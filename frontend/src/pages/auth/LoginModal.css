@@ -1,0 +1,644 @@
+/* =========================================
+   LOGIN MODAL OVERLAY
+========================================= */
+
+.login-modal-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+
+    background: rgba(0, 0, 0, 0.82);
+
+    backdrop-filter: blur(8px);
+
+    -webkit-backdrop-filter: blur(8px);
+
+    z-index: 9999;
+}
+
+
+/* =========================================
+   LOGIN MODAL
+========================================= */
+
+.login-modal {
+    position: relative;
+
+    width: 100%;
+
+    max-width: 550px;
+
+    min-height: 590px;
+
+    padding: 32px 40px 30px;
+
+    background:
+        radial-gradient(circle at 50% 0%,
+            rgba(0, 255, 55, 0.08),
+            transparent 45%),
+        #050b08;
+
+    border: 1px solid #00ff3c;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 0 25px rgba(0, 255, 60, 0.18),
+        0 0 70px rgba(0, 255, 60, 0.08);
+
+    color: white;
+
+    box-sizing: border-box;
+
+    animation:
+        modalOpen 0.25s ease-out;
+}
+
+
+/* =========================================
+   MODAL ANIMATION
+========================================= */
+
+@keyframes modalOpen {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(15px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0) scale(1);
+    }
+}
+
+
+/* =========================================
+   CLOSE BUTTON
+========================================= */
+
+.login-modal-close {
+    position: absolute;
+
+    top: 18px;
+    right: 18px;
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    border: 1px solid #26322c;
+
+    background: #101713;
+
+    color: #9ba89f;
+
+    font-size: 17px;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.login-modal-close:hover {
+
+    color: #00ff3c;
+
+    border-color: #00ff3c;
+
+    background: #101f15;
+
+    transform: rotate(90deg);
+}
+
+
+/* =========================================
+   LOGO
+========================================= */
+
+.modal-logo {
+    width: 60px;
+    height: 60px;
+
+    margin: 0 auto 14px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid #00ff3c;
+
+    border-radius: 15px;
+
+    color: #00ff3c;
+
+    font-size: 30px;
+
+    box-shadow:
+        0 0 15px rgba(0, 255, 60, 0.25);
+}
+
+
+/* =========================================
+   HMS TITLE
+========================================= */
+
+.login-modal h2 {
+
+    margin: 0;
+
+    text-align: center;
+
+    color: #00ff3c;
+
+    font-size: 42px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================
+   SUBTITLE
+========================================= */
+
+.modal-subtitle {
+
+    margin: 4px 0 26px;
+
+    text-align: center;
+
+    color: #929d97;
+
+    font-size: 16px;
+}
+
+
+/* =========================================
+   SIGN IN
+========================================= */
+
+.modal-heading {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    margin-bottom: 24px;
+}
+
+
+.modal-heading::before,
+.modal-heading::after {
+
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: #164d27;
+}
+
+
+.modal-heading span {
+
+    color: #00ff3c;
+
+    font-size: 21px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   FORM
+========================================= */
+
+.modal-form {
+    width: 100%;
+}
+
+
+/* =========================================
+   INPUT
+========================================= */
+
+.modal-input {
+
+    width: 100%;
+
+    height: 58px;
+
+    display: flex;
+
+    align-items: center;
+
+    margin-bottom: 17px;
+
+    padding: 0 16px;
+
+    box-sizing: border-box;
+
+    background: #e9f1ff;
+
+    border: 1px solid #00b934;
+
+    border-radius: 11px;
+
+    transition: 0.2s ease;
+}
+
+
+.modal-input>svg {
+
+    flex: 0 0 auto;
+
+    width: 20px;
+
+    min-width: 20px;
+
+    margin-right: 13px;
+
+    color: #00e83a;
+
+    font-size: 19px;
+}
+
+
+.modal-input input {
+
+    display: block;
+
+    flex: 1 1 auto;
+
+    width: 100%;
+
+    min-width: 0;
+
+    height: 100%;
+
+    padding: 0;
+
+    margin: 0;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #111827;
+
+    font-size: 16px;
+
+    font-family: inherit;
+
+    box-sizing: border-box;
+}
+
+
+.modal-input input::placeholder {
+    color: #6b7280;
+}
+
+
+.modal-input:focus-within {
+
+    border-color: #00ff3c;
+
+    box-shadow:
+        0 0 0 2px rgba(0, 255, 60, 0.12),
+        0 0 15px rgba(0, 255, 60, 0.08);
+}
+
+
+/* =========================================
+   PASSWORD EYE
+========================================= */
+
+.modal-eye {
+
+    flex: 0 0 35px;
+
+    width: 35px;
+
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #7c8a84;
+
+    font-size: 17px;
+
+    cursor: pointer;
+}
+
+
+.modal-eye:hover {
+    color: #00d936;
+}
+
+
+/* =========================================
+   ERROR
+========================================= */
+
+.modal-error {
+
+    width: 100%;
+
+    margin: -4px 0 14px;
+
+    padding: 10px 12px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #7f1d1d;
+
+    border-radius: 8px;
+
+    background:
+        rgba(127, 29, 29, 0.18);
+
+    color: #ff6b6b;
+
+    font-size: 13px;
+}
+
+
+/* =========================================
+   OPTIONS
+========================================= */
+
+.modal-options {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin: 5px 0 20px;
+}
+
+
+.modal-options button {
+
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #00ff3c;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.modal-options button:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================
+   LOGIN BUTTON
+========================================= */
+
+.modal-login-button {
+
+    width: 100%;
+
+    height: 58px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    border-radius: 11px;
+
+    background: #00f238;
+
+    color: #001b07;
+
+    font-size: 20px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+
+    box-shadow:
+        0 0 18px rgba(0, 255, 60, 0.15);
+}
+
+
+.modal-login-button:hover:not(:disabled) {
+
+    background: #19ff4e;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 0 25px rgba(0, 255, 60, 0.25);
+}
+
+
+.modal-login-button:disabled {
+
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================
+   OR
+========================================= */
+
+.modal-or {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin: 24px 0 20px;
+}
+
+
+.modal-or::before,
+.modal-or::after {
+
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: #164d27;
+}
+
+
+.modal-or span {
+
+    color: #00ff3c;
+
+    font-size: 14px;
+}
+
+
+/* =========================================
+   SECURITY
+========================================= */
+
+.modal-security {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    color: #7e8983;
+
+    font-size: 13px;
+
+    text-align: center;
+}
+
+
+.modal-security svg {
+
+    color: #00ff3c;
+
+    font-size: 14px;
+}
+
+
+/* =========================================
+   DESKTOP
+========================================= */
+
+@media (min-width: 1200px) {
+
+    .login-modal {
+        max-width: 560px;
+    }
+
+}
+
+
+/* =========================================
+   LAPTOP
+========================================= */
+
+@media (max-width: 900px) {
+
+    .login-modal {
+        max-width: 520px;
+    }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .login-modal-overlay {
+        padding: 15px;
+    }
+
+    .login-modal {
+
+        max-width: 100%;
+
+        min-height: auto;
+
+        padding: 28px 22px 25px;
+
+        border-radius: 18px;
+    }
+
+    .modal-logo {
+
+        width: 54px;
+        height: 54px;
+    }
+
+    .login-modal h2 {
+        font-size: 36px;
+    }
+
+    .modal-subtitle {
+
+        font-size: 14px;
+
+        margin-bottom: 22px;
+    }
+
+    .modal-heading {
+        margin-bottom: 20px;
+    }
+
+    .modal-input {
+        height: 54px;
+    }
+
+    .modal-login-button {
+        height: 54px;
+    }
+
+}
