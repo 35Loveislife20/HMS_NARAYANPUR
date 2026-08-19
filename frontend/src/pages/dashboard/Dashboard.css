@@ -424,19 +424,20 @@
 }
 
 /* ==========================================================================================
-   ★ MOBILE & TABLET RESPONSIVE MEDIA QUERIES (मोबाइल पर लेआउट ठीक करने के लिए) ★
+   ★ CRITICAL MOBILE & TABLET RESPONSIVE FIXES (मोबाइल लेआउट ठीक करने के लिए) ★
 ========================================================================================== */
 @media (max-width: 1024px) {
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
     }
 }
 
 @media (max-width: 992px) {
 
-    /* Dashboard Main Content को बगल की बजाय ऊपर-नीचे (Stack) करें */
+    /* Dashboard Main Content को बगल की बजाय ऊपर-नीचे रखें */
     .dashboard-content {
-        flex-direction: column;
+        flex-direction: column !important;
     }
 
     .appointments-panel {
@@ -447,13 +448,15 @@
     .heart-panel {
         flex: none;
         width: 100%;
-        min-height: 300px;
+        min-height: 250px;
     }
 
     /* Topbar में बदलाव */
     .dashboard-topbar {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
+        gap: 10px;
+        padding: 15px;
     }
 
     .topbar-right {
@@ -462,19 +465,47 @@
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
 
-    /* बहुत छोटी स्क्रीन पर Stats को 1 कॉलम करें */
+    /* बहुत छोटी स्क्रीन पर 1 कॉलम */
     .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
     }
 
     .dashboard-page {
-        padding: 10px 15px;
+        padding: 10px 12px;
     }
 
     .brand-section h1 {
         font-size: 20px;
+    }
+
+    /* Text को ओवरलैप होने से रोकें */
+    .appointment-row {
+        flex-wrap: wrap;
+        /* अगर जगह कम है तो अगली लाइन में आ जाए */
+        justify-content: space-between;
+        gap: 5px;
+    }
+
+    .appointment-info {
+        flex: 1 1 100%;
+        /* नाम और स्पेशलाइजेशन को पूरी लाइन में ले आएं */
+        order: 1;
+        margin-bottom: 5px;
+    }
+
+    .appointment-time {
+        flex: 1;
+        order: 2;
+        margin-right: 0;
+        text-align: left;
+    }
+
+    .status {
+        order: 3;
+        flex-shrink: 0;
     }
 
     .dashboard-user {
