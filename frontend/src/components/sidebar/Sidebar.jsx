@@ -9,7 +9,6 @@ import "./Sidebar.css";
 const Sidebar = () => {
     const { logout } = useAuth();
 
-    // इमोजी की जगह अब React Icons का इस्तेमाल किया गया है
     const menuItems = [
         { label: "Dashboard", path: "/dashboard", icon: <FaChartBar /> },
         { label: "Patients", path: "/patients", icon: <FaUsers /> },
@@ -25,35 +24,23 @@ const Sidebar = () => {
         <aside className="sidebar">
             <div className="sidebar-logo">
                 <div className="logo-icon">🏥</div>
-                <div>
-                    <h2>HMS</h2>
-                    <span>Hospital System</span>
-                </div>
+                <div><h2>HMS</h2><span>Hospital System</span></div>
             </div>
-
             <nav className="sidebar-nav">
                 {menuItems.map((item) => (
-                    <NavLink
-                        key={item.path}
-                        to={item.path}
-                        className={({ isActive }) =>
-                            isActive ? "sidebar-link active" : "sidebar-link"
-                        }
-                    >
+                    <NavLink key={item.path} to={item.path} className={({ isActive }) => isActive ? "sidebar-link active" : "sidebar-link"}>
                         <span className="sidebar-icon">{item.icon}</span>
                         <span>{item.label}</span>
                     </NavLink>
                 ))}
             </nav>
-
             <div className="sidebar-bottom">
+                {/* 3D रेड Logout बटन */}
                 <button className="btn-3d btn-logout" onClick={logout}>
-                    <FaSignOutAlt className="sidebar-icon btn-icon" />
-                    Logout
+                    <FaSignOutAlt className="sidebar-icon btn-icon" /> Logout
                 </button>
             </div>
         </aside>
     );
 };
-
 export default Sidebar;

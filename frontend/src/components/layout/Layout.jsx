@@ -16,10 +16,11 @@ const Layout = ({ children }) => {
             </button>
 
             {/* Sidebar को क्लास dynamically दें */}
-            <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
+            <div className={`sidebar-wrapper ${isSidebarOpen ? "open" : ""}`}>
                 <Sidebar />
             </div>
 
+            {/* ★ FIX: main-content को margin-left देना जरूरी है, जो CSS में हैंडल होगा */}
             <div className="main-content">
                 {children}
             </div>
