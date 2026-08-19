@@ -8,7 +8,6 @@
     left: 0;
     top: 0;
     background-color: #040a06;
-    /* Deep Dark Green */
     background-image: radial-gradient(rgba(0, 255, 94, 0.08) 1px, transparent 1px);
     background-size: 30px 30px;
     color: #ffffff;
@@ -16,6 +15,7 @@
     flex-direction: column;
     z-index: 100;
     border-right: 1px solid rgba(0, 255, 94, 0.1);
+    transition: transform 0.3s ease;
 }
 
 /* =========================================
@@ -78,24 +78,16 @@
     background: rgba(0, 255, 94, 0.05);
     color: #00ff5e;
     padding-left: 18px;
-    /* Hover पर हल्का स्लाइड इफेक्ट */
 }
 
-/* ★ MAJOR FIX: Solid Green Block for Active Button ★ */
 .sidebar-link.active {
     background: #00ff5e;
-    /* Solid Light Green */
     color: #040a06;
-    /* Dark Text for Contrast */
     border-left: none;
-    /* पतली रेखा हटा दी गई है */
     box-shadow: 0 4px 15px rgba(0, 255, 94, 0.3);
-    /* बटन पर हल्का ग्लो */
     padding-left: 14px;
-    /* स्लाइड इफेक्ट रीसेट */
 }
 
-/* आइकॉन के लिए स्टाइलिंग */
 .sidebar-icon {
     width: 22px;
     height: 22px;
@@ -113,7 +105,6 @@
     border-top: 1px solid rgba(0, 255, 94, 0.1);
 }
 
-/* 3D Push Button Base Style */
 .btn-3d {
     border: none;
     border-radius: 8px;
@@ -135,7 +126,6 @@
     box-shadow: 0 0px 0 #008a48, 0 2px 6px rgba(0, 0, 0, 0.5);
 }
 
-/* Specific 3D Style for Logout Button */
 .btn-logout {
     background: linear-gradient(180deg, #ff5555, #cc0000);
     box-shadow: 0 4px 0 #880000, 0 6px 12px rgba(255, 0, 0, 0.2);
@@ -158,4 +148,49 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* ==========================================================================================
+   ★ MOBILE RESPONSIVE - Sidebar को छुपाएं और Mobile Menu Button दिखाएं ★
+========================================================================================== */
+@media (max-width: 992px) {
+
+    /* Mobile पर Sidebar को बाईं ओर खिसका कर छुपा दें */
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* जब Sidebar Open हो (क्लास जोड़ने पर) */
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    /* यहाँ एक CSS हैक है ताकि बिना JS के भी मेनू खोला जा सके (नीचे Layout.jsx में इस्तेमाल करने के लिए) */
+    .hamburger-menu {
+        display: block;
+        position: fixed;
+        left: 15px;
+        top: 25px;
+        z-index: 101;
+        background: #00ff5e;
+        color: #040a06;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        cursor: pointer;
+    }
+}
+
+@media (min-width: 993px) {
+
+    /* डेस्कटॉप पर हैमबर्गर मेनू न दिखे */
+    .hamburger-menu {
+        display: none !important;
+    }
 }
