@@ -1,0 +1,278 @@
+/* =====================================================
+   HMS LAYOUT
+   Sidebar width: 250px (desktop)
+   Mobile breakpoint: 768px
+===================================================== */
+
+/* =====================================================
+   ROOT WRAPPER
+===================================================== */
+
+.layout-root {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background: #050706;
+}
+
+
+/* =====================================================
+   SIDEBAR WRAPPER
+   Desktop: fixed 250px left column
+   Mobile: slide-in drawer
+===================================================== */
+
+.layout-sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 200;
+}
+
+/* Sidebar.css already has position:fixed + left:0 + top:0
+   so we just need to reserve the 250px space on desktop */
+
+
+/* =====================================================
+   MAIN CONTENT
+===================================================== */
+
+.layout-main {
+    flex: 1;
+    min-width: 0;
+    /* overflow-x prevent karo horizontal scroll */
+    overflow-x: hidden;
+}
+
+
+/* =====================================================
+   MOBILE TOPBAR
+   Only visible on mobile
+===================================================== */
+
+.mobile-topbar {
+    display: none;
+}
+
+
+/* =====================================================
+   SIDEBAR OVERLAY
+   Mobile pe sidebar ke peeche dark background
+===================================================== */
+
+.sidebar-overlay {
+    display: none;
+}
+
+
+/* =====================================================
+   SIDEBAR CLOSE BUTTON
+   Mobile sidebar ke andar X button
+===================================================== */
+
+.sidebar-close-btn {
+    display: none;
+}
+
+
+/* =====================================================
+   TABLET (max 1024px)
+   Stats grid 2 column etc. already handled in Dashboard.css
+===================================================== */
+
+@media (max-width: 1024px) {
+    .layout-sidebar {
+        width: 240px;
+    }
+}
+
+
+/* =====================================================
+   MOBILE (max 768px)
+   Sidebar drawer mode
+===================================================== */
+
+@media (max-width: 768px) {
+
+    /* Root: single column — topbar + main */
+    .layout-root {
+        flex-direction: column;
+    }
+
+    /* Sidebar: absolute drawer, hidden off-screen */
+    .layout-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 260px;
+        height: 100vh;
+        z-index: 300;
+
+        /* Off-screen by default */
+        transform: translateX(-100%);
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Sidebar open state */
+    .layout-sidebar.is-open {
+        transform: translateX(0);
+    }
+
+    /* Main content: full width, top padding for topbar */
+    .layout-main {
+        width: 100%;
+        padding-top: 56px; /* topbar height */
+    }
+
+    /* Mobile topbar: show karo */
+    .mobile-topbar {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 56px;
+        z-index: 250;
+
+        padding: 0 16px;
+
+        background: #0b100d;
+        border-bottom: 1px solid rgba(0, 255, 34, 0.15);
+    }
+
+    /* Overlay: show karo */
+    .sidebar-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 299;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(2px);
+        animation: overlay-fade-in 0.2s ease;
+    }
+
+    @keyframes overlay-fade-in {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    /* Close button: show karo */
+    .sidebar-close-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        position: absolute;
+        top: 14px;
+        right: 14px;
+
+        width: 32px;
+        height: 32px;
+
+        border: none;
+        border-radius: 6px;
+
+        background: rgba(255, 255, 255, 0.08);
+        color: #94a3b8;
+
+        font-size: 14px;
+        cursor: pointer;
+
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .sidebar-close-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+    }
+}
+
+
+/* =====================================================
+   HAMBURGER BUTTON
+===================================================== */
+
+.hamburger-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+
+    width: 38px;
+    height: 38px;
+    padding: 8px;
+
+    border: 1px solid rgba(0, 255, 34, 0.25);
+    border-radius: 8px;
+
+    background: rgba(0, 255, 34, 0.05);
+
+    cursor: pointer;
+
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.hamburger-btn span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: #00ff22;
+    transition: background 0.2s;
+}
+
+.hamburger-btn:hover {
+    background: rgba(0, 255, 34, 0.12);
+    border-color: rgba(0, 255, 34, 0.5);
+}
+
+
+/* =====================================================
+   MOBILE LOGO
+===================================================== */
+
+.mobile-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.mobile-logo-icon {
+    font-size: 22px;
+}
+
+
+/* =====================================================
+   DASHBOARD PAGE — sidebar ke saath adjust
+   Dashboard.css mein min-height:100vh hai,
+   mobile par hum sirf padding-top fix karte hain
+===================================================== */
+
+@media (max-width: 768px) {
+    /* Dashboard apna padding khud manage karta hai,
+       layout-main ka padding-top kaafi hai */
+    .layout-main .dashboard-page {
+        min-height: calc(100vh - 56px);
+    }
+}
+
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .layout-sidebar {
+        transition: none;
+    }
+    .sidebar-overlay {
+        animation: none;
+    }
+}

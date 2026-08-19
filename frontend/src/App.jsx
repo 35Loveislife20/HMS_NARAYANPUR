@@ -8,6 +8,7 @@ import Patients from "./pages/patients/Patients";
 import Appointments from "./pages/Appointments/Appointments";
 
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import Layout from "./components/layout/Layout";
 
 function App() {
   return (
@@ -25,41 +26,47 @@ function App() {
         element={<Login />}
       />
 
-      {/* DASHBOARD */}
+      {/* PROTECTED ROUTES — Layout mein wrap */}
       <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <Layout>
+              <Dashboard />
+            </Layout>
           </ProtectedRoute>
         }
       />
 
-      {/* PATIENTS */}
       <Route
         path="/patients"
         element={
           <ProtectedRoute>
-            <Patients />
+            <Layout>
+              <Patients />
+            </Layout>
           </ProtectedRoute>
         }
       />
 
-      {/* APPOINTMENTS */}
       <Route
         path="/appointments"
         element={
           <ProtectedRoute>
-            <Appointments />
+            <Layout>
+              <Appointments />
+            </Layout>
           </ProtectedRoute>
         }
       />
-      {/* DOCTORS */}
+
       <Route
         path="/doctors"
         element={
           <ProtectedRoute>
-            <Doctors />
+            <Layout>
+              <Doctors />
+            </Layout>
           </ProtectedRoute>
         }
       />

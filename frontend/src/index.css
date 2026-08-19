@@ -4,30 +4,24 @@
   box-sizing: border-box;
 }
 
-html,
-body,
-#root {
-  width: 100%;
-  height: 100%;
-
-  margin: 0;
-  padding: 0;
-}
-
 html {
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 body {
-  overflow: hidden;
-
+  overflow-x: hidden;
   background: #020604;
-
   font-family:
     Inter,
     Arial,
     Helvetica,
     sans-serif;
+}
+
+/* #root ko height:100% nahi dena —
+   har page apni min-height khud set karta hai */
+#root {
+  width: 100%;
 }
 
 button,
