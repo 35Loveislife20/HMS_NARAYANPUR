@@ -1,0 +1,1774 @@
+/* =========================================================
+   HMS BILLING PAGE
+   Dark Dashboard + Professional Hospital Invoice
+========================================================= */
+
+.billing-page {
+    width: 100%;
+    min-height: 100%;
+    padding: 28px;
+    box-sizing: border-box;
+    color: #ffffff;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.billing-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.billing-header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.billing-header h1 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.billing-header p {
+    margin: 6px 0 0;
+    color: #8fa39a;
+    font-size: 14px;
+}
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.back-dashboard-button {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+
+    border: 1px solid rgba(0, 255, 55, 0.22);
+    border-radius: 12px;
+
+    background: rgba(0, 255, 55, 0.06);
+    color: #00ff37;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.back-dashboard-button:hover {
+    background: rgba(0, 255, 55, 0.14);
+    border-color: rgba(0, 255, 55, 0.4);
+    transform: translateX(-3px);
+}
+
+/* =========================================================
+   HEADER ACTIONS
+========================================================= */
+
+.billing-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.billing-refresh {
+    width: 44px;
+    height: 44px;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.04);
+    color: #b7c8c0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.billing-refresh:hover {
+    color: #00ff37;
+    border-color: rgba(0, 255, 55, 0.35);
+}
+
+.billing-refresh:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.add-billing-button {
+    min-height: 44px;
+    padding: 0 18px;
+
+    border: 1px solid rgba(0, 255, 55, 0.35);
+    border-radius: 12px;
+
+    background: #00ff37;
+    color: #031006;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-billing-button:hover {
+    background: #19ff4b;
+    box-shadow: 0 8px 24px rgba(0, 255, 55, 0.18);
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.billing-main-error {
+    margin-bottom: 20px;
+    padding: 13px 15px;
+
+    border: 1px solid rgba(255, 75, 75, 0.25);
+    border-radius: 12px;
+
+    background: rgba(255, 55, 55, 0.08);
+    color: #ff8d8d;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.billing-main-error span {
+    flex: 1;
+}
+
+.billing-main-error button {
+    border: 0;
+    background: transparent;
+    color: #ff9b9b;
+    cursor: pointer;
+}
+
+/* =========================================================
+   SUMMARY CARDS
+========================================================= */
+
+.billing-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.billing-summary {
+    min-height: 88px;
+    padding: 18px;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+
+    background: rgba(255, 255, 255, 0.035);
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.billing-summary:hover {
+    border-color: rgba(0, 255, 55, 0.18);
+    transform: translateY(-1px);
+}
+
+.summary-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    background: rgba(0, 255, 55, 0.08);
+    color: #00ff37;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.billing-summary span {
+    display: block;
+    margin-bottom: 5px;
+
+    color: #7f948a;
+    font-size: 12px;
+}
+
+.billing-summary strong {
+    display: block;
+    color: #ffffff;
+    font-size: 21px;
+}
+
+/* =========================================================
+   MAIN PANEL
+========================================================= */
+
+.billing-panel {
+    overflow: hidden;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.billing-panel-header {
+    min-height: 78px;
+    padding: 18px 20px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.billing-panel-header h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 18px;
+}
+
+.billing-panel-header p {
+    margin: 5px 0 0;
+    color: #7f948a;
+    font-size: 13px;
+}
+
+.billing-panel-header>span {
+    color: #8ea39a;
+    font-size: 13px;
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.billing-toolbar {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.billing-search {
+    width: min(420px, 100%);
+    height: 42px;
+    padding: 0 12px;
+
+    box-sizing: border-box;
+
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.035);
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.billing-search>svg {
+    color: #6f847a;
+    flex-shrink: 0;
+}
+
+.billing-search input {
+    width: 100%;
+
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+    color: #ffffff;
+    font-family: inherit;
+}
+
+.billing-search input::placeholder {
+    color: #52665d;
+}
+
+.billing-search button {
+    width: 28px;
+    height: 28px;
+
+    border: 0;
+    background: transparent;
+    color: #71867c;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.billing-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.billing-table {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+}
+
+.billing-table th {
+    padding: 14px 16px;
+
+    background: rgba(255, 255, 255, 0.025);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+
+    color: #71867c;
+    font-size: 11px;
+
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+}
+
+.billing-table td {
+    padding: 15px 16px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+
+    color: #d8e2dd;
+    font-size: 13px;
+}
+
+.billing-table tbody tr {
+    transition: background 0.15s ease;
+}
+
+.billing-table tbody tr:hover {
+    background: rgba(0, 255, 55, 0.025);
+}
+
+.billing-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+/* =========================================================
+   BILL / PATIENT CELL
+========================================================= */
+
+.bill-cell,
+.patient-bill-cell {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.bill-mini-avatar,
+.patient-mini-avatar {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    background: rgba(0, 255, 55, 0.08);
+    border: 1px solid rgba(0, 255, 55, 0.12);
+
+    color: #00ff37;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bill-cell strong,
+.patient-bill-cell strong {
+    display: block;
+    color: #f1f6f3;
+    font-weight: 700;
+}
+
+.bill-cell span,
+.patient-bill-cell span {
+    display: block;
+    margin-top: 4px;
+    color: #687d73;
+    font-size: 11px;
+}
+
+/* =========================================================
+   DATE
+========================================================= */
+
+.billing-date-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.billing-date-cell svg {
+    color: #00ff37;
+}
+
+/* =========================================================
+   TOTAL
+========================================================= */
+
+.billing-total-cell {
+    color: #00ff37;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   PAYMENT
+========================================================= */
+
+.payment-method {
+    color: #a9bbb3;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.billing-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 70px;
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-transform: capitalize;
+}
+
+.billing-status.paid {
+    border: 1px solid rgba(0, 255, 55, 0.18);
+    background: rgba(0, 255, 55, 0.08);
+    color: #00ff37;
+}
+
+.billing-status.pending,
+.billing-status.partial {
+    border: 1px solid rgba(255, 190, 70, 0.2);
+    background: rgba(255, 190, 70, 0.08);
+    color: #ffc76b;
+}
+
+.billing-status.cancelled {
+    border: 1px solid rgba(255, 75, 75, 0.2);
+    background: rgba(255, 75, 75, 0.08);
+    color: #ff8d8d;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.billing-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.billing-actions button {
+    width: 34px;
+    height: 34px;
+
+    border-radius: 9px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.billing-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.print-billing-button {
+    border: 1px solid rgba(0, 255, 55, 0.16);
+    background: rgba(0, 255, 55, 0.06);
+    color: #00ff37;
+}
+
+.print-billing-button:hover {
+    background: rgba(0, 255, 55, 0.13);
+}
+
+.pdf-billing-button {
+    border: 1px solid rgba(255, 100, 100, 0.18);
+    background: rgba(255, 80, 80, 0.06);
+    color: #ff8585;
+}
+
+.pdf-billing-button:hover {
+    background: rgba(255, 80, 80, 0.13);
+}
+
+.edit-billing-button {
+    border: 1px solid rgba(80, 170, 255, 0.18);
+    background: rgba(80, 170, 255, 0.06);
+    color: #73baff;
+}
+
+.edit-billing-button:hover {
+    background: rgba(80, 170, 255, 0.13);
+}
+
+.delete-billing-button {
+    border: 1px solid rgba(255, 75, 75, 0.14);
+    background: rgba(255, 75, 75, 0.06);
+    color: #ff7777;
+}
+
+.delete-billing-button:hover {
+    background: rgba(255, 75, 75, 0.12);
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.billing-page-loading {
+    min-height: 260px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    color: #84988e;
+}
+
+.billing-page-loading svg {
+    color: #00ff37;
+    font-size: 24px;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.billing-page-empty {
+    min-height: 280px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+    text-align: center;
+}
+
+.billing-page-empty>svg {
+    margin-bottom: 10px;
+    color: rgba(0, 255, 55, 0.65);
+    font-size: 42px;
+}
+
+.billing-page-empty strong {
+    color: #ffffff;
+}
+
+.billing-page-empty span {
+    color: #7f948a;
+    font-size: 13px;
+}
+
+.empty-create-billing-button {
+    margin-top: 12px;
+    min-height: 40px;
+    padding: 0 15px;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: #00ff37;
+    color: #031006;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.billing-modal-overlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 9999;
+
+    padding: 20px;
+    box-sizing: border-box;
+
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(7px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow-y: auto;
+}
+
+.billing-modal {
+    width: min(720px, 100%);
+    max-height: calc(100vh - 40px);
+
+    overflow-y: auto;
+
+    border: 1px solid rgba(0, 255, 55, 0.13);
+    border-radius: 20px;
+
+    background: #07100b;
+
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+}
+
+.billing-modal-header {
+    padding: 20px 22px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.billing-modal-header h2 {
+    margin: 0;
+    color: #ffffff;
+}
+
+.billing-modal-header p {
+    margin: 6px 0 0;
+    color: #7f948a;
+    font-size: 13px;
+}
+
+.billing-modal-close-button {
+    width: 36px;
+    height: 36px;
+
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.035);
+    color: #8ea39a;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.billing-form {
+    padding: 22px;
+}
+
+.billing-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px;
+}
+
+.billing-form-group {
+    min-width: 0;
+}
+
+.billing-form-group-full {
+    grid-column: 1 / -1;
+}
+
+.billing-form-group label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    margin-bottom: 8px;
+
+    color: #b9c9c2;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.billing-form-group label svg {
+    color: #00ff37;
+}
+
+.billing-form-group input,
+.billing-form-group select,
+.billing-form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 10px;
+
+    outline: none;
+
+    background: rgba(255, 255, 255, 0.035);
+    color: #ffffff;
+
+    font-family: inherit;
+
+    transition: all 0.2s ease;
+}
+
+.billing-form-group input,
+.billing-form-group select {
+    height: 44px;
+    padding: 0 13px;
+}
+
+.billing-form-group textarea {
+    min-height: 95px;
+    padding: 12px 13px;
+    resize: vertical;
+}
+
+.billing-form-group input:focus,
+.billing-form-group select:focus,
+.billing-form-group textarea:focus {
+    border-color: rgba(0, 255, 55, 0.42);
+    box-shadow: 0 0 0 3px rgba(0, 255, 55, 0.06);
+}
+
+.billing-form-group select option {
+    background: #07100b;
+    color: #ffffff;
+}
+
+/* =========================================================
+   FORM ERROR
+========================================================= */
+
+.billing-form-error {
+    margin: 16px 22px 0;
+    padding: 11px 13px;
+
+    border: 1px solid rgba(255, 75, 75, 0.2);
+    border-radius: 10px;
+
+    background: rgba(255, 75, 75, 0.07);
+    color: #ff9292;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+/* =========================================================
+   TOTAL PREVIEW
+========================================================= */
+
+.billing-total-preview {
+    margin-top: 24px;
+    padding: 16px;
+
+    border: 1px solid rgba(0, 255, 55, 0.15);
+    border-radius: 13px;
+
+    background: rgba(0, 255, 55, 0.045);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.billing-total-preview span {
+    display: block;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.billing-total-preview small {
+    display: block;
+    margin-top: 5px;
+    color: #72877d;
+}
+
+.billing-total-preview strong {
+    color: #00ff37;
+    font-size: 22px;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.billing-form-actions {
+    margin-top: 24px;
+    padding-top: 18px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.cancel-billing-button,
+.save-billing-button {
+    min-height: 42px;
+    padding: 0 17px;
+
+    border-radius: 10px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.cancel-billing-button {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.035);
+    color: #9aaca4;
+}
+
+.save-billing-button {
+    border: 1px solid rgba(0, 255, 55, 0.35);
+    background: #00ff37;
+    color: #031006;
+}
+
+.save-billing-button:disabled,
+.cancel-billing-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   PRINT CONTAINER
+========================================================= */
+
+.print-bill-container {
+    display: none;
+}
+
+/* =========================================================
+   A4 INVOICE
+========================================================= */
+
+.print-bill {
+    position: relative;
+
+    width: 210mm;
+    height: 297mm;
+    min-height: 297mm;
+    max-height: 297mm;
+
+    box-sizing: border-box;
+    overflow: hidden;
+
+    background: #ffffff;
+    color: #183b72;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    isolation: isolate;
+}
+
+/* =========================================================
+   FULL PAGE DOCTOR IMAGE WATERMARK
+========================================================= */
+
+.print-doctor-watermark {
+    position: absolute;
+
+    left: 50%;
+    top: 63%;
+
+    width: 210mm;
+    height: 240mm;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1;
+    pointer-events: none;
+
+    overflow: visible;
+}
+
+.print-doctor-watermark img {
+    width: 210mm;
+    height: 210mm;
+
+    max-width: none;
+    max-height: none;
+
+    object-fit: contain;
+
+    opacity: 0.055;
+
+    transform: rotate(-8deg);
+
+    display: block;
+}
+
+/* =========================================================
+   HOSPITAL HEADER
+========================================================= */
+
+.print-hospital-header {
+    position: relative;
+
+    min-height: 47mm;
+
+    padding: 12mm 15mm 9mm;
+
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background:
+        linear-gradient(135deg,
+            #f8fdff 0%,
+            #eef9fc 52%,
+            #ffffff 100%);
+
+    border-bottom: 1px solid #d8e5ed;
+
+    z-index: 5;
+}
+
+.print-hospital-header::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 3px;
+
+    background:
+        linear-gradient(90deg,
+            #0b4d9a 0%,
+            #087cc1 40%,
+            #0ca7c7 70%,
+            #13c2d5 100%);
+}
+
+/* =========================================================
+   HOSPITAL BRAND
+========================================================= */
+
+.print-hospital-brand {
+    display: flex;
+    align-items: center;
+    gap: 7mm;
+}
+
+.print-hospital-logo {
+    width: 27mm;
+    height: 27mm;
+
+    object-fit: contain;
+
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   HOSPITAL NAME
+========================================================= */
+
+.print-hospital-name h1 {
+    margin: 0;
+
+    color: #087cc1;
+
+    font-size: 27px;
+    line-height: 1.05;
+
+    font-weight: 900;
+
+    letter-spacing: 0.7px;
+}
+
+.print-hospital-name p {
+    margin: 5px 0 3px;
+
+    color: #173b82;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.print-hospital-name span {
+    color: #6b7d98;
+
+    font-size: 9.5px;
+    font-weight: 500;
+}
+
+/* =========================================================
+   INVOICE BOX
+========================================================= */
+
+.print-invoice-box {
+    min-width: 40mm;
+
+    padding: 7mm 8mm;
+
+    box-sizing: border-box;
+
+    border: 2px solid #173f89;
+
+    background: rgba(255, 255, 255, 0.94);
+
+    text-align: center;
+
+    box-shadow:
+        0 3px 10px rgba(18, 65, 120, 0.06);
+}
+
+.print-invoice-box strong,
+.print-invoice-box span {
+    display: block;
+}
+
+.print-invoice-box strong {
+    margin-bottom: 5px;
+
+    color: #173f89;
+
+    font-size: 15px;
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+.print-invoice-box span {
+    color: #087cc1;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* =========================================================
+   PATIENT / BILL INFORMATION
+   FULLY TRANSPARENT
+========================================================= */
+
+.print-patient-section {
+    position: relative;
+
+    margin: 0;
+
+    padding: 8mm 15mm 6mm;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 14mm;
+
+    box-sizing: border-box;
+
+    /* IMPORTANT: TRANSPARENT */
+    background: transparent;
+
+    z-index: 5;
+}
+
+.print-patient-section>div {
+    position: relative;
+
+    min-height: 27mm;
+
+    padding: 4mm 5mm;
+
+    border-left: 3px solid #0a91c3;
+
+    /* IMPORTANT: NO WHITE BOX */
+    background: transparent;
+
+    box-shadow: none;
+}
+
+.print-patient-section h3 {
+    margin: 0 0 7px;
+
+    color: #087cc1;
+
+    font-size: 12px;
+    font-weight: 900;
+
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.print-patient-section p {
+    margin: 4px 0;
+
+    color: #344d78;
+
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+.print-patient-section p strong {
+    display: inline-block;
+
+    min-width: 78px;
+
+    color: #183b72;
+}
+
+/* =========================================================
+   BILL TABLE
+   FULLY TRANSPARENT
+========================================================= */
+
+.print-bill-table {
+    position: relative;
+
+    z-index: 5;
+
+    width: calc(100% - 30mm);
+
+    margin: 2mm 15mm 0;
+
+    border-collapse: collapse;
+
+    /* IMPORTANT: TRANSPARENT */
+    background: transparent;
+}
+
+.print-bill-table th {
+    padding: 9px 10px;
+
+    border: 0;
+
+    /* IMPORTANT: TRANSPARENT HEADER */
+    background: transparent;
+
+    color: #0875b8;
+
+    font-size: 10.5px;
+    font-weight: 900;
+
+    text-align: left;
+
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.print-bill-table td {
+    padding: 8px 10px;
+
+    border-bottom: 1px solid rgba(48, 72, 117, 0.20);
+
+    color: #304875;
+
+    font-size: 10px;
+
+    /* IMPORTANT: TRANSPARENT */
+    background: transparent;
+}
+
+/* Remove all row backgrounds */
+.print-bill-table tbody tr:nth-child(even) td,
+.print-bill-table tbody tr:nth-child(odd) td {
+    background: transparent;
+}
+
+.print-bill-table tbody tr:hover td {
+    background: transparent;
+}
+
+.print-bill-table th:last-child,
+.print-bill-table td:last-child {
+    width: 42mm;
+
+    text-align: right;
+
+    font-weight: 700;
+}
+
+/* =========================================================
+   TOTAL
+========================================================= */
+
+.print-total-row {
+    position: relative;
+
+    z-index: 5;
+
+    width: calc(100% - 30mm);
+
+    margin: 6mm 15mm 0;
+
+    padding: 5mm 7mm;
+
+    box-sizing: border-box;
+
+    border-top: 2px solid #173f89;
+    border-bottom: 1px solid #d6e1e9;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 15mm;
+
+    background:
+        linear-gradient(90deg,
+            #f8fcfe,
+            #e8f6fa);
+
+    color: #183b72;
+}
+
+.print-total-row span {
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.print-total-row strong {
+    min-width: 45mm;
+
+    color: #0b4f9b;
+
+    text-align: right;
+
+    font-size: 18px;
+    font-weight: 900;
+}
+
+/* =========================================================
+   NOTES
+========================================================= */
+
+.print-notes {
+    position: relative;
+
+    z-index: 5;
+
+    margin: 5mm 15mm 0;
+
+    padding: 3mm 4mm;
+
+    border: 1px solid #cbdbe6;
+
+    background: #f8fcfe;
+}
+
+.print-notes strong {
+    color: #087cc1;
+
+    font-size: 10px;
+}
+
+.print-notes p {
+    margin: 4px 0 0;
+
+    color: #344c80;
+
+    font-size: 9px;
+    line-height: 1.4;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.print-footer {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    min-height: 42mm;
+
+    padding: 7mm 15mm 6mm;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(135deg,
+            #e8f9fc 0%,
+            #9edfea 35%,
+            #38bfd6 72%,
+            #0ca6c5 100%);
+
+    text-align: center;
+
+    z-index: 5;
+}
+
+.print-footer-brand {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 4mm;
+
+    z-index: 3;
+}
+
+.print-footer-brand img {
+    width: 14mm;
+    height: 14mm;
+
+    object-fit: contain;
+}
+
+.print-footer-brand div {
+    text-align: left;
+}
+
+.print-footer-brand strong {
+    display: block;
+
+    color: #08447e;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.print-footer-brand span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #23617e;
+
+    font-size: 8.5px;
+}
+
+.print-footer p {
+    position: relative;
+
+    margin: 5mm 0 2px;
+
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    z-index: 3;
+}
+
+.print-footer>span {
+    position: relative;
+
+    color: #eaffff;
+
+    font-size: 8px;
+
+    z-index: 3;
+}
+
+/* =========================================================
+   FOOTER WATERMARK
+========================================================= */
+
+.print-footer::before {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 48mm;
+    height: 48mm;
+
+    transform: translate(-50%, -50%);
+
+    background-image: url("/hms-logo.png");
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+
+    opacity: 0.08;
+
+    pointer-events: none;
+}
+
+/* =========================================================
+   FOOTER SIGNATURE
+========================================================= */
+
+.print-footer::after {
+    content:
+        "Authorized Signature                                      Bill Officer / Cashier";
+
+    position: absolute;
+
+    left: 15mm;
+    right: 15mm;
+    bottom: 6mm;
+
+    color: #14517d;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    white-space: pre;
+
+    text-align: center;
+
+    letter-spacing: 0.2px;
+}
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+.refresh-spin {
+    animation:
+        billing-spin 0.9s linear infinite;
+}
+
+@keyframes billing-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+    .billing-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .billing-page {
+        padding: 20px;
+    }
+
+    .billing-header {
+        align-items: flex-start;
+    }
+
+    .billing-header h1 {
+        font-size: 25px;
+    }
+
+    .billing-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .billing-form-group-full {
+        grid-column: auto;
+    }
+
+    .billing-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .add-billing-button span {
+        display: none;
+    }
+
+    .add-billing-button {
+        width: 44px;
+        padding: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .billing-page {
+        padding: 15px;
+    }
+
+    .billing-header-left {
+        gap: 11px;
+    }
+
+    .billing-header h1 {
+        font-size: 21px;
+    }
+
+    .billing-header p {
+        font-size: 12px;
+    }
+
+    .billing-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .billing-form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .cancel-billing-button,
+    .save-billing-button {
+        width: 100%;
+    }
+
+    .billing-modal-overlay {
+        padding: 10px;
+    }
+
+    .billing-modal {
+        max-height: calc(100vh - 20px);
+        border-radius: 16px;
+    }
+
+    .billing-form {
+        padding: 17px;
+    }
+
+    .billing-modal-header {
+        padding: 17px;
+    }
+}
+
+/* =========================================================
+   PRINT MEDIA
+========================================================= */
+
+@media print {
+
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+
+    html,
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+
+        width: 210mm !important;
+        height: 297mm !important;
+
+        background: #ffffff !important;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Hide complete dashboard */
+
+    body * {
+        visibility: hidden !important;
+    }
+
+    /* Show only invoice */
+
+    .print-bill-container,
+    .print-bill-container * {
+        visibility: visible !important;
+    }
+
+    .print-bill-container {
+        position: absolute !important;
+
+        left: 0 !important;
+        top: 0 !important;
+
+        display: block !important;
+
+        width: 210mm !important;
+        height: 297mm !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        background: #ffffff !important;
+
+        overflow: hidden !important;
+    }
+
+    .print-bill {
+        display: block !important;
+
+        position: relative !important;
+
+        width: 210mm !important;
+        height: 297mm !important;
+
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        box-sizing: border-box !important;
+
+        background: #ffffff !important;
+
+        color: #183b72 !important;
+
+        overflow: hidden !important;
+
+        page-break-after: avoid !important;
+        page-break-before: avoid !important;
+        page-break-inside: avoid !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* =====================================================
+       PRINT TRANSPARENCY
+    ===================================================== */
+
+    .print-patient-section,
+    .print-patient-section>div,
+    .print-bill-table,
+    .print-bill-table th,
+    .print-bill-table td,
+    .print-bill-table tbody tr,
+    .print-bill-table tbody tr:nth-child(even) td,
+    .print-bill-table tbody tr:nth-child(odd) td {
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    .print-hospital-header,
+    .print-patient-section,
+    .print-bill-table,
+    .print-total-row,
+    .print-notes,
+    .print-footer,
+    .print-doctor-watermark {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .print-hospital-header {
+        page-break-after: avoid !important;
+    }
+
+    .print-patient-section {
+        page-break-after: avoid !important;
+    }
+
+    .print-bill-table {
+        page-break-inside: avoid !important;
+    }
+
+    .print-total-row {
+        page-break-inside: avoid !important;
+    }
+
+    .print-notes {
+        page-break-inside: avoid !important;
+    }
+
+    .print-footer {
+        page-break-inside: avoid !important;
+    }
+
+    /* =====================================================
+       DOCTOR WATERMARK PRINT
+    ===================================================== */
+
+    .print-doctor-watermark {
+        visibility: visible !important;
+
+        position: absolute !important;
+
+        z-index: 1 !important;
+
+        pointer-events: none !important;
+    }
+
+    .print-doctor-watermark img {
+        visibility: visible !important;
+
+        display: block !important;
+
+        width: 145mm !important;
+        height: 145mm !important;
+
+        object-fit: contain !important;
+
+        opacity: 0.045 !important;
+    }
+}

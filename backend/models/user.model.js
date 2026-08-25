@@ -1,31 +1,34 @@
-const pool = require("../config/db");
+const { pool } = require("../config/db");
 
-const createUser = async (user) => {
-    const { name, email, password, role } = user;
-
-    const [result] = await pool.execute(
-        `INSERT INTO users
-    (name, email, password, role)
-    VALUES (?, ?, ?, ?)`,
-        [name, email, password, role || "receptionist"]
+const createUser = async (name, email, hashedPassword, phone, role) => {
+    const [result] = await pool.query(
+        `INSERT INTO users (name, email, password, phone, role)
+         VALUES (?, ?, ?, ?, ?)`,
+        [name, email, hashedPassword, phone || null, role]
     );
-
-    return result.insertId;
+    return result;
 };
 
 const findUserByEmail = async (email) => {
-    const [rows] = await pool.execute(
-        `SELECT id, name, email, password, role, status
-     FROM users
-     WHERE email = ?
-     LIMIT 1`,
+    const [rows] = await pool.query(
+        `SELECT id, name, email, password, role, phone, profile_image, created_at
+         FROM users
+         WHERE email = ?
+         LIMIT 1`,
         [email]
     );
-
-    return rows[0];
+    return rows[0] || null;
 };
 
-module.exports = {
-    createUser,
-    findUserByEmail,
+const findUserById = async (id) => {
+    const [rows] = await pool.query(
+        `SELECT id, name, email, role, phone, profile_image, created_at
+         FROM users
+         WHERE id = ?
+         LIMIT 1`,
+        [id]
+    );
+    return rows[0] || null;
 };
+
+module.exports = { createUser, findUserByEmail, findUserById };

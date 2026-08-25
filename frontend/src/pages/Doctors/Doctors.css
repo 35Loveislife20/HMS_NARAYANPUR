@@ -61,7 +61,6 @@
 
 /* =====================================================
    BACK DASHBOARD BUTTON
-   Same style as Patients page
 ===================================================== */
 
 .back-dashboard-button {
@@ -92,19 +91,14 @@
 
 .back-dashboard-button:hover {
     background: #00ff22;
-
     border-color: #00ff22;
-
     color: #000000;
-
     transform: translateX(-3px);
 }
 
 .back-dashboard-button:focus-visible {
     outline: none;
-
-    box-shadow:
-        0 0 0 3px rgba(0, 255, 34, 0.15);
+    box-shadow: 0 0 0 3px rgba(0, 255, 34, 0.15);
 }
 
 /* =====================================================
@@ -142,10 +136,7 @@
 
 .add-doctor-button:hover {
     background: #16ff38;
-
-    box-shadow:
-        0 0 20px rgba(0, 255, 34, 0.2);
-
+    box-shadow: 0 0 20px rgba(0, 255, 34, 0.2);
     transform: translateY(-2px);
 }
 
@@ -167,16 +158,12 @@
     gap: 10px;
 
     padding: 14px 16px;
-
     margin-bottom: 20px;
 
-    border:
-        1px solid rgba(255, 70, 70, 0.35);
-
+    border: 1px solid rgba(255, 70, 70, 0.35);
     border-radius: 10px;
 
-    background:
-        rgba(255, 70, 70, 0.08);
+    background: rgba(255, 70, 70, 0.08);
 
     color: #ff7777;
 
@@ -185,16 +172,13 @@
 
 .doctors-error>span {
     flex: 1;
-
     min-width: 0;
 }
 
 .doctors-error>button:not(.error-close) {
     padding: 7px 13px;
 
-    border:
-        1px solid rgba(255, 70, 70, 0.4);
-
+    border: 1px solid rgba(255, 70, 70, 0.4);
     border-radius: 7px;
 
     background: transparent;
@@ -205,14 +189,11 @@
 
     cursor: pointer;
 
-    transition:
-        background 0.2s ease,
-        color 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .doctors-error>button:not(.error-close):hover {
     background: #ff4545;
-
     color: #ffffff;
 }
 
@@ -235,14 +216,11 @@
 
     cursor: pointer;
 
-    transition:
-        background 0.2s ease,
-        color 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .doctors-error .error-close:hover {
     background: rgba(255, 70, 70, 0.15);
-
     color: #ffffff;
 }
 
@@ -254,12 +232,9 @@
     width: 100%;
 
     display: grid;
-
-    grid-template-columns:
-        repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 
     gap: 16px;
-
     margin-bottom: 20px;
 }
 
@@ -272,12 +247,9 @@
     gap: 14px;
 
     padding: 20px;
-
     box-sizing: border-box;
 
-    border:
-        1px solid rgba(0, 255, 34, 0.18);
-
+    border: 1px solid rgba(0, 255, 34, 0.18);
     border-radius: 14px;
 
     background: #0b100d;
@@ -289,11 +261,8 @@
 }
 
 .doctor-stat-card:hover {
-    border-color:
-        rgba(0, 255, 34, 0.35);
-
+    border-color: rgba(0, 255, 34, 0.35);
     background: #0d130f;
-
     transform: translateY(-2px);
 }
 
@@ -309,8 +278,7 @@
 
     border-radius: 12px;
 
-    background:
-        rgba(0, 255, 34, 0.1);
+    background: rgba(0, 255, 34, 0.1);
 
     color: #00ff22;
 
@@ -319,19 +287,14 @@
 
 .doctor-stat-card span {
     display: block;
-
     color: #8f9b92;
-
     font-size: 13px;
 }
 
 .doctor-stat-card strong {
     display: block;
-
     margin-top: 4px;
-
     color: #ffffff;
-
     font-size: 24px;
 }
 
@@ -341,12 +304,9 @@
 
 .doctors-panel {
     width: 100%;
-
     box-sizing: border-box;
 
-    border:
-        1px solid rgba(0, 255, 34, 0.18);
-
+    border: 1px solid rgba(0, 255, 34, 0.18);
     border-radius: 14px;
 
     background: #0b100d;
@@ -364,37 +324,26 @@
     justify-content: space-between;
 
     gap: 20px;
-
     padding: 22px;
 
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .doctors-toolbar h2 {
     margin: 0;
-
     font-size: 18px;
 }
 
 .doctors-toolbar>div:first-child span {
     display: block;
-
     margin-top: 5px;
-
     color: #7f8b83;
-
     font-size: 12px;
 }
-
-/* =====================================================
-   TOOLBAR ACTIONS
-===================================================== */
 
 .doctor-toolbar-actions {
     display: flex;
     align-items: center;
-
     gap: 10px;
 }
 
@@ -410,45 +359,34 @@
     align-items: center;
 
     gap: 9px;
-
     padding: 0 12px;
-
     box-sizing: border-box;
 
-    border:
-        1px solid rgba(0, 255, 34, 0.18);
-
+    border: 1px solid rgba(0, 255, 34, 0.18);
     border-radius: 8px;
 
     background: #070b08;
 
     color: #66726a;
 
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .doctor-search:focus-within {
     border-color: #00ff22;
-
-    box-shadow:
-        0 0 0 3px rgba(0, 255, 34, 0.08);
+    box-shadow: 0 0 0 3px rgba(0, 255, 34, 0.08);
 }
 
 .doctor-search svg {
     flex-shrink: 0;
-
     font-size: 13px;
 }
 
 .doctor-search input {
     width: 100%;
-
     min-width: 0;
 
     border: none;
-
     outline: none;
 
     background: transparent;
@@ -456,7 +394,6 @@
     color: #ffffff;
 
     font-family: inherit;
-
     font-size: 12px;
 }
 
@@ -476,16 +413,12 @@
     justify-content: center;
 
     gap: 8px;
-
     padding: 0 13px;
 
-    border:
-        1px solid rgba(0, 255, 34, 0.3);
-
+    border: 1px solid rgba(0, 255, 34, 0.3);
     border-radius: 8px;
 
-    background:
-        rgba(0, 255, 34, 0.06);
+    background: rgba(0, 255, 34, 0.06);
 
     color: #00ff22;
 
@@ -502,15 +435,12 @@
 
 .doctor-refresh-button:hover:not(:disabled) {
     background: #00ff22;
-
     border-color: #00ff22;
-
     color: #000000;
 }
 
 .doctor-refresh-button:disabled {
     opacity: 0.5;
-
     cursor: not-allowed;
 }
 
@@ -530,13 +460,11 @@
     gap: 12px;
 
     color: #8f9b92;
-
     font-size: 13px;
 }
 
 .doctors-loading svg {
     color: #00ff22;
-
     font-size: 25px;
 }
 
@@ -550,8 +478,23 @@
 
 .doctors-table-wrapper {
     width: 100%;
-
     overflow-x: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: #00ff22 #050706;
+}
+
+.doctors-table-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.doctors-table-wrapper::-webkit-scrollbar-track {
+    background: #050706;
+}
+
+.doctors-table-wrapper::-webkit-scrollbar-thumb {
+    background: #00ff22;
+    border-radius: 10px;
 }
 
 /* =====================================================
@@ -560,9 +503,7 @@
 
 .doctors-table {
     width: 100%;
-
-    min-width: 900px;
-
+    min-width: 1000px;
     border-collapse: collapse;
 }
 
@@ -576,11 +517,9 @@
     text-align: left;
 
     font-size: 11px;
-
     font-weight: 600;
 
     text-transform: uppercase;
-
     letter-spacing: 0.5px;
 
     white-space: nowrap;
@@ -589,8 +528,7 @@
 .doctors-table td {
     padding: 16px 18px;
 
-    border-top:
-        1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 
     color: #c8d0cb;
 
@@ -600,13 +538,27 @@
 }
 
 .doctors-table tbody tr {
-    transition:
-        background 0.2s ease;
+    transition: background 0.2s ease;
 }
 
 .doctors-table tbody tr:hover {
-    background:
-        rgba(0, 255, 34, 0.025);
+    background: rgba(0, 255, 34, 0.025);
+}
+
+/* =====================================================
+   DOCTOR CODE BADGE
+===================================================== */
+
+.doctor-code-badge {
+    background: rgba(0, 255, 34, 0.1);
+    color: #00ff22;
+    border: 1px solid rgba(0, 255, 34, 0.3);
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: monospace;
+    white-space: nowrap;
 }
 
 /* =====================================================
@@ -618,7 +570,6 @@
     align-items: center;
 
     gap: 10px;
-
     min-width: 150px;
 }
 
@@ -634,8 +585,7 @@
 
     border-radius: 50%;
 
-    background:
-        rgba(0, 255, 34, 0.1);
+    background: rgba(0, 255, 34, 0.1);
 
     color: #00ff22;
 
@@ -644,30 +594,30 @@
 
 .doctor-name strong {
     display: block;
-
     color: #ffffff;
-
     font-size: 13px;
 }
 
 .doctor-name span {
     display: block;
-
     margin-top: 3px;
-
     color: #7f8b83;
-
     font-size: 11px;
 }
 
 /* =====================================================
-   SPECIALIZATION
+   SPECIALIZATION BADGE
 ===================================================== */
 
-.specialization-cell {
-    color: #c8d0cb;
-
-    font-size: 13px;
+.specialization-badge {
+    background: rgba(92, 168, 255, 0.1);
+    color: #5ca8ff;
+    border: 1px solid rgba(92, 168, 255, 0.25);
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
 }
 
 /* =====================================================
@@ -681,36 +631,84 @@
     gap: 7px;
 
     white-space: nowrap;
-
     color: #aeb8b1;
 }
 
 .phone-cell svg {
     color: #00ff22;
-
     font-size: 11px;
 }
 
 /* =====================================================
-   DEPARTMENT
+   EXPERIENCE
 ===================================================== */
 
-.department-cell {
-    color: #aeb8b1;
+.experience-cell {
+    display: flex;
+    align-items: center;
 
+    gap: 6px;
+
+    color: #aeb8b1;
+    white-space: nowrap;
+}
+
+.experience-cell svg {
+    color: #ffd700;
+    font-size: 11px;
+}
+
+/* =====================================================
+   FEE BADGE
+===================================================== */
+
+.fee-badge {
+    background: rgba(0, 255, 34, 0.08);
+    color: #00ff22;
+    border: 1px solid rgba(0, 255, 34, 0.2);
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
     white-space: nowrap;
 }
 
 /* =====================================================
-   FEE
+   STATUS BADGE
 ===================================================== */
 
-.fee-cell {
-    color: #00ff22;
+.doctor-status-badge {
+    display: inline-flex;
+    align-items: center;
 
-    font-size: 13px;
+    gap: 5px;
+
+    padding: 4px 10px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+    font-weight: 600;
 
     white-space: nowrap;
+}
+
+.status-available {
+    background: rgba(0, 255, 34, 0.1);
+    color: #00ff22;
+    border: 1px solid rgba(0, 255, 34, 0.25);
+}
+
+.status-busy {
+    background: rgba(255, 191, 0, 0.1);
+    color: #ffbf00;
+    border: 1px solid rgba(255, 191, 0, 0.25);
+}
+
+.status-offline {
+    background: rgba(255, 70, 70, 0.1);
+    color: #ff6262;
+    border: 1px solid rgba(255, 70, 70, 0.25);
 }
 
 /* =====================================================
@@ -720,7 +718,6 @@
 .doctor-actions {
     display: flex;
     align-items: center;
-
     gap: 7px;
 }
 
@@ -743,81 +740,47 @@
         transform 0.2s ease;
 }
 
-/* =====================================================
-   VIEW
-===================================================== */
-
 .doctor-actions .view-action {
-    border:
-        1px solid rgba(0, 170, 255, 0.25);
-
-    background:
-        rgba(0, 170, 255, 0.06);
-
+    border: 1px solid rgba(0, 170, 255, 0.25);
+    background: rgba(0, 170, 255, 0.06);
     color: #38bdf8;
 }
 
 .doctor-actions .view-action:hover {
     background: #38bdf8;
-
     border-color: #38bdf8;
-
     color: #000000;
-
     transform: translateY(-2px);
 }
 
-/* =====================================================
-   EDIT
-===================================================== */
-
 .doctor-actions .edit-action {
-    border:
-        1px solid rgba(255, 190, 0, 0.25);
-
-    background:
-        rgba(255, 190, 0, 0.06);
-
+    border: 1px solid rgba(255, 190, 0, 0.25);
+    background: rgba(255, 190, 0, 0.06);
     color: #ffbf00;
 }
 
 .doctor-actions .edit-action:hover {
     background: #ffbf00;
-
     border-color: #ffbf00;
-
     color: #000000;
-
     transform: translateY(-2px);
 }
 
-/* =====================================================
-   DELETE
-===================================================== */
-
 .doctor-actions .delete-action {
-    border:
-        1px solid rgba(255, 70, 70, 0.25);
-
-    background:
-        rgba(255, 70, 70, 0.06);
-
+    border: 1px solid rgba(255, 70, 70, 0.25);
+    background: rgba(255, 70, 70, 0.06);
     color: #ff6262;
 }
 
 .doctor-actions .delete-action:hover:not(:disabled) {
     background: #ff4545;
-
     border-color: #ff4545;
-
     color: #ffffff;
-
     transform: translateY(-2px);
 }
 
 .doctor-actions button:disabled {
     opacity: 0.5;
-
     cursor: not-allowed;
 }
 
@@ -827,11 +790,8 @@
 
 .empty-doctors {
     height: 220px;
-
     text-align: center;
-
     color: #7f8b83 !important;
-
     font-size: 13px !important;
 }
 
@@ -841,24 +801,31 @@
 
 .doctor-modal-overlay {
     position: fixed;
-
     inset: 0;
-
     z-index: 1000;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
     padding: 20px;
-
     box-sizing: border-box;
 
-    background:
-        rgba(0, 0, 0, 0.75);
+    background: rgba(0, 0, 0, 0.75);
 
     backdrop-filter: blur(5px);
+
+    animation: doctorOverlayOpen 0.2s ease-out;
+}
+
+@keyframes doctorOverlayOpen {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* =====================================================
@@ -869,20 +836,15 @@
     position: relative;
 
     width: 100%;
-
     max-width: 600px;
-
     max-height: 90vh;
 
     overflow-y: auto;
-
     box-sizing: border-box;
 
     padding: 28px;
 
-    border:
-        1px solid rgba(0, 255, 34, 0.3);
-
+    border: 1px solid rgba(0, 255, 34, 0.3);
     border-radius: 16px;
 
     background: #0b100d;
@@ -890,6 +852,36 @@
     box-shadow:
         0 20px 70px rgba(0, 0, 0, 0.6),
         0 0 30px rgba(0, 255, 34, 0.05);
+
+    animation: doctorModalOpen 0.2s ease-out;
+
+    scrollbar-width: thin;
+    scrollbar-color: #00ff22 #050706;
+}
+
+.doctor-modal::-webkit-scrollbar {
+    width: 5px;
+}
+
+.doctor-modal::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.doctor-modal::-webkit-scrollbar-thumb {
+    background: #00ff22;
+    border-radius: 10px;
+}
+
+@keyframes doctorModalOpen {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 /* =====================================================
@@ -898,7 +890,6 @@
 
 .doctor-modal-close {
     position: absolute;
-
     top: 18px;
     right: 18px;
 
@@ -909,13 +900,10 @@
     align-items: center;
     justify-content: center;
 
-    border:
-        1px solid rgba(255, 255, 255, 0.1);
-
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
 
-    background:
-        rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.04);
 
     color: #9aa49d;
 
@@ -924,15 +912,15 @@
     transition:
         background 0.2s ease,
         color 0.2s ease,
-        border-color 0.2s ease;
+        border-color 0.2s ease,
+        transform 0.2s ease;
 }
 
 .doctor-modal-close:hover {
     background: #ff4545;
-
     border-color: #ff4545;
-
     color: #ffffff;
+    transform: rotate(90deg);
 }
 
 /* =====================================================
@@ -951,8 +939,7 @@
 
     border-radius: 14px;
 
-    background:
-        rgba(0, 255, 34, 0.1);
+    background: rgba(0, 255, 34, 0.1);
 
     color: #00ff22;
 
@@ -961,17 +948,13 @@
 
 .doctor-modal h2 {
     margin: 0;
-
     color: #ffffff;
-
     font-size: 21px;
 }
 
 .doctor-modal>p {
     margin: 6px 0 22px;
-
     color: #7f8b83;
-
     font-size: 12px;
 }
 
@@ -981,44 +964,40 @@
 
 .doctor-form {
     width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
 }
 
 .doctor-form .form-group {
     display: flex;
     flex-direction: column;
-
     gap: 7px;
-
-    margin-bottom: 16px;
 }
 
 .doctor-form .form-row {
     display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
 }
 
 .doctor-form label {
     color: #cbd5ce;
-
     font-size: 12px;
-
     font-weight: 600;
 }
 
-.doctor-form input {
+.doctor-form input,
+.doctor-form select {
     width: 100%;
-
     box-sizing: border-box;
 
-    padding: 11px 12px;
+    height: 44px;
+    padding: 0 12px;
 
-    border:
-        1px solid rgba(0, 255, 34, 0.18);
-
+    border: 1px solid rgba(0, 255, 34, 0.18);
     border-radius: 8px;
 
     outline: none;
@@ -1028,7 +1007,6 @@
     color: #ffffff;
 
     font-family: inherit;
-
     font-size: 13px;
 
     transition:
@@ -1036,11 +1014,10 @@
         box-shadow 0.2s ease;
 }
 
-.doctor-form input:focus {
+.doctor-form input:focus,
+.doctor-form select:focus {
     border-color: #00ff22;
-
-    box-shadow:
-        0 0 0 3px rgba(0, 255, 34, 0.08);
+    box-shadow: 0 0 0 3px rgba(0, 255, 34, 0.08);
 }
 
 .doctor-form input::placeholder {
@@ -1049,14 +1026,33 @@
 
 .doctor-form input:disabled {
     opacity: 0.6;
-
     cursor: not-allowed;
 }
 
-.doctor-form small {
-    color: #68736c;
+/* =====================================================
+   AUTO ID INFO
+===================================================== */
 
-    font-size: 10px;
+.auto-id-info {
+    background: rgba(0, 255, 34, 0.05);
+    border: 1px dashed rgba(0, 255, 34, 0.3);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #8f9b92;
+}
+
+.auto-id-info strong {
+    color: #00ff22;
+}
+
+/* =====================================================
+   REQUIRED
+===================================================== */
+
+.required {
+    color: #ff6b6b;
+    margin-left: 2px;
 }
 
 /* =====================================================
@@ -1075,11 +1071,9 @@
     justify-content: space-between;
 
     gap: 20px;
-
     padding: 12px 0;
 
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .doctor-detail-label {
@@ -1089,7 +1083,6 @@
     gap: 8px;
 
     color: #8f9b92;
-
     font-size: 12px;
 }
 
@@ -1099,11 +1092,8 @@
 
 .doctor-detail-value {
     color: #ffffff;
-
     font-size: 13px;
-
     font-weight: 600;
-
     text-align: right;
 }
 
@@ -1116,13 +1106,10 @@
     justify-content: flex-end;
 
     gap: 10px;
-
     margin-top: 22px;
-
     padding-top: 18px;
 
-    border-top:
-        1px solid rgba(255, 255, 255, 0.06);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .cancel-button,
@@ -1134,13 +1121,11 @@
     justify-content: center;
 
     gap: 8px;
-
     padding: 0 16px;
 
     border-radius: 8px;
 
     font-size: 13px;
-
     font-weight: 600;
 
     cursor: pointer;
@@ -1153,44 +1138,32 @@
 }
 
 .cancel-button {
-    border:
-        1px solid rgba(255, 255, 255, 0.15);
-
+    border: 1px solid rgba(255, 255, 255, 0.15);
     background: transparent;
-
     color: #9aa49d;
 }
 
 .cancel-button:hover:not(:disabled) {
-    background:
-        rgba(255, 255, 255, 0.06);
-
+    background: rgba(255, 255, 255, 0.06);
     color: #ffffff;
 }
 
 .save-doctor-button {
     border: 1px solid #00ff22;
-
     background: #00ff22;
-
     color: #000000;
 }
 
 .save-doctor-button:hover:not(:disabled) {
     background: #16ff38;
-
     transform: translateY(-2px);
-
-    box-shadow:
-        0 0 18px rgba(0, 255, 34, 0.18);
+    box-shadow: 0 0 18px rgba(0, 255, 34, 0.18);
 }
 
 .cancel-button:disabled,
 .save-doctor-button:disabled {
     opacity: 0.5;
-
     cursor: not-allowed;
-
     transform: none;
 }
 
@@ -1199,8 +1172,7 @@
 ===================================================== */
 
 .refresh-spinning {
-    animation:
-        doctors-spin 0.9s linear infinite;
+    animation: doctors-spin 0.9s linear infinite;
 }
 
 @keyframes doctors-spin {
@@ -1218,7 +1190,6 @@
 ===================================================== */
 
 @media (max-width: 900px) {
-
     .doctors-page {
         padding: 24px;
     }
@@ -1228,8 +1199,7 @@
     }
 
     .doctor-stats {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .doctor-stat-card:last-child {
@@ -1238,7 +1208,6 @@
 
     .doctors-toolbar {
         align-items: flex-start;
-
         flex-direction: column;
     }
 
@@ -1248,10 +1217,8 @@
 
     .doctor-search {
         flex: 1;
-
         width: auto;
     }
-
 }
 
 /* =====================================================
@@ -1259,14 +1226,12 @@
 ===================================================== */
 
 @media (max-width: 650px) {
-
     .doctors-page {
         padding: 18px;
     }
 
     .doctors-header {
         align-items: flex-start;
-
         flex-direction: column;
     }
 
@@ -1296,7 +1261,6 @@
 
     .doctor-toolbar-actions {
         width: 100%;
-
         flex-direction: column;
     }
 
@@ -1310,29 +1274,23 @@
 
     .doctor-modal-overlay {
         align-items: flex-end;
-
         padding: 10px;
     }
 
     .doctor-modal {
         max-height: 94vh;
-
         padding: 22px;
-
         border-radius: 14px;
     }
 
     .doctor-form .form-row {
         grid-template-columns: 1fr;
-
         gap: 0;
     }
 
     .doctor-detail-row {
         align-items: flex-start;
-
         flex-direction: column;
-
         gap: 6px;
     }
 
@@ -1340,6 +1298,14 @@
         text-align: left;
     }
 
+    .doctor-form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .cancel-button,
+    .save-doctor-button {
+        width: 100%;
+    }
 }
 
 /* =====================================================
@@ -1347,7 +1313,6 @@
 ===================================================== */
 
 @media (max-width: 400px) {
-
     .doctors-page {
         padding: 14px;
     }
@@ -1363,9 +1328,7 @@
 
     .add-doctor-button {
         min-height: 40px;
-
         padding: 0 12px;
-
         font-size: 12px;
     }
 
@@ -1394,16 +1357,6 @@
         width: 48px;
         height: 48px;
     }
-
-    .doctor-form-actions {
-        flex-direction: column-reverse;
-    }
-
-    .cancel-button,
-    .save-doctor-button {
-        width: 100%;
-    }
-
 }
 
 /* =====================================================
@@ -1411,7 +1364,6 @@
 ===================================================== */
 
 @media (max-width: 320px) {
-
     .doctors-page {
         padding: 10px;
     }
@@ -1434,10 +1386,8 @@
 
     .doctor-modal {
         padding: 16px;
-
         border-radius: 12px;
     }
-
 }
 
 /* =====================================================
@@ -1450,10 +1400,7 @@
     *::before,
     *::after {
         animation-duration: 0.01ms !important;
-
         animation-iteration-count: 1 !important;
-
         transition-duration: 0.01ms !important;
     }
-
 }

@@ -1,11 +1,14 @@
 const bcrypt = require("bcryptjs");
-
 const {
     createUser,
-    findUserByEmail,
+    findUserByEmail
 } = require("../models/user.model");
 
 const generateToken = require("../utils/jwt");
+
+// =====================================================
+// REGISTER
+// =====================================================
 
 const register = async (req, res) => {
     try {
@@ -13,93 +16,135 @@ const register = async (req, res) => {
             name,
             email,
             password,
-            role,
+            phone,
+            role
         } = req.body;
 
-        if (!name || !email || !password) {
+        // Required fields
+        if (!name || !email || !password || !role) {
             return res.status(400).json({
                 success: false,
-                message: "Name, email and password are required",
+                message: "Name, email, password and role are required"
             });
         }
 
+        // Valid roles
+        const validRoles = [
+            "patient",
+            "doctor",
+            "admin"
+        ];
+
+        if (!validRoles.includes(role)) {
+            return res.status(400).json({
+                success: false,
+                message: "Role must be patient, doctor or admin"
+            });
+        }
+
+        // Check existing email
         const existingUser = await findUserByEmail(email);
 
         if (existingUser) {
             return res.status(409).json({
                 success: false,
                 message: "Email already registered",
+                existing_user: {
+                    id: existingUser.id,
+                    name: existingUser.name,
+                    email: existingUser.email,
+                    role: existingUser.role
+                }
             });
         }
 
+        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const userId = await createUser({
+        // Create user
+        const result = await createUser(
             name,
             email,
-            password: hashedPassword,
-            role,
-        });
+            hashedPassword,
+            phone,
+            role
+        );
 
+        const userId = result.insertId;
+
+        // Generate JWT
         const token = generateToken({
             id: userId,
             email,
-            role: role || "receptionist",
+            role
         });
 
         return res.status(201).json({
             success: true,
             message: "User registered successfully",
+
             token,
+
             user: {
                 id: userId,
                 name,
                 email,
-                role: role || "receptionist",
-            },
+                phone: phone || null,
+                role
+            }
         });
 
     } catch (error) {
-        console.error("Register Error:", error);
+
+        // IMPORTANT: Actual error terminal + Postman में दिखेगा
+        console.error("=================================");
+        console.error("REGISTER ERROR");
+        console.error("Message:", error.message);
+        console.error("Code:", error.code);
+        console.error("SQL State:", error.sqlState);
+        console.error("=================================");
 
         return res.status(500).json({
             success: false,
             message: "Server error",
+            error: error.message,
+            code: error.code || null
         });
     }
 };
 
 
+// =====================================================
+// LOGIN
+// =====================================================
+
 const login = async (req, res) => {
     try {
+
         const {
             email,
-            password,
+            password
         } = req.body;
 
+        // Required fields
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
-                message: "Email and password are required",
+                message: "Email and password are required"
             });
         }
 
+        // Find user
         const user = await findUserByEmail(email);
 
         if (!user) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid email or password",
+                message: "Invalid email or password"
             });
         }
 
-        if (user.status !== "active") {
-            return res.status(403).json({
-                success: false,
-                message: "User account is inactive",
-            });
-        }
-
+        // Compare password
         const passwordMatch = await bcrypt.compare(
             password,
             user.password
@@ -108,35 +153,57 @@ const login = async (req, res) => {
         if (!passwordMatch) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid email or password",
+                message: "Invalid email or password"
             });
         }
 
-        const token = generateToken(user);
+        // Generate token
+        const token = generateToken({
+            id: user.id,
+            email: user.email,
+            role: user.role
+        });
 
         return res.status(200).json({
             success: true,
             message: "Login successful",
+
             token,
+
             user: {
                 id: user.id,
                 name: user.name,
                 email: user.email,
-                role: user.role,
-            },
+                phone: user.phone,
+                role: user.role
+            }
         });
 
     } catch (error) {
-        console.error("Login Error:", error);
+
+        // IMPORTANT: Actual error terminal + Postman में दिखेगा
+        console.error("=================================");
+        console.error("LOGIN ERROR");
+        console.error("Message:", error.message);
+        console.error("Code:", error.code);
+        console.error("SQL State:", error.sqlState);
+        console.error("=================================");
 
         return res.status(500).json({
             success: false,
             message: "Server error",
+            error: error.message,
+            code: error.code || null
         });
     }
 };
 
+
+// =====================================================
+// EXPORT
+// =====================================================
+
 module.exports = {
     register,
-    login,
+    login
 };

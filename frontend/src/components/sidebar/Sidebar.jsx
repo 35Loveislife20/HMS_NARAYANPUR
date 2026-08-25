@@ -1,46 +1,157 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
-    FaSignOutAlt, FaChartBar, FaUsers, FaUserMd,
-    FaCalendarCheck, FaHospital, FaPills, FaFlask, FaCreditCard
+    FaSignOutAlt,
+    FaChartBar,
+    FaUsers,
+    FaUserMd,
+    FaCalendarCheck,
+    FaHospital,
+    FaPills,
+    FaFlask,
+    FaCreditCard,
 } from "react-icons/fa";
 import "./Sidebar.css";
 
 const Sidebar = () => {
     const { logout } = useAuth();
+    const navigate = useNavigate();
+
+    /* =================================================
+       LOGOUT
+    ================================================= */
+
+    const handleLogout = () => {
+        // Clear authentication data
+        logout();
+
+        // Same destination as Header Logout
+        navigate("/", {
+            replace: true,
+        });
+    };
+
+    /* =================================================
+       MENU ITEMS
+    ================================================= */
 
     const menuItems = [
-        { label: "Dashboard", path: "/dashboard", icon: <FaChartBar /> },
-        { label: "Patients", path: "/patients", icon: <FaUsers /> },
-        { label: "Doctors", path: "/doctors", icon: <FaUserMd /> },
-        { label: "Appointments", path: "/appointments", icon: <FaCalendarCheck /> },
-        { label: "Departments", path: "/departments", icon: <FaHospital /> },
-        { label: "Pharmacy", path: "/pharmacy", icon: <FaPills /> },
-        { label: "Laboratory", path: "/laboratory", icon: <FaFlask /> },
-        { label: "Billing", path: "/billing", icon: <FaCreditCard /> },
+        {
+            label: "Dashboard",
+            path: "/dashboard",
+            icon: <FaChartBar />,
+        },
+        {
+            label: "Patients",
+            path: "/patients",
+            icon: <FaUsers />,
+        },
+        {
+            label: "Doctors",
+            path: "/doctors",
+            icon: <FaUserMd />,
+        },
+        {
+            label: "Appointments",
+            path: "/appointments",
+            icon: <FaCalendarCheck />,
+        },
+        {
+            label: "Departments",
+            path: "/departments",
+            icon: <FaHospital />,
+        },
+        {
+            label: "Pharmacy",
+            path: "/pharmacy",
+            icon: <FaPills />,
+        },
+        {
+            label: "Laboratory",
+            path: "/laboratory",
+            icon: <FaFlask />,
+        },
+        {
+            label: "Billing",
+            path: "/billing",
+            icon: <FaCreditCard />,
+        },
     ];
 
     return (
         <aside className="sidebar">
+
+            {/* =================================================
+                LOGO
+            ================================================= */}
+
             <div className="sidebar-logo">
-                <div className="logo-icon">🏥</div>
-                <div><h2>HMS</h2><span>Hospital System</span></div>
+
+                <div className="logo-icon">
+                    🏥
+                </div>
+
+                <div>
+                    <h2>HMS</h2>
+
+                    <span>
+                        Hospital System
+                    </span>
+                </div>
+
             </div>
+
+            {/* =================================================
+                NAVIGATION
+            ================================================= */}
+
             <nav className="sidebar-nav">
+
                 {menuItems.map((item) => (
-                    <NavLink key={item.path} to={item.path} className={({ isActive }) => isActive ? "sidebar-link active" : "sidebar-link"}>
-                        <span className="sidebar-icon">{item.icon}</span>
-                        <span>{item.label}</span>
+                    <NavLink
+                        key={item.path}
+                        to={item.path}
+                        className={({ isActive }) =>
+                            isActive
+                                ? "sidebar-link active"
+                                : "sidebar-link"
+                        }
+                    >
+                        <span className="sidebar-icon">
+                            {item.icon}
+                        </span>
+
+                        <span>
+                            {item.label}
+                        </span>
                     </NavLink>
                 ))}
+
             </nav>
+
+            {/* =================================================
+                LOGOUT
+            ================================================= */}
+
             <div className="sidebar-bottom">
-                {/* 3D रेड Logout बटन */}
-                <button className="btn-3d btn-logout" onClick={logout}>
-                    <FaSignOutAlt className="sidebar-icon btn-icon" /> Logout
+
+                <button
+                    type="button"
+                    className="btn-3d btn-logout"
+                    onClick={handleLogout}
+                    title="Logout"
+                >
+                    <FaSignOutAlt className="sidebar-icon btn-icon" />
+
+                    <span>
+                        Logout
+                    </span>
                 </button>
+
             </div>
+
         </aside>
     );
 };
+
 export default Sidebar;

@@ -607,7 +607,7 @@
 .patients-table {
     width: 100%;
 
-    min-width: 950px;
+    min-width: 1050px;
 
     border-collapse: collapse;
 }
@@ -651,6 +651,37 @@
 .patients-table tbody tr:hover {
     background:
         rgba(0, 255, 34, 0.025);
+}
+
+/* =====================================================
+   PATIENT CODE BADGE
+===================================================== */
+
+.patient-code-badge {
+    background: rgba(0, 255, 34, 0.1);
+    color: #00ff22;
+    border: 1px solid rgba(0, 255, 34, 0.3);
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: monospace;
+    white-space: nowrap;
+}
+
+/* =====================================================
+   BLOOD GROUP BADGE
+===================================================== */
+
+.blood-group-badge {
+    background: rgba(255, 50, 50, 0.15);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 50, 50, 0.3);
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
 }
 
 /* =====================================================
@@ -705,7 +736,7 @@
 }
 
 /* =====================================================
-   PHONE
+   PHONE / DATE CELLS
 ===================================================== */
 
 .phone-cell,
@@ -743,16 +774,12 @@
 }
 
 .patient-status.active {
-    background:
-        rgba(0, 255, 34, 0.1);
-
+    background: rgba(0, 255, 34, 0.1);
     color: #00ff22;
 }
 
 .patient-status.inactive {
-    background:
-        rgba(255, 80, 80, 0.1);
-
+    background: rgba(255, 80, 80, 0.1);
     color: #ff6666;
 }
 
@@ -795,43 +822,36 @@
 
 .patient-actions button:disabled {
     opacity: 0.5;
-
     cursor: not-allowed;
 }
 
 .view-action {
     border: 1px solid rgba(0, 255, 34, 0.2);
-
     color: #00ff22;
 }
 
 .view-action:hover {
     background: #00ff22;
-
     color: #000000;
 }
 
 .edit-action {
     border: 1px solid rgba(80, 150, 255, 0.2);
-
     color: #5ca8ff;
 }
 
 .edit-action:hover {
     background: #5ca8ff;
-
     color: #000000;
 }
 
 .delete-action {
     border: 1px solid rgba(255, 70, 70, 0.2);
-
     color: #ff6262;
 }
 
 .delete-action:hover {
     background: #ff4545;
-
     color: #ffffff;
 }
 
@@ -841,9 +861,7 @@
 
 .empty-patients {
     height: 160px;
-
     text-align: center !important;
-
     color: #69756d !important;
 }
 
@@ -866,13 +884,11 @@
 
     box-sizing: border-box;
 
-    background:
-        rgba(0, 0, 0, 0.75);
+    background: rgba(0, 0, 0, 0.75);
 
     backdrop-filter: blur(6px);
 
-    animation:
-        patientOverlayOpen 0.2s ease-out;
+    animation: patientOverlayOpen 0.2s ease-out;
 }
 
 @keyframes patientOverlayOpen {
@@ -894,7 +910,6 @@
 
     width: 100%;
     max-width: 500px;
-
     max-height: 90vh;
 
     overflow-y: auto;
@@ -904,7 +919,6 @@
     box-sizing: border-box;
 
     border: 1px solid rgba(0, 255, 34, 0.3);
-
     border-radius: 18px;
 
     background: #0b100d;
@@ -913,13 +927,10 @@
         0 25px 70px rgba(0, 0, 0, 0.6),
         0 0 35px rgba(0, 255, 34, 0.08);
 
-    animation:
-        patientModalOpen 0.2s ease-out;
+    animation: patientModalOpen 0.2s ease-out;
 
     scrollbar-width: thin;
-
-    scrollbar-color:
-        #00ff22 #050706;
+    scrollbar-color: #00ff22 #050706;
 }
 
 .patient-modal::-webkit-scrollbar {
@@ -932,23 +943,18 @@
 
 .patient-modal::-webkit-scrollbar-thumb {
     background: #00ff22;
-
     border-radius: 10px;
 }
 
 @keyframes patientModalOpen {
     from {
         opacity: 0;
-
-        transform:
-            translateY(10px) scale(0.98);
+        transform: translateY(10px) scale(0.98);
     }
 
     to {
         opacity: 1;
-
-        transform:
-            translateY(0) scale(1);
+        transform: translateY(0) scale(1);
     }
 }
 
@@ -972,11 +978,9 @@
     padding: 0;
 
     border: 1px solid rgba(255, 255, 255, 0.1);
-
     border-radius: 8px;
 
-    background:
-        rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.04);
 
     color: #9aa49d;
 
@@ -991,11 +995,8 @@
 
 .patient-modal-close:hover {
     background: #ff4545;
-
     border-color: #ff4545;
-
     color: #ffffff;
-
     transform: rotate(90deg);
 }
 
@@ -1015,8 +1016,7 @@
 
     border-radius: 13px;
 
-    background:
-        rgba(0, 255, 34, 0.1);
+    background: rgba(0, 255, 34, 0.1);
 
     color: #00ff22;
 
@@ -1025,29 +1025,23 @@
 
 .patient-modal h2 {
     margin: 0;
-
     color: #ffffff;
-
     font-size: 23px;
 }
 
 .patient-modal>p {
     margin: 6px 0 25px;
-
     color: #7f8b83;
-
     font-size: 13px;
 }
 
 /* =====================================================
-   DETAILS
+   DETAILS VIEW
 ===================================================== */
 
 .patient-details {
     display: flex;
-
     flex-direction: column;
-
     gap: 4px;
 }
 
@@ -1060,8 +1054,7 @@
 
     padding: 13px 0;
 
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .patient-detail-label {
@@ -1082,10 +1075,8 @@
 
 .patient-detail-value {
     color: #ffffff;
-
     font-size: 14px;
     font-weight: 600;
-
     text-align: right;
 }
 
@@ -1095,25 +1086,19 @@
 
 .patient-form {
     display: flex;
-
     flex-direction: column;
-
     gap: 17px;
 }
 
 .form-group {
     display: flex;
-
     flex-direction: column;
-
     gap: 7px;
 }
 
 .form-group label {
     color: #b8c0bb;
-
     font-size: 12px;
-
     font-weight: 600;
 }
 
@@ -1121,23 +1106,14 @@
 .form-group select,
 .form-group textarea {
     width: 100%;
-
     box-sizing: border-box;
-
     border: 1px solid rgba(0, 255, 34, 0.18);
-
     border-radius: 8px;
-
     outline: none;
-
     background: #050706;
-
     color: #ffffff;
-
     font-family: inherit;
-
     font-size: 13px;
-
     transition:
         border-color 0.2s ease,
         box-shadow 0.2s ease;
@@ -1146,15 +1122,12 @@
 .form-group input,
 .form-group select {
     height: 44px;
-
     padding: 0 13px;
 }
 
 .form-group textarea {
     min-height: 90px;
-
     padding: 12px 13px;
-
     resize: vertical;
 }
 
@@ -1162,9 +1135,7 @@
 .form-group select:focus,
 .form-group textarea:focus {
     border-color: #00ff22;
-
-    box-shadow:
-        0 0 12px rgba(0, 255, 34, 0.08);
+    box-shadow: 0 0 12px rgba(0, 255, 34, 0.08);
 }
 
 .form-group input::placeholder,
@@ -1174,7 +1145,6 @@
 
 .form-group small {
     color: #69756d;
-
     font-size: 10px;
 }
 
@@ -1184,11 +1154,34 @@
 
 .form-row {
     display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 15px;
+}
+
+/* =====================================================
+   AUTO ID INFO
+===================================================== */
+
+.auto-id-info {
+    background: rgba(0, 255, 34, 0.05);
+    border: 1px dashed rgba(0, 255, 34, 0.3);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #8f9b92;
+}
+
+.auto-id-info strong {
+    color: #00ff22;
+}
+
+/* =====================================================
+   REQUIRED FIELD
+===================================================== */
+
+.required {
+    color: #ff6b6b;
+    margin-left: 2px;
 }
 
 /* =====================================================
@@ -1197,11 +1190,8 @@
 
 .patient-form-actions {
     display: flex;
-
     justify-content: flex-end;
-
     gap: 10px;
-
     margin-top: 5px;
 }
 
@@ -1220,9 +1210,7 @@
     border-radius: 8px;
 
     font-family: inherit;
-
     font-size: 13px;
-
     font-weight: 600;
 
     cursor: pointer;
@@ -1236,40 +1224,30 @@
 
 .cancel-button {
     border: 1px solid rgba(255, 255, 255, 0.12);
-
     background: transparent;
-
     color: #9aa49d;
 }
 
 .cancel-button:hover {
-    background:
-        rgba(255, 255, 255, 0.06);
-
+    background: rgba(255, 255, 255, 0.06);
     color: #ffffff;
 }
 
 .save-patient-button {
     border: 1px solid #00ff22;
-
     background: #00ff22;
-
     color: #000000;
 }
 
 .save-patient-button:hover:not(:disabled) {
     background: transparent;
-
     color: #00ff22;
-
-    box-shadow:
-        0 0 18px rgba(0, 255, 34, 0.15);
+    box-shadow: 0 0 18px rgba(0, 255, 34, 0.15);
 }
 
 .cancel-button:disabled,
 .save-patient-button:disabled {
     opacity: 0.6;
-
     cursor: not-allowed;
 }
 
@@ -1283,8 +1261,7 @@
     }
 
     .patient-stats {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
@@ -1308,7 +1285,6 @@
     .patient-stat-icon {
         width: 46px;
         height: 46px;
-
         font-size: 19px;
     }
 
@@ -1332,15 +1308,12 @@
 
     .patients-header {
         align-items: flex-start;
-
         flex-direction: column;
     }
 
     .patients-header-left {
         width: 100%;
-
         align-items: flex-start;
-
         gap: 11px;
     }
 
@@ -1363,23 +1336,18 @@
 
     .patient-stats {
         grid-template-columns: 1fr;
-
         gap: 12px;
     }
 
     .patients-toolbar {
         align-items: stretch;
-
         flex-direction: column;
-
         padding: 20px;
     }
 
     .patient-toolbar-actions {
         width: 100%;
-
         flex-direction: column;
-
         margin-left: 0;
     }
 
@@ -1393,17 +1361,13 @@
 
     .patient-modal {
         max-height: 92vh;
-
         padding: 24px 18px;
-
         border-radius: 15px;
     }
 
     .patient-detail-row {
         flex-direction: column;
-
         align-items: flex-start;
-
         gap: 4px;
     }
 
@@ -1449,7 +1413,6 @@
     .patient-stat-icon {
         width: 44px;
         height: 44px;
-
         font-size: 18px;
     }
 
@@ -1468,7 +1431,6 @@
     .patient-modal-icon {
         width: 46px;
         height: 46px;
-
         font-size: 19px;
     }
 }
