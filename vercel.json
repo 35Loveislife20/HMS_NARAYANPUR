@@ -1,25 +1,13 @@
 {
-  "builds": [
-    {
-      "src": "frontend/**",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    },
-    {
-      "src": "backend/**",
-      "use": "@vercel/node"
-    }
-  ],
+  "version": 2,
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/backend/api/$1"
+      "destination": "https://hms-narayanpur.onrender.com/api/$1"
     },
     {
       "source": "/(.*)",
-      "destination": "/frontend/$1"
+      "destination": "/index.html"
     }
   ]
 }

@@ -1,7 +1,7 @@
 /* =========================================
    HMS SIDEBAR
    DESKTOP DESIGN SAME
-   MOBILE SIDEBAR FIXED
+   MOBILE RESPONSIVE
 ========================================= */
 
 .sidebar {
@@ -29,11 +29,9 @@
 
     border-right: 1px solid rgba(0, 255, 94, 0.1);
 
-    transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
-
     overflow: hidden;
+
+    box-sizing: border-box;
 }
 
 
@@ -266,7 +264,7 @@
 
 
 /* =========================================
-   RED LOGOUT
+   RED LOGOUT BUTTON
 ========================================= */
 
 .btn-logout {
@@ -311,111 +309,14 @@
 
 
 /* =========================================
-   MOBILE HAMBURGER
+   DESKTOP
 ========================================= */
 
-.mobile-sidebar-toggle {
-    display: none;
+@media (min-width: 993px) {
 
-    position: fixed;
-
-    left: 15px;
-    top: 15px;
-
-    width: 42px;
-    height: 42px;
-
-    align-items: center;
-    justify-content: center;
-
-    background: #00ff5e;
-
-    color: #040a06;
-
-    border: none;
-
-    border-radius: 10px;
-
-    cursor: pointer;
-
-    font-size: 20px;
-
-    z-index: 1200;
-
-    box-shadow:
-        0 4px 10px rgba(0, 0, 0, 0.4);
-
-    transition:
-        transform 0.15s ease,
-        background 0.2s ease;
-}
-
-.mobile-sidebar-toggle:hover {
-    background: #19ff70;
-
-    transform: scale(1.04);
-}
-
-.mobile-sidebar-toggle:active {
-    transform: scale(0.94);
-}
-
-
-/* =========================================
-   MOBILE CLOSE BUTTON
-========================================= */
-
-.mobile-sidebar-close {
-    display: none;
-
-    margin-left: auto;
-
-    width: 36px;
-    height: 36px;
-
-    flex-shrink: 0;
-
-    align-items: center;
-    justify-content: center;
-
-    background: rgba(255, 255, 255, 0.05);
-
-    color: #a0aea7;
-
-    border: 1px solid rgba(255, 255, 255, 0.1);
-
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    font-size: 16px;
-}
-
-.mobile-sidebar-close:hover {
-    color: #00ff5e;
-
-    border-color: rgba(0, 255, 94, 0.3);
-
-    background: rgba(0, 255, 94, 0.08);
-}
-
-
-/* =========================================
-   MOBILE OVERLAY
-========================================= */
-
-.sidebar-mobile-overlay {
-    display: none;
-
-    position: fixed;
-
-    inset: 0;
-
-    background: rgba(0, 0, 0, 0.62);
-
-    backdrop-filter: blur(2px);
-
-    z-index: 998;
+    .sidebar {
+        transform: translateX(0);
+    }
 }
 
 
@@ -432,44 +333,33 @@
 
         transform: translateX(-105%);
 
-        z-index: 1100;
+        z-index: 1200;
 
         box-shadow:
             8px 0 25px rgba(0, 0, 0, 0.55);
+
+        transition:
+            transform 0.3s ease,
+            box-shadow 0.3s ease;
     }
 
-    /* IMPORTANT FIX
-       JSX class = sidebar-mobile-active
+    /*
+       IMPORTANT:
+       Layout.jsx se .sidebar-wrapper.open
+       aata hai.
+
+       Isliye Sidebar khud ko transform
+       nahi karega.
     */
 
-    .sidebar.sidebar-mobile-active {
+    .sidebar-wrapper.open .sidebar {
         transform: translateX(0);
 
         box-shadow:
             8px 0 30px rgba(0, 0, 0, 0.65);
     }
 
-    /* HAMBURGER */
-
-    .mobile-sidebar-toggle {
-        display: flex;
-    }
-
-    /* CLOSE */
-
-    .mobile-sidebar-close {
-        display: flex;
-    }
-
-    /* OVERLAY */
-
-    .sidebar-mobile-overlay {
-        display: block;
-
-        z-index: 1090;
-    }
-
-    /* KEEP MENU VISIBLE */
+    /* Menu always visible inside opened sidebar */
 
     .sidebar-nav {
         display: block;
@@ -479,8 +369,7 @@
         min-height: 0;
 
         overflow-y: auto;
-
-        padding: 24px 14px;
+        overflow-x: hidden;
     }
 
     .sidebar-link {
@@ -500,12 +389,6 @@
     .btn-logout {
         display: flex;
     }
-
-    /* BODY LOCK */
-
-    body.sidebar-mobile-open {
-        overflow: hidden;
-    }
 }
 
 
@@ -519,14 +402,6 @@
         width: 82vw;
 
         max-width: 280px;
-    }
-
-    .mobile-sidebar-toggle {
-        left: 12px;
-        top: 12px;
-
-        width: 42px;
-        height: 42px;
     }
 
     .sidebar-logo {

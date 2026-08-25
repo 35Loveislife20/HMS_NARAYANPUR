@@ -1,76 +1,208 @@
+/* =========================================================
+   HMS LAYOUT
+   Desktop + Mobile Responsive
+========================================================= */
+
 .layout-container {
     display: flex;
     min-height: 100vh;
     width: 100%;
     overflow-x: hidden;
-    /* बाएँ-दाएँ स्क्रॉल को रोकता है */
+    position: relative;
 }
 
-/* Desktop Layout: Sidebar को फिक्स्ड रखें, Content को आगे बढ़ाएं */
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
 .main-content {
     flex: 1;
     margin-left: 250px;
-    /* Sidebar की चौड़ाई */
     width: calc(100% - 250px);
-    transition: margin-left 0.3s ease;
+    min-width: 0;
+    transition:
+        margin-left 0.3s ease,
+        width 0.3s ease;
 }
 
-/* Sidebar Wrapper को फिक्स्ड रखें */
+/* =========================================================
+   SIDEBAR WRAPPER
+========================================================= */
+
 .sidebar-wrapper {
     position: fixed;
     top: 0;
     left: 0;
+
+    width: 250px;
     height: 100vh;
+
     z-index: 999;
-    transition: transform 0.3s ease;
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
-/* Hamburger Menu for Mobile */
+/* =========================================================
+   MOBILE OVERLAY
+========================================================= */
+
+.sidebar-overlay {
+    display: none;
+}
+
+/* =========================================================
+   HAMBURGER
+========================================================= */
+
 .hamburger-menu {
     display: none;
 }
 
-/* =========================================
-   RESPONSIVE: मोबाइल पर Sidebar ओवरलैप करेगा
-========================================= */
+/* =========================================================
+   MOBILE
+========================================================= */
+
 @media (max-width: 992px) {
 
-    /* Mobile पर main-content से मार्जिन हटाएं */
+    /* Main content full width */
+
     .main-content {
         margin-left: 0;
         width: 100%;
     }
 
-    /* Sidebar को स्क्रीन के बाहर ले जाएं */
+    /* Sidebar hidden */
+
     .sidebar-wrapper {
-        transform: translateX(-100%);
         width: 280px;
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
+        height: 100dvh;
+
+        transform: translateX(-105%);
+
+        z-index: 1200;
+
+        box-shadow:
+            8px 0 30px rgba(0, 0, 0, 0.55);
+
+        transition:
+            transform 0.3s ease;
     }
 
-    /* Sidebar खोलने पर वापस लाएं */
+    /* Sidebar open */
+
     .sidebar-wrapper.open {
         transform: translateX(0);
     }
 
-    /* मोबाइल मेनू बटन दिखाएं */
+    /* =====================================================
+       HAMBURGER BUTTON
+       Same green design
+    ===================================================== */
+
     .hamburger-menu {
         display: flex;
+
         position: fixed;
+
         left: 15px;
         top: 15px;
-        z-index: 1000;
-        background: #00ff5e;
-        color: #040a06;
+
         width: 42px;
         height: 42px;
-        border-radius: 10px;
+
         align-items: center;
         justify-content: center;
+
         border: none;
-        cursor: pointer;
+        border-radius: 10px;
+
+        background: #00ff5e;
+        color: #040a06;
+
         font-size: 20px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+
+        cursor: pointer;
+
+        z-index: 1300;
+
+        box-shadow:
+            0 4px 10px rgba(0, 0, 0, 0.4);
+
+        transition:
+            transform 0.15s ease,
+            box-shadow 0.15s ease;
+    }
+
+    .hamburger-menu:hover {
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 5px 14px rgba(0, 0, 0, 0.45);
+    }
+
+    .hamburger-menu:active {
+        transform: translateY(3px);
+
+        box-shadow:
+            0 2px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    /* =====================================================
+       OVERLAY
+    ===================================================== */
+
+    .sidebar-overlay {
+        display: block;
+
+        position: fixed;
+        inset: 0;
+
+        background: rgba(0, 0, 0, 0.62);
+
+        backdrop-filter: blur(2px);
+
+        z-index: 1100;
+    }
+
+    /* Prevent background scrolling */
+
+    body:has(.sidebar-wrapper.open) {
+        overflow: hidden;
+    }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .sidebar-wrapper {
+        width: 280px;
+        max-width: 82vw;
+    }
+
+    .hamburger-menu {
+        left: 12px;
+        top: 12px;
+
+        width: 42px;
+        height: 42px;
+
+        border-radius: 10px;
+    }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 360px) {
+
+    .sidebar-wrapper {
+        width: 88vw;
+        max-width: 290px;
     }
 }

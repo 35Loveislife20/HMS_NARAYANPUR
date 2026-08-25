@@ -6,24 +6,60 @@ import "./Layout.css";
 const Layout = ({ children }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+    const toggleSidebar = () => {
+        setIsSidebarOpen((prev) => !prev);
+    };
+
+    const closeSidebar = () => {
+        setIsSidebarOpen(false);
+    };
 
     return (
         <div className="layout-container">
-            {/* Mobile Only Hamburger Button */}
-            <button className="hamburger-menu" onClick={toggleSidebar}>
+
+            {/* =========================================
+                MOBILE HAMBURGER
+            ========================================= */}
+            <button
+                type="button"
+                className="hamburger-menu"
+                onClick={toggleSidebar}
+                aria-label={
+                    isSidebarOpen
+                        ? "Close sidebar"
+                        : "Open sidebar"
+                }
+            >
                 {isSidebarOpen ? <FaTimes /> : <FaBars />}
             </button>
 
-            {/* Sidebar को क्लास dynamically दें */}
-            <div className={`sidebar-wrapper ${isSidebarOpen ? "open" : ""}`}>
-                <Sidebar />
+            {/* =========================================
+                MOBILE OVERLAY
+            ========================================= */}
+            {isSidebarOpen && (
+                <div
+                    className="sidebar-overlay"
+                    onClick={closeSidebar}
+                />
+            )}
+
+            {/* =========================================
+                SIDEBAR
+            ========================================= */}
+            <div
+                className={`sidebar-wrapper ${isSidebarOpen ? "open" : ""
+                    }`}
+            >
+                <Sidebar onNavigate={closeSidebar} />
             </div>
 
-            {/* ★ FIX: main-content को margin-left देना जरूरी है, जो CSS में हैंडल होगा */}
-            <div className="main-content">
+            {/* =========================================
+                MAIN CONTENT
+            ========================================= */}
+            <main className="main-content">
                 {children}
-            </div>
+            </main>
+
         </div>
     );
 };
