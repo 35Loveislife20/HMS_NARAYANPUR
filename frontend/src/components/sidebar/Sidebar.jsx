@@ -1,5 +1,7 @@
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+
 import {
     FaSignOutAlt,
     FaChartBar,
@@ -13,7 +15,7 @@ import {
     FaBars,
     FaTimes,
 } from "react-icons/fa";
-import { useEffect, useState } from "react";
+
 import "./Sidebar.css";
 
 const Sidebar = () => {
@@ -23,17 +25,17 @@ const Sidebar = () => {
 
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-    /* =================================================
-       CLOSE SIDEBAR WHEN ROUTE CHANGES
-    ================================================= */
+    /* =========================================================
+       CLOSE SIDEBAR AFTER ROUTE CHANGE
+    ========================================================= */
 
     useEffect(() => {
         setIsMobileOpen(false);
     }, [location.pathname]);
 
-    /* =================================================
-       CLOSE SIDEBAR ON ESC
-    ================================================= */
+    /* =========================================================
+       ESC KEY
+    ========================================================= */
 
     useEffect(() => {
         const handleEscape = (event) => {
@@ -49,9 +51,9 @@ const Sidebar = () => {
         };
     }, []);
 
-    /* =================================================
-       PREVENT BODY SCROLL WHEN MOBILE SIDEBAR OPEN
-    ================================================= */
+    /* =========================================================
+       BODY SCROLL CONTROL
+    ========================================================= */
 
     useEffect(() => {
         if (isMobileOpen) {
@@ -65,9 +67,9 @@ const Sidebar = () => {
         };
     }, [isMobileOpen]);
 
-    /* =================================================
+    /* =========================================================
        LOGOUT
-    ================================================= */
+    ========================================================= */
 
     const handleLogout = () => {
         setIsMobileOpen(false);
@@ -79,9 +81,9 @@ const Sidebar = () => {
         });
     };
 
-    /* =================================================
+    /* =========================================================
        MENU ITEMS
-    ================================================= */
+    ========================================================= */
 
     const menuItems = [
         {
@@ -126,12 +128,12 @@ const Sidebar = () => {
         },
     ];
 
-    /* =================================================
-       MOBILE MENU TOGGLE
-    ================================================= */
+    /* =========================================================
+       MOBILE SIDEBAR
+    ========================================================= */
 
-    const toggleMobileSidebar = () => {
-        setIsMobileOpen((prev) => !prev);
+    const openMobileSidebar = () => {
+        setIsMobileOpen(true);
     };
 
     const closeMobileSidebar = () => {
@@ -140,27 +142,23 @@ const Sidebar = () => {
 
     return (
         <>
-            {/* =================================================
+            {/* =====================================================
                 MOBILE HAMBURGER
-            ================================================= */}
+            ===================================================== */}
 
             <button
                 type="button"
                 className="mobile-sidebar-toggle"
-                onClick={toggleMobileSidebar}
-                aria-label={
-                    isMobileOpen
-                        ? "Close navigation menu"
-                        : "Open navigation menu"
-                }
+                onClick={openMobileSidebar}
+                aria-label="Open navigation menu"
                 aria-expanded={isMobileOpen}
             >
-                {isMobileOpen ? <FaTimes /> : <FaBars />}
+                <FaBars />
             </button>
 
-            {/* =================================================
+            {/* =====================================================
                 MOBILE OVERLAY
-            ================================================= */}
+            ===================================================== */}
 
             {isMobileOpen && (
                 <div
@@ -170,14 +168,13 @@ const Sidebar = () => {
                 />
             )}
 
-            {/* =================================================
+            {/* =====================================================
                 SIDEBAR
-            ================================================= */}
+            ===================================================== */}
 
             <aside
-                className={`sidebar ${
-                    isMobileOpen ? "sidebar-mobile-active" : ""
-                }`}
+                className={`sidebar ${isMobileOpen ? "sidebar-mobile-active" : ""
+                    }`}
             >
                 {/* =================================================
                     LOGO
@@ -197,7 +194,7 @@ const Sidebar = () => {
                         </span>
                     </div>
 
-                    {/* MOBILE CLOSE BUTTON */}
+                    {/* MOBILE CLOSE */}
 
                     <button
                         type="button"
