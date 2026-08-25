@@ -8,7 +8,7 @@ import Patients from "./pages/patients/Patients";
 import Doctors from "./pages/Doctors/Doctors";
 import Appointments from "./pages/Appointments/Appointments";
 import Departments from "./pages/Departments/Departments";
-import Pharmacy from "./pages/Pharmacy/Pharmacy";
+import Pharmacy from "./pages/pharmacy/Pharmacy";
 import Laboratory from "./pages/Laboratory/Laboratory";
 import Billing from "./pages/Billing/Billing";
 
