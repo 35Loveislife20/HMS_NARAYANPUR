@@ -175,8 +175,9 @@ const Sidebar = () => {
             ================================================= */}
 
             <aside
-                className={`sidebar ${isMobileOpen ? "sidebar-mobile-active" : ""
-                    }`}
+                className={`sidebar ${
+                    isMobileOpen ? "sidebar-mobile-active" : ""
+                }`}
             >
                 {/* =================================================
                     LOGO

@@ -15,10 +15,12 @@
     flex-direction: column;
 
     background:
-        linear-gradient(180deg,
+        linear-gradient(
+            180deg,
             #07110d 0%,
             #050b08 50%,
-            #020605 100%);
+            #020605 100%
+        );
 
     border-right: 1px solid rgba(0, 255, 55, 0.16);
 
@@ -67,9 +69,11 @@
     border-radius: 14px;
 
     background:
-        linear-gradient(145deg,
+        linear-gradient(
+            145deg,
             rgba(0, 255, 55, 0.20),
-            rgba(0, 255, 55, 0.04));
+            rgba(0, 255, 55, 0.04)
+        );
 
     border: 1px solid rgba(0, 255, 55, 0.20);
 
@@ -180,9 +184,11 @@
     color: #00ff37;
 
     background:
-        linear-gradient(90deg,
+        linear-gradient(
+            90deg,
             rgba(0, 255, 55, 0.14),
-            rgba(0, 255, 55, 0.04));
+            rgba(0, 255, 55, 0.04)
+        );
 
     border-color: rgba(0, 255, 55, 0.20);
 
@@ -240,9 +246,11 @@
     color: #ff6b6b;
 
     background:
-        linear-gradient(145deg,
+        linear-gradient(
+            145deg,
             rgba(255, 70, 70, 0.10),
-            rgba(255, 70, 70, 0.03));
+            rgba(255, 70, 70, 0.03)
+        );
 
     border: 1px solid rgba(255, 70, 70, 0.15);
 
@@ -261,9 +269,11 @@
     transform: translateX(3px);
 
     background:
-        linear-gradient(145deg,
+        linear-gradient(
+            145deg,
             rgba(255, 70, 70, 0.16),
-            rgba(255, 70, 70, 0.05));
+            rgba(255, 70, 70, 0.05)
+        );
 
     border-color: rgba(255, 70, 70, 0.28);
 }
@@ -413,7 +423,8 @@
         display: flex;
     }
 
-    .sidebar-mobile-active~.sidebar-mobile-overlay {
+    .sidebar-mobile-active
+    ~ .sidebar-mobile-overlay {
         display: block;
     }
 
