@@ -1,16 +1,22 @@
-/* =========================================
+/* =========================================================
    HMS SIDEBAR
-   DESKTOP DESIGN SAME
-   MOBILE RESPONSIVE
-========================================= */
+   COMPLETE REPLACEMENT
+   BIG LOGO + FULL HOSPITAL NAME
+   DESKTOP + TABLET + MOBILE
+========================================================= */
 
 .sidebar {
     width: 250px;
     height: 100dvh;
 
     position: fixed;
-    left: 0;
     top: 0;
+    left: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    box-sizing: border-box;
 
     background-color: #040a06;
 
@@ -22,94 +28,333 @@
 
     color: #ffffff;
 
-    display: flex;
-    flex-direction: column;
-
-    z-index: 999;
-
     border-right: 1px solid rgba(0, 255, 94, 0.1);
 
     overflow: hidden;
 
-    box-sizing: border-box;
+    z-index: 999;
 }
 
 
-/* =========================================
-   LOGO
-========================================= */
+/* =========================================================
+   LOGO HEADER
+========================================================= */
 
 .sidebar-logo {
-    height: 80px;
+    width: 100%;
+    min-height: 92px;
 
     display: flex;
     align-items: center;
 
     gap: 12px;
 
-    padding: 0 20px;
+    padding: 10px 14px;
+
+    box-sizing: border-box;
 
     border-bottom: 1px solid rgba(0, 255, 94, 0.1);
 
     flex-shrink: 0;
 
-    box-sizing: border-box;
+    overflow: visible;
 }
 
+
+/* =========================================================
+   ACTUAL HOSPITAL LOGO
+   SQUARE / GREEN BOX REMOVED
+========================================================= */
+
 .logo-icon {
-    width: 42px;
-    height: 42px;
+    width: 62px;
+    height: 62px;
+
+    min-width: 62px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    background: #00ff5e;
+    background: transparent !important;
 
-    color: #040a06;
+    color: inherit;
 
-    border-radius: 10px;
+    border-radius: 0;
 
-    font-size: 22px;
+    font-size: 0;
+
+    line-height: 1;
 
     flex-shrink: 0;
+
+    overflow: visible;
+
+    box-shadow: none;
 }
+
+
+/* =========================================================
+   IMPORTANT:
+   React me emoji ki jagah image use hone par
+   image properly show hogi
+========================================================= */
+
+.logo-icon img {
+    width: 62px;
+    height: 62px;
+
+    max-width: 62px;
+    max-height: 62px;
+
+    display: block;
+
+    object-fit: contain;
+
+    object-position: center;
+
+    border: none;
+
+    border-radius: 0;
+
+    background: transparent;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   HOSPITAL NAME CONTENT
+========================================================= */
+
+.sidebar-logo-content {
+    flex: 1;
+
+    min-width: 0;
+
+    width: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+
+    overflow: visible;
+}
+
+
+/* =========================================================
+   HOSPITAL NAME
+========================================================= */
 
 .sidebar-logo h2 {
+    width: 100%;
+
     margin: 0;
-
-    font-size: 21px;
-
-    font-weight: 700;
+    padding: 0;
 
     color: #ffffff;
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+    line-height: 1.18;
+
+    letter-spacing: -0.2px;
+
+    white-space: normal;
+
+    overflow: visible;
+
+    text-overflow: clip;
+
+    word-break: normal;
+
+    overflow-wrap: anywhere;
 }
+
+
+/* =========================================================
+   HOSPITAL SYSTEM
+========================================================= */
 
 .sidebar-logo span {
     display: block;
 
-    margin-top: 2px;
+    width: 100%;
 
-    font-size: 11px;
+    margin-top: 5px;
 
-    color: #a0aea7;
+    color: #00ff5e;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    line-height: 1.2;
+
+    letter-spacing: 0.3px;
+
+    white-space: nowrap;
+
+    overflow: visible;
 }
 
 
-/* =========================================
+/* =========================================================
+   USER PROFILE
+========================================================= */
+
+.sidebar-user {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 16px 18px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid rgba(0, 255, 94, 0.1);
+
+    flex-shrink: 0;
+
+    min-width: 0;
+}
+
+
+/* =========================================================
+   USER AVATAR
+========================================================= */
+
+.sidebar-user-avatar {
+    width: 42px;
+    height: 42px;
+
+    min-width: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(135deg,
+            #00ff5e,
+            #00c94f);
+
+    color: #040a06;
+
+    font-size: 17px;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+    box-shadow:
+        0 4px 12px rgba(0, 255, 94, 0.22);
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   USER INFORMATION
+========================================================= */
+
+.sidebar-user-info {
+    flex: 1;
+
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+
+    gap: 3px;
+
+    overflow: hidden;
+}
+
+
+.sidebar-user-info strong {
+    display: block;
+
+    width: 100%;
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    line-height: 1.25;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.sidebar-user-info span {
+    display: block;
+
+    width: 100%;
+
+    margin: 0;
+
+    color: #8f9d95;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    line-height: 1.25;
+
+    text-transform: capitalize;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
    NAVIGATION
-========================================= */
+========================================================= */
 
 .sidebar-nav {
     flex: 1 1 auto;
 
-    overflow-y: auto;
-    overflow-x: hidden;
+    min-height: 0;
 
-    padding: 24px 14px;
+    width: 100%;
+
+    padding: 18px 14px;
 
     box-sizing: border-box;
+
+    overflow-x: hidden;
+    overflow-y: auto;
 }
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
 
 .sidebar-nav::-webkit-scrollbar {
     width: 4px;
@@ -125,13 +370,19 @@
     border-radius: 10px;
 }
 
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 94, 0.35);
+}
 
-/* =========================================
-   SIDEBAR LINKS
-========================================= */
+
+/* =========================================================
+   NAVIGATION LINK
+========================================================= */
 
 .sidebar-link {
     width: 100%;
+
+    min-height: 46px;
 
     display: flex;
     align-items: center;
@@ -140,7 +391,9 @@
 
     padding: 12px 14px;
 
-    margin-bottom: 6px;
+    margin: 0 0 6px 0;
+
+    box-sizing: border-box;
 
     border-radius: 12px;
 
@@ -150,13 +403,20 @@
 
     font-size: 15px;
 
-    box-sizing: border-box;
+    font-weight: 500;
+
+    line-height: 1.2;
 
     transition:
         background 0.2s ease,
         color 0.2s ease,
         padding-left 0.2s ease;
 }
+
+
+/* =========================================================
+   LINK HOVER
+========================================================= */
 
 .sidebar-link:hover {
     background: rgba(0, 255, 94, 0.05);
@@ -166,25 +426,34 @@
     padding-left: 18px;
 }
 
+
+/* =========================================================
+   ACTIVE LINK
+========================================================= */
+
 .sidebar-link.active {
     background: #00ff5e;
 
     color: #040a06;
 
-    box-shadow:
-        0 4px 15px rgba(0, 255, 94, 0.3);
+    font-weight: 700;
 
     padding-left: 14px;
+
+    box-shadow:
+        0 4px 15px rgba(0, 255, 94, 0.3);
 }
 
 
-/* =========================================
+/* =========================================================
    ICON
-========================================= */
+========================================================= */
 
 .sidebar-icon {
     width: 22px;
     height: 22px;
+
+    min-width: 22px;
 
     display: flex;
     align-items: center;
@@ -193,42 +462,71 @@
     flex-shrink: 0;
 
     font-size: 18px;
+
+    line-height: 1;
 }
+
+
+/* =========================================================
+   LINK TEXT
+========================================================= */
 
 .sidebar-link-text {
+    display: block;
+
+    min-width: 0;
+
+    flex: 1;
+
     white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
 
-/* =========================================
-   BOTTOM
-========================================= */
+/* =========================================================
+   BOTTOM SECTION
+========================================================= */
 
 .sidebar-bottom {
-    padding: 20px 14px;
+    width: 100%;
+
+    padding: 16px 14px 20px;
+
+    box-sizing: border-box;
 
     border-top: 1px solid rgba(0, 255, 94, 0.1);
 
     flex-shrink: 0;
-
-    box-sizing: border-box;
 }
 
 
-/* =========================================
+/* =========================================================
    3D BUTTON
-========================================= */
+========================================================= */
 
 .btn-3d {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 12px 16px;
+
+    box-sizing: border-box;
+
     border: none;
 
     border-radius: 8px;
 
-    font-weight: 700;
-
     font-size: 14px;
 
-    padding: 12px 16px;
+    font-weight: 700;
 
     cursor: pointer;
 
@@ -237,22 +535,11 @@
         box-shadow 0.1s ease,
         background 0.2s ease;
 
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 8px;
-
-    width: 100%;
-
-    box-sizing: border-box;
-
     box-shadow:
         0 4px 0 #008a48,
         0 6px 12px rgba(0, 0, 0, 0.5);
 }
+
 
 .btn-3d:active {
     transform: translateY(4px);
@@ -263,9 +550,9 @@
 }
 
 
-/* =========================================
-   RED LOGOUT BUTTON
-========================================= */
+/* =========================================================
+   LOGOUT BUTTON
+========================================================= */
 
 .btn-logout {
     background:
@@ -273,12 +560,13 @@
             #ff5555,
             #cc0000) !important;
 
+    color: #ffffff !important;
+
     box-shadow:
         0 4px 0 #880000,
         0 6px 12px rgba(255, 0, 0, 0.2) !important;
-
-    color: #ffffff !important;
 }
+
 
 .btn-logout:hover {
     background:
@@ -287,6 +575,7 @@
             #cc0000) !important;
 }
 
+
 .btn-logout:active {
     transform: translateY(4px) !important;
 
@@ -294,35 +583,39 @@
         0 0 0 #880000 !important;
 }
 
+
 .btn-icon {
     width: 18px;
     height: 18px;
 
-    font-size: 18px;
+    min-width: 18px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
+    font-size: 18px;
+
     flex-shrink: 0;
 }
 
 
-/* =========================================
+/* =========================================================
    DESKTOP
-========================================= */
+========================================================= */
 
 @media (min-width: 993px) {
 
     .sidebar {
         transform: translateX(0);
     }
+
 }
 
 
-/* =========================================
-   MOBILE
-========================================= */
+/* =========================================================
+   TABLET / MOBILE
+========================================================= */
 
 @media (max-width: 992px) {
 
@@ -343,14 +636,6 @@
             box-shadow 0.3s ease;
     }
 
-    /*
-       IMPORTANT:
-       Layout.jsx se .sidebar-wrapper.open
-       aata hai.
-
-       Isliye Sidebar khud ko transform
-       nahi karega.
-    */
 
     .sidebar-wrapper.open .sidebar {
         transform: translateX(0);
@@ -359,7 +644,37 @@
             8px 0 30px rgba(0, 0, 0, 0.65);
     }
 
-    /* Menu always visible inside opened sidebar */
+
+    .sidebar-logo {
+        min-height: 92px;
+
+        padding: 10px 15px;
+    }
+
+
+    .logo-icon {
+        width: 62px;
+        height: 62px;
+
+        min-width: 62px;
+    }
+
+
+    .logo-icon img {
+        width: 62px;
+        height: 62px;
+    }
+
+
+    .sidebar-logo h2 {
+        font-size: 17px;
+    }
+
+
+    .sidebar-user {
+        padding: 16px 18px;
+    }
+
 
     .sidebar-nav {
         display: block;
@@ -372,13 +687,14 @@
         overflow-x: hidden;
     }
 
+
     .sidebar-link {
         display: flex;
 
         visibility: visible;
-
         opacity: 1;
     }
+
 
     .sidebar-bottom {
         display: block;
@@ -386,55 +702,172 @@
         flex-shrink: 0;
     }
 
+
     .btn-logout {
         display: flex;
     }
+
 }
 
 
-/* =========================================
+/* =========================================================
    SMALL MOBILE
-========================================= */
+========================================================= */
 
 @media (max-width: 480px) {
 
     .sidebar {
         width: 82vw;
 
-        max-width: 280px;
+        max-width: 300px;
     }
+
 
     .sidebar-logo {
-        padding: 0 15px;
+        min-height: 92px;
+
+        padding: 10px 14px;
+
+        gap: 10px;
     }
+
+
+    .logo-icon {
+        width: 58px;
+        height: 58px;
+
+        min-width: 58px;
+    }
+
+
+    .logo-icon img {
+        width: 58px;
+        height: 58px;
+    }
+
+
+    .sidebar-logo h2 {
+        font-size: 16px;
+
+        line-height: 1.15;
+    }
+
+
+    .sidebar-logo span {
+        font-size: 9px;
+    }
+
+
+    .sidebar-user {
+        padding: 15px;
+    }
+
+
+    .sidebar-user-avatar {
+        width: 40px;
+        height: 40px;
+
+        min-width: 40px;
+
+        font-size: 16px;
+    }
+
+
+    .sidebar-user-info strong {
+        font-size: 13px;
+    }
+
+
+    .sidebar-user-info span {
+        font-size: 10px;
+    }
+
 
     .sidebar-nav {
-        padding: 20px 12px;
+        padding: 16px 12px;
     }
 
+
     .sidebar-link {
-        padding: 12px 13px;
+        min-height: 44px;
+
+        padding: 11px 13px;
 
         font-size: 14px;
     }
 
+
     .sidebar-bottom {
         padding: 15px 12px;
     }
+
 }
 
 
-/* =========================================
+/* =========================================================
    VERY SMALL MOBILE
-========================================= */
+========================================================= */
 
 @media (max-width: 360px) {
 
     .sidebar {
         width: 88vw;
+
+        max-width: 300px;
     }
 
+
+    .sidebar-logo {
+        min-height: 88px;
+
+        padding: 8px 12px;
+
+        gap: 9px;
+    }
+
+
+    .logo-icon {
+        width: 52px;
+        height: 52px;
+
+        min-width: 52px;
+    }
+
+
+    .logo-icon img {
+        width: 52px;
+        height: 52px;
+    }
+
+
+    .sidebar-logo h2 {
+        font-size: 15px;
+    }
+
+
+    .sidebar-logo span {
+        font-size: 9px;
+    }
+
+
+    .sidebar-user {
+        gap: 10px;
+
+        padding: 14px 13px;
+    }
+
+
+    .sidebar-user-avatar {
+        width: 38px;
+        height: 38px;
+
+        min-width: 38px;
+    }
+
+
     .sidebar-link {
+        min-height: 42px;
+
         padding: 11px 12px;
 
         gap: 10px;
@@ -442,11 +875,34 @@
         font-size: 13px;
     }
 
+
     .sidebar-icon {
+        width: 20px;
+        height: 20px;
+
         font-size: 17px;
     }
 
-    .sidebar-logo h2 {
-        font-size: 20px;
-    }
+}
+
+
+/* =========================================================
+   FORCE FULL HOSPITAL NAME
+========================================================= */
+
+.sidebar-logo-content,
+.sidebar-logo-content h2 {
+    max-width: none !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+
+/* =========================================================
+   IMAGE SAFETY
+========================================================= */
+
+.sidebar-logo img {
+    opacity: 1 !important;
+    visibility: visible !important;
 }

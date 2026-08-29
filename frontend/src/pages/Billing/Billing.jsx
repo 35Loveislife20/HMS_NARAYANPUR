@@ -20,7 +20,6 @@ import {
     FaTrash,
     FaCheckCircle,
     FaClock,
-    FaUserMd,
 } from "react-icons/fa";
 import "./Billing.css";
 
@@ -77,6 +76,20 @@ const Billing = () => {
     const [printBill, setPrintBill] = useState(null);
 
     /* =====================================================
+       HOSPITAL SETTINGS
+    ===================================================== */
+
+    const [hospitalSettings, setHospitalSettings] = useState({
+        hospitalName: "HMS Hospital",
+        hospitalSubtitle: "Hospital Management System",
+        hospitalTagline: "Quality Healthcare & Patient Care",
+        hospitalAddress: "",
+        hospitalPhone: "",
+        hospitalEmail: "",
+        hospitalWebsite: "",
+    });
+
+    /* =====================================================
        AUTH HEADERS
     ===================================================== */
 
@@ -91,6 +104,39 @@ const Billing = () => {
                 }
                 : {}),
         };
+    };
+
+    /* =====================================================
+       FETCH HOSPITAL SETTINGS
+    ===================================================== */
+
+    const fetchHospitalSettings = async () => {
+        try {
+            const response = await fetch(`${API_URL}/settings`, {
+                method: "GET",
+                headers: getHeaders(),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "Failed to load hospital settings"
+                );
+            }
+
+            if (data?.success && data?.data) {
+                setHospitalSettings((previous) => ({
+                    ...previous,
+                    ...data.data,
+                }));
+            }
+        } catch (err) {
+            console.error(
+                "Hospital settings fetch error:",
+                err
+            );
+        }
     };
 
     /* =====================================================
@@ -173,6 +219,7 @@ const Billing = () => {
     ===================================================== */
 
     useEffect(() => {
+        fetchHospitalSettings();
         fetchBilling();
         fetchPatients();
     }, []);
@@ -183,6 +230,7 @@ const Billing = () => {
 
     const handleRefresh = async () => {
         await Promise.all([
+            fetchHospitalSettings(),
             fetchBilling(),
             fetchPatients(),
         ]);
@@ -758,11 +806,28 @@ const Billing = () => {
         : 0;
 
     /* =====================================================
+       SAFE HOSPITAL SETTINGS
+    ===================================================== */
+
+    const printHospitalName =
+        hospitalSettings.hospitalName ||
+        "HMS Hospital";
+
+    const printHospitalSubtitle =
+        hospitalSettings.hospitalSubtitle ||
+        "Hospital Management System";
+
+    const printHospitalTagline =
+        hospitalSettings.hospitalTagline ||
+        "Quality Healthcare & Patient Care";
+
+    /* =====================================================
        RENDER
     ===================================================== */
 
     return (
         <main className="billing-page">
+
             {/* =================================================
                 HEADER
             ================================================= */}
@@ -820,6 +885,7 @@ const Billing = () => {
                         }
                     >
                         <FaPlus />
+
                         <span>
                             Add Bill
                         </span>
@@ -963,8 +1029,7 @@ const Billing = () => {
                             value={search}
                             onChange={(event) =>
                                 setSearch(
-                                    event.target
-                                        .value
+                                    event.target.value
                                 )
                             }
                             placeholder="Search patient, bill number, payment..."
@@ -974,9 +1039,7 @@ const Billing = () => {
                             <button
                                 type="button"
                                 onClick={() =>
-                                    setSearch(
-                                        ""
-                                    )
+                                    setSearch("")
                                 }
                                 title="Clear search"
                             >
@@ -1030,33 +1093,13 @@ const Billing = () => {
                         <table className="billing-table">
                             <thead>
                                 <tr>
-                                    <th>
-                                        Bill
-                                    </th>
-
-                                    <th>
-                                        Patient
-                                    </th>
-
-                                    <th>
-                                        Bill Date
-                                    </th>
-
-                                    <th>
-                                        Payment
-                                    </th>
-
-                                    <th>
-                                        Total
-                                    </th>
-
-                                    <th>
-                                        Status
-                                    </th>
-
-                                    <th>
-                                        Actions
-                                    </th>
+                                    <th>Bill</th>
+                                    <th>Patient</th>
+                                    <th>Bill Date</th>
+                                    <th>Payment</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
 
@@ -1242,9 +1285,7 @@ const Billing = () => {
             {showModal && (
                 <div
                     className="billing-modal-overlay"
-                    onMouseDown={(
-                        event
-                    ) => {
+                    onMouseDown={(event) => {
                         if (
                             event.target ===
                             event.currentTarget
@@ -1303,6 +1344,7 @@ const Billing = () => {
                             }
                         >
                             <div className="billing-form-grid">
+
                                 {/* PATIENT */}
 
                                 <div className="billing-form-group">
@@ -1330,9 +1372,7 @@ const Billing = () => {
                                         </option>
 
                                         {patients.map(
-                                            (
-                                                patient
-                                            ) => (
+                                            (patient) => (
                                                 <option
                                                     key={
                                                         patient.id
@@ -1737,36 +1777,52 @@ const Billing = () => {
                             />
                         </div>
 
-                        {/* HMS HEADER */}
+                        {/* =================================================
+                            DYNAMIC HOSPITAL HEADER
+                        ================================================= */}
 
                         <header className="print-hospital-header">
+
                             <div className="print-hospital-brand">
+
                                 <img
                                     src="/hms-logo.png"
-                                    alt="HMS Hospital"
+                                    alt={printHospitalName}
                                     className="print-hospital-logo"
                                 />
 
                                 <div className="print-hospital-name">
+
                                     <h1>
-                                        HMS HOSPITAL
+                                        {printHospitalName}
                                     </h1>
 
                                     <p>
-                                        Hospital
-                                        Management
-                                        System
+                                        {printHospitalSubtitle}
                                     </p>
 
                                     <span>
-                                        Quality
-                                        Healthcare &
-                                        Patient Care
+                                        {printHospitalTagline}
                                     </span>
+
+                                    {hospitalSettings.hospitalAddress && (
+                                        <small>
+                                            {hospitalSettings.hospitalAddress}
+                                        </small>
+                                    )}
+
+                                    {hospitalSettings.hospitalPhone && (
+                                        <small>
+                                            Phone:{" "}
+                                            {hospitalSettings.hospitalPhone}
+                                        </small>
+                                    )}
+
                                 </div>
                             </div>
 
                             <div className="print-invoice-box">
+
                                 <strong>
                                     INVOICE
                                 </strong>
@@ -1776,12 +1832,14 @@ const Billing = () => {
                                         printBill
                                     )}
                                 </span>
+
                             </div>
                         </header>
 
                         {/* PATIENT + BILL INFORMATION */}
 
                         <section className="print-patient-section">
+
                             <div>
                                 <h3>
                                     Patient Information
@@ -1849,11 +1907,13 @@ const Billing = () => {
                                     ).toUpperCase()}
                                 </p>
                             </div>
+
                         </section>
 
                         {/* BILL TABLE */}
 
                         <table className="print-bill-table">
+
                             <thead>
                                 <tr>
                                     <th>
@@ -1867,10 +1927,10 @@ const Billing = () => {
                             </thead>
 
                             <tbody>
+
                                 <tr>
                                     <td>
-                                        Consultation
-                                        Fee
+                                        Consultation Fee
                                     </td>
 
                                     <td>
@@ -1940,12 +2000,14 @@ const Billing = () => {
                                         )}
                                     </td>
                                 </tr>
+
                             </tbody>
                         </table>
 
                         {/* GRAND TOTAL */}
 
                         <div className="print-total-row">
+
                             <span>
                                 Grand Total
                             </span>
@@ -1955,6 +2017,7 @@ const Billing = () => {
                                     printTotal
                                 )}
                             </strong>
+
                         </div>
 
                         {/* NOTES */}
@@ -1962,6 +2025,7 @@ const Billing = () => {
                         {printBill.notes ||
                             printBill.description ? (
                             <div className="print-notes">
+
                                 <strong>
                                     Notes
                                 </strong>
@@ -1970,45 +2034,51 @@ const Billing = () => {
                                     {printBill.notes ||
                                         printBill.description}
                                 </p>
+
                             </div>
                         ) : null}
 
-                        {/* FOOTER */}
+                        {/* =================================================
+                            DYNAMIC FOOTER
+                        ================================================= */}
 
                         <footer className="print-footer">
+
                             <div className="print-footer-brand">
+
                                 <img
                                     src="/hms-logo.png"
-                                    alt="HMS Hospital"
+                                    alt={printHospitalName}
                                 />
 
                                 <div>
+
                                     <strong>
-                                        HMS HOSPITAL
+                                        {printHospitalName}
                                     </strong>
 
                                     <span>
-                                        Hospital
-                                        Management
-                                        System
+                                        {printHospitalSubtitle}
                                     </span>
+
                                 </div>
                             </div>
 
                             <p>
-                                Thank you for
-                                choosing HMS
-                                Hospital.
+                                Thank you for choosing{" "}
+                                {printHospitalName}.
                             </p>
 
                             <span>
-                                Quality Healthcare
-                                & Patient Care
+                                {printHospitalTagline}
                             </span>
+
                         </footer>
+
                     </div>
                 )}
             </div>
+
         </main>
     );
 };

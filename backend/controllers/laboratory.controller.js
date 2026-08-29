@@ -1,7 +1,8 @@
 const laboratoryModel = require("../models/laboratory.model");
 
+
 // =====================================================
-// CREATE
+// CREATE LABORATORY TEST
 // =====================================================
 
 const createLaboratoryTest = async (req, res) => {
@@ -21,13 +22,28 @@ const createLaboratoryTest = async (req, res) => {
             });
         }
 
-        const id = await laboratoryModel.createLaboratoryTest({
-            test_name: test_name.trim(),
-            category: category?.trim() || null,
-            description: description?.trim() || null,
-            price: price || 0,
-            status: status || "active",
-        });
+        const numericPrice = Number(price);
+
+        if (
+            price !== undefined &&
+            price !== null &&
+            price !== "" &&
+            (Number.isNaN(numericPrice) || numericPrice < 0)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Price must be a valid positive number",
+            });
+        }
+
+        const id =
+            await laboratoryModel.createLaboratoryTest({
+                test_name: test_name.trim(),
+                category: category?.trim() || null,
+                description: description?.trim() || null,
+                price: numericPrice || 0,
+                status: status || "active",
+            });
 
         const test =
             await laboratoryModel.getLaboratoryTestById(id);
@@ -140,6 +156,20 @@ const updateLaboratoryTest = async (req, res) => {
             });
         }
 
+        const numericPrice = Number(price);
+
+        if (
+            price !== undefined &&
+            price !== null &&
+            price !== "" &&
+            (Number.isNaN(numericPrice) || numericPrice < 0)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Price must be a valid positive number",
+            });
+        }
+
         const affectedRows =
             await laboratoryModel.updateLaboratoryTest(
                 id,
@@ -147,7 +177,7 @@ const updateLaboratoryTest = async (req, res) => {
                     test_name: test_name.trim(),
                     category: category?.trim() || null,
                     description: description?.trim() || null,
-                    price: price || 0,
+                    price: numericPrice || 0,
                     status: status || "active",
                 }
             );
@@ -246,6 +276,10 @@ const getLaboratoryStats = async (req, res) => {
     }
 };
 
+
+// =====================================================
+// EXPORT
+// =====================================================
 
 module.exports = {
     createLaboratoryTest,

@@ -1,89 +1,82 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
 import {
-    FaSearch,
     FaPlus,
-    FaUserMd,
+    FaSyncAlt,
+    FaSearch,
     FaEdit,
     FaTrash,
     FaEye,
-    FaPhone,
-    FaMoneyBillWave,
     FaTimes,
-    FaArrowLeft,
-    FaSyncAlt,
-    FaExclamationTriangle,
+    FaUserMd,
+    FaPhone,
     FaEnvelope,
-    FaStar,
-    FaCheckCircle,
-    FaClock,
-    FaTimesCircle,
+    FaGraduationCap,
+    FaBriefcase,
+    FaMoneyBillWave,
+    FaBuilding,
+    FaExclamationTriangle,
 } from "react-icons/fa";
 
 import "./Doctors.css";
 
-const SPECIALIZATIONS = [
-    "General Medicine",
-    "Cardiology",
-    "Neurology",
-    "Orthopedics",
-    "Pediatrics",
-    "Gynecology",
-    "Dermatology",
-    "ENT",
-    "Ophthalmology",
-    "Psychiatry",
-    "Dentistry",
-    "Radiology",
-    "Anesthesiology",
-    "Pathology",
-    "General Surgery",
-];
-
-const EMPTY_FORM = {
-    name: "",
-    specialization: "",
-    qualification: "",
-    phone: "",
-    email: "",
-    experience_years: "",
-    consultation_fee: "",
-    status: "available",
-};
-
 function Doctors() {
-    const navigate = useNavigate();
-
     const API_URL =
         import.meta.env.VITE_API_URL ||
         "http://localhost:5000/api";
 
     // =====================================================
-    // STATES
+    // STATE
     // =====================================================
 
     const [doctors, setDoctors] = useState([]);
-    const [search, setSearch] = useState("");
+
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+
     const [error, setError] = useState("");
+
+    const [search, setSearch] = useState("");
+
     const [showModal, setShowModal] = useState(false);
-    const [modalMode, setModalMode] = useState("add");
-    const [activeDoctorId, setActiveDoctorId] = useState(null);
+    const [showViewModal, setShowViewModal] = useState(false);
+
+    const [editingDoctor, setEditingDoctor] = useState(null);
+    const [selectedDoctor, setSelectedDoctor] = useState(null);
+
     const [saving, setSaving] = useState(false);
-    const [deletingId, setDeletingId] = useState(null);
-    const [formData, setFormData] = useState({ ...EMPTY_FORM });
+
+    const [deleteLoading, setDeleteLoading] = useState(null);
+
+    const [form, setForm] = useState({
+        doctor_code: "",
+        name: "",
+        specialization: "",
+        qualification: "",
+        phone: "",
+        email: "",
+        experience_years: "",
+        consultation_fee: "",
+        department_id: "",
+        hospital_id: "",
+        status: "available",
+    });
 
     // =====================================================
-    // HEADERS
+    // AUTH HEADERS
     // =====================================================
 
     const getHeaders = () => {
         const token = localStorage.getItem("hms_token");
+
+        if (!token) {
+            throw new Error(
+                "Login session expired. Please login again."
+            );
+        }
+
         return {
             "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
+            Authorization: `Bearer ${token}`,
         };
     };
 
@@ -91,39 +84,86 @@ function Doctors() {
     // FETCH DOCTORS
     // =====================================================
 
-    const fetchDoctors = async (isRefresh = false) => {
+    const fetchDoctors = async (showLoader = true) => {
         try {
-            isRefresh ? setRefreshing(true) : setLoading(true);
+            if (showLoader) {
+                setLoading(true);
+            }
+
             setError("");
 
-            const response = await fetch(`${API_URL}/doctors`, {
-                method: "GET",
-                headers: getHeaders(),
-                cache: "no-store",
-            });
+            const response = await fetch(
+                `${API_URL}/doctors`,
+                {
+                    method: "GET",
+                    headers: getHeaders(),
+                }
+            );
 
             const data = await response.json();
 
-            if (!response.ok) throw new Error(data.message || "Unable to load doctors.");
-            if (!data.success || !Array.isArray(data.doctors))
-                throw new Error("Invalid doctors response.");
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Unable to load doctors."
+                );
+            }
 
-            setDoctors([...data.doctors]);
+            if (!data.success) {
+                throw new Error(
+                    data.message ||
+                    "Unable to load doctors."
+                );
+            }
 
+            setDoctors(
+                Array.isArray(data.doctors)
+                    ? data.doctors
+                    : []
+            );
         } catch (err) {
-            console.error("Fetch Doctors Error:", err);
-            setError(err.message || "Unable to connect to HMS server.");
+            console.error(
+                "Fetch Doctors Error:",
+                err
+            );
+
+            setDoctors([]);
+
+            setError(
+                err.message ||
+                "Unable to connect to server."
+            );
         } finally {
-            setLoading(false);
-            setRefreshing(false);
+            if (showLoader) {
+                setLoading(false);
+            }
         }
     };
 
-    useEffect(() => { fetchDoctors(false); }, []);
+    // =====================================================
+    // INITIAL LOAD
+    // =====================================================
+
+    useEffect(() => {
+        fetchDoctors(true);
+    }, []);
+
+    // =====================================================
+    // REFRESH
+    // =====================================================
 
     const handleRefresh = async () => {
-        if (loading || refreshing) return;
-        await fetchDoctors(true);
+        if (refreshing) {
+            return;
+        }
+
+        try {
+            setRefreshing(true);
+
+            await fetchDoctors(false);
+        } finally {
+            setRefreshing(false);
+        }
     };
 
     // =====================================================
@@ -131,214 +171,508 @@ function Doctors() {
     // =====================================================
 
     const filteredDoctors = useMemo(() => {
-        const value = search.toLowerCase().trim();
-        if (!value) return doctors;
-        return doctors.filter((d) =>
-            String(d.name || "").toLowerCase().includes(value) ||
-            String(d.doctor_code || "").toLowerCase().includes(value) ||
-            String(d.specialization || "").toLowerCase().includes(value) ||
-            String(d.phone || "").toLowerCase().includes(value) ||
-            String(d.email || "").toLowerCase().includes(value)
-        );
+        const query =
+            search.trim().toLowerCase();
+
+        if (!query) {
+            return doctors;
+        }
+
+        return doctors.filter((doctor) => {
+            return (
+                String(
+                    doctor.doctor_code || ""
+                )
+                    .toLowerCase()
+                    .includes(query) ||
+                String(
+                    doctor.name || ""
+                )
+                    .toLowerCase()
+                    .includes(query) ||
+                String(
+                    doctor.specialization || ""
+                )
+                    .toLowerCase()
+                    .includes(query) ||
+                String(
+                    doctor.phone || ""
+                )
+                    .toLowerCase()
+                    .includes(query) ||
+                String(
+                    doctor.email || ""
+                )
+                    .toLowerCase()
+                    .includes(query)
+            );
+        });
     }, [doctors, search]);
 
     // =====================================================
-    // STATS
+    // TOTAL DOCTORS
     // =====================================================
 
     const totalDoctors = doctors.length;
-    const availableDoctors = doctors.filter((d) => d.status === "available").length;
-    const avgFee = doctors.length > 0
-        ? doctors.reduce((t, d) => t + Number(d.consultation_fee || 0), 0) / doctors.length
-        : 0;
 
     // =====================================================
-    // MODAL HELPERS
+    // AVAILABLE DOCTORS
     // =====================================================
 
-    const openAddModal = () => {
-        setModalMode("add");
-        setActiveDoctorId(null);
-        setFormData({ ...EMPTY_FORM });
-        setError("");
-        setShowModal(true);
-    };
+    const availableDoctors = doctors.filter(
+        (doctor) =>
+            String(
+                doctor.status || ""
+            ).toLowerCase() === "available"
+    ).length;
 
-    const openViewModal = (doctor) => {
-        setModalMode("view");
-        setActiveDoctorId(doctor.id);
-        setFormData({
-            name: doctor.name || "",
-            specialization: doctor.specialization || "",
-            qualification: doctor.qualification || "",
-            phone: doctor.phone || "",
-            email: doctor.email || "",
-            experience_years: doctor.experience_years ?? "",
-            consultation_fee: doctor.consultation_fee || "",
-            status: doctor.status || "available",
-        });
-        setShowModal(true);
-    };
+    // =====================================================
+    // AVERAGE CONSULTATION FEE
+    // =====================================================
 
-    const openEditModal = (doctor) => {
-        setModalMode("edit");
-        setActiveDoctorId(doctor.id);
-        setFormData({
-            name: doctor.name || "",
-            specialization: doctor.specialization || "",
-            qualification: doctor.qualification || "",
-            phone: doctor.phone || "",
-            email: doctor.email || "",
-            experience_years: doctor.experience_years ?? "",
-            consultation_fee: doctor.consultation_fee || "",
-            status: doctor.status || "available",
-        });
-        setError("");
-        setShowModal(true);
-    };
-
-    const closeModal = () => {
-        if (saving) return;
-        setShowModal(false);
-        setModalMode("add");
-        setActiveDoctorId(null);
-        setFormData({ ...EMPTY_FORM });
-    };
-
-    useEffect(() => {
-        const handleEsc = (e) => {
-            if (e.key === "Escape" && showModal) closeModal();
-        };
-        document.addEventListener("keydown", handleEsc);
-        return () => document.removeEventListener("keydown", handleEsc);
-    }, [showModal, saving]);
+    const averageConsultation =
+        doctors.length > 0
+            ? doctors.reduce(
+                (total, doctor) => {
+                    return (
+                        total +
+                        Number(
+                            doctor.consultation_fee ||
+                            0
+                        )
+                    );
+                },
+                0
+            ) / doctors.length
+            : 0;
 
     // =====================================================
     // FORM CHANGE
     // =====================================================
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+    const handleChange = (event) => {
+        const {
+            name,
+            value,
+        } = event.target;
+
+        setForm((previous) => ({
+            ...previous,
+            [name]: value,
+        }));
     };
 
     // =====================================================
-    // SUBMIT
+    // RESET FORM
     // =====================================================
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const resetForm = () => {
+        setForm({
+            doctor_code: "",
+            name: "",
+            specialization: "",
+            qualification: "",
+            phone: "",
+            email: "",
+            experience_years: "",
+            consultation_fee: "",
+            department_id: "",
+            hospital_id: "",
+            status: "available",
+        });
+    };
 
-        if (!formData.name.trim()) {
-            setError("Doctor name is required.");
+    // =====================================================
+    // OPEN ADD MODAL
+    // =====================================================
+
+    const openAddModal = async () => {
+        resetForm();
+
+        setEditingDoctor(null);
+
+        setShowModal(true);
+
+        try {
+            const response = await fetch(
+                `${API_URL}/doctors/next-code`,
+                {
+                    method: "GET",
+                    headers: getHeaders(),
+                }
+            );
+
+            const data =
+                await response.json();
+
+            if (
+                response.ok &&
+                data.success
+            ) {
+                const nextCode =
+                    data.doctor_code ||
+                    data.nextCode ||
+                    data.code ||
+                    "";
+
+                setForm((previous) => ({
+                    ...previous,
+                    doctor_code:
+                        nextCode,
+                }));
+            }
+        } catch (err) {
+            console.error(
+                "Next Doctor Code Error:",
+                err
+            );
+        }
+    };
+
+    // =====================================================
+    // OPEN EDIT MODAL
+    // =====================================================
+
+    const openEditModal = (doctor) => {
+        setEditingDoctor(doctor);
+
+        setForm({
+            doctor_code:
+                doctor.doctor_code || "",
+
+            name:
+                doctor.name || "",
+
+            specialization:
+                doctor.specialization || "",
+
+            qualification:
+                doctor.qualification || "",
+
+            phone:
+                doctor.phone || "",
+
+            email:
+                doctor.email || "",
+
+            experience_years:
+                doctor.experience_years ??
+                "",
+
+            consultation_fee:
+                doctor.consultation_fee ??
+                "",
+
+            department_id:
+                doctor.department_id ??
+                "",
+
+            hospital_id:
+                doctor.hospital_id ??
+                "",
+
+            status:
+                doctor.status ||
+                "available",
+        });
+
+        setShowModal(true);
+    };
+
+    // =====================================================
+    // VIEW DOCTOR
+    // =====================================================
+
+    const openViewModal = (doctor) => {
+        setSelectedDoctor(doctor);
+
+        setShowViewModal(true);
+    };
+
+    // =====================================================
+    // CLOSE MODAL
+    // =====================================================
+
+    const closeModal = () => {
+        if (saving) {
             return;
         }
-        if (!formData.specialization) {
-            setError("Please select specialization.");
+
+        setShowModal(false);
+
+        setEditingDoctor(null);
+
+        resetForm();
+    };
+
+    const closeViewModal = () => {
+        setShowViewModal(false);
+
+        setSelectedDoctor(null);
+    };
+
+    // =====================================================
+    // SAVE DOCTOR
+    // =====================================================
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        if (!form.name.trim()) {
+            setError(
+                "Doctor name is required."
+            );
+
             return;
         }
 
         try {
             setSaving(true);
+
             setError("");
 
+            const isEdit =
+                Boolean(editingDoctor);
+
+            const url = isEdit
+                ? `${API_URL}/doctors/${editingDoctor.id}`
+                : `${API_URL}/doctors`;
+
+            const method = isEdit
+                ? "PUT"
+                : "POST";
+
             const body = {
-                name: formData.name.trim(),
-                specialization: formData.specialization || null,
-                qualification: formData.qualification.trim() || null,
-                phone: formData.phone.trim() || null,
-                email: formData.email.trim() || null,
-                experience_years: formData.experience_years ? Number(formData.experience_years) : 0,
-                consultation_fee: formData.consultation_fee ? Number(formData.consultation_fee) : 0,
-                status: formData.status || "available",
+                doctor_code:
+                    form.doctor_code.trim(),
+
+                name:
+                    form.name.trim(),
+
+                specialization:
+                    form.specialization.trim(),
+
+                qualification:
+                    form.qualification.trim(),
+
+                phone:
+                    form.phone.trim(),
+
+                email:
+                    form.email.trim(),
+
+                experience_years:
+                    form.experience_years ===
+                        ""
+                        ? 0
+                        : Number(
+                            form.experience_years
+                        ),
+
+                consultation_fee:
+                    form.consultation_fee ===
+                        ""
+                        ? 0
+                        : Number(
+                            form.consultation_fee
+                        ),
+
+                department_id:
+                    form.department_id ===
+                        ""
+                        ? null
+                        : Number(
+                            form.department_id
+                        ),
+
+                hospital_id:
+                    form.hospital_id ===
+                        ""
+                        ? null
+                        : Number(
+                            form.hospital_id
+                        ),
+
+                status:
+                    form.status ||
+                    "available",
             };
 
-            const url = modalMode === "edit"
-                ? `${API_URL}/doctors/${activeDoctorId}`
-                : `${API_URL}/doctors`;
-            const method = modalMode === "edit" ? "PUT" : "POST";
+            const response = await fetch(
+                url,
+                {
+                    method,
+                    headers: getHeaders(),
+                    body: JSON.stringify(
+                        body
+                    ),
+                }
+            );
 
-            const response = await fetch(url, {
-                method,
-                headers: getHeaders(),
-                body: JSON.stringify(body),
-            });
+            const data =
+                await response.json();
 
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.message || "Unable to save doctor.");
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Unable to save doctor."
+                );
+            }
 
-            await fetchDoctors(true);
+            if (!data.success) {
+                throw new Error(
+                    data.message ||
+                    "Unable to save doctor."
+                );
+            }
+
             setShowModal(false);
-            setModalMode("add");
-            setActiveDoctorId(null);
-            setFormData({ ...EMPTY_FORM });
 
+            setEditingDoctor(null);
+
+            resetForm();
+
+            await fetchDoctors(false);
         } catch (err) {
-            console.error("Save Doctor Error:", err);
-            setError(err.message || "Unable to save doctor.");
+            console.error(
+                "Save Doctor Error:",
+                err
+            );
+
+            setError(
+                err.message ||
+                "Unable to save doctor."
+            );
         } finally {
             setSaving(false);
         }
     };
 
     // =====================================================
-    // DELETE
+    // DELETE DOCTOR
     // =====================================================
 
-    const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this doctor?")) return;
+    const handleDelete = async (doctor) => {
+        const confirmed =
+            window.confirm(
+                `Are you sure you want to delete ${doctor.name}?`
+            );
+
+        if (!confirmed) {
+            return;
+        }
 
         try {
-            setDeletingId(id);
+            setDeleteLoading(
+                doctor.id
+            );
+
             setError("");
 
-            const response = await fetch(`${API_URL}/doctors/${id}`, {
-                method: "DELETE",
-                headers: getHeaders(),
-            });
+            const response = await fetch(
+                `${API_URL}/doctors/${doctor.id}`,
+                {
+                    method: "DELETE",
+                    headers: getHeaders(),
+                }
+            );
 
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.message || "Unable to delete doctor.");
+            const data =
+                await response.json();
 
-            setDoctors((prev) => prev.filter((d) => d.id !== id));
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Unable to delete doctor."
+                );
+            }
 
+            if (!data.success) {
+                throw new Error(
+                    data.message ||
+                    "Unable to delete doctor."
+                );
+            }
+
+            await fetchDoctors(false);
         } catch (err) {
-            console.error("Delete Doctor Error:", err);
-            setError(err.message || "Unable to delete doctor.");
+            console.error(
+                "Delete Doctor Error:",
+                err
+            );
+
+            setError(
+                err.message ||
+                "Unable to delete doctor."
+            );
         } finally {
-            setDeletingId(null);
+            setDeleteLoading(null);
         }
     };
 
     // =====================================================
-    // STATUS BADGE
+    // STATUS CLASS
     // =====================================================
 
-    const StatusBadge = ({ status }) => {
-        const config = {
-            available: { icon: <FaCheckCircle />, label: "Available", cls: "status-available" },
-            busy: { icon: <FaClock />, label: "Busy", cls: "status-busy" },
-            offline: { icon: <FaTimesCircle />, label: "Offline", cls: "status-offline" },
-        };
-        const s = config[status] || config.available;
-        return (
-            <span className={`doctor-status-badge ${s.cls}`}>
-                {s.icon} {s.label}
-            </span>
-        );
+    const getStatusClass = (status) => {
+        switch (
+        String(
+            status || ""
+        ).toLowerCase()
+        ) {
+            case "available":
+                return "available";
+
+            case "busy":
+                return "busy";
+
+            case "offline":
+                return "offline";
+
+            default:
+                return "offline";
+        }
     };
 
     // =====================================================
-    // MODAL META
+    // STATUS TEXT
     // =====================================================
 
-    const isViewMode = modalMode === "view";
-    const modalTitle = modalMode === "add" ? "Add New Doctor"
-        : modalMode === "edit" ? "Edit Doctor"
-            : "Doctor Details";
-    const modalSubtitle = modalMode === "add" ? "Enter doctor information below"
-        : modalMode === "edit" ? "Update doctor information below"
-            : "Viewing doctor record";
+    const getStatusText = (status) => {
+        switch (
+        String(
+            status || ""
+        ).toLowerCase()
+        ) {
+            case "available":
+                return "Available";
+
+            case "busy":
+                return "Busy";
+
+            case "offline":
+                return "Offline";
+
+            default:
+                return "Offline";
+        }
+    };
+
+    // =====================================================
+    // FORMAT CURRENCY
+    // =====================================================
+
+    const formatCurrency = (value) => {
+        return Number(
+            value || 0
+        ).toLocaleString(
+            "en-IN",
+            {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+            }
+        );
+    };
 
     // =====================================================
     // RENDER
@@ -347,446 +681,1109 @@ function Doctors() {
     return (
         <main className="doctors-page">
 
-            {/* HEADER */}
+            {/* =================================================
+                PAGE HEADER
+            ================================================= */}
+
             <header className="doctors-header">
-                <div className="doctors-header-left">
-                    <button
-                        type="button"
-                        className="back-dashboard-button"
-                        onClick={() => navigate("/dashboard")}
-                        title="Back to Dashboard"
-                    >
-                        <FaArrowLeft />
-                    </button>
-                    <div>
-                        <h1>Doctors</h1>
-                        <p>Manage hospital doctors and their information</p>
-                    </div>
+
+                <div>
+                    <h1>Doctors</h1>
+
+                    <p>
+                        Manage hospital doctors
+                        and their information
+                    </p>
                 </div>
-                <button type="button" className="add-doctor-button" onClick={openAddModal}>
+
+                <button
+                    type="button"
+                    className="add-doctor-btn"
+                    onClick={
+                        openAddModal
+                    }
+                >
                     <FaPlus />
-                    <span>Add Doctor</span>
+
+                    <span>
+                        Add Doctor
+                    </span>
                 </button>
+
             </header>
 
-            {/* ERROR */}
+            {/* =================================================
+                ERROR
+            ================================================= */}
+
             {error && (
                 <div className="doctors-error">
+
                     <FaExclamationTriangle />
-                    <span>{error}</span>
-                    <button type="button" onClick={handleRefresh} disabled={refreshing}>Retry</button>
-                    <button type="button" className="error-close" onClick={() => setError("")} aria-label="Close error">
-                        <FaTimes />
+
+                    <span>
+                        {error}
+                    </span>
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setError("");
+                            fetchDoctors(true);
+                        }}
+                    >
+                        Retry
                     </button>
+
                 </div>
             )}
 
-            {/* STATS */}
+            {/* =================================================
+                SUMMARY CARDS
+            ================================================= */}
+
             <section className="doctor-stats">
+
                 <div className="doctor-stat-card">
-                    <div className="doctor-stat-icon"><FaUserMd /></div>
-                    <div>
-                        <span>Total Doctors</span>
-                        <strong>{loading ? "..." : totalDoctors}</strong>
+
+                    <div className="doctor-stat-icon">
+                        <FaUserMd />
                     </div>
+
+                    <div>
+                        <span>
+                            Total Doctors
+                        </span>
+
+                        <strong>
+                            {totalDoctors}
+                        </strong>
+                    </div>
+
                 </div>
+
                 <div className="doctor-stat-card">
-                    <div className="doctor-stat-icon"><FaCheckCircle /></div>
-                    <div>
-                        <span>Available</span>
-                        <strong>{loading ? "..." : availableDoctors}</strong>
+
+                    <div className="doctor-stat-icon">
+                        <FaUserMd />
                     </div>
+
+                    <div>
+                        <span>
+                            Available
+                        </span>
+
+                        <strong>
+                            {availableDoctors}
+                        </strong>
+                    </div>
+
                 </div>
+
                 <div className="doctor-stat-card">
-                    <div className="doctor-stat-icon"><FaMoneyBillWave /></div>
-                    <div>
-                        <span>Avg. Consultation</span>
-                        <strong>{loading ? "..." : `₹${avgFee.toFixed(0)}`}</strong>
+
+                    <div className="doctor-stat-icon">
+                        <FaMoneyBillWave />
                     </div>
+
+                    <div>
+                        <span>
+                            Avg. Consultation
+                        </span>
+
+                        <strong>
+                            ₹
+                            {averageConsultation.toFixed(
+                                2
+                            )}
+                        </strong>
+                    </div>
+
                 </div>
+
             </section>
 
-            {/* DOCTOR LIST */}
+            {/* =================================================
+                DOCTOR LIST
+            ================================================= */}
+
             <section className="doctors-panel">
-                <div className="doctors-toolbar">
+
+                <div className="doctors-panel-header">
+
                     <div>
-                        <h2>Doctor List</h2>
-                        <span>
-                            {loading
-                                ? "Loading doctors..."
-                                : `${filteredDoctors.length} doctors found`}
-                        </span>
+                        <h2>
+                            Doctor List
+                        </h2>
+
+                        <p>
+                            {filteredDoctors.length}{" "}
+                            doctor
+                            {filteredDoctors.length !==
+                                1
+                                ? "s"
+                                : ""}{" "}
+                            found
+                        </p>
                     </div>
-                    <div className="doctor-toolbar-actions">
+
+                    <div className="doctor-tools">
+
                         <div className="doctor-search">
+
                             <FaSearch />
+
                             <input
                                 type="text"
-                                placeholder="Search doctor..."
+                                placeholder="Search doctors..."
                                 value={search}
-                                onChange={(e) => setSearch(e.target.value)}
+                                onChange={(event) =>
+                                    setSearch(
+                                        event.target
+                                            .value
+                                    )
+                                }
                             />
+
+                            {search && (
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setSearch(
+                                            ""
+                                        )
+                                    }
+                                >
+                                    <FaTimes />
+                                </button>
+                            )}
+
                         </div>
+
                         <button
                             type="button"
-                            className={`doctor-refresh-button ${refreshing ? "is-refreshing" : ""}`}
-                            onClick={handleRefresh}
-                            disabled={loading || refreshing}
+                            className="refresh-btn"
+                            onClick={
+                                handleRefresh
+                            }
+                            disabled={
+                                refreshing
+                            }
                         >
-                            <FaSyncAlt className={refreshing ? "refresh-spinning" : ""} />
-                            <span>{refreshing ? "Refreshing..." : "Refresh"}</span>
+                            <FaSyncAlt
+                                className={
+                                    refreshing
+                                        ? "spin"
+                                        : ""
+                                }
+                            />
+
+                            <span>
+                                Refresh
+                            </span>
                         </button>
+
                     </div>
+
                 </div>
 
+                {/* =================================================
+                    LOADING
+                ================================================= */}
+
                 {loading ? (
-                    <div className="doctors-loading">
-                        <FaSyncAlt className="refresh-spinning" />
-                        <p>Loading doctors...</p>
+                    <div className="doctor-loading">
+
+                        <FaSyncAlt className="spin" />
+
+                        <span>
+                            Loading doctors...
+                        </span>
+
+                    </div>
+                ) : filteredDoctors.length ===
+                    0 ? (
+                    <div className="doctor-empty">
+
+                        <FaUserMd />
+
+                        <h3>
+                            No doctors found
+                        </h3>
+
+                        <p>
+                            {search
+                                ? "Try a different search."
+                                : "Add your first doctor to get started."}
+                        </p>
+
                     </div>
                 ) : (
-                    <div className="doctors-table-wrapper">
-                        <table className="doctors-table">
+                    <div className="doctor-table-wrapper">
+
+                        <table className="doctor-table">
+
                             <thead>
                                 <tr>
-                                    <th>Doctor ID</th>
-                                    <th>Doctor</th>
-                                    <th>Specialization</th>
-                                    <th>Phone</th>
-                                    <th>Experience</th>
-                                    <th>Consultation</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                    <th>
+                                        Doctor ID
+                                    </th>
+
+                                    <th>
+                                        Doctor
+                                    </th>
+
+                                    <th>
+                                        Specialization
+                                    </th>
+
+                                    <th>
+                                        Phone
+                                    </th>
+
+                                    <th>
+                                        Experience
+                                    </th>
+
+                                    <th>
+                                        Consultation
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Action
+                                    </th>
                                 </tr>
                             </thead>
+
                             <tbody>
-                                {filteredDoctors.length > 0 ? (
-                                    filteredDoctors.map((doctor) => (
-                                        <tr key={doctor.id}>
 
-                                            {/* DOCTOR ID */}
-                                            <td>
-                                                <span className="doctor-code-badge">
-                                                    {doctor.doctor_code}
-                                                </span>
-                                            </td>
+                                {filteredDoctors.map(
+                                    (doctor) => {
+                                        const name =
+                                            doctor.name ||
+                                            "Unknown Doctor";
 
-                                            {/* DOCTOR */}
-                                            <td>
-                                                <div className="doctor-name">
-                                                    <div className="doctor-avatar">
-                                                        <FaUserMd />
+                                        const firstLetter =
+                                            name
+                                                .charAt(
+                                                    0
+                                                )
+                                                .toUpperCase();
+
+                                        return (
+                                            <tr
+                                                key={
+                                                    doctor.id
+                                                }
+                                            >
+
+                                                {/* ID */}
+
+                                                <td>
+                                                    <strong className="doctor-code">
+                                                        {doctor.doctor_code ||
+                                                            `D-${doctor.id}`}
+                                                    </strong>
+                                                </td>
+
+                                                {/* DOCTOR */}
+
+                                                <td>
+
+                                                    <div className="doctor-person">
+
+                                                        <div className="doctor-avatar">
+                                                            {firstLetter}
+                                                        </div>
+
+                                                        <div className="doctor-person-info">
+
+                                                            <strong>
+                                                                {
+                                                                    name
+                                                                }
+                                                            </strong>
+
+                                                            <span>
+                                                                {doctor.email ||
+                                                                    "No email"}
+                                                            </span>
+
+                                                        </div>
+
                                                     </div>
-                                                    <div>
-                                                        <strong>{doctor.name}</strong>
-                                                        <span>{doctor.email || "-"}</span>
+
+                                                </td>
+
+                                                {/* SPECIALIZATION */}
+
+                                                <td>
+                                                    <span className="specialization">
+                                                        {doctor.specialization ||
+                                                            "General Medicine"}
+                                                    </span>
+                                                </td>
+
+                                                {/* PHONE */}
+
+                                                <td>
+                                                    <div className="table-contact">
+                                                        <FaPhone />
+
+                                                        <span>
+                                                            {doctor.phone ||
+                                                                "N/A"}
+                                                        </span>
                                                     </div>
-                                                </div>
-                                            </td>
+                                                </td>
 
-                                            {/* SPECIALIZATION */}
-                                            <td>
-                                                <span className="specialization-badge">
-                                                    {doctor.specialization || "-"}
-                                                </span>
-                                            </td>
+                                                {/* EXPERIENCE */}
 
-                                            {/* PHONE */}
-                                            <td>
-                                                <div className="phone-cell">
-                                                    <FaPhone />
-                                                    {doctor.phone || "-"}
-                                                </div>
-                                            </td>
+                                                <td>
+                                                    <strong>
+                                                        {Number(
+                                                            doctor.experience_years ||
+                                                            0
+                                                        )}{" "}
+                                                        yrs
+                                                    </strong>
+                                                </td>
 
-                                            {/* EXPERIENCE */}
-                                            <td>
-                                                <div className="experience-cell">
-                                                    <FaStar />
-                                                    {doctor.experience_years
-                                                        ? `${doctor.experience_years} yrs`
-                                                        : "-"}
-                                                </div>
-                                            </td>
+                                                {/* FEE */}
 
-                                            {/* FEE */}
-                                            <td>
-                                                <span className="fee-badge">
-                                                    ₹{Number(doctor.consultation_fee || 0).toFixed(0)}
-                                                </span>
-                                            </td>
+                                                <td>
+                                                    <strong className="consultation-fee">
+                                                        ₹
+                                                        {formatCurrency(
+                                                            doctor.consultation_fee
+                                                        )}
+                                                    </strong>
+                                                </td>
 
-                                            {/* STATUS */}
-                                            <td>
-                                                <StatusBadge status={doctor.status} />
-                                            </td>
+                                                {/* STATUS */}
 
-                                            {/* ACTIONS */}
-                                            <td>
-                                                <div className="doctor-actions">
-                                                    <button
-                                                        type="button"
-                                                        className="view-action"
-                                                        title="View Doctor"
-                                                        onClick={() => openViewModal(doctor)}
+                                                <td>
+
+                                                    <span
+                                                        className={`doctor-status ${getStatusClass(
+                                                            doctor.status
+                                                        )}`}
                                                     >
-                                                        <FaEye />
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className="edit-action"
-                                                        title="Edit Doctor"
-                                                        onClick={() => openEditModal(doctor)}
-                                                    >
-                                                        <FaEdit />
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className="delete-action"
-                                                        title="Delete Doctor"
-                                                        disabled={deletingId === doctor.id}
-                                                        onClick={() => handleDelete(doctor.id)}
-                                                    >
-                                                        {deletingId === doctor.id
-                                                            ? <FaSyncAlt className="refresh-spinning" />
-                                                            : <FaTrash />}
-                                                    </button>
-                                                </div>
-                                            </td>
+                                                        <span className="status-dot"></span>
 
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="8" className="empty-doctors">
-                                            {search ? "No doctors match your search." : "No doctors found."}
-                                        </td>
-                                    </tr>
+                                                        {getStatusText(
+                                                            doctor.status
+                                                        )}
+                                                    </span>
+
+                                                </td>
+
+                                                {/* ACTIONS */}
+
+                                                <td>
+
+                                                    <div className="doctor-actions">
+
+                                                        <button
+                                                            type="button"
+                                                            className="action-btn view"
+                                                            title="View Doctor"
+                                                            onClick={() =>
+                                                                openViewModal(
+                                                                    doctor
+                                                                )
+                                                            }
+                                                        >
+                                                            <FaEye />
+                                                        </button>
+
+                                                        <button
+                                                            type="button"
+                                                            className="action-btn edit"
+                                                            title="Edit Doctor"
+                                                            onClick={() =>
+                                                                openEditModal(
+                                                                    doctor
+                                                                )
+                                                            }
+                                                        >
+                                                            <FaEdit />
+                                                        </button>
+
+                                                        <button
+                                                            type="button"
+                                                            className="action-btn delete"
+                                                            title="Delete Doctor"
+                                                            disabled={
+                                                                deleteLoading ===
+                                                                doctor.id
+                                                            }
+                                                            onClick={() =>
+                                                                handleDelete(
+                                                                    doctor
+                                                                )
+                                                            }
+                                                        >
+                                                            {deleteLoading ===
+                                                                doctor.id ? (
+                                                                <FaSyncAlt className="spin" />
+                                                            ) : (
+                                                                <FaTrash />
+                                                            )}
+                                                        </button>
+
+                                                    </div>
+
+                                                </td>
+
+                                            </tr>
+                                        );
+                                    }
                                 )}
+
                             </tbody>
+
                         </table>
+
                     </div>
                 )}
+
             </section>
 
-            {/* MODAL */}
+            {/* =================================================
+                ADD / EDIT MODAL
+            ================================================= */}
+
             {showModal && (
-                <div className="doctor-modal-overlay" onClick={closeModal}>
-                    <div className="doctor-modal" onClick={(e) => e.stopPropagation()}>
+                <div
+                    className="doctor-modal-overlay"
+                    onMouseDown={(event) => {
+                        if (
+                            event.target ===
+                            event.currentTarget
+                        ) {
+                            closeModal();
+                        }
+                    }}
+                >
 
-                        <button
-                            type="button"
-                            className="doctor-modal-close"
-                            onClick={closeModal}
-                            aria-label="Close"
+                    <div className="doctor-modal">
+
+                        <div className="doctor-modal-header">
+
+                            <div>
+                                <h2>
+                                    {editingDoctor
+                                        ? "Edit Doctor"
+                                        : "Add Doctor"}
+                                </h2>
+
+                                <p>
+                                    {editingDoctor
+                                        ? "Update doctor information"
+                                        : "Enter doctor information"}
+                                </p>
+                            </div>
+
+                            <button
+                                type="button"
+                                className="modal-close"
+                                onClick={
+                                    closeModal
+                                }
+                                disabled={saving}
+                            >
+                                <FaTimes />
+                            </button>
+
+                        </div>
+
+                        <form
+                            onSubmit={
+                                handleSubmit
+                            }
                         >
-                            <FaTimes />
-                        </button>
 
-                        <div className="doctor-modal-icon"><FaUserMd /></div>
-                        <h2>{modalTitle}</h2>
-                        <p>{modalSubtitle}</p>
+                            <div className="doctor-form-grid">
 
-                        {/* VIEW MODE */}
-                        {isViewMode ? (
-                            <div className="doctor-details">
+                                <div className="form-group">
 
-                                <div className="doctor-detail-row">
-                                    <span className="doctor-detail-label"><FaUserMd /> Doctor ID</span>
-                                    <span className="doctor-code-badge">
-                                        {doctors.find((d) => d.id === activeDoctorId)?.doctor_code || "-"}
-                                    </span>
+                                    <label>
+                                        Doctor Code
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="doctor_code"
+                                        value={
+                                            form.doctor_code
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        placeholder="D-20260001"
+                                        readOnly={
+                                            Boolean(
+                                                editingDoctor
+                                            )
+                                        }
+                                    />
+
                                 </div>
 
-                                <div className="doctor-detail-row">
-                                    <span className="doctor-detail-label"><FaUserMd /> Name</span>
-                                    <span className="doctor-detail-value">{formData.name}</span>
+                                <div className="form-group">
+
+                                    <label>
+                                        Doctor Name *
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={
+                                            form.name
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        placeholder="Dr. John Doe"
+                                        required
+                                    />
+
                                 </div>
 
-                                <div className="doctor-detail-row">
-                                    <span className="doctor-detail-label">Specialization</span>
-                                    <span className="specialization-badge">{formData.specialization || "-"}</span>
+                                <div className="form-group">
+
+                                    <label>
+                                        Specialization
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="specialization"
+                                        value={
+                                            form.specialization
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        placeholder="Cardiology"
+                                    />
+
                                 </div>
 
-                                <div className="doctor-detail-row">
-                                    <span className="doctor-detail-label">Qualification</span>
-                                    <span className="doctor-detail-value">{formData.qualification || "-"}</span>
+                                <div className="form-group">
+
+                                    <label>
+                                        Qualification
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="qualification"
+                                        value={
+                                            form.qualification
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        placeholder="MBBS, MD"
+                                    />
+
                                 </div>
 
-                                <div className="doctor-detail-row">
-                                    <span className="doctor-detail-label"><FaPhone /> Phone</span>
-                                    <span className="doctor-detail-value">{formData.phone || "-"}</span>
+                                <div className="form-group">
+
+                                    <label>
+                                        Phone
+                                    </label>
+
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        value={
+                                            form.phone
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        placeholder="9876543210"
+                                    />
+
                                 </div>
 
-                                <div className="doctor-detail-row">
-                                    <span className="doctor-detail-label"><FaEnvelope /> Email</span>
-                                    <span className="doctor-detail-value">{formData.email || "-"}</span>
+                                <div className="form-group">
+
+                                    <label>
+                                        Email
+                                    </label>
+
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={
+                                            form.email
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        placeholder="doctor@hms.com"
+                                    />
+
                                 </div>
 
-                                <div className="doctor-detail-row">
-                                    <span className="doctor-detail-label"><FaStar /> Experience</span>
-                                    <span className="doctor-detail-value">
-                                        {formData.experience_years ? `${formData.experience_years} years` : "-"}
-                                    </span>
+                                <div className="form-group">
+
+                                    <label>
+                                        Experience
+                                        (Years)
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        name="experience_years"
+                                        value={
+                                            form.experience_years
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        placeholder="10"
+                                    />
+
                                 </div>
 
-                                <div className="doctor-detail-row">
-                                    <span className="doctor-detail-label"><FaMoneyBillWave /> Consultation Fee</span>
-                                    <span className="fee-badge">₹{Number(formData.consultation_fee || 0).toFixed(0)}</span>
+                                <div className="form-group">
+
+                                    <label>
+                                        Consultation
+                                        Fee
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        name="consultation_fee"
+                                        value={
+                                            form.consultation_fee
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        placeholder="500"
+                                    />
+
                                 </div>
 
-                                <div className="doctor-detail-row">
-                                    <span className="doctor-detail-label">Status</span>
-                                    <StatusBadge status={formData.status} />
+                                <div className="form-group">
+
+                                    <label>
+                                        Department ID
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        name="department_id"
+                                        value={
+                                            form.department_id
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        placeholder="Optional"
+                                    />
+
                                 </div>
 
-                                <div className="doctor-form-actions">
-                                    <button type="button" className="cancel-button" onClick={closeModal}>Close</button>
-                                    <button
-                                        type="button"
-                                        className="save-doctor-button"
-                                        onClick={() => {
-                                            const doctor = doctors.find((d) => d.id === activeDoctorId);
-                                            if (doctor) openEditModal(doctor);
-                                        }}
+                                <div className="form-group">
+
+                                    <label>
+                                        Hospital ID
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        name="hospital_id"
+                                        value={
+                                            form.hospital_id
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        placeholder="Optional"
+                                    />
+
+                                </div>
+
+                                <div className="form-group">
+
+                                    <label>
+                                        Status
+                                    </label>
+
+                                    <select
+                                        name="status"
+                                        value={
+                                            form.status
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
                                     >
-                                        <FaEdit /> Edit Doctor
-                                    </button>
+                                        <option value="available">
+                                            Available
+                                        </option>
+
+                                        <option value="busy">
+                                            Busy
+                                        </option>
+
+                                        <option value="offline">
+                                            Offline
+                                        </option>
+                                    </select>
+
                                 </div>
 
                             </div>
 
-                        ) : (
+                            <div className="doctor-modal-footer">
 
-                            /* ADD / EDIT FORM */
-                            <form className="doctor-form" onSubmit={handleSubmit}>
+                                <button
+                                    type="button"
+                                    className="cancel-btn"
+                                    onClick={
+                                        closeModal
+                                    }
+                                    disabled={
+                                        saving
+                                    }
+                                >
+                                    Cancel
+                                </button>
 
-                                <div className="form-group">
-                                    <label>Doctor Name <span className="required">*</span></label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        placeholder="Dr. Rahul Sharma"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
+                                <button
+                                    type="submit"
+                                    className="save-doctor-btn"
+                                    disabled={
+                                        saving
+                                    }
+                                >
+                                    {saving ? (
+                                        <>
+                                            <FaSyncAlt className="spin" />
 
-                                <div className="form-group">
-                                    <label>Specialization <span className="required">*</span></label>
-                                    <select
-                                        name="specialization"
-                                        value={formData.specialization}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <option value="">Select Specialization</option>
-                                        {SPECIALIZATIONS.map((s) => (
-                                            <option key={s} value={s}>{s}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                                            Saving...
+                                        </>
+                                    ) : (
+                                        <>
+                                            {editingDoctor
+                                                ? "Update Doctor"
+                                                : "Save Doctor"}
+                                        </>
+                                    )}
+                                </button>
 
-                                <div className="form-group">
-                                    <label>Qualification</label>
-                                    <input
-                                        type="text"
-                                        name="qualification"
-                                        placeholder="MBBS, MD"
-                                        value={formData.qualification}
-                                        onChange={handleChange}
-                                    />
-                                </div>
+                            </div>
 
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label>Phone</label>
-                                        <input
-                                            type="tel"
-                                            name="phone"
-                                            placeholder="9876543210"
-                                            value={formData.phone}
-                                            onChange={handleChange}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Email</label>
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            placeholder="doctor@hms.com"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                        />
-                                    </div>
-                                </div>
+                        </form>
 
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label>Experience (years)</label>
-                                        <input
-                                            type="number"
-                                            name="experience_years"
-                                            min="0"
-                                            placeholder="10"
-                                            value={formData.experience_years}
-                                            onChange={handleChange}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Consultation Fee (₹)</label>
-                                        <input
-                                            type="number"
-                                            name="consultation_fee"
-                                            min="0"
-                                            placeholder="500"
-                                            value={formData.consultation_fee}
-                                            onChange={handleChange}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="form-group">
-                                    <label>Status</label>
-                                    <select
-                                        name="status"
-                                        value={formData.status}
-                                        onChange={handleChange}
-                                    >
-                                        <option value="available">Available</option>
-                                        <option value="busy">Busy</option>
-                                        <option value="offline">Offline</option>
-                                    </select>
-                                </div>
-
-                                {modalMode === "add" && (
-                                    <div className="auto-id-info">
-                                        🪪 Doctor ID will be auto-generated
-                                        <strong> (D-{new Date().getFullYear()}XXXX)</strong>
-                                    </div>
-                                )}
-
-                                <div className="doctor-form-actions">
-                                    <button type="button" className="cancel-button" onClick={closeModal} disabled={saving}>
-                                        Cancel
-                                    </button>
-                                    <button type="submit" className="save-doctor-button" disabled={saving}>
-                                        {saving ? (
-                                            <><FaSyncAlt className="refresh-spinning" /> Saving...</>
-                                        ) : modalMode === "edit" ? (
-                                            <><FaEdit /> Save Changes</>
-                                        ) : (
-                                            <><FaPlus /> Add Doctor</>
-                                        )}
-                                    </button>
-                                </div>
-
-                            </form>
-                        )}
                     </div>
+
                 </div>
             )}
+
+            {/* =================================================
+                VIEW MODAL
+            ================================================= */}
+
+            {showViewModal &&
+                selectedDoctor && (
+                    <div
+                        className="doctor-modal-overlay"
+                        onMouseDown={(
+                            event
+                        ) => {
+                            if (
+                                event.target ===
+                                event.currentTarget
+                            ) {
+                                closeViewModal();
+                            }
+                        }}
+                    >
+
+                        <div className="doctor-view-modal">
+
+                            <div className="doctor-modal-header">
+
+                                <div>
+                                    <h2>
+                                        Doctor Details
+                                    </h2>
+
+                                    <p>
+                                        Complete doctor
+                                        information
+                                    </p>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    className="modal-close"
+                                    onClick={
+                                        closeViewModal
+                                    }
+                                >
+                                    <FaTimes />
+                                </button>
+
+                            </div>
+
+                            <div className="doctor-profile">
+
+                                <div className="large-doctor-avatar">
+                                    {(
+                                        selectedDoctor.name ||
+                                        "D"
+                                    )
+                                        .charAt(
+                                            0
+                                        )
+                                        .toUpperCase()}
+                                </div>
+
+                                <div>
+
+                                    <h3>
+                                        {
+                                            selectedDoctor.name
+                                        }
+                                    </h3>
+
+                                    <p>
+                                        {
+                                            selectedDoctor.specialization ||
+                                            "General Medicine"
+                                        }
+                                    </p>
+
+                                    <span
+                                        className={`doctor-status ${getStatusClass(
+                                            selectedDoctor.status
+                                        )}`}
+                                    >
+                                        <span className="status-dot"></span>
+
+                                        {getStatusText(
+                                            selectedDoctor.status
+                                        )}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <div className="doctor-detail-grid">
+
+                                <div className="detail-item">
+
+                                    <FaUserMd />
+
+                                    <div>
+                                        <span>
+                                            Doctor ID
+                                        </span>
+
+                                        <strong>
+                                            {
+                                                selectedDoctor.doctor_code
+                                            }
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                                <div className="detail-item">
+
+                                    <FaEnvelope />
+
+                                    <div>
+                                        <span>
+                                            Email
+                                        </span>
+
+                                        <strong>
+                                            {
+                                                selectedDoctor.email ||
+                                                "N/A"
+                                            }
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                                <div className="detail-item">
+
+                                    <FaPhone />
+
+                                    <div>
+                                        <span>
+                                            Phone
+                                        </span>
+
+                                        <strong>
+                                            {
+                                                selectedDoctor.phone ||
+                                                "N/A"
+                                            }
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                                <div className="detail-item">
+
+                                    <FaGraduationCap />
+
+                                    <div>
+                                        <span>
+                                            Qualification
+                                        </span>
+
+                                        <strong>
+                                            {
+                                                selectedDoctor.qualification ||
+                                                "N/A"
+                                            }
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                                <div className="detail-item">
+
+                                    <FaBriefcase />
+
+                                    <div>
+                                        <span>
+                                            Experience
+                                        </span>
+
+                                        <strong>
+                                            {Number(
+                                                selectedDoctor.experience_years ||
+                                                0
+                                            )}{" "}
+                                            years
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                                <div className="detail-item">
+
+                                    <FaMoneyBillWave />
+
+                                    <div>
+                                        <span>
+                                            Consultation
+                                            Fee
+                                        </span>
+
+                                        <strong>
+                                            ₹
+                                            {formatCurrency(
+                                                selectedDoctor.consultation_fee
+                                            )}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                                <div className="detail-item">
+
+                                    <FaBuilding />
+
+                                    <div>
+                                        <span>
+                                            Department
+                                            ID
+                                        </span>
+
+                                        <strong>
+                                            {
+                                                selectedDoctor.department_id ||
+                                                "N/A"
+                                            }
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                                <div className="detail-item">
+
+                                    <FaBuilding />
+
+                                    <div>
+                                        <span>
+                                            Hospital ID
+                                        </span>
+
+                                        <strong>
+                                            {
+                                                selectedDoctor.hospital_id ||
+                                                "N/A"
+                                            }
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div className="doctor-view-footer">
+
+                                <button
+                                    type="button"
+                                    className="cancel-btn"
+                                    onClick={
+                                        closeViewModal
+                                    }
+                                >
+                                    Close
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="save-doctor-btn"
+                                    onClick={() => {
+                                        closeViewModal();
+
+                                        openEditModal(
+                                            selectedDoctor
+                                        );
+                                    }}
+                                >
+                                    <FaEdit />
+
+                                    Edit Doctor
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                )}
 
         </main>
     );

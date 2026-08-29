@@ -1,9 +1,18 @@
 /* =====================================================
-   HOME PAGE — No scroll, full viewport fit
+   HMS HOME PAGE
+   COMPLETE REPLACEMENT
+   Dynamic Hospital Branding
+   Large Logo + Database Hospital Name
+   ===================================================== */
+
+
+/* =====================================================
+   ROOT PAGE
 ===================================================== */
 
 .home-page {
     width: 100%;
+    min-height: 100vh;
     height: 100vh;
 
     position: relative;
@@ -11,22 +20,25 @@
     display: flex;
     flex-direction: column;
 
+    box-sizing: border-box;
+
     overflow: hidden;
 
     color: #ffffff;
 
     background:
-        radial-gradient(circle at 15% 50%,
+        radial-gradient(circle at 10% 45%,
+            rgba(0, 255, 55, 0.11),
+            transparent 34%),
+        radial-gradient(circle at 90% 42%,
             rgba(0, 255, 55, 0.08),
-            transparent 35%),
-        radial-gradient(circle at 85% 45%,
-            rgba(0, 255, 55, 0.06),
-            transparent 30%),
+            transparent 32%),
         linear-gradient(135deg,
-            #020806,
-            #06130d 50%,
-            #020806);
+            #020806 0%,
+            #06150d 50%,
+            #020806 100%);
 }
+
 
 /* =====================================================
    BACKGROUND GRID
@@ -34,212 +46,466 @@
 
 .home-page::before {
     content: "";
+
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+
+    inset: 0;
+
     background-image:
-        linear-gradient(rgba(0, 255, 80, 0.055) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 80, 0.055) 1px, transparent 1px);
+        linear-gradient(rgba(0, 255, 80, 0.045) 1px,
+            transparent 1px),
+        linear-gradient(90deg,
+            rgba(0, 255, 80, 0.045) 1px,
+            transparent 1px);
+
     background-size: 65px 65px;
+
     pointer-events: none;
+
     z-index: 0;
 }
 
+
 /* =====================================================
-   HEADER
+   HIDDEN HEADER
 ===================================================== */
 
 .home-header {
-    width: 100%;
-    height: 70px;
-    flex-shrink: 0;
-
-    padding: 0 50px;
-
-    display: flex;
-    align-items: center;
-
-    position: relative;
-    z-index: 10;
-
-    border-bottom: 1px solid rgba(0, 255, 60, 0.18);
-    background: rgba(0, 0, 0, 0.38);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    display: none !important;
 }
+
 
 /* =====================================================
-   BRAND
-===================================================== */
-
-.home-brand {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.home-brand-icon {
-    width: 44px;
-    height: 44px;
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border: 2px solid #00ff37;
-    border-radius: 11px;
-    color: #00ff37;
-    font-size: 22px;
-    background: rgba(0, 255, 55, 0.04);
-    box-shadow: 0 0 18px rgba(0, 255, 55, 0.25);
-    transition: 0.25s ease;
-}
-
-.home-brand-icon:hover {
-    transform: scale(1.06);
-    box-shadow: 0 0 28px rgba(0, 255, 55, 0.45);
-}
-
-.home-brand-text h1 {
-    margin: 0;
-    color: #00ff37;
-    font-size: 25px;
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: 1px;
-}
-
-.home-brand-text span {
-    display: block;
-    margin-top: 4px;
-    color: #91a49a;
-    font-size: 11px;
-}
-
-/* =====================================================
-   MAIN CONTENT — flex:1 takes remaining height
+   MAIN CONTENT
 ===================================================== */
 
 .home-content {
     width: 100%;
+
     flex: 1;
+
     min-height: 0;
 
-    padding: 30px 60px;
+    padding: 42px 70px 32px;
+
+    box-sizing: border-box;
 
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 60px;
+
+    grid-template-columns:
+        minmax(0, 1.25fr) minmax(350px, 0.75fr);
+
+    gap: 70px;
 
     align-items: center;
 
     position: relative;
+
     z-index: 2;
 }
 
+
 /* =====================================================
-   LEFT SIDE
+   LEFT SECTION
 ===================================================== */
 
 .home-left {
     width: 100%;
-    max-width: 780px;
+
+    max-width: 920px;
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
 }
+
+
+/* =====================================================
+   SMART HEALTHCARE BADGE
+   TOP
+===================================================== */
 
 .home-badge {
     width: fit-content;
+
+    max-width: 100%;
+
     display: flex;
+
     align-items: center;
-    gap: 9px;
-    padding: 7px 14px;
-    border: 1px solid rgba(0, 255, 55, 0.35);
+
+    gap: 10px;
+
+    margin: 0 0 20px;
+
+    padding: 9px 17px;
+
+    box-sizing: border-box;
+
+    border: 1px solid rgba(0,
+            255,
+            55,
+            0.42);
+
     border-radius: 30px;
-    background: rgba(0, 255, 55, 0.05);
+
+    background:
+        rgba(0,
+            255,
+            55,
+            0.055);
+
     color: #00ff37;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+
+    line-height: 1.2;
+
+    box-shadow:
+        0 0 22px rgba(0,
+            255,
+            55,
+            0.05);
 }
+
 
 .home-badge svg {
-    font-size: 13px;
     flex-shrink: 0;
-}
 
-.home-left h2 {
-    margin: 18px 0 12px;
-    color: #ffffff;
-    font-size: clamp(36px, 4vw, 68px);
-    line-height: 1.04;
-    font-weight: 300;
-    letter-spacing: -2px;
-}
-
-.home-left h2 strong {
     color: #00ff37;
-    font-weight: 800;
-    text-shadow: 0 0 25px rgba(0, 255, 55, 0.3);
+
+    font-size: 15px;
 }
+
+
+/* =====================================================
+   BRAND AREA
+   LOGO LEFT
+   NAME RIGHT
+===================================================== */
+
+.home-brand {
+    width: 100%;
+
+    min-width: 0;
+
+    min-height: 180px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 32px;
+
+    margin: 0 0 24px;
+
+    padding: 0;
+
+    box-sizing: border-box;
+}
+
+
+/* =====================================================
+   LARGE REAL LOGO
+   NO SQUARE
+   NO BACKGROUND
+   NO BORDER
+===================================================== */
+
+.home-brand-icon {
+    width: 170px;
+
+    height: 170px;
+
+    min-width: 170px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: none !important;
+
+    border-radius: 0 !important;
+
+    background: transparent !important;
+
+    box-shadow: none !important;
+
+    overflow: visible;
+
+    padding: 0;
+
+    margin: 0;
+}
+
+
+/* =====================================================
+   REAL LOGO IMAGE
+===================================================== */
+
+.home-brand-icon img {
+    width: 100%;
+
+    height: 100%;
+
+    max-width: 100%;
+
+    max-height: 100%;
+
+    display: block;
+
+    object-fit: contain;
+
+    object-position: center;
+
+    background: transparent !important;
+
+    border: none !important;
+
+    border-radius: 0 !important;
+
+    box-shadow: none !important;
+
+    outline: none;
+}
+
+
+/* =====================================================
+   HOSPITAL NAME AREA
+===================================================== */
+
+.home-brand-text {
+    flex: 1;
+
+    min-width: 0;
+
+    max-width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    overflow: visible;
+}
+
+
+/* =====================================================
+   DATABASE HOSPITAL NAME
+===================================================== */
+
+.home-brand-text h1 {
+    width: 100%;
+
+    margin: 0;
+
+    padding: 0;
+
+    color: #ffffff;
+
+    font-size: clamp(38px,
+            4.2vw,
+            64px);
+
+    font-weight: 800;
+
+    line-height: 1.05;
+
+    letter-spacing: -1.8px;
+
+    white-space: normal;
+
+    overflow-wrap: anywhere;
+
+    word-break: normal;
+
+    text-shadow:
+        0 0 28px rgba(0,
+            255,
+            55,
+            0.10);
+}
+
+
+/* =====================================================
+   HOSPITAL NAME FIRST LETTER
+===================================================== */
+
+.home-brand-text h1::first-letter {
+    color: #00ff37;
+}
+
+
+/* =====================================================
+   HOSPITAL SYSTEM / TAGLINE
+===================================================== */
+
+.home-brand-text span {
+    display: block;
+
+    margin-top: 10px;
+
+    color: #00ff37;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.5px;
+
+    line-height: 1.4;
+
+    white-space: normal;
+}
+
+
+/* =====================================================
+   OLD HERO HEADING COMPLETELY REMOVED
+===================================================== */
+
+.home-left>h2 {
+    display: none !important;
+}
+
+
+/* =====================================================
+   DESCRIPTION
+===================================================== */
 
 .home-description {
-    max-width: 600px;
-    color: #9aaba2;
-    font-size: 15px;
-    line-height: 1.6;
+    width: 100%;
+
+    max-width: 690px;
+
+    margin: 0 0 2px;
+
+    color: #a2b3aa;
+
+    font-size: 16px;
+
+    font-weight: 400;
+
+    line-height: 1.7;
 }
+
+
+/* =====================================================
+   LOGIN WRAPPER
+===================================================== */
+
+.home-login-wrapper {
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
+}
+
 
 /* =====================================================
    LOGIN BUTTON
 ===================================================== */
 
-.home-login-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .home-login-button {
-    width: 210px;
-    height: 50px;
+    width: 215px;
+
+    height: 52px;
+
     margin-top: 22px;
-    padding: 0 20px;
+
+    padding: 0 22px;
+
+    box-sizing: border-box;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
+
     gap: 10px;
 
     border: none;
-    border-radius: 9px;
-    background: #00ff37;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(180deg,
+            #00ff55,
+            #00d948);
+
     color: #001207;
+
     font-size: 15px;
+
     font-weight: 800;
+
     cursor: pointer;
 
+    box-shadow:
+        0 5px 0 #008d31,
+        0 10px 25px rgba(0,
+            255,
+            55,
+            0.20);
+
     transition:
-        transform 0.25s ease,
-        background 0.25s ease,
-        box-shadow 0.25s ease;
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
+
 
 .home-login-button:hover {
-    background: #16ff4b;
-    transform: translateY(-2px);
-    box-shadow: 0 0 30px rgba(0, 255, 55, 0.35);
+    transform: translateY(-3px);
+
+    background:
+        linear-gradient(180deg,
+            #16ff61,
+            #00df4c);
+
+    box-shadow:
+        0 7px 0 #008d31,
+        0 15px 35px rgba(0,
+            255,
+            55,
+            0.30);
 }
+
 
 .home-login-button:active {
-    transform: scale(0.98);
+    transform: translateY(2px);
+
+    box-shadow:
+        0 2px 0 #008d31,
+        0 5px 15px rgba(0,
+            255,
+            55,
+            0.18);
 }
 
+
 .home-login-button svg {
-    font-size: 15px;
+    flex-shrink: 0;
+
+    font-size: 16px;
 }
+
 
 /* =====================================================
    FEATURES
@@ -247,21 +513,47 @@
 
 .home-features {
     width: 100%;
-    margin-top: 22px;
+
+    margin-top: 27px;
+
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 13px;
 }
 
+
 .home-feature {
-    padding: 14px;
+    min-width: 0;
+
+    padding: 15px;
+
+    box-sizing: border-box;
+
     display: flex;
+
     align-items: flex-start;
-    gap: 10px;
-    border: 1px solid rgba(0, 255, 55, 0.15);
-    border-radius: 10px;
-    background: rgba(0, 20, 12, 0.55);
-    backdrop-filter: blur(5px);
+
+    gap: 11px;
+
+    border:
+        1px solid rgba(0,
+            255,
+            55,
+            0.14);
+
+    border-radius: 12px;
+
+    background:
+        rgba(0,
+            20,
+            12,
+            0.55);
+
+    backdrop-filter: blur(8px);
+
     transition:
         transform 0.25s ease,
         border-color 0.25s ease,
@@ -269,33 +561,62 @@
         box-shadow 0.25s ease;
 }
 
+
 .home-feature:hover {
     transform: translateY(-4px);
-    border-color: rgba(0, 255, 55, 0.5);
-    background: rgba(0, 255, 55, 0.06);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+
+    border-color:
+        rgba(0,
+            255,
+            55,
+            0.45);
+
+    background:
+        rgba(0,
+            255,
+            55,
+            0.06);
+
+    box-shadow:
+        0 12px 28px rgba(0,
+            0,
+            0,
+            0.30);
 }
+
 
 .home-feature>svg {
     flex-shrink: 0;
+
     margin-top: 2px;
+
     color: #00ff37;
-    font-size: 18px;
+
+    font-size: 19px;
 }
+
 
 .home-feature h3 {
     margin: 0 0 4px;
+
     color: #ffffff;
+
     font-size: 13px;
+
     font-weight: 700;
 }
 
+
 .home-feature p {
     margin: 0;
-    color: #7e9287;
+
+    color: #82958b;
+
     font-size: 11px;
-    line-height: 1.4;
+
+    line-height: 1.45;
 }
+
 
 /* =====================================================
    RIGHT SIDE
@@ -303,136 +624,301 @@
 
 .home-right {
     width: 100%;
+
+    min-width: 0;
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 }
 
+
+/* =====================================================
+   HOSPITAL CARD
+===================================================== */
+
 .hospital-card {
-    width: 340px;
+    width: 370px;
+
     max-width: 100%;
-    padding: 28px 26px;
+
+    padding: 30px 27px;
+
+    box-sizing: border-box;
+
     text-align: center;
 
-    border: 1px solid rgba(0, 255, 55, 0.42);
-    border-radius: 20px;
+    border:
+        1px solid rgba(0,
+            255,
+            55,
+            0.42);
+
+    border-radius: 22px;
 
     background:
         linear-gradient(145deg,
-            rgba(8, 28, 18, 0.98),
+            rgba(8, 30, 19, 0.98),
             rgba(2, 12, 8, 0.98));
 
     box-shadow:
-        0 25px 70px rgba(0, 0, 0, 0.45),
-        0 0 35px rgba(0, 255, 55, 0.08);
+        0 25px 70px rgba(0,
+            0,
+            0,
+            0.48),
+        0 0 40px rgba(0,
+            255,
+            55,
+            0.08);
 
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(15px);
 
     transition:
         transform 0.3s ease,
         box-shadow 0.3s ease;
 }
 
+
 .hospital-card:hover {
     transform: translateY(-5px);
+
     box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.5),
-        0 0 45px rgba(0, 255, 55, 0.14);
+        0 30px 80px rgba(0,
+            0,
+            0,
+            0.52),
+        0 0 50px rgba(0,
+            255,
+            55,
+            0.14);
 }
 
+
+/* =====================================================
+   CARD LOGO
+   NO SQUARE
+===================================================== */
+
 .hospital-card-icon {
-    width: 66px;
-    height: 66px;
-    margin: 0 auto 14px;
+    width: 85px;
+
+    height: 85px;
+
+    margin: 0 auto 16px;
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
-    border: 2px solid #00ff37;
-    border-radius: 16px;
-    color: #00ff37;
-    font-size: 30px;
-    background: rgba(0, 255, 55, 0.035);
-    box-shadow: 0 0 22px rgba(0, 255, 55, 0.2);
+
+    border: none !important;
+
+    border-radius: 0 !important;
+
+    background: transparent !important;
+
+    box-shadow: none !important;
+
+    overflow: visible;
 }
+
+
+.hospital-card-icon img {
+    width: 100%;
+
+    height: 100%;
+
+    display: block;
+
+    object-fit: contain;
+
+    object-position: center;
+
+    border: none !important;
+
+    border-radius: 0 !important;
+
+    background: transparent !important;
+
+    box-shadow: none !important;
+}
+
+
+/* =====================================================
+   CARD HOSPITAL NAME
+===================================================== */
 
 .hospital-card h3 {
     margin: 0;
+
     color: #ffffff;
-    font-size: 22px;
-    font-weight: 700;
+
+    font-size: 23px;
+
+    font-weight: 750;
+
+    line-height: 1.25;
+
+    overflow-wrap: anywhere;
 }
 
+
+/* =====================================================
+   CARD DESCRIPTION
+===================================================== */
+
 .hospital-card>p {
-    max-width: 280px;
-    margin: 8px auto 18px;
+    max-width: 290px;
+
+    margin: 9px auto 19px;
+
     color: #8fa39a;
+
     font-size: 12px;
+
     line-height: 1.6;
 }
 
+
+/* =====================================================
+   MANAGEMENT LIST
+===================================================== */
+
 .hospital-management-list {
     width: 100%;
+
     display: flex;
+
     flex-direction: column;
+
     gap: 8px;
+
     margin-top: 8px;
 }
 
+
+/* =====================================================
+   MANAGEMENT ITEM
+===================================================== */
+
 .management-item {
     width: 100%;
-    min-height: 48px;
-    padding: 0 12px;
+
+    min-height: 49px;
+
+    padding: 0 13px;
+
+    box-sizing: border-box;
+
     display: flex;
+
     align-items: center;
+
     gap: 10px;
-    border: 1px solid rgba(0, 255, 55, 0.13);
-    border-radius: 9px;
-    background: rgba(0, 255, 55, 0.025);
+
+    border:
+        1px solid rgba(0,
+            255,
+            55,
+            0.13);
+
+    border-radius: 10px;
+
+    background:
+        rgba(0,
+            255,
+            55,
+            0.025);
+
     text-align: left;
+
     transition:
         background 0.2s ease,
         border-color 0.2s ease,
         transform 0.2s ease;
 }
 
+
 .management-item:hover {
-    background: rgba(0, 255, 55, 0.07);
-    border-color: rgba(0, 255, 55, 0.35);
+    background:
+        rgba(0,
+            255,
+            55,
+            0.07);
+
+    border-color:
+        rgba(0,
+            255,
+            55,
+            0.35);
+
     transform: translateX(3px);
 }
 
+
 .management-item svg {
     flex-shrink: 0;
+
     color: #00ff37;
+
     font-size: 16px;
 }
 
+
 .management-item span {
     flex: 1;
+
+    min-width: 0;
+
     color: #ffffff;
+
     font-size: 13px;
+
     font-weight: 600;
 }
 
+
 .management-item small {
+    flex-shrink: 0;
+
     color: #00ff37;
+
     font-size: 11px;
 }
+
+
+/* =====================================================
+   SECURITY
+===================================================== */
 
 .hospital-security {
-    margin-top: 16px;
+    margin-top: 17px;
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
+
     gap: 7px;
+
     color: #687d72;
+
     font-size: 11px;
 }
 
+
 .hospital-security svg {
+    flex-shrink: 0;
+
     color: #00ff37;
+
     font-size: 13px;
 }
+
 
 /* =====================================================
    FOOTER
@@ -440,191 +926,391 @@
 
 .home-footer {
     width: 100%;
+
     height: 52px;
+
     flex-shrink: 0;
+
     padding: 0 50px;
 
+    box-sizing: border-box;
+
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
     position: relative;
+
     z-index: 5;
 
-    border-top: 1px solid rgba(0, 255, 55, 0.15);
-    background: rgba(0, 0, 0, 0.25);
+    border-top:
+        1px solid rgba(0,
+            255,
+            55,
+            0.15);
+
+    background:
+        rgba(0,
+            0,
+            0,
+            0.25);
+
     color: #60736a;
+
     font-size: 11px;
 }
 
+
 /* =====================================================
-   TABLET (max 1100px)
+   LARGE DESKTOP
+===================================================== */
+
+@media (min-width: 1400px) {
+
+    .home-content {
+        padding-left: 90px;
+        padding-right: 90px;
+
+        gap: 90px;
+    }
+
+
+    .home-brand {
+        gap: 38px;
+    }
+
+
+    .home-brand-icon {
+        width: 185px;
+        height: 185px;
+
+        min-width: 185px;
+    }
+
+
+    .home-brand-text h1 {
+        font-size: clamp(44px,
+                4vw,
+                68px);
+    }
+
+
+    .hospital-card {
+        width: 390px;
+    }
+}
+
+
+/* =====================================================
+   TABLET / SMALL DESKTOP
 ===================================================== */
 
 @media (max-width: 1100px) {
 
     .home-content {
-        padding: 25px 40px;
-        gap: 40px;
+        padding: 35px 40px 30px;
+
+        gap: 45px;
     }
 
-    .home-left h2 {
-        font-size: clamp(32px, 4vw, 56px);
+
+    .home-brand {
+        gap: 25px;
+
+        min-height: 145px;
     }
+
+
+    .home-brand-icon {
+        width: 135px;
+        height: 135px;
+
+        min-width: 135px;
+    }
+
+
+    .home-brand-text h1 {
+        font-size: clamp(32px,
+                4vw,
+                50px);
+    }
+
+
+    .home-brand-text span {
+        font-size: 13px;
+    }
+
 
     .hospital-card {
-        width: 300px;
+        width: 330px;
     }
 }
 
+
 /* =====================================================
-   TABLET (max 900px) — stack layout, allow scroll
+   TABLET
 ===================================================== */
 
 @media (max-width: 900px) {
 
     .home-page {
         height: auto;
+
         min-height: 100vh;
+
         overflow-y: auto;
+
+        overflow-x: hidden;
     }
 
+
     .home-content {
-        padding: 35px 30px 40px;
+        flex: none;
+
+        padding: 38px 30px 40px;
+
         grid-template-columns: 1fr;
-        gap: 35px;
+
+        gap: 40px;
+
         align-items: start;
     }
+
 
     .home-left {
         max-width: 100%;
     }
 
-    .home-left h2 {
-        font-size: clamp(38px, 6vw, 58px);
+
+    .home-brand {
+        min-height: 145px;
+
+        margin-bottom: 20px;
+
+        gap: 25px;
     }
+
+
+    .home-brand-icon {
+        width: 135px;
+        height: 135px;
+
+        min-width: 135px;
+    }
+
+
+    .home-brand-text h1 {
+        font-size: clamp(32px,
+                7vw,
+                50px);
+    }
+
 
     .home-login-wrapper {
         justify-content: center;
     }
 
-    .home-right {
-        padding-bottom: 10px;
-    }
 
     .hospital-card {
         width: 420px;
+
         max-width: 100%;
     }
 
+
     .home-footer {
         height: auto;
+
         padding: 16px 30px;
+
         flex-direction: column;
+
         gap: 6px;
+
         text-align: center;
     }
 }
 
+
 /* =====================================================
-   MOBILE (max 600px)
+   MOBILE
 ===================================================== */
 
 @media (max-width: 600px) {
 
-    .home-header {
-        height: 64px;
-        padding: 0 18px;
-    }
-
-    .home-brand-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 19px;
-    }
-
-    .home-brand-text h1 {
-        font-size: 22px;
-    }
-
-    .home-brand-text span {
-        font-size: 9px;
-    }
-
     .home-content {
         padding: 28px 18px 35px;
-        gap: 30px;
+
+        gap: 32px;
     }
+
 
     .home-badge {
+        margin-bottom: 16px;
+
+        padding: 7px 12px;
+
         font-size: 9px;
-        padding: 6px 11px;
+
+        letter-spacing: 0.9px;
     }
 
-    .home-left h2 {
-        font-size: 38px;
-        letter-spacing: -1.5px;
+
+    .home-brand {
+        min-height: 105px;
+
+        gap: 18px;
+
+        margin-bottom: 18px;
     }
+
+
+    .home-brand-icon {
+        width: 105px;
+        height: 105px;
+
+        min-width: 105px;
+    }
+
+
+    .home-brand-text h1 {
+        font-size: 29px;
+
+        line-height: 1.08;
+
+        letter-spacing: -0.8px;
+    }
+
+
+    .home-brand-text span {
+        margin-top: 7px;
+
+        font-size: 10px;
+
+        letter-spacing: 1px;
+    }
+
 
     .home-description {
         font-size: 14px;
+
+        line-height: 1.6;
     }
+
 
     .home-login-button {
         width: 100%;
+
         max-width: 300px;
     }
 
+
     .home-features {
         grid-template-columns: 1fr;
+
         gap: 10px;
     }
 
+
     .hospital-card {
         width: 100%;
-        padding: 24px 18px;
+
+        padding: 25px 18px;
     }
+
+
+    .hospital-card-icon {
+        width: 75px;
+        height: 75px;
+    }
+
 
     .hospital-card h3 {
         font-size: 20px;
     }
 
+
     .home-footer {
         padding: 14px 18px;
+
         font-size: 10px;
     }
 }
 
+
 /* =====================================================
-   VERY SMALL (max 380px)
+   VERY SMALL MOBILE
 ===================================================== */
 
 @media (max-width: 380px) {
 
-    .home-header {
-        padding: 0 12px;
+    .home-content {
+        padding: 24px 14px 30px;
+
+        gap: 28px;
     }
+
+
+    .home-brand {
+        gap: 14px;
+
+        min-height: 88px;
+    }
+
+
+    .home-brand-icon {
+        width: 88px;
+        height: 88px;
+
+        min-width: 88px;
+    }
+
+
+    .home-brand-text h1 {
+        font-size: 24px;
+
+        letter-spacing: -0.5px;
+    }
+
 
     .home-brand-text span {
-        display: none;
+        font-size: 9px;
+
+        letter-spacing: 0.7px;
     }
 
-    .home-left h2 {
-        font-size: 32px;
+
+    .home-badge {
+        font-size: 8px;
+
+        padding: 6px 10px;
     }
 
-    .home-description {
-        font-size: 13px;
-    }
-
-    .home-login-button {
-        max-width: 100%;
-    }
 
     .hospital-card {
-        padding: 20px 14px;
+        padding: 21px 14px;
+    }
+
+
+    .hospital-card-icon {
+        width: 68px;
+        height: 68px;
     }
 }
+
+
+/* =====================================================
+   ACCESSIBILITY
+===================================================== */
+
+.home-login-button:focus-visible {
+    outline: 2px solid #ffffff;
+
+    outline-offset: 4px;
+}
+
 
 /* =====================================================
    REDUCED MOTION
@@ -636,7 +1322,11 @@
     *::before,
     *::after {
         animation-duration: 0.01ms !important;
+
         animation-iteration-count: 1 !important;
+
         transition-duration: 0.01ms !important;
+
+        scroll-behavior: auto !important;
     }
 }

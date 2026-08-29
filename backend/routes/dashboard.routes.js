@@ -5,14 +5,25 @@ const {
     getRecentAppointmentsController,
 } = require("../controllers/dashboard.controller");
 
+const authenticateToken = require("../middleware/auth.middleware");
+
 const router = express.Router();
 
-// Dashboard statistics
-router.get("/stats", getStats);
+/*
+=====================================================
+ALL DASHBOARD ROUTES REQUIRE LOGIN
+=====================================================
+*/
 
-// Recent appointments
+router.get(
+    "/stats",
+    authenticateToken,
+    getStats
+);
+
 router.get(
     "/recent-appointments",
+    authenticateToken,
     getRecentAppointmentsController
 );
 

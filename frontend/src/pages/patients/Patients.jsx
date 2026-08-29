@@ -1,56 +1,52 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
 import {
-    FaSearch,
     FaPlus,
-    FaUserInjured,
+    FaSyncAlt,
+    FaSearch,
     FaEdit,
     FaTrash,
     FaEye,
-    FaPhone,
-    FaCalendarAlt,
     FaTimes,
-    FaArrowLeft,
+    FaUserInjured,
+    FaPhone,
+    FaEnvelope,
+    FaCalendarAlt,
+    FaMapMarkerAlt,
+    FaTint,
     FaVenusMars,
-    FaHospital,
-    FaSyncAlt,
     FaExclamationTriangle,
 } from "react-icons/fa";
 
 import "./Patients.css";
 
 function Patients() {
-    const navigate = useNavigate();
-
     const API_URL =
         import.meta.env.VITE_API_URL ||
         "http://localhost:5000/api";
 
-    const user =
-        JSON.parse(localStorage.getItem("hms_user")) || {};
-    void user;
-
     // =====================================================
-    // STATES
+    // STATE
     // =====================================================
 
     const [patients, setPatients] = useState([]);
-    const [search, setSearch] = useState("");
+
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+
     const [error, setError] = useState("");
+
+    const [search, setSearch] = useState("");
+
     const [showModal, setShowModal] = useState(false);
-    const [modalMode, setModalMode] = useState("add");
-    const [activePatientId, setActivePatientId] = useState(null);
+    const [showViewModal, setShowViewModal] = useState(false);
+
+    const [editingPatient, setEditingPatient] = useState(null);
+    const [selectedPatient, setSelectedPatient] = useState(null);
+
     const [saving, setSaving] = useState(false);
-    const [deletingId, setDeletingId] = useState(null);
+    const [deleteLoading, setDeleteLoading] = useState(null);
 
-    // =====================================================
-    // EMPTY FORM — no patient_code field
-    // =====================================================
-
-    const emptyForm = {
+    const [formData, setFormData] = useState({
         name: "",
         gender: "male",
         date_of_birth: "",
@@ -58,345 +54,522 @@ function Patients() {
         email: "",
         address: "",
         blood_group: "",
-    };
+    });
 
-    const [formData, setFormData] = useState(emptyForm);
+    // =====================================================
+    // AUTH HEADERS
+    // =====================================================
+
+    const getHeaders = () => {
+        const token = localStorage.getItem("hms_token");
+
+        if (!token) {
+            throw new Error(
+                "Login session expired. Please login again."
+            );
+        }
+
+        return {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token} `,
+        };
+    };
 
     // =====================================================
     // FETCH PATIENTS
     // =====================================================
 
-    const fetchPatients = async (isRefresh = false) => {
+    const fetchPatients = async (showLoader = true) => {
         try {
-            if (isRefresh) {
-                setRefreshing(true);
-            } else {
+            if (showLoader) {
                 setLoading(true);
             }
 
             setError("");
 
-            const token = localStorage.getItem("hms_token");
-
-            const response = await fetch(`${API_URL}/patients`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    ...(token && {
-                        Authorization: `Bearer ${token}`,
-                    }),
-                },
-                cache: "no-store",
-            });
+            const response = await fetch(
+                `${API_URL}/patients`,
+                {
+                    method: "GET",
+                    headers: getHeaders(),
+                }
+            );
 
             const data = await response.json();
 
             if (!response.ok) {
                 throw new Error(
-                    data.message || "Unable to load patients"
+                    data.message ||
+                    "Unable to load patients."
                 );
             }
 
-            if (!data.success || !Array.isArray(data.patients)) {
-                throw new Error("Invalid patients response");
+            if (
+                data.success === false
+            ) {
+                throw new Error(
+                    data.message ||
+                    "Unable to load patients."
+                );
             }
 
-            setPatients([...data.patients]);
-
+            setPatients(
+                Array.isArray(data.patients)
+                    ? data.patients
+                    : []
+            );
         } catch (err) {
-            console.error("Fetch Patients Error:", err);
-            setError(err.message || "Unable to connect to HMS server.");
+            console.error(
+                "Fetch Patients Error:",
+                err
+            );
+
+            setError(
+                err.message ||
+                "Unable to connect to server."
+            );
         } finally {
-            setLoading(false);
+            if (showLoader) {
+                setLoading(false);
+            }
+        }
+    };
+
+    // =====================================================
+    // INITIAL LOAD
+    // =====================================================
+
+    useEffect(() => {
+        fetchPatients(true);
+    }, []);
+
+    // =====================================================
+    // REFRESH
+    // =====================================================
+
+    const handleRefresh = async () => {
+        if (refreshing) {
+            return;
+        }
+
+        try {
+            setRefreshing(true);
+            await fetchPatients(false);
+        } finally {
             setRefreshing(false);
         }
     };
-
-    useEffect(() => {
-        fetchPatients(false);
-    }, []);
-
-    const handleRefresh = async () => {
-        if (loading || refreshing) return;
-        await fetchPatients(true);
-    };
-
-    // =====================================================
-    // HELPERS
-    // =====================================================
-
-    const calculateAge = (dateOfBirth) => {
-        if (!dateOfBirth) return "-";
-        const dob = new Date(dateOfBirth);
-        if (Number.isNaN(dob.getTime())) return "-";
-        const today = new Date();
-        let age = today.getFullYear() - dob.getFullYear();
-        const monthDiff = today.getMonth() - dob.getMonth();
-        if (
-            monthDiff < 0 ||
-            (monthDiff === 0 && today.getDate() < dob.getDate())
-        ) {
-            age--;
-        }
-        return age >= 0 ? age : "-";
-    };
-
-    const formatDate = (date) => {
-        if (!date) return "-";
-        const parsed = new Date(date);
-        if (Number.isNaN(parsed.getTime())) return "-";
-        return parsed.toLocaleDateString("en-IN", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-        });
-    };
-
-    const isToday = (date) => {
-        if (!date) return false;
-        const d = new Date(date);
-        const today = new Date();
-        return (
-            d.getFullYear() === today.getFullYear() &&
-            d.getMonth() === today.getMonth() &&
-            d.getDate() === today.getDate()
-        );
-    };
-
-    const isNewPatient = (date) => {
-        if (!date) return false;
-        const created = new Date(date);
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        return created >= sevenDaysAgo;
-    };
-
-    // =====================================================
-    // STATISTICS
-    // =====================================================
-
-    const totalPatients = patients.length;
-    const activePatients = patients.length;
-    const todaysPatients = patients.filter((p) => isToday(p.created_at)).length;
-    const newPatients = patients.filter((p) => isNewPatient(p.created_at)).length;
 
     // =====================================================
     // SEARCH
     // =====================================================
 
     const filteredPatients = useMemo(() => {
-        const value = search.toLowerCase().trim();
-        if (!value) return patients;
-        return patients.filter((patient) =>
-            String(patient.name || "").toLowerCase().includes(value) ||
-            String(patient.patient_code || "").toLowerCase().includes(value) ||
-            String(patient.phone || "").toLowerCase().includes(value) ||
-            String(patient.email || "").toLowerCase().includes(value) ||
-            String(patient.gender || "").toLowerCase().includes(value)
-        );
+        const query = search
+            .trim()
+            .toLowerCase();
+
+        if (!query) {
+            return patients;
+        }
+
+        return patients.filter((patient) => {
+            return (
+                String(
+                    patient.patient_code || ""
+                )
+                    .toLowerCase()
+                    .includes(query) ||
+
+                String(
+                    patient.name || ""
+                )
+                    .toLowerCase()
+                    .includes(query) ||
+
+                String(
+                    patient.phone || ""
+                )
+                    .toLowerCase()
+                    .includes(query) ||
+
+                String(
+                    patient.email || ""
+                )
+                    .toLowerCase()
+                    .includes(query) ||
+
+                String(
+                    patient.gender || ""
+                )
+                    .toLowerCase()
+                    .includes(query) ||
+
+                String(
+                    patient.blood_group || ""
+                )
+                    .toLowerCase()
+                    .includes(query)
+            );
+        });
     }, [patients, search]);
+
+    // =====================================================
+    // STATISTICS
+    // =====================================================
+
+    const totalPatients = patients.length;
+
+    const malePatients = patients.filter(
+        (patient) =>
+            String(
+                patient.gender || ""
+            ).toLowerCase() === "male"
+    ).length;
+
+    const femalePatients = patients.filter(
+        (patient) =>
+            String(
+                patient.gender || ""
+            ).toLowerCase() === "female"
+    ).length;
 
     // =====================================================
     // FORM CHANGE
     // =====================================================
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+    const handleChange = (event) => {
+        const {
+            name,
+            value,
+        } = event.target;
+
+        setFormData((previous) => ({
+            ...previous,
+            [name]: value,
+        }));
     };
 
     // =====================================================
-    // MODAL OPEN/CLOSE
+    // RESET FORM
+    // =====================================================
+
+    const resetForm = () => {
+        setFormData({
+            name: "",
+            gender: "male",
+            date_of_birth: "",
+            phone: "",
+            email: "",
+            address: "",
+            blood_group: "",
+        });
+    };
+
+    // =====================================================
+    // OPEN ADD MODAL
     // =====================================================
 
     const openAddModal = () => {
-        setModalMode("add");
-        setActivePatientId(null);
-        setFormData({ ...emptyForm });
+        resetForm();
+
+        setEditingPatient(null);
+
+        setError("");
+
         setShowModal(true);
     };
 
-    const openViewModal = (patient) => {
-        setModalMode("view");
-        setActivePatientId(patient.id);
-        setFormData({
-            name: patient.name || "",
-            gender: patient.gender || "male",
-            date_of_birth: patient.date_of_birth
-                ? String(patient.date_of_birth).substring(0, 10)
-                : "",
-            phone: patient.phone || "",
-            email: patient.email || "",
-            address: patient.address || "",
-            blood_group: patient.blood_group || "",
-        });
-        setShowModal(true);
-    };
+    // =====================================================
+    // OPEN EDIT MODAL
+    // =====================================================
 
     const openEditModal = (patient) => {
-        setModalMode("edit");
-        setActivePatientId(patient.id);
+        setEditingPatient(patient);
+
         setFormData({
             name: patient.name || "",
-            gender: patient.gender || "male",
-            date_of_birth: patient.date_of_birth
-                ? String(patient.date_of_birth).substring(0, 10)
-                : "",
-            phone: patient.phone || "",
-            email: patient.email || "",
-            address: patient.address || "",
-            blood_group: patient.blood_group || "",
+
+            gender:
+                patient.gender || "male",
+
+            date_of_birth:
+                patient.date_of_birth
+                    ? String(
+                        patient.date_of_birth
+                    ).slice(0, 10)
+                    : "",
+
+            phone:
+                patient.phone || "",
+
+            email:
+                patient.email || "",
+
+            address:
+                patient.address || "",
+
+            blood_group:
+                patient.blood_group || "",
         });
+
+        setError("");
+
         setShowModal(true);
     };
 
-    const closeModal = () => {
-        if (saving) return;
-        setShowModal(false);
-        setModalMode("add");
-        setActivePatientId(null);
-        setFormData({ ...emptyForm });
+    // =====================================================
+    // OPEN VIEW MODAL
+    // =====================================================
+
+    const openViewModal = (patient) => {
+        setSelectedPatient(patient);
+
+        setShowViewModal(true);
     };
 
-    useEffect(() => {
-        const handleEscape = (e) => {
-            if (e.key === "Escape" && showModal) closeModal();
-        };
-        document.addEventListener("keydown", handleEscape);
-        return () => document.removeEventListener("keydown", handleEscape);
-    }, [showModal, saving]);
-
     // =====================================================
-    // SUBMIT — ADD / EDIT
+    // CLOSE MODALS
     // =====================================================
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const closeModal = () => {
+        if (saving) {
+            return;
+        }
+
+        setShowModal(false);
+
+        setEditingPatient(null);
+
+        resetForm();
+    };
+
+    const closeViewModal = () => {
+        setShowViewModal(false);
+
+        setSelectedPatient(null);
+    };
+
+    // =====================================================
+    // SAVE PATIENT
+    // =====================================================
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        if (!formData.name.trim()) {
+            setError(
+                "Patient name is required."
+            );
+
+            return;
+        }
 
         try {
             setSaving(true);
+
             setError("");
 
-            const token = localStorage.getItem("hms_token");
+            const isEdit =
+                Boolean(editingPatient);
 
-            // ── ADD ─────────────────────────────────────
-            if (modalMode === "add") {
-                const response = await fetch(`${API_URL}/patients`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        ...(token && { Authorization: `Bearer ${token}` }),
-                    },
-                    body: JSON.stringify({
-                        name: formData.name.trim(),
-                        gender: formData.gender,
-                        date_of_birth: formData.date_of_birth || null,
-                        phone: formData.phone.trim() || null,
-                        email: formData.email.trim() || null,
-                        address: formData.address.trim() || null,
-                        blood_group: formData.blood_group.trim() || null,
-                    }),
+            const url = isEdit
+                ? `${API_URL}/patients/${editingPatient.id}`
+                : `${API_URL}/patients`;
+
+            const method = isEdit
+                ? "PUT"
+                : "POST";
+
+            const body = {
+                name:
+                    formData.name.trim(),
+
+                gender:
+                    formData.gender || "male",
+
+                date_of_birth:
+                    formData.date_of_birth ||
+                    null,
+
+                phone:
+                    formData.phone.trim(),
+
+                email:
+                    formData.email.trim(),
+
+                address:
+                    formData.address.trim(),
+
+                blood_group:
+                    formData.blood_group || "",
+            };
+
+            const response =
+                await fetch(url, {
+                    method,
+                    headers: getHeaders(),
+                    body: JSON.stringify(body),
                 });
 
-                const data = await response.json();
-                if (!response.ok) {
-                    throw new Error(data.message || "Unable to add patient");
-                }
-            }
+            const data =
+                await response.json();
 
-            // ── EDIT ─────────────────────────────────────
-            if (modalMode === "edit" && activePatientId !== null) {
-                const response = await fetch(
-                    `${API_URL}/patients/${activePatientId}`,
-                    {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json",
-                            ...(token && { Authorization: `Bearer ${token}` }),
-                        },
-                        body: JSON.stringify({
-                            name: formData.name.trim(),
-                            gender: formData.gender,
-                            date_of_birth: formData.date_of_birth || null,
-                            phone: formData.phone.trim() || null,
-                            email: formData.email.trim() || null,
-                            address: formData.address.trim() || null,
-                            blood_group: formData.blood_group.trim() || null,
-                        }),
-                    }
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Unable to save patient."
                 );
-
-                const data = await response.json();
-                if (!response.ok) {
-                    throw new Error(data.message || "Unable to update patient");
-                }
             }
 
-            await fetchPatients(true);
-            setShowModal(false);
-            setModalMode("add");
-            setActivePatientId(null);
-            setFormData({ ...emptyForm });
+            if (
+                data.success === false
+            ) {
+                throw new Error(
+                    data.message ||
+                    "Unable to save patient."
+                );
+            }
 
+            setShowModal(false);
+
+            setEditingPatient(null);
+
+            resetForm();
+
+            await fetchPatients(false);
         } catch (err) {
-            console.error("Save Patient Error:", err);
-            setError(err.message || "Unable to save patient.");
+            console.error(
+                "Save Patient Error:",
+                err
+            );
+
+            setError(
+                err.message ||
+                "Unable to save patient."
+            );
         } finally {
             setSaving(false);
         }
     };
 
     // =====================================================
-    // DELETE
+    // DELETE PATIENT
     // =====================================================
 
-    const handleDelete = async (id) => {
-        const confirmDelete = window.confirm(
-            "Are you sure you want to delete this patient?"
-        );
-        if (!confirmDelete) return;
+    const handleDelete = async (patient) => {
+        const confirmed =
+            window.confirm(
+                `Are you sure you want to delete ${patient.name}?`
+            );
+
+        if (!confirmed) {
+            return;
+        }
 
         try {
-            setDeletingId(id);
+            setDeleteLoading(patient.id);
+
             setError("");
 
-            const token = localStorage.getItem("hms_token");
+            const response =
+                await fetch(
+                    `${API_URL}/patients/${patient.id}`,
+                    {
+                        method: "DELETE",
+                        headers: getHeaders(),
+                    }
+                );
 
-            const response = await fetch(`${API_URL}/patients/${id}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    ...(token && { Authorization: `Bearer ${token}` }),
-                },
-            });
+            const data =
+                await response.json();
 
-            const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.message || "Unable to delete patient");
+                throw new Error(
+                    data.message ||
+                    "Unable to delete patient."
+                );
             }
 
-            setPatients((prev) => prev.filter((p) => p.id !== id));
-            await fetchPatients(true);
+            if (
+                data.success === false
+            ) {
+                throw new Error(
+                    data.message ||
+                    "Unable to delete patient."
+                );
+            }
 
+            await fetchPatients(false);
         } catch (err) {
-            console.error("Delete Patient Error:", err);
-            setError(err.message || "Unable to delete patient.");
+            console.error(
+                "Delete Patient Error:",
+                err
+            );
+
+            setError(
+                err.message ||
+                "Unable to delete patient."
+            );
         } finally {
-            setDeletingId(null);
+            setDeleteLoading(null);
         }
     };
 
     // =====================================================
-    // MODAL META
+    // DATE FORMAT
     // =====================================================
 
-    const isViewMode = modalMode === "view";
-    const modalTitle = modalMode === "add" ? "Add New Patient"
-        : modalMode === "edit" ? "Edit Patient"
-            : "Patient Details";
-    const modalSubtitle = modalMode === "add" ? "Enter patient information below"
-        : modalMode === "edit" ? "Update patient information below"
-            : "Viewing patient record";
+    const formatDate = (date) => {
+        if (!date) {
+            return "N/A";
+        }
+
+        const parsed =
+            new Date(date);
+
+        if (
+            Number.isNaN(
+                parsed.getTime()
+            )
+        ) {
+            return "N/A";
+        }
+
+        return parsed.toLocaleDateString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+            }
+        );
+    };
+
+    // =====================================================
+    // GENDER TEXT
+    // =====================================================
+
+    const getGenderText = (gender) => {
+        const value =
+            String(
+                gender || ""
+            ).toLowerCase();
+
+        switch (value) {
+            case "male":
+                return "Male";
+
+            case "female":
+                return "Female";
+
+            case "other":
+                return "Other";
+
+            default:
+                return "N/A";
+        }
+    };
 
     // =====================================================
     // RENDER
@@ -405,512 +578,1037 @@ function Patients() {
     return (
         <main className="patients-page">
 
-            {/* HEADER */}
+            {/* =================================================
+                PAGE HEADER
+            ================================================= */}
+
             <header className="patients-header">
-                <div className="patients-header-left">
+
+                <div>
+                    <h1>
+                        Patients
+                    </h1>
+
+                    <p>
+                        Manage hospital patients
+                        and their information
+                    </p>
+                </div>
+
+                <div className="patients-actions">
+
                     <button
                         type="button"
-                        className="back-dashboard-button"
-                        onClick={() => navigate("/dashboard")}
-                        title="Back to Dashboard"
-                        aria-label="Back to Dashboard"
+                        className="patients-refresh"
+                        onClick={
+                            handleRefresh
+                        }
+                        disabled={
+                            refreshing
+                        }
                     >
-                        <FaArrowLeft />
+                        <FaSyncAlt
+                            className={
+                                refreshing
+                                    ? "spin"
+                                    : ""
+                            }
+                        />
+
+                        <span>
+                            Refresh
+                        </span>
                     </button>
-                    <div>
-                        <h1>Patients</h1>
-                        <p>Manage hospital patients and their information</p>
-                    </div>
+
+                    <button
+                        type="button"
+                        className="patients-add"
+                        onClick={
+                            openAddModal
+                        }
+                    >
+                        <FaPlus />
+
+                        <span>
+                            Add Patient
+                        </span>
+                    </button>
+
                 </div>
-                <button
-                    type="button"
-                    className="add-patient-button"
-                    onClick={openAddModal}
-                >
-                    <FaPlus />
-                    <span>Add Patient</span>
-                </button>
+
             </header>
 
-            {/* ERROR */}
+            {/* =================================================
+                ERROR
+            ================================================= */}
+
             {error && (
                 <div className="patients-error">
+
                     <FaExclamationTriangle />
-                    <span>{error}</span>
+
+                    <span>
+                        {error}
+                    </span>
+
                     <button
                         type="button"
-                        onClick={handleRefresh}
-                        disabled={refreshing}
+                        onClick={() => {
+                            setError("");
+
+                            fetchPatients(true);
+                        }}
                     >
                         Retry
                     </button>
-                    <button
-                        type="button"
-                        className="error-close"
-                        onClick={() => setError("")}
-                        aria-label="Close error"
-                    >
-                        <FaTimes />
-                    </button>
+
                 </div>
             )}
 
-            {/* STATISTICS */}
+            {/* =================================================
+                SUMMARY CARDS
+            ================================================= */}
+
             <section className="patient-stats">
+
                 <div className="patient-stat-card">
-                    <div className="patient-stat-icon"><FaUserInjured /></div>
-                    <div>
-                        <span>Total Patients</span>
-                        <strong>{loading ? "..." : totalPatients}</strong>
+
+                    <div className="patient-stat-icon">
+                        <FaUserInjured />
                     </div>
+
+                    <div>
+                        <span>
+                            Total Patients
+                        </span>
+
+                        <strong>
+                            {totalPatients}
+                        </strong>
+                    </div>
+
                 </div>
+
                 <div className="patient-stat-card">
-                    <div className="patient-stat-icon"><FaUserInjured /></div>
-                    <div>
-                        <span>Active Patients</span>
-                        <strong>{loading ? "..." : activePatients}</strong>
+
+                    <div className="patient-stat-icon">
+                        <FaVenusMars />
                     </div>
+
+                    <div>
+                        <span>
+                            Male Patients
+                        </span>
+
+                        <strong>
+                            {malePatients}
+                        </strong>
+                    </div>
+
                 </div>
+
                 <div className="patient-stat-card">
-                    <div className="patient-stat-icon"><FaCalendarAlt /></div>
-                    <div>
-                        <span>Today's Patients</span>
-                        <strong>{loading ? "..." : todaysPatients}</strong>
+
+                    <div className="patient-stat-icon">
+                        <FaVenusMars />
                     </div>
-                </div>
-                <div className="patient-stat-card">
-                    <div className="patient-stat-icon"><FaUserInjured /></div>
+
                     <div>
-                        <span>New Patients</span>
-                        <strong>{loading ? "..." : newPatients}</strong>
+                        <span>
+                            Female Patients
+                        </span>
+
+                        <strong>
+                            {femalePatients}
+                        </strong>
                     </div>
+
                 </div>
+
             </section>
 
-            {/* PATIENT LIST */}
-            <section className="patients-panel">
-                <div className="patients-toolbar">
+            {/* =================================================
+                PATIENT LIST
+            ================================================= */}
+
+            <section className="patients-card">
+
+                <div className="patients-panel-header">
+
                     <div>
-                        <h2>Patient List</h2>
-                        <span>
-                            {loading
-                                ? "Loading patients..."
-                                : `${filteredPatients.length} patients found`}
-                        </span>
+                        <h2>
+                            Patient List
+                        </h2>
+
+                        <p>
+                            {filteredPatients.length}{" "}
+                            patient
+                            {filteredPatients.length !==
+                                1
+                                ? "s"
+                                : ""}{" "}
+                            found
+                        </p>
                     </div>
-                    <div className="patient-toolbar-actions">
-                        <div className="patient-search">
+
+                    <div className="patients-toolbar">
+
+                        <div className="patients-search">
+
                             <FaSearch />
+
                             <input
                                 type="text"
-                                placeholder="Search patient..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="Search patients..."
+                                value={
+                                    search
+                                }
+                                onChange={(
+                                    event
+                                ) =>
+                                    setSearch(
+                                        event
+                                            .target
+                                            .value
+                                    )
+                                }
                             />
+
+                            {search && (
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setSearch(
+                                            ""
+                                        )
+                                    }
+                                >
+                                    <FaTimes />
+                                </button>
+                            )}
+
                         </div>
-                        <button
-                            type="button"
-                            className={`patient-refresh-button ${refreshing ? "is-refreshing" : ""}`}
-                            onClick={handleRefresh}
-                            disabled={loading || refreshing}
-                            title="Refresh patients"
-                        >
-                            <FaSyncAlt className={refreshing ? "refresh-spinning" : ""} />
-                            <span>{refreshing ? "Refreshing..." : "Refresh"}</span>
-                        </button>
+
                     </div>
+
                 </div>
+
+                {/* =================================================
+                    LOADING
+                ================================================= */}
 
                 {loading ? (
                     <div className="patients-loading">
-                        <FaSyncAlt className="refresh-spinning" />
-                        <p>Loading patients...</p>
+
+                        <FaSyncAlt className="spin" />
+
+                        <span>
+                            Loading patients...
+                        </span>
+
+                    </div>
+                ) : filteredPatients.length ===
+                    0 ? (
+                    <div className="patients-empty">
+
+                        <FaUserInjured />
+
+                        <h3>
+                            No patients found
+                        </h3>
+
+                        <p>
+                            {search
+                                ? "Try a different search."
+                                : "Add your first patient to get started."}
+                        </p>
+
+                        {!search && (
+                            <button
+                                type="button"
+                                onClick={
+                                    openAddModal
+                                }
+                            >
+                                <FaPlus />
+
+                                Add Patient
+                            </button>
+                        )}
+
                     </div>
                 ) : (
                     <div className="patients-table-wrapper">
+
                         <table className="patients-table">
+
                             <thead>
                                 <tr>
-                                    <th>Patient ID</th>
-                                    <th>Patient</th>
-                                    <th>Age</th>
-                                    <th>Gender</th>
-                                    <th>Phone</th>
-                                    <th>Blood Group</th>
-                                    <th>Status</th>
-                                    <th>Registered</th>
-                                    <th>Action</th>
+
+                                    <th>
+                                        Patient ID
+                                    </th>
+
+                                    <th>
+                                        Patient
+                                    </th>
+
+                                    <th>
+                                        Gender
+                                    </th>
+
+                                    <th>
+                                        Date of Birth
+                                    </th>
+
+                                    <th>
+                                        Phone
+                                    </th>
+
+                                    <th>
+                                        Blood Group
+                                    </th>
+
+                                    <th>
+                                        Actions
+                                    </th>
+
                                 </tr>
                             </thead>
+
                             <tbody>
-                                {filteredPatients.length > 0 ? (
-                                    filteredPatients.map((patient) => (
-                                        <tr key={patient.id}>
 
-                                            {/* PATIENT ID */}
-                                            <td>
-                                                <span className="patient-code-badge">
-                                                    {patient.patient_code}
-                                                </span>
-                                            </td>
+                                {filteredPatients.map(
+                                    (patient) => {
+                                        const name =
+                                            patient.name ||
+                                            "Unknown Patient";
 
-                                            {/* PATIENT NAME */}
-                                            <td>
-                                                <div className="patient-name">
-                                                    <div className="patient-avatar">
-                                                        {patient.name?.charAt(0).toUpperCase() || "P"}
+                                        const firstLetter =
+                                            name
+                                                .charAt(
+                                                    0
+                                                )
+                                                .toUpperCase();
+
+                                        return (
+                                            <tr
+                                                key={
+                                                    patient.id
+                                                }
+                                            >
+
+                                                {/* PATIENT ID */}
+
+                                                <td>
+                                                    <strong className="patient-code">
+                                                        {patient.patient_code ||
+                                                            `P-${patient.id}`}
+                                                    </strong>
+                                                </td>
+
+                                                {/* PATIENT */}
+
+                                                <td>
+
+                                                    <div className="patient-name">
+
+                                                        <div className="patient-avatar">
+                                                            {
+                                                                firstLetter
+                                                            }
+                                                        </div>
+
+                                                        <div>
+
+                                                            <strong>
+                                                                {
+                                                                    name
+                                                                }
+                                                            </strong>
+
+                                                            <span>
+                                                                {patient.email ||
+                                                                    "No email"}
+                                                            </span>
+
+                                                        </div>
+
                                                     </div>
-                                                    <div>
-                                                        <strong>{patient.name}</strong>
-                                                        <span>{patient.email || "-"}</span>
-                                                    </div>
-                                                </div>
-                                            </td>
 
-                                            {/* AGE */}
-                                            <td>{calculateAge(patient.date_of_birth)}</td>
+                                                </td>
 
-                                            {/* GENDER */}
-                                            <td>
-                                                {patient.gender
-                                                    ? patient.gender.charAt(0).toUpperCase() +
-                                                    patient.gender.slice(1)
-                                                    : "-"}
-                                            </td>
+                                                {/* GENDER */}
 
-                                            {/* PHONE */}
-                                            <td>
-                                                <div className="phone-cell">
-                                                    <FaPhone />
-                                                    {patient.phone || "-"}
-                                                </div>
-                                            </td>
-
-                                            {/* BLOOD GROUP */}
-                                            <td>
-                                                <span className="blood-group-badge">
-                                                    {patient.blood_group || "-"}
-                                                </span>
-                                            </td>
-
-                                            {/* STATUS */}
-                                            <td>
-                                                <span className="patient-status active">
-                                                    Active
-                                                </span>
-                                            </td>
-
-                                            {/* REGISTERED */}
-                                            <td>
-                                                <div className="date-cell">
-                                                    <FaCalendarAlt />
-                                                    {formatDate(patient.created_at)}
-                                                </div>
-                                            </td>
-
-                                            {/* ACTIONS */}
-                                            <td>
-                                                <div className="patient-actions">
-                                                    <button
-                                                        type="button"
-                                                        className="view-action"
-                                                        title="View Patient"
-                                                        onClick={() => openViewModal(patient)}
-                                                    >
-                                                        <FaEye />
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className="edit-action"
-                                                        title="Edit Patient"
-                                                        onClick={() => openEditModal(patient)}
-                                                    >
-                                                        <FaEdit />
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className="delete-action"
-                                                        title="Delete Patient"
-                                                        disabled={deletingId === patient.id}
-                                                        onClick={() => handleDelete(patient.id)}
-                                                    >
-                                                        {deletingId === patient.id ? (
-                                                            <FaSyncAlt className="refresh-spinning" />
-                                                        ) : (
-                                                            <FaTrash />
+                                                <td>
+                                                    <span className="gender-badge">
+                                                        {getGenderText(
+                                                            patient.gender
                                                         )}
-                                                    </button>
-                                                </div>
-                                            </td>
+                                                    </span>
+                                                </td>
 
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="9" className="empty-patients">
-                                            {search
-                                                ? "No patients match your search."
-                                                : "No patients found."}
-                                        </td>
-                                    </tr>
+                                                {/* DOB */}
+
+                                                <td>
+                                                    {formatDate(
+                                                        patient.date_of_birth
+                                                    )}
+                                                </td>
+
+                                                {/* PHONE */}
+
+                                                <td>
+                                                    <div className="table-contact">
+                                                        <FaPhone />
+
+                                                        <span>
+                                                            {patient.phone ||
+                                                                "N/A"}
+                                                        </span>
+                                                    </div>
+                                                </td>
+
+                                                {/* BLOOD GROUP */}
+
+                                                <td>
+                                                    <span className="blood-badge">
+                                                        {patient.blood_group ||
+                                                            "-"}
+                                                    </span>
+                                                </td>
+
+                                                {/* ACTIONS */}
+
+                                                <td>
+
+                                                    <div className="patient-row-actions">
+
+                                                        <button
+                                                            type="button"
+                                                            className="action-btn view"
+                                                            title="View Patient"
+                                                            onClick={() =>
+                                                                openViewModal(
+                                                                    patient
+                                                                )
+                                                            }
+                                                        >
+                                                            <FaEye />
+                                                        </button>
+
+                                                        <button
+                                                            type="button"
+                                                            className="action-btn edit edit-button"
+                                                            title="Edit Patient"
+                                                            onClick={() =>
+                                                                openEditModal(
+                                                                    patient
+                                                                )
+                                                            }
+                                                        >
+                                                            <FaEdit />
+                                                        </button>
+
+                                                        <button
+                                                            type="button"
+                                                            className="action-btn delete delete-button"
+                                                            title="Delete Patient"
+                                                            disabled={
+                                                                deleteLoading ===
+                                                                patient.id
+                                                            }
+                                                            onClick={() =>
+                                                                handleDelete(
+                                                                    patient
+                                                                )
+                                                            }
+                                                        >
+                                                            {deleteLoading ===
+                                                                patient.id ? (
+                                                                <FaSyncAlt className="spin" />
+                                                            ) : (
+                                                                <FaTrash />
+                                                            )}
+                                                        </button>
+
+                                                    </div>
+
+                                                </td>
+
+                                            </tr>
+                                        );
+                                    }
                                 )}
+
                             </tbody>
+
                         </table>
+
                     </div>
                 )}
+
             </section>
 
-            {/* MODAL */}
+            {/* =================================================
+                ADD / EDIT MODAL
+            ================================================= */}
+
             {showModal && (
                 <div
                     className="patient-modal-overlay"
-                    onClick={closeModal}
+                    onMouseDown={(event) => {
+                        if (
+                            event.target ===
+                            event.currentTarget
+                        ) {
+                            closeModal();
+                        }
+                    }}
                 >
-                    <div
-                        className="patient-modal"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <button
-                            type="button"
-                            className="patient-modal-close"
-                            onClick={closeModal}
-                            title="Close"
-                            aria-label="Close"
-                        >
-                            <FaTimes />
-                        </button>
 
-                        <div className="patient-modal-icon">
-                            <FaUserInjured />
+                    <div className="patient-modal">
+
+                        <div className="patient-modal-header">
+
+                            <div>
+
+                                <h2>
+                                    {editingPatient
+                                        ? "Edit Patient"
+                                        : "Add Patient"}
+                                </h2>
+
+                                <p>
+                                    {editingPatient
+                                        ? "Update patient information"
+                                        : "Enter patient information"}
+                                </p>
+
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={
+                                    closeModal
+                                }
+                                disabled={
+                                    saving
+                                }
+                            >
+                                <FaTimes />
+                            </button>
+
                         </div>
 
-                        <h2>{modalTitle}</h2>
-                        <p>{modalSubtitle}</p>
+                        <form
+                            onSubmit={
+                                handleSubmit
+                            }
+                            className="patient-form"
+                        >
 
-                        {/* VIEW MODE */}
-                        {isViewMode ? (
-                            <div className="patient-details">
+                            <div className="form-grid">
 
-                                <div className="patient-detail-row">
-                                    <span className="patient-detail-label">
-                                        <FaUserInjured /> Patient ID
-                                    </span>
-                                    <span className="patient-detail-value patient-code-badge">
-                                        {patients.find((p) => p.id === activePatientId)?.patient_code || "-"}
-                                    </span>
+                                {/* NAME */}
+
+                                <div className="form-group full">
+
+                                    <label>
+                                        Full Name *
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={
+                                            formData.name
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        placeholder="Enter patient name"
+                                        required
+                                    />
+
                                 </div>
 
-                                <div className="patient-detail-row">
-                                    <span className="patient-detail-label">
-                                        <FaUserInjured /> Name
-                                    </span>
-                                    <span className="patient-detail-value">{formData.name}</span>
-                                </div>
+                                {/* GENDER */}
 
-                                <div className="patient-detail-row">
-                                    <span className="patient-detail-label">
-                                        <FaVenusMars /> Age / Gender
-                                    </span>
-                                    <span className="patient-detail-value">
-                                        {calculateAge(formData.date_of_birth)} yrs, {formData.gender}
-                                    </span>
-                                </div>
+                                <div className="form-group">
 
-                                <div className="patient-detail-row">
-                                    <span className="patient-detail-label">
-                                        <FaPhone /> Phone
-                                    </span>
-                                    <span className="patient-detail-value">
-                                        {formData.phone || "-"}
-                                    </span>
-                                </div>
+                                    <label>
+                                        Gender *
+                                    </label>
 
-                                <div className="patient-detail-row">
-                                    <span className="patient-detail-label">Email</span>
-                                    <span className="patient-detail-value">
-                                        {formData.email || "-"}
-                                    </span>
-                                </div>
-
-                                <div className="patient-detail-row">
-                                    <span className="patient-detail-label">
-                                        <FaHospital /> Blood Group
-                                    </span>
-                                    <span className="blood-group-badge">
-                                        {formData.blood_group || "-"}
-                                    </span>
-                                </div>
-
-                                <div className="patient-detail-row">
-                                    <span className="patient-detail-label">Address</span>
-                                    <span className="patient-detail-value">
-                                        {formData.address || "-"}
-                                    </span>
-                                </div>
-
-                                <div className="patient-detail-row">
-                                    <span className="patient-detail-label">Status</span>
-                                    <span className="patient-status active">Active</span>
-                                </div>
-
-                                <div className="patient-form-actions">
-                                    <button
-                                        type="button"
-                                        className="cancel-button"
-                                        onClick={closeModal}
+                                    <select
+                                        name="gender"
+                                        value={
+                                            formData.gender
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        required
                                     >
-                                        Close
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="save-patient-button"
-                                        onClick={() => {
-                                            const patient = patients.find(
-                                                (p) => p.id === activePatientId
-                                            );
-                                            if (patient) openEditModal(patient);
-                                        }}
+
+                                        <option value="male">
+                                            Male
+                                        </option>
+
+                                        <option value="female">
+                                            Female
+                                        </option>
+
+                                        <option value="other">
+                                            Other
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                                {/* DOB */}
+
+                                <div className="form-group">
+
+                                    <label>
+                                        Date of Birth
+                                    </label>
+
+                                    <input
+                                        type="date"
+                                        name="date_of_birth"
+                                        value={
+                                            formData.date_of_birth
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                    />
+
+                                </div>
+
+                                {/* PHONE */}
+
+                                <div className="form-group">
+
+                                    <label>
+                                        Phone
+                                    </label>
+
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        value={
+                                            formData.phone
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        placeholder="9876543210"
+                                    />
+
+                                </div>
+
+                                {/* EMAIL */}
+
+                                <div className="form-group">
+
+                                    <label>
+                                        Email
+                                    </label>
+
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={
+                                            formData.email
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        placeholder="patient@email.com"
+                                    />
+
+                                </div>
+
+                                {/* BLOOD GROUP */}
+
+                                <div className="form-group">
+
+                                    <label>
+                                        Blood Group
+                                    </label>
+
+                                    <select
+                                        name="blood_group"
+                                        value={
+                                            formData.blood_group
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
                                     >
-                                        <FaEdit /> Edit Patient
-                                    </button>
+
+                                        <option value="">
+                                            Select Blood Group
+                                        </option>
+
+                                        <option value="A+">
+                                            A+
+                                        </option>
+
+                                        <option value="A-">
+                                            A-
+                                        </option>
+
+                                        <option value="B+">
+                                            B+
+                                        </option>
+
+                                        <option value="B-">
+                                            B-
+                                        </option>
+
+                                        <option value="AB+">
+                                            AB+
+                                        </option>
+
+                                        <option value="AB-">
+                                            AB-
+                                        </option>
+
+                                        <option value="O+">
+                                            O+
+                                        </option>
+
+                                        <option value="O-">
+                                            O-
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                                {/* ADDRESS */}
+
+                                <div className="form-group full">
+
+                                    <label>
+                                        Address
+                                    </label>
+
+                                    <textarea
+                                        name="address"
+                                        value={
+                                            formData.address
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        rows="3"
+                                        placeholder="Enter patient address"
+                                    />
+
                                 </div>
 
                             </div>
 
-                        ) : (
+                            {/* FOOTER */}
 
-                            /* ADD / EDIT FORM */
-                            <form className="patient-form" onSubmit={handleSubmit}>
+                            <div className="patient-form-actions">
 
-                                <div className="form-group">
-                                    <label>Patient Name <span className="required">*</span></label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        placeholder="Enter patient name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
+                                <button
+                                    type="button"
+                                    className="cancel-button"
+                                    onClick={
+                                        closeModal
+                                    }
+                                    disabled={
+                                        saving
+                                    }
+                                >
+                                    Cancel
+                                </button>
 
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label>Date of Birth</label>
-                                        <input
-                                            type="date"
-                                            name="date_of_birth"
-                                            value={formData.date_of_birth}
-                                            onChange={handleChange}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Gender <span className="required">*</span></label>
-                                        <select
-                                            name="gender"
-                                            value={formData.gender}
-                                            onChange={handleChange}
-                                            required
-                                        >
-                                            <option value="male">Male</option>
-                                            <option value="female">Female</option>
-                                            <option value="other">Other</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                <button
+                                    type="submit"
+                                    className="save-button"
+                                    disabled={
+                                        saving
+                                    }
+                                >
+                                    {saving ? (
+                                        <>
+                                            <FaSyncAlt className="spin" />
 
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label>Phone Number</label>
-                                        <input
-                                            type="tel"
-                                            name="phone"
-                                            placeholder="Enter phone number"
-                                            value={formData.phone}
-                                            onChange={handleChange}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Blood Group</label>
-                                        <select
-                                            name="blood_group"
-                                            value={formData.blood_group}
-                                            onChange={handleChange}
-                                        >
-                                            <option value="">Select</option>
-                                            <option value="A+">A+</option>
-                                            <option value="A-">A-</option>
-                                            <option value="B+">B+</option>
-                                            <option value="B-">B-</option>
-                                            <option value="AB+">AB+</option>
-                                            <option value="AB-">AB-</option>
-                                            <option value="O+">O+</option>
-                                            <option value="O-">O-</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                            Saving...
+                                        </>
+                                    ) : (
+                                        <>
+                                            {editingPatient
+                                                ? "Update Patient"
+                                                : "Save Patient"}
+                                        </>
+                                    )}
+                                </button>
 
-                                <div className="form-group">
-                                    <label>Email</label>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        placeholder="Enter email address"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                    />
-                                </div>
+                            </div>
 
-                                <div className="form-group">
-                                    <label>Address</label>
-                                    <textarea
-                                        name="address"
-                                        placeholder="Enter patient address"
-                                        value={formData.address}
-                                        onChange={handleChange}
-                                        rows="3"
-                                    />
-                                </div>
+                        </form>
 
-                                {modalMode === "add" && (
-                                    <div className="auto-id-info">
-                                        🪪 Patient ID will be auto-generated
-                                        <strong> (P-{new Date().getFullYear()}XXXX)</strong>
-                                    </div>
-                                )}
-
-                                <div className="patient-form-actions">
-                                    <button
-                                        type="button"
-                                        className="cancel-button"
-                                        onClick={closeModal}
-                                        disabled={saving}
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        className="save-patient-button"
-                                        disabled={saving}
-                                    >
-                                        {saving ? (
-                                            <>
-                                                <FaSyncAlt className="refresh-spinning" />
-                                                Saving...
-                                            </>
-                                        ) : modalMode === "edit" ? (
-                                            <><FaEdit /> Save Changes</>
-                                        ) : (
-                                            <><FaPlus /> Add Patient</>
-                                        )}
-                                    </button>
-                                </div>
-
-                            </form>
-                        )}
                     </div>
+
                 </div>
             )}
+
+            {/* =================================================
+                VIEW PATIENT MODAL
+            ================================================= */}
+
+            {showViewModal &&
+                selectedPatient && (
+                    <div
+                        className="patient-modal-overlay"
+                        onMouseDown={(event) => {
+                            if (
+                                event.target ===
+                                event.currentTarget
+                            ) {
+                                closeViewModal();
+                            }
+                        }}
+                    >
+
+                        <div className="patient-view-modal">
+
+                            {/* HEADER */}
+
+                            <div className="patient-modal-header">
+
+                                <div>
+
+                                    <h2>
+                                        Patient Details
+                                    </h2>
+
+                                    <p>
+                                        Complete patient
+                                        information
+                                    </p>
+
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={
+                                        closeViewModal
+                                    }
+                                >
+                                    <FaTimes />
+                                </button>
+
+                            </div>
+
+                            {/* PROFILE */}
+
+                            <div className="patient-profile">
+
+                                <div className="large-patient-avatar">
+
+                                    {(
+                                        selectedPatient.name ||
+                                        "P"
+                                    )
+                                        .charAt(0)
+                                        .toUpperCase()}
+
+                                </div>
+
+                                <div>
+
+                                    <h3>
+                                        {
+                                            selectedPatient.name
+                                        }
+                                    </h3>
+
+                                    <p>
+                                        {selectedPatient.patient_code ||
+                                            `P-${selectedPatient.id}`}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            {/* DETAILS */}
+
+                            <div className="patient-detail-grid">
+
+                                <div className="patient-detail-item">
+
+                                    <FaUserInjured />
+
+                                    <div>
+                                        <span>
+                                            Patient ID
+                                        </span>
+
+                                        <strong>
+                                            {selectedPatient.patient_code ||
+                                                `P-${selectedPatient.id}`}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                                <div className="patient-detail-item">
+
+                                    <FaVenusMars />
+
+                                    <div>
+                                        <span>
+                                            Gender
+                                        </span>
+
+                                        <strong>
+                                            {getGenderText(
+                                                selectedPatient.gender
+                                            )}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                                <div className="patient-detail-item">
+
+                                    <FaCalendarAlt />
+
+                                    <div>
+                                        <span>
+                                            Date of Birth
+                                        </span>
+
+                                        <strong>
+                                            {formatDate(
+                                                selectedPatient.date_of_birth
+                                            )}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                                <div className="patient-detail-item">
+
+                                    <FaPhone />
+
+                                    <div>
+                                        <span>
+                                            Phone
+                                        </span>
+
+                                        <strong>
+                                            {selectedPatient.phone ||
+                                                "N/A"}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                                <div className="patient-detail-item">
+
+                                    <FaEnvelope />
+
+                                    <div>
+                                        <span>
+                                            Email
+                                        </span>
+
+                                        <strong>
+                                            {selectedPatient.email ||
+                                                "N/A"}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                                <div className="patient-detail-item">
+
+                                    <FaTint />
+
+                                    <div>
+                                        <span>
+                                            Blood Group
+                                        </span>
+
+                                        <strong>
+                                            {selectedPatient.blood_group ||
+                                                "N/A"}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                                <div className="patient-detail-item patient-address-item">
+
+                                    <FaMapMarkerAlt />
+
+                                    <div>
+                                        <span>
+                                            Address
+                                        </span>
+
+                                        <strong>
+                                            {selectedPatient.address ||
+                                                "N/A"}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            {/* FOOTER */}
+
+                            <div className="patient-view-footer">
+
+                                <button
+                                    type="button"
+                                    className="cancel-button"
+                                    onClick={
+                                        closeViewModal
+                                    }
+                                >
+                                    Close
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="save-button"
+                                    onClick={() => {
+                                        const patient =
+                                            selectedPatient;
+
+                                        closeViewModal();
+
+                                        openEditModal(
+                                            patient
+                                        );
+                                    }}
+                                >
+                                    <FaEdit />
+
+                                    Edit Patient
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                )}
 
         </main>
     );

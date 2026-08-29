@@ -1,8 +1,10 @@
 const { pool } = require("../config/db");
 
-// =====================================================
-// GENERATE TEST CODE
-// =====================================================
+/*
+=====================================================
+GENERATE LABORATORY TEST CODE
+=====================================================
+*/
 
 const generateTestCode = async () => {
     const currentYear = new Date().getFullYear();
@@ -22,6 +24,7 @@ const generateTestCode = async () => {
     }
 
     const lastCode = rows[0].test_code;
+
     const lastNumber = parseInt(
         lastCode.replace(prefix, ""),
         10
@@ -34,10 +37,11 @@ const generateTestCode = async () => {
     return `${prefix}${String(nextNumber).padStart(4, "0")}`;
 };
 
-
-// =====================================================
-// CREATE LABORATORY TEST
-// =====================================================
+/*
+=====================================================
+CREATE LABORATORY TEST
+=====================================================
+*/
 
 const createLaboratoryTest = async (test) => {
     const {
@@ -48,7 +52,8 @@ const createLaboratoryTest = async (test) => {
         status,
     } = test;
 
-    const test_code = await generateTestCode();
+    const test_code =
+        await generateTestCode();
 
     const [result] = await pool.query(
         `INSERT INTO laboratory_tests
@@ -74,10 +79,11 @@ const createLaboratoryTest = async (test) => {
     return result.insertId;
 };
 
-
-// =====================================================
-// GET ALL LABORATORY TESTS
-// =====================================================
+/*
+=====================================================
+GET ALL LABORATORY TESTS
+=====================================================
+*/
 
 const getAllLaboratoryTests = async () => {
     const [rows] = await pool.query(
@@ -98,10 +104,11 @@ const getAllLaboratoryTests = async () => {
     return rows;
 };
 
-
-// =====================================================
-// GET TEST BY ID
-// =====================================================
+/*
+=====================================================
+GET LABORATORY TEST BY ID
+=====================================================
+*/
 
 const getLaboratoryTestById = async (id) => {
     const [rows] = await pool.query(
@@ -124,10 +131,11 @@ const getLaboratoryTestById = async (id) => {
     return rows[0];
 };
 
-
-// =====================================================
-// UPDATE LABORATORY TEST
-// =====================================================
+/*
+=====================================================
+UPDATE LABORATORY TEST
+=====================================================
+*/
 
 const updateLaboratoryTest = async (id, test) => {
     const {
@@ -160,10 +168,11 @@ const updateLaboratoryTest = async (id, test) => {
     return result.affectedRows;
 };
 
-
-// =====================================================
-// DELETE LABORATORY TEST
-// =====================================================
+/*
+=====================================================
+DELETE LABORATORY TEST
+=====================================================
+*/
 
 const deleteLaboratoryTest = async (id) => {
     const [result] = await pool.query(
@@ -175,51 +184,73 @@ const deleteLaboratoryTest = async (id) => {
     return result.affectedRows;
 };
 
-
-// =====================================================
-// LABORATORY STATISTICS
-// =====================================================
+/*
+=====================================================
+LABORATORY STATISTICS
+=====================================================
+*/
 
 const getLaboratoryStats = async () => {
     const [rows] = await pool.query(
         `SELECT
             COUNT(*) AS totalTests,
 
-            SUM(
-                CASE
-                    WHEN status = 'active'
-                    THEN 1
-                    ELSE 0
-                END
+            COALESCE(
+                SUM(
+                    CASE
+                        WHEN status = 'active'
+                        THEN 1
+                        ELSE 0
+                    END
+                ),
+                0
             ) AS activeTests,
 
-            SUM(
-                CASE
-                    WHEN status = 'inactive'
-                    THEN 1
-                    ELSE 0
-                END
+            COALESCE(
+                SUM(
+                    CASE
+                        WHEN status = 'inactive'
+                        THEN 1
+                        ELSE 0
+                    END
+                ),
+                0
             ) AS inactiveTests,
 
-            SUM(
-                CASE
-                    WHEN DATE(created_at) = CURDATE()
-                    THEN 1
-                    ELSE 0
-                END
-            ) AS todayTests
+            COALESCE(
+                SUM(
+                    CASE
+                        WHEN status = 'active'
+                        THEN price
+                        ELSE 0
+                    END
+                ),
+                0
+            ) AS totalTestValue
 
          FROM laboratory_tests`
     );
 
     return {
-        totalTests: Number(rows[0].totalTests) || 0,
-        activeTests: Number(rows[0].activeTests) || 0,
-        inactiveTests: Number(rows[0].inactiveTests) || 0,
-        todayTests: Number(rows[0].todayTests) || 0,
+        totalTests:
+            Number(rows[0].totalTests) || 0,
+
+        activeTests:
+            Number(rows[0].activeTests) || 0,
+
+        inactiveTests:
+            Number(rows[0].inactiveTests) || 0,
+
+        totalTestValue:
+            Number(rows[0].totalTestValue) || 0,
     };
 };
 
+/*
+=====================================================
+EXPORT
+=====================================================
+*/
 
 module.exports = {
     createLaboratoryTest,

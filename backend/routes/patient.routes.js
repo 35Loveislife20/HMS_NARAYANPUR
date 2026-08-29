@@ -1,23 +1,85 @@
 const express = require("express");
 
 const {
-    addPatient,
     getPatients,
-    getPatient,
-    editPatient,
-    removePatient,
+    getPatientById,
+    createPatient,
+    updatePatient,
+    deletePatient,
 } = require("../controllers/patient.controller");
+
+const authMiddleware = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
-router.post("/", addPatient);
 
-router.get("/", getPatients);
+/*
+=====================================================
+AUTHENTICATION
+=====================================================
+*/
 
-router.get("/:id", getPatient);
+router.use(authMiddleware);
 
-router.put("/:id", editPatient);
 
-router.delete("/:id", removePatient);
+/*
+=====================================================
+GET ALL
+=====================================================
+*/
+
+router.get(
+    "/",
+    getPatients
+);
+
+
+/*
+=====================================================
+GET ONE
+=====================================================
+*/
+
+router.get(
+    "/:id",
+    getPatientById
+);
+
+
+/*
+=====================================================
+CREATE
+=====================================================
+*/
+
+router.post(
+    "/",
+    createPatient
+);
+
+
+/*
+=====================================================
+UPDATE
+=====================================================
+*/
+
+router.put(
+    "/:id",
+    updatePatient
+);
+
+
+/*
+=====================================================
+DELETE
+=====================================================
+*/
+
+router.delete(
+    "/:id",
+    deletePatient
+);
+
 
 module.exports = router;

@@ -1,166 +1,505 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import React from "react";
+
+import {
+  Navigate,
+  Route,
+  Routes,
+} from "react-router-dom";
+
+import { AuthProvider } from "./context/AuthContext";
+
+// =====================================================
+// PUBLIC PAGES
+// =====================================================
 
 import Home from "./pages/home/Home";
-import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+
+// =====================================================
+// PROTECTED PAGES
+// =====================================================
 
 import Dashboard from "./pages/dashboard/Dashboard";
 import Patients from "./pages/patients/Patients";
 import Doctors from "./pages/Doctors/Doctors";
 import Appointments from "./pages/Appointments/Appointments";
 import Departments from "./pages/Departments/Departments";
-import Pharmacy from "./pages/pharmacy/Pharmacy";
 import Laboratory from "./pages/Laboratory/Laboratory";
+import Pharmacy from "./pages/pharmacy/Pharmacy";
 import Billing from "./pages/Billing/Billing";
+import Reports from "./pages/reports/Reports";
+import Settings from "./pages/settings/Settings";
+import Users from "./pages/users/Users";
 
-import ProtectedRoute from "./components/common/ProtectedRoute";
+// =====================================================
+// LAYOUT
+// =====================================================
+
 import Layout from "./components/layout/Layout";
 
-function App() {
+// =====================================================
+// PROTECTED ROUTE
+// =====================================================
+
+import ProtectedRoute from "./components/common/ProtectedRoute";
+
+// =====================================================
+// EXACT 9 ROLES
+// =====================================================
+
+export const ROLES = {
+  SUPER_ADMIN: "super_admin",
+  HOSPITAL_ADMIN: "hospital_admin",
+  RECEPTIONIST: "receptionist",
+  DOCTOR: "doctor",
+  LAB_TECHNICIAN: "lab_technician",
+  PHARMACIST: "pharmacist",
+  ACCOUNTANT: "accountant",
+  NURSE: "nurse",
+  PATIENT: "patient",
+};
+
+// =====================================================
+// EXACT PERMISSION MATRIX
+// =====================================================
+
+export const PERMISSIONS = {
+
+  dashboard: [
+    ROLES.SUPER_ADMIN,
+    ROLES.HOSPITAL_ADMIN,
+    ROLES.RECEPTIONIST,
+    ROLES.DOCTOR,
+    ROLES.LAB_TECHNICIAN,
+    ROLES.PHARMACIST,
+    ROLES.ACCOUNTANT,
+    ROLES.NURSE,
+    ROLES.PATIENT,
+  ],
+
+  patients: [
+    ROLES.SUPER_ADMIN,
+    ROLES.HOSPITAL_ADMIN,
+    ROLES.RECEPTIONIST,
+    ROLES.DOCTOR,
+    ROLES.NURSE,
+  ],
+
+  doctors: [
+    ROLES.SUPER_ADMIN,
+    ROLES.HOSPITAL_ADMIN,
+  ],
+
+  appointments: [
+    ROLES.SUPER_ADMIN,
+    ROLES.HOSPITAL_ADMIN,
+    ROLES.RECEPTIONIST,
+    ROLES.DOCTOR,
+    ROLES.NURSE,
+    ROLES.PATIENT,
+  ],
+
+  departments: [
+    ROLES.SUPER_ADMIN,
+    ROLES.HOSPITAL_ADMIN,
+    ROLES.DOCTOR,
+    ROLES.NURSE,
+  ],
+
+  laboratory: [
+    ROLES.SUPER_ADMIN,
+    ROLES.HOSPITAL_ADMIN,
+    ROLES.DOCTOR,
+    ROLES.LAB_TECHNICIAN,
+  ],
+
+  pharmacy: [
+    ROLES.SUPER_ADMIN,
+    ROLES.HOSPITAL_ADMIN,
+    ROLES.PHARMACIST,
+    ROLES.ACCOUNTANT,
+  ],
+
+  billing: [
+    ROLES.SUPER_ADMIN,
+    ROLES.HOSPITAL_ADMIN,
+    ROLES.PHARMACIST,
+    ROLES.ACCOUNTANT,
+  ],
+
+  reports: [
+    ROLES.SUPER_ADMIN,
+    ROLES.HOSPITAL_ADMIN,
+    ROLES.DOCTOR,
+    ROLES.LAB_TECHNICIAN,
+    ROLES.PHARMACIST,
+    ROLES.ACCOUNTANT,
+  ],
+
+  settings: [
+    ROLES.SUPER_ADMIN,
+    ROLES.HOSPITAL_ADMIN,
+  ],
+
+  users: [
+    ROLES.SUPER_ADMIN,
+  ],
+};
+
+// =====================================================
+// ACCESS DENIED
+// =====================================================
+
+const AccessDenied = () => {
+
   return (
-    <Routes>
+    <div
+      style={{
+        minHeight: "100vh",
+        width: "100%",
+        background: "#020806",
+        color: "#ffffff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "30px",
+        boxSizing: "border-box",
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
 
-      {/* =====================================================
-          HOME
-      ===================================================== */}
-      <Route
-        path="/"
-        element={<Home />}
-      />
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "520px",
+          padding: "40px",
+          textAlign: "center",
+          borderRadius: "20px",
+          border: "1px solid rgba(0,255,55,.25)",
+          background: "rgba(5,20,12,.95)",
+          boxShadow:
+            "0 25px 70px rgba(0,0,0,.5)",
+          boxSizing: "border-box",
+        }}
+      >
 
-      {/* =====================================================
-          LOGIN
-      ===================================================== */}
-      <Route
-        path="/login"
-        element={<Login />}
-      />
+        <div
+          style={{
+            fontSize: "60px",
+            marginBottom: "15px",
+          }}
+        >
+          🔒
+        </div>
 
-      {/* =====================================================
-          DASHBOARD
-      ===================================================== */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <Layout>
-              <Dashboard />
-            </Layout>
-          </ProtectedRoute>
-        }
-      />
+        <h1
+          style={{
+            margin: "0 0 12px",
+            color: "#00ff37",
+            fontSize: "30px",
+          }}
+        >
+          Access Denied
+        </h1>
 
-      {/* =====================================================
-          PATIENTS
-      ===================================================== */}
-      <Route
-        path="/patients"
-        element={
-          <ProtectedRoute>
-            <Layout>
-              <Patients />
-            </Layout>
-          </ProtectedRoute>
-        }
-      />
+        <p
+          style={{
+            margin: "0 0 25px",
+            color: "#9aaea3",
+            lineHeight: 1.6,
+            fontSize: "14px",
+          }}
+        >
+          You do not have permission to access
+          this section of HMS.
+        </p>
 
-      {/* =====================================================
-          DOCTORS
-      ===================================================== */}
-      <Route
-        path="/doctors"
-        element={
-          <ProtectedRoute>
-            <Layout>
-              <Doctors />
-            </Layout>
-          </ProtectedRoute>
-        }
-      />
+        <button
+          type="button"
+          onClick={() =>
+            window.history.back()
+          }
+          style={{
+            border: "1px solid rgba(0,255,55,.35)",
+            borderRadius: "10px",
+            padding: "11px 20px",
+            background:
+              "rgba(0,255,55,.08)",
+            color: "#00ff37",
+            cursor: "pointer",
+            fontWeight: 700,
+          }}
+        >
+          Go Back
+        </button>
 
-      {/* =====================================================
-          APPOINTMENTS
-      ===================================================== */}
-      <Route
-        path="/appointments"
-        element={
-          <ProtectedRoute>
-            <Layout>
-              <Appointments />
-            </Layout>
-          </ProtectedRoute>
-        }
-      />
+      </div>
 
-      {/* =====================================================
-          DEPARTMENTS
-      ===================================================== */}
-      <Route
-        path="/departments"
-        element={
-          <ProtectedRoute>
-            <Layout>
-              <Departments />
-            </Layout>
-          </ProtectedRoute>
-        }
-      />
+    </div>
+  );
+};
 
-      {/* =====================================================
-          PHARMACY
-      ===================================================== */}
-      <Route
-        path="/pharmacy"
-        element={
-          <ProtectedRoute>
-            <Layout>
-              <Pharmacy />
-            </Layout>
-          </ProtectedRoute>
-        }
-      />
+// =====================================================
+// PROTECTED PAGE
+// =====================================================
 
-      {/* =====================================================
-          LABORATORY
-      ===================================================== */}
-      <Route
-        path="/laboratory"
-        element={
-          <ProtectedRoute>
-            <Layout>
-              <Laboratory />
-            </Layout>
-          </ProtectedRoute>
-        }
-      />
+const ProtectedPage = ({
+  element,
+  roles,
+}) => {
 
-      {/* =====================================================
-          BILLING
-      ===================================================== */}
-      <Route
-        path="/billing"
-        element={
-          <ProtectedRoute>
-            <Layout>
-              <Billing />
-            </Layout>
-          </ProtectedRoute>
-        }
-      />
+  return (
+    <ProtectedRoute
+      allowedRoles={roles}
+      fallback={<AccessDenied />}
+    >
+      {element}
+    </ProtectedRoute>
+  );
+};
 
-      {/* =====================================================
-          UNKNOWN URL
-      ===================================================== */}
-      <Route
-        path="*"
-        element={
-          <Navigate
-            to="/"
-            replace
+// =====================================================
+// APP
+// IMPORTANT:
+// BrowserRouter must exist only once in main.jsx
+// =====================================================
+
+function App() {
+
+  return (
+
+    <AuthProvider>
+
+      <Routes>
+
+        {/* =================================================
+                    PUBLIC ROUTES
+                ================================================= */}
+
+        <Route
+          path="/"
+          element={<Home />}
+        />
+
+        <Route
+          path="/register"
+          element={<Register />}
+        />
+
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
+
+        {/* =================================================
+                    RESET PASSWORD
+                    PUBLIC ROUTE
+                ================================================= */}
+
+        <Route
+          path="/reset-password"
+          element={<ResetPassword />}
+        />
+
+
+        {/* =================================================
+                    PROTECTED LAYOUT
+                ================================================= */}
+
+        <Route
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+
+          {/* =============================================
+                        DASHBOARD
+                    ============================================= */}
+
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedPage
+                roles={PERMISSIONS.dashboard}
+                element={<Dashboard />}
+              />
+            }
           />
-        }
-      />
 
-    </Routes>
+
+          {/* =============================================
+                        PATIENTS
+                    ============================================= */}
+
+          <Route
+            path="/patients"
+            element={
+              <ProtectedPage
+                roles={PERMISSIONS.patients}
+                element={<Patients />}
+              />
+            }
+          />
+
+
+          {/* =============================================
+                        DOCTORS
+                    ============================================= */}
+
+          <Route
+            path="/doctors"
+            element={
+              <ProtectedPage
+                roles={PERMISSIONS.doctors}
+                element={<Doctors />}
+              />
+            }
+          />
+
+
+          {/* =============================================
+                        APPOINTMENTS
+                    ============================================= */}
+
+          <Route
+            path="/appointments"
+            element={
+              <ProtectedPage
+                roles={PERMISSIONS.appointments}
+                element={<Appointments />}
+              />
+            }
+          />
+
+
+          {/* =============================================
+                        DEPARTMENTS
+                    ============================================= */}
+
+          <Route
+            path="/departments"
+            element={
+              <ProtectedPage
+                roles={PERMISSIONS.departments}
+                element={<Departments />}
+              />
+            }
+          />
+
+
+          {/* =============================================
+                        LABORATORY
+                    ============================================= */}
+
+          <Route
+            path="/laboratory"
+            element={
+              <ProtectedPage
+                roles={PERMISSIONS.laboratory}
+                element={<Laboratory />}
+              />
+            }
+          />
+
+
+          {/* =============================================
+                        PHARMACY
+                    ============================================= */}
+
+          <Route
+            path="/pharmacy"
+            element={
+              <ProtectedPage
+                roles={PERMISSIONS.pharmacy}
+                element={<Pharmacy />}
+              />
+            }
+          />
+
+
+          {/* =============================================
+                        BILLING
+                    ============================================= */}
+
+          <Route
+            path="/billing"
+            element={
+              <ProtectedPage
+                roles={PERMISSIONS.billing}
+                element={<Billing />}
+              />
+            }
+          />
+
+
+          {/* =============================================
+                        REPORTS
+                    ============================================= */}
+
+          <Route
+            path="/reports"
+            element={
+              <ProtectedPage
+                roles={PERMISSIONS.reports}
+                element={<Reports />}
+              />
+            }
+          />
+
+
+          {/* =============================================
+                        SETTINGS
+                    ============================================= */}
+
+          <Route
+            path="/settings"
+            element={
+              <ProtectedPage
+                roles={PERMISSIONS.settings}
+                element={<Settings />}
+              />
+            }
+          />
+
+
+          {/* =============================================
+                        USER MANAGEMENT
+                    ============================================= */}
+
+          <Route
+            path="/users"
+            element={
+              <ProtectedPage
+                roles={PERMISSIONS.users}
+                element={<Users />}
+              />
+            }
+          />
+
+        </Route>
+
+
+        {/* =================================================
+                    FALLBACK
+                ================================================= */}
+
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to="/"
+              replace
+            />
+          }
+        />
+
+      </Routes>
+
+    </AuthProvider>
   );
 }
 

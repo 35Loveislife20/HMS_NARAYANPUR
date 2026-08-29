@@ -11,7 +11,11 @@ const {
     getLaboratoryStats,
 } = require("../controllers/laboratory.controller");
 
-// GET all laboratory tests
+// =====================================================
+// LABORATORY TEST ROUTES
+// =====================================================
+
+// GET all tests
 router.get("/", getLaboratoryTests);
 
 // GET statistics
@@ -20,13 +24,13 @@ router.get("/stats", getLaboratoryStats);
 // GET single test
 router.get("/:id", getLaboratoryTest);
 
-// CREATE
+// CREATE test
 router.post("/", createLaboratoryTest);
 
-// UPDATE
+// UPDATE test
 router.put("/:id", updateLaboratoryTest);
 
-// DELETE
+// DELETE test
 router.delete("/:id", deleteLaboratoryTest);
 
 module.exports = router;

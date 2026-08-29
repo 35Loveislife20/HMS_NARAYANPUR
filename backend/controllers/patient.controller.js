@@ -1,21 +1,88 @@
 const {
-    createPatient,
     getAllPatients,
-    getPatientById,
-    updatePatient,
-    deletePatient,
-    getPatientStats,
+    getPatientByIdModel,
+    createPatientModel,
+    updatePatientModel,
+    deletePatientModel,
 } = require("../models/patient.model");
 
-const { sendPatientRegistrationSMS } = require("../services/sms.service");
+/*
+=====================================================
+GET ALL PATIENTS
+GET /api/patients
+=====================================================
+*/
 
-// =====================================================
-// ADD PATIENT
-// =====================================================
+const getPatients = async (req, res) => {
+    try {
+        const patients = await getAllPatients();
 
-const addPatient = async (req, res) => {
+        return res.status(200).json({
+            success: true,
+            count: patients.length,
+            patients,
+        });
+
+    } catch (error) {
+        console.error("GET PATIENTS ERROR:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to load patients",
+            error: error.message,
+        });
+    }
+};
+
+
+/*
+=====================================================
+GET PATIENT BY ID
+GET /api/patients/:id
+=====================================================
+*/
+
+const getPatientById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const patient = await getPatientByIdModel(id);
+
+        if (!patient) {
+            return res.status(404).json({
+                success: false,
+                message: "Patient not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            patient,
+        });
+
+    } catch (error) {
+        console.error("GET PATIENT ERROR:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to load patient",
+            error: error.message,
+        });
+    }
+};
+
+
+/*
+=====================================================
+CREATE PATIENT
+POST /api/patients
+=====================================================
+*/
+
+const createPatient = async (req, res) => {
     try {
         const {
+            patient_code,
             name,
             gender,
             date_of_birth,
@@ -25,6 +92,7 @@ const addPatient = async (req, res) => {
             blood_group,
         } = req.body;
 
+
         if (!name || !gender) {
             return res.status(400).json({
                 success: false,
@@ -32,7 +100,23 @@ const addPatient = async (req, res) => {
             });
         }
 
-        const patientId = await createPatient({
+
+        const validGender = [
+            "male",
+            "female",
+            "other",
+        ];
+
+        if (!validGender.includes(gender)) {
+            return res.status(400).json({
+                success: false,
+                message: "Gender must be male, female or other",
+            });
+        }
+
+
+        const result = await createPatientModel({
+            patient_code,
             name,
             gender,
             date_of_birth,
@@ -42,14 +126,11 @@ const addPatient = async (req, res) => {
             blood_group,
         });
 
-        const patient = await getPatientById(patientId);
 
-        // SMS bhejo agar phone number hai
-        if (patient && patient.phone) {
-            sendPatientRegistrationSMS(patient).catch((err) =>
-                console.error("SMS failed:", err)
-            );
-        }
+        const patient = await getPatientByIdModel(
+            result.insertId
+        );
+
 
         return res.status(201).json({
             success: true,
@@ -58,142 +139,170 @@ const addPatient = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Add Patient Error:", error);
+        console.error("CREATE PATIENT ERROR:", error);
+
+        if (error.code === "ER_DUP_ENTRY") {
+            return res.status(409).json({
+                success: false,
+                message: "Patient code already exists",
+            });
+        }
 
         return res.status(500).json({
             success: false,
-            message: "Server error",
+            message: "Unable to create patient",
+            error: error.message,
         });
     }
 };
 
-// =====================================================
-// GET PATIENTS
-// =====================================================
 
-const getPatients = async (req, res) => {
+/*
+=====================================================
+UPDATE PATIENT
+PUT /api/patients/:id
+=====================================================
+*/
+
+const updatePatient = async (req, res) => {
     try {
-        const patients = await getAllPatients();
-        const stats = await getPatientStats();
+        const { id } = req.params;
 
-        return res.status(200).json({
-            success: true,
-            count: patients.length,
-            stats: {
-                totalPatients: stats.totalPatients,
-                todayPatients: stats.todayPatients,
-                newPatients: stats.newPatients,
-            },
-            patients,
-        });
-    } catch (error) {
-        console.error("Get Patients Error:", error);
+        const existingPatient =
+            await getPatientByIdModel(id);
 
-        return res.status(500).json({
-            success: false,
-            message: "Server error",
-        });
-    }
-};
-
-// =====================================================
-// GET SINGLE PATIENT
-// =====================================================
-
-const getPatient = async (req, res) => {
-    try {
-        const patient = await getPatientById(req.params.id);
-
-        if (!patient) {
+        if (!existingPatient) {
             return res.status(404).json({
                 success: false,
                 message: "Patient not found",
             });
         }
 
-        return res.status(200).json({
-            success: true,
-            patient,
-        });
-    } catch (error) {
-        console.error("Get Patient Error:", error);
 
-        return res.status(500).json({
-            success: false,
-            message: "Server error",
-        });
-    }
-};
+        const {
+            patient_code,
+            name,
+            gender,
+            date_of_birth,
+            phone,
+            email,
+            address,
+            blood_group,
+        } = req.body;
 
-// =====================================================
-// UPDATE PATIENT
-// =====================================================
 
-const editPatient = async (req, res) => {
-    try {
-        const patient = await getPatientById(req.params.id);
-
-        if (!patient) {
-            return res.status(404).json({
+        if (!name || !gender) {
+            return res.status(400).json({
                 success: false,
-                message: "Patient not found",
+                message: "Name and gender are required",
             });
         }
 
-        await updatePatient(req.params.id, req.body);
 
-        const updatedPatient = await getPatientById(req.params.id);
+        const validGender = [
+            "male",
+            "female",
+            "other",
+        ];
+
+        if (!validGender.includes(gender)) {
+            return res.status(400).json({
+                success: false,
+                message: "Gender must be male, female or other",
+            });
+        }
+
+
+        await updatePatientModel(
+            id,
+            {
+                patient_code,
+                name,
+                gender,
+                date_of_birth,
+                phone,
+                email,
+                address,
+                blood_group,
+            }
+        );
+
+
+        const patient =
+            await getPatientByIdModel(id);
+
 
         return res.status(200).json({
             success: true,
             message: "Patient updated successfully",
-            patient: updatedPatient,
+            patient,
         });
+
     } catch (error) {
-        console.error("Update Patient Error:", error);
+        console.error("UPDATE PATIENT ERROR:", error);
+
+        if (error.code === "ER_DUP_ENTRY") {
+            return res.status(409).json({
+                success: false,
+                message: "Patient code already exists",
+            });
+        }
 
         return res.status(500).json({
             success: false,
-            message: "Server error",
+            message: "Unable to update patient",
+            error: error.message,
         });
     }
 };
 
-// =====================================================
-// DELETE PATIENT
-// =====================================================
 
-const removePatient = async (req, res) => {
+/*
+=====================================================
+DELETE PATIENT
+DELETE /api/patients/:id
+=====================================================
+*/
+
+const deletePatient = async (req, res) => {
     try {
-        const patient = await getPatientById(req.params.id);
+        const { id } = req.params;
 
-        if (!patient) {
+        const existingPatient =
+            await getPatientByIdModel(id);
+
+        if (!existingPatient) {
             return res.status(404).json({
                 success: false,
                 message: "Patient not found",
             });
         }
 
-        await deletePatient(req.params.id);
+
+        await deletePatientModel(id);
+
 
         return res.status(200).json({
             success: true,
             message: "Patient deleted successfully",
         });
+
     } catch (error) {
-        console.error("Delete Patient Error:", error);
+        console.error("DELETE PATIENT ERROR:", error);
 
         return res.status(500).json({
             success: false,
-            message: "Server error",
+            message: "Unable to delete patient",
+            error: error.message,
         });
     }
 };
 
+
 module.exports = {
-    addPatient,
     getPatients,
-    getPatient,
-    editPatient,
-    removePatient,
+    getPatientById,
+    createPatient,
+    updatePatient,
+    deletePatient,
 };

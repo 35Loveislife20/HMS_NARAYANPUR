@@ -1,6 +1,7 @@
 /* =========================================================
    HMS BILLING PAGE
-   Dark Dashboard + Professional Hospital Invoice
+   DARK DASHBOARD + PROFESSIONAL A4 HOSPITAL INVOICE
+   COMPLETE REPLACEMENT CSS
 ========================================================= */
 
 .billing-page {
@@ -97,7 +98,7 @@
     justify-content: center;
 
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .billing-refresh:hover {
@@ -264,7 +265,7 @@
     font-size: 13px;
 }
 
-.billing-panel-header>span {
+.billing-panel-header > span {
     color: #8ea39a;
     font-size: 13px;
 }
@@ -295,7 +296,7 @@
     gap: 10px;
 }
 
-.billing-search>svg {
+.billing-search > svg {
     color: #6f847a;
     flex-shrink: 0;
 }
@@ -606,7 +607,7 @@
     text-align: center;
 }
 
-.billing-page-empty>svg {
+.billing-page-empty > svg {
     margin-bottom: 10px;
     color: rgba(0, 255, 55, 0.65);
     font-size: 42px;
@@ -918,8 +919,6 @@
 
     width: 210mm;
     height: 297mm;
-    min-height: 297mm;
-    max-height: 297mm;
 
     box-sizing: border-box;
     overflow: hidden;
@@ -936,17 +935,17 @@
 }
 
 /* =========================================================
-   FULL PAGE DOCTOR IMAGE WATERMARK
+   DOCTOR WATERMARK
 ========================================================= */
 
 .print-doctor-watermark {
     position: absolute;
 
     left: 50%;
-    top: 63%;
+    top: 61%;
 
     width: 210mm;
-    height: 240mm;
+    height: 225mm;
 
     transform: translate(-50%, -50%);
 
@@ -955,21 +954,21 @@
     justify-content: center;
 
     z-index: 1;
-    pointer-events: none;
 
+    pointer-events: none;
     overflow: visible;
 }
 
 .print-doctor-watermark img {
-    width: 210mm;
-    height: 210mm;
+    width: 145mm;
+    height: 145mm;
 
     max-width: none;
     max-height: none;
 
     object-fit: contain;
 
-    opacity: 0.055;
+    opacity: 0.045;
 
     transform: rotate(-8deg);
 
@@ -983,9 +982,10 @@
 .print-hospital-header {
     position: relative;
 
+    width: 100%;
     min-height: 47mm;
 
-    padding: 12mm 15mm 9mm;
+    padding: 11mm 15mm 9mm;
 
     box-sizing: border-box;
 
@@ -994,10 +994,12 @@
     justify-content: space-between;
 
     background:
-        linear-gradient(135deg,
+        linear-gradient(
+            135deg,
             #f8fdff 0%,
             #eef9fc 52%,
-            #ffffff 100%);
+            #ffffff 100%
+        );
 
     border-bottom: 1px solid #d8e5ed;
 
@@ -1016,11 +1018,13 @@
     height: 3px;
 
     background:
-        linear-gradient(90deg,
+        linear-gradient(
+            90deg,
             #0b4d9a 0%,
             #087cc1 40%,
             #0ca7c7 70%,
-            #13c2d5 100%);
+            #13c2d5 100%
+        );
 }
 
 /* =========================================================
@@ -1038,7 +1042,6 @@
     height: 27mm;
 
     object-fit: contain;
-
     flex-shrink: 0;
 }
 
@@ -1082,12 +1085,11 @@
 .print-invoice-box {
     min-width: 40mm;
 
-    padding: 7mm 8mm;
+    padding: 6mm 8mm;
 
     box-sizing: border-box;
 
     border: 2px solid #173f89;
-
     background: rgba(255, 255, 255, 0.94);
 
     text-align: center;
@@ -1121,15 +1123,16 @@
 
 /* =========================================================
    PATIENT / BILL INFORMATION
-   FULLY TRANSPARENT
 ========================================================= */
 
 .print-patient-section {
     position: relative;
 
+    width: 100%;
+
     margin: 0;
 
-    padding: 8mm 15mm 6mm;
+    padding: 7mm 15mm 5mm;
 
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1138,29 +1141,26 @@
 
     box-sizing: border-box;
 
-    /* IMPORTANT: TRANSPARENT */
     background: transparent;
 
     z-index: 5;
 }
 
-.print-patient-section>div {
-    position: relative;
+.print-patient-section > div {
+    min-height: 25mm;
 
-    min-height: 27mm;
-
-    padding: 4mm 5mm;
+    padding: 3mm 5mm;
 
     border-left: 3px solid #0a91c3;
 
-    /* IMPORTANT: NO WHITE BOX */
-    background: transparent;
+    box-sizing: border-box;
 
+    background: transparent;
     box-shadow: none;
 }
 
 .print-patient-section h3 {
-    margin: 0 0 7px;
+    margin: 0 0 6px;
 
     color: #087cc1;
 
@@ -1172,12 +1172,12 @@
 }
 
 .print-patient-section p {
-    margin: 4px 0;
+    margin: 3px 0;
 
     color: #344d78;
 
     font-size: 10px;
-    line-height: 1.45;
+    line-height: 1.4;
 }
 
 .print-patient-section p strong {
@@ -1190,7 +1190,6 @@
 
 /* =========================================================
    BILL TABLE
-   FULLY TRANSPARENT
 ========================================================= */
 
 .print-bill-table {
@@ -1204,16 +1203,14 @@
 
     border-collapse: collapse;
 
-    /* IMPORTANT: TRANSPARENT */
     background: transparent;
 }
 
 .print-bill-table th {
-    padding: 9px 10px;
+    padding: 8px 10px;
 
     border: 0;
 
-    /* IMPORTANT: TRANSPARENT HEADER */
     background: transparent;
 
     color: #0875b8;
@@ -1228,7 +1225,7 @@
 }
 
 .print-bill-table td {
-    padding: 8px 10px;
+    padding: 7px 10px;
 
     border-bottom: 1px solid rgba(48, 72, 117, 0.20);
 
@@ -1236,11 +1233,9 @@
 
     font-size: 10px;
 
-    /* IMPORTANT: TRANSPARENT */
     background: transparent;
 }
 
-/* Remove all row backgrounds */
 .print-bill-table tbody tr:nth-child(even) td,
 .print-bill-table tbody tr:nth-child(odd) td {
     background: transparent;
@@ -1270,9 +1265,9 @@
 
     width: calc(100% - 30mm);
 
-    margin: 6mm 15mm 0;
+    margin: 5mm 15mm 0;
 
-    padding: 5mm 7mm;
+    padding: 4mm 7mm;
 
     box-sizing: border-box;
 
@@ -1287,9 +1282,11 @@
     gap: 15mm;
 
     background:
-        linear-gradient(90deg,
+        linear-gradient(
+            90deg,
             #f8fcfe,
-            #e8f6fa);
+            #e8f6fa
+        );
 
     color: #183b72;
 }
@@ -1297,6 +1294,7 @@
 .print-total-row span {
     font-size: 14px;
     font-weight: 900;
+
     text-transform: uppercase;
 }
 
@@ -1320,11 +1318,13 @@
 
     z-index: 5;
 
-    margin: 5mm 15mm 0;
+    margin: 4mm 15mm 0;
 
     padding: 3mm 4mm;
 
     border: 1px solid #cbdbe6;
+
+    box-sizing: border-box;
 
     background: #f8fcfe;
 }
@@ -1341,11 +1341,12 @@
     color: #344c80;
 
     font-size: 9px;
-    line-height: 1.4;
+    line-height: 1.35;
 }
 
 /* =========================================================
    FOOTER
+   PROFESSIONAL HOSPITAL STYLE
 ========================================================= */
 
 .print-footer {
@@ -1355,92 +1356,42 @@
     right: 0;
     bottom: 0;
 
+    width: 100%;
+    height: 42mm;
     min-height: 42mm;
 
-    padding: 7mm 15mm 6mm;
+    padding: 5.5mm 15mm 4mm;
 
     box-sizing: border-box;
 
-    background:
-        linear-gradient(135deg,
-            #e8f9fc 0%,
-            #9edfea 35%,
-            #38bfd6 72%,
-            #0ca6c5 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    overflow: hidden;
 
     text-align: center;
 
-    z-index: 5;
-}
+    background:
+        linear-gradient(
+            135deg,
+            #e6f9fc 0%,
+            #b6e9f0 18%,
+            #72d5e2 43%,
+            #28bfd3 72%,
+            #08a9c4 100%
+        );
 
-.print-footer-brand {
-    position: relative;
+    border-top: 1px solid rgba(8, 124, 193, 0.25);
 
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    gap: 4mm;
-
-    z-index: 3;
-}
-
-.print-footer-brand img {
-    width: 14mm;
-    height: 14mm;
-
-    object-fit: contain;
-}
-
-.print-footer-brand div {
-    text-align: left;
-}
-
-.print-footer-brand strong {
-    display: block;
-
-    color: #08447e;
-
-    font-size: 11px;
-    font-weight: 900;
-}
-
-.print-footer-brand span {
-    display: block;
-
-    margin-top: 2px;
-
-    color: #23617e;
-
-    font-size: 8.5px;
-}
-
-.print-footer p {
-    position: relative;
-
-    margin: 5mm 0 2px;
+    z-index: 20;
 
     color: #ffffff;
-
-    font-size: 10px;
-    font-weight: 800;
-
-    z-index: 3;
-}
-
-.print-footer>span {
-    position: relative;
-
-    color: #eaffff;
-
-    font-size: 8px;
-
-    z-index: 3;
 }
 
 /* =========================================================
-   FOOTER WATERMARK
+   FOOTER TOP ACCENT
 ========================================================= */
 
 .print-footer::before {
@@ -1448,27 +1399,170 @@
 
     position: absolute;
 
-    left: 50%;
-    top: 50%;
+    left: 0;
+    right: 0;
+    top: 0;
 
-    width: 48mm;
-    height: 48mm;
+    height: 2px;
 
-    transform: translate(-50%, -50%);
+    background:
+        linear-gradient(
+            90deg,
+            #0b4d9a 0%,
+            #087cc1 30%,
+            #0cc3d8 65%,
+            #00e0dc 100%
+        );
 
-    background-image: url("/hms-logo.png");
-
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-
-    opacity: 0.08;
+    opacity: 0.95;
 
     pointer-events: none;
 }
 
 /* =========================================================
-   FOOTER SIGNATURE
+   FOOTER WATERMARK
+========================================================= */
+
+.print-footer-watermark {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 45mm;
+    height: 45mm;
+
+    transform: translate(-50%, -50%);
+
+    object-fit: contain;
+
+    opacity: 0.055;
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+/* =========================================================
+   FOOTER BRAND
+========================================================= */
+
+.print-footer-brand {
+    position: relative;
+
+    z-index: 5;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 3.5mm;
+
+    margin: 0;
+}
+
+/* =========================================================
+   FOOTER LOGO
+========================================================= */
+
+.print-footer-brand img {
+    width: 13mm;
+    height: 13mm;
+
+    object-fit: contain;
+
+    flex-shrink: 0;
+
+    filter:
+        drop-shadow(
+            0 1px 2px rgba(0, 70, 110, 0.18)
+        );
+}
+
+/* =========================================================
+   FOOTER BRAND TEXT
+========================================================= */
+
+.print-footer-brand div {
+    text-align: left;
+
+    line-height: 1.15;
+}
+
+.print-footer-brand strong {
+    display: block;
+
+    margin: 0;
+
+    color: #06477f;
+
+    font-size: 10.5px;
+    font-weight: 900;
+
+    letter-spacing: 0.25px;
+}
+
+.print-footer-brand span {
+    display: block;
+
+    margin-top: 1.5px;
+
+    color: #185c79;
+
+    font-size: 7.5px;
+    font-weight: 700;
+}
+
+/* =========================================================
+   FOOTER THANK YOU
+========================================================= */
+
+.print-footer p {
+    position: relative;
+
+    z-index: 5;
+
+    margin: 4.2mm 0 0;
+
+    color: #ffffff;
+
+    font-size: 8.5px;
+
+    line-height: 1.2;
+
+    font-weight: 800;
+
+    text-shadow:
+        0 1px 2px rgba(0, 80, 120, 0.18);
+}
+
+/* =========================================================
+   FOOTER CONTACT / TAGLINE
+========================================================= */
+
+.print-footer > span {
+    position: relative;
+
+    z-index: 5;
+
+    display: block;
+
+    margin-top: 1.5mm;
+
+    color: #eaffff;
+
+    font-size: 6.8px;
+
+    line-height: 1.2;
+
+    font-weight: 600;
+
+    letter-spacing: 0.05px;
+}
+
+/* =========================================================
+   FOOTER SIGNATURE AREA
 ========================================================= */
 
 .print-footer::after {
@@ -1479,18 +1573,62 @@
 
     left: 15mm;
     right: 15mm;
-    bottom: 6mm;
+    bottom: 3.5mm;
 
-    color: #14517d;
+    z-index: 6;
 
-    font-size: 8px;
-    font-weight: 700;
+    color: #07537b;
+
+    font-size: 6.7px;
+
+    line-height: 1;
+
+    font-weight: 800;
 
     white-space: pre;
 
     text-align: center;
 
-    letter-spacing: 0.2px;
+    letter-spacing: 0.1px;
+
+    border-top: 1px solid rgba(7, 83, 123, 0.20);
+
+    padding-top: 2.5mm;
+}
+
+/* =========================================================
+   FOOTER DECORATIVE CIRCLES
+========================================================= */
+
+.print-footer .footer-decoration-left,
+.print-footer .footer-decoration-right {
+    position: absolute;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    z-index: 1;
+}
+
+.print-footer .footer-decoration-left {
+    width: 32mm;
+    height: 32mm;
+
+    left: -17mm;
+    bottom: -18mm;
+
+    background: rgba(255, 255, 255, 0.10);
+}
+
+.print-footer .footer-decoration-right {
+    width: 42mm;
+    height: 42mm;
+
+    right: -21mm;
+    top: -22mm;
+
+    background: rgba(255, 255, 255, 0.09);
 }
 
 /* =========================================================
@@ -1498,8 +1636,7 @@
 ========================================================= */
 
 .refresh-spin {
-    animation:
-        billing-spin 0.9s linear infinite;
+    animation: billing-spin 0.9s linear infinite;
 }
 
 @keyframes billing-spin {
@@ -1517,12 +1654,14 @@
 ========================================================= */
 
 @media (max-width: 1100px) {
+
     .billing-summary-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 768px) {
+
     .billing-page {
         padding: 20px;
     }
@@ -1544,7 +1683,7 @@
     }
 
     .billing-summary-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .add-billing-button span {
@@ -1558,6 +1697,7 @@
 }
 
 @media (max-width: 600px) {
+
     .billing-page {
         padding: 15px;
     }
@@ -1607,6 +1747,7 @@
 
 /* =========================================================
    PRINT MEDIA
+   A4 PORTRAIT / SINGLE PAGE
 ========================================================= */
 
 @media print {
@@ -1618,43 +1759,11 @@
 
     html,
     body {
-        margin: 0 !important;
-        padding: 0 !important;
-
         width: 210mm !important;
         height: 297mm !important;
 
-        background: #ffffff !important;
-    }
-
-    body {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
-
-    /* Hide complete dashboard */
-
-    body * {
-        visibility: hidden !important;
-    }
-
-    /* Show only invoice */
-
-    .print-bill-container,
-    .print-bill-container * {
-        visibility: visible !important;
-    }
-
-    .print-bill-container {
-        position: absolute !important;
-
-        left: 0 !important;
-        top: 0 !important;
-
-        display: block !important;
-
-        width: 210mm !important;
-        height: 297mm !important;
+        min-width: 210mm !important;
+        min-height: 297mm !important;
 
         margin: 0 !important;
         padding: 0 !important;
@@ -1664,13 +1773,45 @@
         overflow: hidden !important;
     }
 
-    .print-bill {
-        display: block !important;
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
 
-        position: relative !important;
+    /* -----------------------------------------------------
+       HIDE EVERYTHING
+    ----------------------------------------------------- */
+
+    body * {
+        visibility: hidden !important;
+    }
+
+    /* -----------------------------------------------------
+       SHOW PRINT BILL ONLY
+    ----------------------------------------------------- */
+
+    .print-bill-container,
+    .print-bill-container * {
+        visibility: visible !important;
+    }
+
+    /* -----------------------------------------------------
+       PRINT CONTAINER
+    ----------------------------------------------------- */
+
+    .print-bill-container {
+        position: absolute !important;
+
+        top: 0 !important;
+        left: 0 !important;
+
+        display: block !important;
 
         width: 210mm !important;
         height: 297mm !important;
+
+        min-width: 210mm !important;
+        max-width: 210mm !important;
 
         min-height: 297mm !important;
         max-height: 297mm !important;
@@ -1680,27 +1821,146 @@
 
         box-sizing: border-box !important;
 
+        overflow: hidden !important;
+
         background: #ffffff !important;
 
-        color: #183b72 !important;
+        page-break-before: avoid !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+
+        break-before: avoid !important;
+        break-after: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    /* -----------------------------------------------------
+       A4 BILL
+    ----------------------------------------------------- */
+
+    .print-bill {
+        position: relative !important;
+
+        display: block !important;
+
+        width: 210mm !important;
+        height: 297mm !important;
+
+        min-width: 210mm !important;
+        max-width: 210mm !important;
+
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        box-sizing: border-box !important;
 
         overflow: hidden !important;
 
-        page-break-after: avoid !important;
+        background: #ffffff !important;
+        color: #183b72 !important;
+
+        isolation: isolate !important;
+
         page-break-before: avoid !important;
+        page-break-after: avoid !important;
         page-break-inside: avoid !important;
+
+        break-before: avoid !important;
+        break-after: avoid !important;
+        break-inside: avoid !important;
 
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
-    /* =====================================================
-       PRINT TRANSPARENCY
-    ===================================================== */
+    /* -----------------------------------------------------
+       HEADER
+    ----------------------------------------------------- */
 
-    .print-patient-section,
-    .print-patient-section>div,
-    .print-bill-table,
+    .print-hospital-header {
+        position: relative !important;
+
+        width: 210mm !important;
+        min-height: 47mm !important;
+
+        box-sizing: border-box !important;
+
+        page-break-before: avoid !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+
+        break-before: avoid !important;
+        break-after: avoid !important;
+        break-inside: avoid !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* -----------------------------------------------------
+       PATIENT SECTION
+    ----------------------------------------------------- */
+
+    .print-patient-section {
+        position: relative !important;
+
+        width: 210mm !important;
+
+        box-sizing: border-box !important;
+
+        background: transparent !important;
+        box-shadow: none !important;
+
+        page-break-before: avoid !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+
+        break-before: avoid !important;
+        break-after: avoid !important;
+        break-inside: avoid !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .print-patient-section > div {
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    /* -----------------------------------------------------
+       BILL TABLE
+    ----------------------------------------------------- */
+
+    .print-bill-table {
+        position: relative !important;
+
+        width: calc(100% - 30mm) !important;
+
+        margin-left: 15mm !important;
+        margin-right: 15mm !important;
+
+        box-sizing: border-box !important;
+
+        border-collapse: collapse !important;
+
+        background: transparent !important;
+
+        page-break-before: avoid !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+
+        break-before: avoid !important;
+        break-after: avoid !important;
+        break-inside: avoid !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
     .print-bill-table th,
     .print-bill-table td,
     .print-bill-table tbody tr,
@@ -1709,6 +1969,313 @@
         background: transparent !important;
         box-shadow: none !important;
     }
+
+    .print-bill-table tbody tr:hover td {
+        background: transparent !important;
+    }
+
+    /* -----------------------------------------------------
+       TOTAL
+    ----------------------------------------------------- */
+
+    .print-total-row {
+        position: relative !important;
+
+        width: calc(100% - 30mm) !important;
+
+        margin-left: 15mm !important;
+        margin-right: 15mm !important;
+
+        box-sizing: border-box !important;
+
+        page-break-before: avoid !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+
+        break-before: avoid !important;
+        break-after: avoid !important;
+        break-inside: avoid !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* -----------------------------------------------------
+       NOTES
+    ----------------------------------------------------- */
+
+    .print-notes {
+        position: relative !important;
+
+        margin-left: 15mm !important;
+        margin-right: 15mm !important;
+
+        box-sizing: border-box !important;
+
+        page-break-before: avoid !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+
+        break-before: avoid !important;
+        break-after: avoid !important;
+        break-inside: avoid !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* -----------------------------------------------------
+       FOOTER
+       FIXED A4 BOTTOM
+    ----------------------------------------------------- */
+
+    .print-footer {
+        position: absolute !important;
+
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+
+        width: 210mm !important;
+        height: 42mm !important;
+        min-height: 42mm !important;
+        max-height: 42mm !important;
+
+        margin: 0 !important;
+
+        padding: 5.5mm 15mm 4mm !important;
+
+        box-sizing: border-box !important;
+
+        display: flex !important;
+
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+
+        overflow: hidden !important;
+
+        background:
+            linear-gradient(
+                135deg,
+                #e6f9fc 0%,
+                #b6e9f0 18%,
+                #72d5e2 43%,
+                #28bfd3 72%,
+                #08a9c4 100%
+            ) !important;
+
+        border-top: 1px solid rgba(8, 124, 193, 0.25) !important;
+
+        z-index: 20 !important;
+
+        page-break-before: avoid !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+
+        break-before: avoid !important;
+        break-after: avoid !important;
+        break-inside: avoid !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* -----------------------------------------------------
+       FOOTER TOP LINE
+    ----------------------------------------------------- */
+
+    .print-footer::before {
+        content: "";
+
+        position: absolute !important;
+
+        left: 0 !important;
+        right: 0 !important;
+        top: 0 !important;
+
+        height: 2px !important;
+
+        background:
+            linear-gradient(
+                90deg,
+                #0b4d9a 0%,
+                #087cc1 30%,
+                #0cc3d8 65%,
+                #00e0dc 100%
+            ) !important;
+
+        opacity: 0.95 !important;
+
+        pointer-events: none !important;
+
+        z-index: 1 !important;
+    }
+
+    /* -----------------------------------------------------
+       FOOTER BRAND
+    ----------------------------------------------------- */
+
+    .print-footer-brand {
+        position: relative !important;
+
+        z-index: 5 !important;
+
+        display: flex !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        gap: 3.5mm !important;
+
+        margin: 0 !important;
+    }
+
+    .print-footer-brand img {
+        width: 13mm !important;
+        height: 13mm !important;
+
+        object-fit: contain !important;
+
+        flex-shrink: 0 !important;
+
+        visibility: visible !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .print-footer-brand div {
+        text-align: left !important;
+        line-height: 1.15 !important;
+    }
+
+    .print-footer-brand strong {
+        display: block !important;
+
+        margin: 0 !important;
+
+        color: #06477f !important;
+
+        font-size: 10.5px !important;
+        font-weight: 900 !important;
+    }
+
+    .print-footer-brand span {
+        display: block !important;
+
+        margin-top: 1.5px !important;
+
+        color: #185c79 !important;
+
+        font-size: 7.5px !important;
+        font-weight: 700 !important;
+    }
+
+    /* -----------------------------------------------------
+       THANK YOU
+    ----------------------------------------------------- */
+
+    .print-footer p {
+        position: relative !important;
+
+        z-index: 5 !important;
+
+        margin: 4.2mm 0 0 !important;
+
+        color: #ffffff !important;
+
+        font-size: 8.5px !important;
+
+        line-height: 1.2 !important;
+
+        font-weight: 800 !important;
+    }
+
+    /* -----------------------------------------------------
+       FOOTER SUBTEXT
+    ----------------------------------------------------- */
+
+    .print-footer > span {
+        position: relative !important;
+
+        z-index: 5 !important;
+
+        display: block !important;
+
+        margin-top: 1.5mm !important;
+
+        color: #eaffff !important;
+
+        font-size: 6.8px !important;
+
+        line-height: 1.2 !important;
+
+        font-weight: 600 !important;
+    }
+
+    /* -----------------------------------------------------
+       SIGNATURE
+    ----------------------------------------------------- */
+
+    .print-footer::after {
+        content:
+            "Authorized Signature                                      Bill Officer / Cashier";
+
+        position: absolute !important;
+
+        left: 15mm !important;
+        right: 15mm !important;
+        bottom: 3.5mm !important;
+
+        z-index: 6 !important;
+
+        color: #07537b !important;
+
+        font-size: 6.7px !important;
+
+        line-height: 1 !important;
+
+        font-weight: 800 !important;
+
+        white-space: pre !important;
+
+        text-align: center !important;
+
+        letter-spacing: 0.1px !important;
+
+        border-top: 1px solid rgba(7, 83, 123, 0.20) !important;
+
+        padding-top: 2.5mm !important;
+    }
+
+    /* -----------------------------------------------------
+       FOOTER WATERMARK
+    ----------------------------------------------------- */
+
+    .print-footer-watermark {
+        position: absolute !important;
+
+        left: 50% !important;
+        top: 50% !important;
+
+        width: 45mm !important;
+        height: 45mm !important;
+
+        transform: translate(-50%, -50%) !important;
+
+        object-fit: contain !important;
+
+        opacity: 0.055 !important;
+
+        pointer-events: none !important;
+
+        z-index: 0 !important;
+    }
+
+    /* -----------------------------------------------------
+       COLORS
+    ----------------------------------------------------- */
 
     .print-hospital-header,
     .print-patient-section,
@@ -1721,54 +2288,24 @@
         print-color-adjust: exact !important;
     }
 
-    .print-hospital-header {
-        page-break-after: avoid !important;
-    }
+    /* -----------------------------------------------------
+       PREVENT EXTRA PAGE
+    ----------------------------------------------------- */
 
-    .print-patient-section {
-        page-break-after: avoid !important;
-    }
-
-    .print-bill-table {
-        page-break-inside: avoid !important;
-    }
-
-    .print-total-row {
-        page-break-inside: avoid !important;
-    }
-
-    .print-notes {
-        page-break-inside: avoid !important;
-    }
-
+    .print-bill-container,
+    .print-bill,
+    .print-hospital-header,
+    .print-patient-section,
+    .print-bill-table,
+    .print-total-row,
+    .print-notes,
     .print-footer {
+        page-break-before: avoid !important;
+        page-break-after: avoid !important;
         page-break-inside: avoid !important;
-    }
 
-    /* =====================================================
-       DOCTOR WATERMARK PRINT
-    ===================================================== */
-
-    .print-doctor-watermark {
-        visibility: visible !important;
-
-        position: absolute !important;
-
-        z-index: 1 !important;
-
-        pointer-events: none !important;
-    }
-
-    .print-doctor-watermark img {
-        visibility: visible !important;
-
-        display: block !important;
-
-        width: 145mm !important;
-        height: 145mm !important;
-
-        object-fit: contain !important;
-
-        opacity: 0.045 !important;
+        break-before: avoid !important;
+        break-after: avoid !important;
+        break-inside: avoid !important;
     }
 }

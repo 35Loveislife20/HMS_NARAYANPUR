@@ -11,24 +11,58 @@ const {
     getMedicineStats,
 } = require("../controllers/medicine.controller");
 
+/*
+=====================================================
+GET ALL MEDICINES
+GET /api/medicines
+=====================================================
+*/
 
-// GET /api/medicines
 router.get("/", getMedicines);
 
-// GET /api/medicines/stats
+/*
+=====================================================
+GET MEDICINE STATS
+GET /api/medicines/stats
+=====================================================
+*/
+
 router.get("/stats", getMedicineStats);
 
-// GET /api/medicines/:id
+/*
+=====================================================
+GET SINGLE MEDICINE
+GET /api/medicines/:id
+=====================================================
+*/
+
 router.get("/:id", getMedicine);
 
-// POST /api/medicines
+/*
+=====================================================
+CREATE MEDICINE
+POST /api/medicines
+=====================================================
+*/
+
 router.post("/", createMedicine);
 
-// PUT /api/medicines/:id
+/*
+=====================================================
+UPDATE MEDICINE
+PUT /api/medicines/:id
+=====================================================
+*/
+
 router.put("/:id", updateMedicine);
 
-// DELETE /api/medicines/:id
-router.delete("/:id", deleteMedicine);
+/*
+=====================================================
+DELETE MEDICINE
+DELETE /api/medicines/:id
+=====================================================
+*/
 
+router.delete("/:id", deleteMedicine);
 
 module.exports = router;

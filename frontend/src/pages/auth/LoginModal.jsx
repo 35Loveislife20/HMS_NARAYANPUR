@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -10,19 +9,126 @@ import {
     FaShieldAlt,
     FaHeartbeat,
     FaTimes,
+    FaUserMd,
+    FaUserInjured,
+    FaFlask,
+    FaPills,
+    FaCalculator,
+    FaUserNurse,
+    FaUserTie,
+    FaHospitalUser,
+    FaChevronDown,
 } from "react-icons/fa";
+
+import { useAuth } from "../../context/AuthContext";
 
 import "./LoginModal.css";
 
+
+// =====================================================
+// EXACT 9 HMS ROLES
+// =====================================================
+
+const ROLE_CONFIG = {
+    super_admin: {
+        label: "Super Admin",
+        icon: FaUserTie,
+    },
+
+    hospital_admin: {
+        label: "Hospital Admin",
+        icon: FaHospitalUser,
+    },
+
+    receptionist: {
+        label: "Receptionist",
+        icon: FaUser,
+    },
+
+    doctor: {
+        label: "Doctor",
+        icon: FaUserMd,
+    },
+
+    lab_technician: {
+        label: "Lab Technician",
+        icon: FaFlask,
+    },
+
+    pharmacist: {
+        label: "Pharmacist",
+        icon: FaPills,
+    },
+
+    accountant: {
+        label: "Accountant",
+        icon: FaCalculator,
+    },
+
+    nurse: {
+        label: "Nurse",
+        icon: FaUserNurse,
+    },
+
+    patient: {
+        label: "Patient",
+        icon: FaUserInjured,
+    },
+};
+
+
+// =====================================================
+// ROLE ORDER
+// =====================================================
+
+const ROLE_OPTIONS = [
+    "super_admin",
+    "hospital_admin",
+    "receptionist",
+    "doctor",
+    "lab_technician",
+    "pharmacist",
+    "accountant",
+    "nurse",
+    "patient",
+];
+
+
+// =====================================================
+// ROLE NORMALIZER
+// =====================================================
+
+const normalizeRole = (role) => {
+    if (typeof role !== "string") {
+        return "";
+    }
+
+    return role
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_");
+};
+
+
+// =====================================================
+// LOGIN MODAL
+// =====================================================
 
 function LoginModal({ onClose }) {
 
     const navigate = useNavigate();
 
-    const [showPassword, setShowPassword] =
-        useState(false);
+    const { login } = useAuth();
+
+
+    // =================================================
+    // STATE
+    // =================================================
+
+    const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
+        role: "super_admin",
         email: "",
         password: "",
     });
@@ -32,18 +138,40 @@ function LoginModal({ onClose }) {
     const [error, setError] = useState("");
 
 
-    /* =========================
-       ESC KEY CLOSE
-    ========================= */
+    // =================================================
+    // SELECTED ROLE
+    // =================================================
+
+    const selectedRole = useMemo(() => {
+        return (
+            ROLE_CONFIG[formData.role] ||
+            ROLE_CONFIG.super_admin
+        );
+    }, [formData.role]);
+
+
+    // =================================================
+    // SUPER ADMIN CHECK
+    // =================================================
+
+    const isSuperAdmin =
+        formData.role === "super_admin";
+
+
+    // =================================================
+    // ESC KEY
+    // =================================================
 
     useEffect(() => {
 
-        const handleEscape = (e) => {
+        const handleEscape = (event) => {
 
-            if (e.key === "Escape") {
+            if (
+                event.key === "Escape" &&
+                !loading
+            ) {
                 onClose();
             }
-
         };
 
         document.addEventListener(
@@ -52,168 +180,310 @@ function LoginModal({ onClose }) {
         );
 
         return () => {
-
             document.removeEventListener(
                 "keydown",
                 handleEscape
             );
-
         };
 
-    }, [onClose]);
+    }, [onClose, loading]);
 
 
-    /* =========================
-       INPUT CHANGE
-    ========================= */
+    // =================================================
+    // HANDLE INPUT
+    // =================================================
 
-    const handleChange = (e) => {
+    const handleChange = (event) => {
 
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+        const {
+            name,
+            value,
+        } = event.target;
+
+        setFormData((previous) => ({
+            ...previous,
+            [name]: value,
+        }));
 
         setError("");
     };
 
 
-    /* =========================
-       LOGIN
-    ========================= */
+    // =================================================
+    // HANDLE ROLE
+    // =================================================
 
-    const handleSubmit = async (e) => {
+    const handleRoleChange = (event) => {
 
-        e.preventDefault();
+        const role = normalizeRole(
+            event.target.value
+        );
 
-        setLoading(true);
+        if (!ROLE_CONFIG[role]) {
+            return;
+        }
+
+        setFormData((previous) => ({
+            ...previous,
+            role,
+        }));
+
+        setError("");
+    };
+
+
+    // =================================================
+    // FORGOT PASSWORD
+    // =================================================
+
+    const handleForgotPassword = () => {
+
+        if (loading) {
+            return;
+        }
+
+        onClose();
+
+        navigate(
+            "/forgot-password"
+        );
+    };
+
+
+    // =================================================
+    // REGISTER
+    // ONLY SUPER ADMIN
+    // =================================================
+
+    const handleRegister = () => {
+
+        if (
+            loading ||
+            !isSuperAdmin
+        ) {
+            return;
+        }
+
+        onClose();
+
+        navigate("/register");
+    };
+
+
+    // =================================================
+    // LOGIN SUBMIT
+    // =================================================
+
+    const handleSubmit = async (event) => {
+
+        event.preventDefault();
 
         setError("");
 
 
+        // -------------------------------------------------
+        // ROLE
+        // -------------------------------------------------
+
+        const selectedRoleName =
+            normalizeRole(formData.role);
+
+        if (
+            !ROLE_CONFIG[selectedRoleName]
+        ) {
+            setError(
+                "Please select a valid HMS role."
+            );
+
+            return;
+        }
+
+
+        // -------------------------------------------------
+        // EMAIL
+        // -------------------------------------------------
+
+        const email =
+            formData.email.trim();
+
+        if (!email) {
+            setError(
+                "Please enter your email address."
+            );
+
+            return;
+        }
+
+
+        // -------------------------------------------------
+        // PASSWORD
+        // -------------------------------------------------
+
+        if (!formData.password) {
+            setError(
+                "Please enter your password."
+            );
+
+            return;
+        }
+
+
+        setLoading(true);
+
+
         try {
 
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/auth/login`,
+            // =================================================
+            // AUTH CONTEXT
+            // =================================================
+
+            const response = await login(
+                email,
+                formData.password
+            );
+
+
+            // =================================================
+            // RESPONSE VALIDATION
+            // =================================================
+
+            if (
+                !response ||
+                !response.success ||
+                !response.token ||
+                !response.user
+            ) {
+                throw new Error(
+                    response?.message ||
+                    "Login failed. Please check your credentials."
+                );
+            }
+
+
+            // =================================================
+            // BACKEND ROLE
+            // =================================================
+
+            const actualRole =
+                normalizeRole(
+                    response.user.role
+                );
+
+
+            if (
+                !ROLE_CONFIG[actualRole]
+            ) {
+                throw new Error(
+                    "Your account has an invalid HMS role."
+                );
+            }
+
+
+            // =================================================
+            // ROLE SECURITY CHECK
+            // =================================================
+
+            if (
+                actualRole !==
+                selectedRoleName
+            ) {
+
+                throw new Error(
+                    `Selected role is "${ROLE_CONFIG[selectedRoleName].label}", but this account is registered as "${ROLE_CONFIG[actualRole].label}". Please select the correct role.`
+                );
+            }
+
+
+            // =================================================
+            // SUCCESS
+            // =================================================
+
+            console.log(
+                "HMS Login Successful:",
                 {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json",
-                    },
-
-                    body: JSON.stringify({
-                        email: formData.email,
-                        password: formData.password,
-                    }),
+                    user: response.user,
+                    role: actualRole,
                 }
             );
 
 
-            const data = await response.json();
-
-
-            if (!response.ok) {
-
-                setError(
-                    data.message ||
-                    "Invalid email or password"
-                );
-
-                return;
-            }
-
-
-            /* SAVE TOKEN */
-
-            if (data.token) {
-
-                localStorage.setItem(
-                    "hms_token",
-                    data.token
-                );
-
-            }
-
-
-            /* SAVE USER */
-
-            if (data.user) {
-
-                localStorage.setItem(
-                    "hms_user",
-                    JSON.stringify(data.user)
-                );
-
-            }
-
-
-            /* CLOSE MODAL */
+            // Close modal
 
             onClose();
 
 
-            /* DASHBOARD */
+            // All roles -> dashboard
 
-            navigate("/dashboard");
+            navigate(
+                "/dashboard",
+                {
+                    replace: true,
+                }
+            );
 
-
-        } catch (err) {
+        } catch (loginError) {
 
             console.error(
-                "LOGIN ERROR:",
-                err
+                "HMS LOGIN ERROR:",
+                loginError
             );
 
             setError(
+                loginError?.message ||
                 "Unable to connect to HMS server."
             );
 
         } finally {
 
             setLoading(false);
-
         }
-
     };
 
 
-    return (
+    // =====================================================
+    // UI
+    // =====================================================
 
+    return (
         <div
             className="login-modal-overlay"
-            onClick={onClose}
+            onClick={() => {
+
+                if (!loading) {
+                    onClose();
+                }
+
+            }}
         >
 
             <div
                 className="login-modal"
-                onClick={(e) =>
-                    e.stopPropagation()
+                onClick={(event) =>
+                    event.stopPropagation()
                 }
             >
 
-
-                {/* CLOSE */}
+                {/* =================================================
+                    CLOSE
+                ================================================= */}
 
                 <button
                     type="button"
                     className="login-modal-close"
                     onClick={onClose}
-                    aria-label="Close login"
+                    disabled={loading}
+                    aria-label="Close login modal"
                 >
-
                     <FaTimes />
-
                 </button>
 
 
-                {/* LOGO */}
+                {/* =================================================
+                    LOGO
+                ================================================= */}
 
                 <div className="modal-logo">
-
                     <FaHeartbeat />
-
                 </div>
 
 
@@ -223,136 +493,254 @@ function LoginModal({ onClose }) {
 
 
                 <p className="modal-subtitle">
-
                     Hospital Management System
-
                 </p>
 
 
-                {/* SIGN IN */}
+                {/* =================================================
+                    SIGN IN
+                ================================================= */}
 
                 <div className="modal-heading">
-
                     <span>
                         SIGN IN
                     </span>
-
                 </div>
 
 
-                {/* FORM */}
+                {/* =================================================
+                    FORM
+                ================================================= */}
 
                 <form
                     className="modal-form"
                     onSubmit={handleSubmit}
                 >
 
+                    {/* =================================================
+                        ROLE - FIRST
+                    ================================================= */}
 
-                    {/* EMAIL */}
+                    <div className="modal-field">
 
-                    <div className="modal-input">
+                        <label>
+                            Select Role
+                        </label>
 
-                        <FaUser />
+                        <div className="modal-input modal-role-input">
 
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Username / Email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                            autoComplete="email"
-                        />
+                            <selectedRole.icon />
 
-                    </div>
+                            <select
+                                name="role"
+                                value={formData.role}
+                                onChange={handleRoleChange}
+                                disabled={loading}
+                                aria-label="Select HMS role"
+                                required
+                            >
 
+                                {ROLE_OPTIONS.map(
+                                    (role) => {
 
-                    {/* PASSWORD */}
+                                        const config =
+                                            ROLE_CONFIG[role];
 
-                    <div className="modal-input">
+                                        return (
+                                            <option
+                                                key={role}
+                                                value={role}
+                                            >
+                                                {config.label}
+                                            </option>
+                                        );
+                                    }
+                                )}
 
-                        <FaLock />
+                            </select>
 
-                        <input
-                            type={
-                                showPassword
-                                    ? "text"
-                                    : "password"
-                            }
-                            name="password"
-                            placeholder="Password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                            autoComplete="current-password"
-                        />
+                            <FaChevronDown
+                                className="modal-role-arrow"
+                            />
 
-
-                        <button
-                            type="button"
-                            className="modal-eye"
-                            onClick={() =>
-                                setShowPassword(
-                                    !showPassword
-                                )
-                            }
-                        >
-
-                            {showPassword ? (
-                                <FaEyeSlash />
-                            ) : (
-                                <FaEye />
-                            )}
-
-                        </button>
+                        </div>
 
                     </div>
 
 
-                    {/* ERROR */}
+                    {/* =================================================
+                        SELECTED ROLE
+                    ================================================= */}
+
+                    <div className="modal-selected-role">
+
+                        <span>
+                            Signing in as
+                        </span>
+
+                        <strong>
+                            {selectedRole.label}
+                        </strong>
+
+                    </div>
+
+
+                    {/* =================================================
+                        EMAIL
+                    ================================================= */}
+
+                    <div className="modal-field">
+
+                        <label>
+                            Email Address
+                        </label>
+
+                        <div className="modal-input">
+
+                            <FaUser />
+
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Enter your email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                autoComplete="email"
+                                disabled={loading}
+                                required
+                            />
+
+                        </div>
+
+                    </div>
+
+
+                    {/* =================================================
+                        PASSWORD
+                    ================================================= */}
+
+                    <div className="modal-field">
+
+                        <label>
+                            Password
+                        </label>
+
+                        <div className="modal-input">
+
+                            <FaLock />
+
+                            <input
+                                type={
+                                    showPassword
+                                        ? "text"
+                                        : "password"
+                                }
+                                name="password"
+                                placeholder="Enter your password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                autoComplete="current-password"
+                                disabled={loading}
+                                required
+                            />
+
+                            <button
+                                type="button"
+                                className="modal-eye"
+                                onClick={() =>
+                                    setShowPassword(
+                                        (previous) =>
+                                            !previous
+                                    )
+                                }
+                                disabled={loading}
+                                aria-label={
+                                    showPassword
+                                        ? "Hide password"
+                                        : "Show password"
+                                }
+                            >
+
+                                {showPassword ? (
+                                    <FaEyeSlash />
+                                ) : (
+                                    <FaEye />
+                                )}
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    {/* =================================================
+                        ERROR
+                    ================================================= */}
 
                     {error && (
 
-                        <div className="modal-error">
+                        <div
+                            className="modal-error"
+                            role="alert"
+                        >
+                            <span>⚠</span>
 
-                            ⚠ {error}
-
+                            <span>
+                                {error}
+                            </span>
                         </div>
 
                     )}
 
 
-                    {/* OPTIONS */}
+                    {/* =================================================
+                        OPTIONS
+                    ================================================= */}
 
-                    <div className="modal-options">
+                    <div
+                        className={
+                            isSuperAdmin
+                                ? "modal-options"
+                                : "modal-options modal-options-single"
+                        }
+                    >
+
+                        {/* FORGOT - EVERY ROLE */}
 
                         <button
                             type="button"
-                            onClick={() =>
-                                navigate(
-                                    "/forgot-password"
-                                )
+                            onClick={
+                                handleForgotPassword
                             }
+                            disabled={loading}
                         >
                             Forgot Password?
                         </button>
 
 
-                        <button
-                            type="button"
-                            onClick={() =>
-                                navigate(
-                                    "/register"
-                                )
-                            }
-                        >
-                            Signup
-                        </button>
+                        {/* REGISTER - SUPER ADMIN ONLY */}
+
+                        {isSuperAdmin && (
+
+                            <button
+                                type="button"
+                                onClick={
+                                    handleRegister
+                                }
+                                disabled={loading}
+                            >
+                                Register
+                            </button>
+
+                        )}
 
                     </div>
 
 
-                    {/* LOGIN */}
+                    {/* =================================================
+                        LOGIN
+                    ================================================= */}
 
                     <button
                         type="submit"
@@ -360,26 +748,32 @@ function LoginModal({ onClose }) {
                         disabled={loading}
                     >
 
-                        {loading
-                            ? "Signing in..."
-                            : "Login"
-                        }
+                        {loading ? (
+                            <>
+                                <span className="login-spinner" />
+                                Signing in...
+                            </>
+                        ) : (
+                            "Login"
+                        )}
 
                     </button>
 
 
-                    {/* OR */}
+                    {/* =================================================
+                        OR
+                    ================================================= */}
 
                     <div className="modal-or">
-
                         <span>
                             OR
                         </span>
-
                     </div>
 
 
-                    {/* SECURITY */}
+                    {/* =================================================
+                        SECURITY
+                    ================================================= */}
 
                     <div className="modal-security">
 
@@ -395,13 +789,11 @@ function LoginModal({ onClose }) {
 
                     </div>
 
-
                 </form>
 
             </div>
 
         </div>
-
     );
 }
 
