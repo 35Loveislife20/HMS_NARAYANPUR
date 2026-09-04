@@ -1,6 +1,3 @@
-const fs = require("fs");
-const path = require("path");
-
 const {
     getAllDoctors,
     getDoctorById,
@@ -11,33 +8,168 @@ const {
     deleteDoctorById,
 } = require("../models/doctor.model");
 
+const cloudinary = require("../config/cloudinary");
+
 
 /* =========================================================
-   HELPER — DELETE OLD PHOTO
+   UPLOAD DOCTOR PHOTO TO CLOUDINARY
 ========================================================= */
-const deleteDoctorPhoto = (photo) => {
-    if (!photo) return;
+
+const uploadDoctorPhotoToCloudinary = async (file) => {
+
+    if (!file || !file.buffer) {
+        return null;
+    }
+
+    return new Promise((resolve, reject) => {
+
+        const uploadStream =
+            cloudinary.uploader.upload_stream(
+                {
+                    folder:
+                        "hms-hospital-narayanpur/doctors",
+
+                    resource_type: "image",
+
+                    transformation: [
+                        {
+                            width: 600,
+                            height: 600,
+                            crop: "fill",
+                            gravity: "face",
+                        },
+                    ],
+                },
+
+                (error, result) => {
+
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+
+                    resolve(result);
+                }
+            );
+
+        uploadStream.end(file.buffer);
+    });
+};
+
+
+/* =========================================================
+   DELETE DOCTOR PHOTO FROM CLOUDINARY
+========================================================= */
+
+const deleteDoctorPhoto = async (photo) => {
+
+    if (!photo) {
+        return;
+    }
 
     try {
-        // Only delete files stored in /uploads/doctors/
-        if (!photo.includes("/uploads/doctors/")) {
+
+        /*
+         * Only process Cloudinary URLs.
+         */
+
+        if (
+            !photo.includes(
+                "res.cloudinary.com"
+            )
+        ) {
             return;
         }
 
-        const fileName = path.basename(photo);
-        const filePath = path.join(
-            __dirname,
-            "..",
-            "uploads",
-            "doctors",
-            fileName
+
+        /*
+         * Find /upload/ part.
+         */
+
+        const uploadIndex =
+            photo.indexOf("/upload/");
+
+        if (uploadIndex === -1) {
+            return;
+        }
+
+
+        /*
+         * Example:
+
+         * https://res.cloudinary.com/demo/image/upload/
+         * v123456/hms-hospital-narayanpur/doctors/photo.jpg
+         */
+
+        let publicId =
+            photo.substring(
+                uploadIndex + "/upload/".length
+            );
+
+
+        /*
+         * Remove transformation segments if present.
+         */
+
+        const parts =
+            publicId.split("/");
+
+
+        /*
+         * Remove version:
+         * v123456
+         */
+
+        if (
+            parts[0] &&
+            /^v\d+$/.test(parts[0])
+        ) {
+            parts.shift();
+        }
+
+
+        publicId = parts.join("/");
+
+
+        /*
+         * Remove extension.
+         */
+
+        publicId =
+            publicId.replace(
+                /\.(jpg|jpeg|png|webp|gif|avif)$/i,
+                ""
+            );
+
+
+        if (!publicId) {
+            return;
+        }
+
+
+        await cloudinary.uploader.destroy(
+            publicId,
+            {
+                resource_type: "image",
+            }
         );
 
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-        }
+        console.log(
+            "Cloudinary doctor photo deleted:",
+            publicId
+        );
+
     } catch (error) {
-        console.error("Doctor photo delete error:", error.message);
+
+        /*
+         * Photo deletion failure should not
+         * break doctor operations.
+         */
+
+        console.error(
+            "Cloudinary doctor photo delete error:",
+            error.message
+        );
     }
 };
 
@@ -45,32 +177,62 @@ const deleteDoctorPhoto = (photo) => {
 /* =========================================================
    GET ALL DOCTORS
    GET /api/doctors
-   PUBLIC — Home page needs this
+   PUBLIC
 ========================================================= */
+
 const getDoctors = async (req, res) => {
+
     try {
+
         const { search } = req.query;
 
         let doctors;
 
-        if (search && search.trim()) {
-            doctors = await searchDoctors(search.trim());
+
+        if (
+            search &&
+            search.trim()
+        ) {
+
+            doctors =
+                await searchDoctors(
+                    search.trim()
+                );
+
         } else {
-            doctors = await getAllDoctors();
+
+            doctors =
+                await getAllDoctors();
         }
 
+
         return res.status(200).json({
+
             success: true,
+
             count: doctors.length,
+
             doctors,
+
         });
+
     } catch (error) {
-        console.error("Get doctors error:", error);
+
+        console.error(
+            "Get doctors error:",
+            error
+        );
 
         return res.status(500).json({
+
             success: false,
-            message: "Failed to fetch doctors",
-            error: error.message,
+
+            message:
+                "Failed to fetch doctors",
+
+            error:
+                error.message,
+
         });
     }
 };
@@ -80,30 +242,57 @@ const getDoctors = async (req, res) => {
    GET SINGLE DOCTOR
    GET /api/doctors/:id
 ========================================================= */
-const getDoctor = async (req, res) => {
-    try {
-        const { id } = req.params;
 
-        const doctor = await getDoctorById(id);
+const getDoctor = async (req, res) => {
+
+    try {
+
+        const { id } =
+            req.params;
+
+
+        const doctor =
+            await getDoctorById(id);
+
 
         if (!doctor) {
+
             return res.status(404).json({
+
                 success: false,
-                message: "Doctor not found",
+
+                message:
+                    "Doctor not found",
+
             });
         }
 
+
         return res.status(200).json({
+
             success: true,
+
             doctor,
+
         });
+
     } catch (error) {
-        console.error("Get doctor error:", error);
+
+        console.error(
+            "Get doctor error:",
+            error
+        );
 
         return res.status(500).json({
+
             success: false,
-            message: "Failed to fetch doctor",
-            error: error.message,
+
+            message:
+                "Failed to fetch doctor",
+
+            error:
+                error.message,
+
         });
     }
 };
@@ -113,21 +302,44 @@ const getDoctor = async (req, res) => {
    GET NEXT DOCTOR CODE
    GET /api/doctors/next-code
 ========================================================= */
-const getNextDoctorCode = async (req, res) => {
+
+const getNextDoctorCode = async (
+    req,
+    res
+) => {
+
     try {
-        const doctorCode = await generateDoctorCode();
+
+        const doctorCode =
+            await generateDoctorCode();
+
 
         return res.status(200).json({
+
             success: true,
-            doctor_code: doctorCode,
+
+            doctor_code:
+                doctorCode,
+
         });
+
     } catch (error) {
-        console.error("Generate doctor code error:", error);
+
+        console.error(
+            "Generate doctor code error:",
+            error
+        );
 
         return res.status(500).json({
+
             success: false,
-            message: "Failed to generate doctor code",
-            error: error.message,
+
+            message:
+                "Failed to generate doctor code",
+
+            error:
+                error.message,
+
         });
     }
 };
@@ -137,8 +349,16 @@ const getNextDoctorCode = async (req, res) => {
    ADD DOCTOR
    POST /api/doctors
 ========================================================= */
-const addDoctor = async (req, res) => {
+
+const addDoctor = async (
+    req,
+    res
+) => {
+
+    let uploadedPhoto = null;
+
     try {
+
         const {
             doctor_code,
             name,
@@ -153,15 +373,30 @@ const addDoctor = async (req, res) => {
             status,
         } = req.body;
 
+
         /* ---------------------------------------------
            VALIDATION
         --------------------------------------------- */
-        if (!name || !name.trim()) {
+
+        if (
+            !name ||
+            !name.trim()
+        ) {
+
             return res.status(400).json({
+
                 success: false,
-                message: "Doctor name is required",
+
+                message:
+                    "Doctor name is required",
+
             });
         }
+
+
+        /* ---------------------------------------------
+           STATUS
+        --------------------------------------------- */
 
         const validStatuses = [
             "available",
@@ -169,26 +404,57 @@ const addDoctor = async (req, res) => {
             "offline",
         ];
 
-        const doctorStatus = validStatuses.includes(status)
-            ? status
-            : "available";
+
+        const doctorStatus =
+            validStatuses.includes(status)
+                ? status
+                : "available";
 
 
         /* ---------------------------------------------
-           PHOTO
+           PHOTO UPLOAD
         --------------------------------------------- */
+
         let photo = null;
 
+
         if (req.file) {
-            photo = `/uploads/doctors/${req.file.filename}`;
+
+            uploadedPhoto =
+                await uploadDoctorPhotoToCloudinary(
+                    req.file
+                );
+
+
+            if (
+                !uploadedPhoto ||
+                !uploadedPhoto.secure_url
+            ) {
+
+                throw new Error(
+                    "Doctor photo upload failed."
+                );
+            }
+
+
+            photo =
+                uploadedPhoto.secure_url;
+
+
+            console.log(
+                "Doctor photo uploaded:",
+                photo
+            );
         }
 
 
         /* ---------------------------------------------
            DOCTOR CODE
         --------------------------------------------- */
+
         const finalDoctorCode =
-            doctor_code && doctor_code.trim()
+            doctor_code &&
+                doctor_code.trim()
                 ? doctor_code.trim()
                 : await generateDoctorCode();
 
@@ -196,62 +462,107 @@ const addDoctor = async (req, res) => {
         /* ---------------------------------------------
            CREATE DOCTOR
         --------------------------------------------- */
-        const result = await createDoctor({
-            doctor_code: finalDoctorCode,
-            name: name.trim(),
-            photo,
-            specialization: specialization?.trim() || null,
-            qualification: qualification?.trim() || null,
-            phone: phone?.trim() || null,
-            email: email?.trim() || null,
-            experience_years: experience_years || 0,
-            consultation_fee: consultation_fee || 0,
-            department_id: department_id || null,
-            hospital_id: hospital_id || null,
-            status: doctorStatus,
-        });
+
+        const result =
+            await createDoctor({
+
+                doctor_code:
+                    finalDoctorCode,
+
+                name:
+                    name.trim(),
+
+                photo,
+
+                specialization:
+                    specialization?.trim() ||
+                    null,
+
+                qualification:
+                    qualification?.trim() ||
+                    null,
+
+                phone:
+                    phone?.trim() ||
+                    null,
+
+                email:
+                    email?.trim() ||
+                    null,
+
+                experience_years:
+                    experience_years || 0,
+
+                consultation_fee:
+                    consultation_fee || 0,
+
+                department_id:
+                    department_id || null,
+
+                hospital_id:
+                    hospital_id || null,
+
+                status:
+                    doctorStatus,
+
+            });
 
 
         /* ---------------------------------------------
-           RETURN CREATED DOCTOR
+           GET CREATED DOCTOR
         --------------------------------------------- */
-        const doctor = await getDoctorById(result.id);
+
+        const doctor =
+            await getDoctorById(
+                result.id
+            );
+
 
         return res.status(201).json({
+
             success: true,
-            message: "Doctor added successfully",
+
+            message:
+                "Doctor added successfully",
+
             doctor,
+
         });
 
     } catch (error) {
-        console.error("Add doctor error:", error);
 
-        // If DB insertion fails, remove uploaded photo
-        if (req.file) {
-            try {
-                const filePath = path.join(
-                    __dirname,
-                    "..",
-                    "uploads",
-                    "doctors",
-                    req.file.filename
-                );
+        console.error(
+            "Add doctor error:",
+            error
+        );
 
-                if (fs.existsSync(filePath)) {
-                    fs.unlinkSync(filePath);
-                }
-            } catch (fileError) {
-                console.error(
-                    "Uploaded photo cleanup error:",
-                    fileError.message
-                );
-            }
+
+        /*
+         * If database creation fails after
+         * Cloudinary upload, delete uploaded image.
+         */
+
+        if (
+            uploadedPhoto &&
+            uploadedPhoto.secure_url
+        ) {
+
+            await deleteDoctorPhoto(
+                uploadedPhoto.secure_url
+            );
         }
 
+
         return res.status(500).json({
+
             success: false,
-            message: "Failed to add doctor",
-            error: error.message,
+
+            message:
+                "Failed to add doctor",
+
+            error:
+                error.message,
+
         });
     }
 };
@@ -261,19 +572,37 @@ const addDoctor = async (req, res) => {
    EDIT DOCTOR
    PUT /api/doctors/:id
 ========================================================= */
-const editDoctor = async (req, res) => {
+
+const editDoctor = async (
+    req,
+    res
+) => {
+
+    let newUploadedPhoto = null;
+
     try {
-        const { id } = req.params;
+
+        const { id } =
+            req.params;
+
 
         /* ---------------------------------------------
            FIND EXISTING DOCTOR
         --------------------------------------------- */
-        const existingDoctor = await getDoctorById(id);
+
+        const existingDoctor =
+            await getDoctorById(id);
+
 
         if (!existingDoctor) {
+
             return res.status(404).json({
+
                 success: false,
-                message: "Doctor not found",
+
+                message:
+                    "Doctor not found",
+
             });
         }
 
@@ -296,12 +625,26 @@ const editDoctor = async (req, res) => {
         /* ---------------------------------------------
            VALIDATION
         --------------------------------------------- */
-        if (!name || !name.trim()) {
+
+        if (
+            !name ||
+            !name.trim()
+        ) {
+
             return res.status(400).json({
+
                 success: false,
-                message: "Doctor name is required",
+
+                message:
+                    "Doctor name is required",
+
             });
         }
+
+
+        /* ---------------------------------------------
+           STATUS
+        --------------------------------------------- */
 
         const validStatuses = [
             "available",
@@ -309,108 +652,187 @@ const editDoctor = async (req, res) => {
             "offline",
         ];
 
-        const doctorStatus = validStatuses.includes(status)
-            ? status
-            : existingDoctor.status || "available";
+
+        const doctorStatus =
+            validStatuses.includes(status)
+                ? status
+                : existingDoctor.status ||
+                "available";
 
 
         /* ---------------------------------------------
-           PHOTO HANDLING
+           PHOTO
         --------------------------------------------- */
 
-        let photo = existingDoctor.photo || null;
+        let photo =
+            existingDoctor.photo ||
+            null;
 
-        // New photo uploaded
+
+        /*
+         * If new photo is uploaded:
+         *
+         * 1. Upload new photo first
+         * 2. Update database
+         * 3. Delete old photo
+         *
+         * This prevents accidental loss of the
+         * old photo if Cloudinary upload fails.
+         */
+
         if (req.file) {
-            photo = `/uploads/doctors/${req.file.filename}`;
 
-            // Delete old photo
-            if (existingDoctor.photo) {
-                deleteDoctorPhoto(existingDoctor.photo);
+            newUploadedPhoto =
+                await uploadDoctorPhotoToCloudinary(
+                    req.file
+                );
+
+
+            if (
+                !newUploadedPhoto ||
+                !newUploadedPhoto.secure_url
+            ) {
+
+                throw new Error(
+                    "Doctor photo upload failed."
+                );
             }
+
+
+            photo =
+                newUploadedPhoto.secure_url;
+
+
+            console.log(
+                "New doctor photo uploaded:",
+                photo
+            );
         }
 
 
         /* ---------------------------------------------
            UPDATE DOCTOR
         --------------------------------------------- */
-        await updateDoctor(id, {
-            doctor_code:
-                doctor_code?.trim() ||
-                existingDoctor.doctor_code,
 
-            name: name.trim(),
+        await updateDoctor(
+            id,
+            {
 
-            photo,
+                doctor_code:
+                    doctor_code?.trim() ||
+                    existingDoctor.doctor_code,
 
-            specialization:
-                specialization?.trim() || null,
+                name:
+                    name.trim(),
 
-            qualification:
-                qualification?.trim() || null,
+                photo,
 
-            phone:
-                phone?.trim() || null,
+                specialization:
+                    specialization?.trim() ||
+                    null,
 
-            email:
-                email?.trim() || null,
+                qualification:
+                    qualification?.trim() ||
+                    null,
 
-            experience_years:
-                experience_years || 0,
+                phone:
+                    phone?.trim() ||
+                    null,
 
-            consultation_fee:
-                consultation_fee || 0,
+                email:
+                    email?.trim() ||
+                    null,
 
-            department_id:
-                department_id || null,
+                experience_years:
+                    experience_years || 0,
 
-            hospital_id:
-                hospital_id || null,
+                consultation_fee:
+                    consultation_fee || 0,
 
-            status: doctorStatus,
-        });
+                department_id:
+                    department_id || null,
+
+                hospital_id:
+                    hospital_id || null,
+
+                status:
+                    doctorStatus,
+
+            }
+        );
 
 
         /* ---------------------------------------------
-           RETURN UPDATED DOCTOR
+           DELETE OLD PHOTO
         --------------------------------------------- */
-        const updatedDoctor = await getDoctorById(id);
+
+        if (
+            req.file &&
+            existingDoctor.photo &&
+            existingDoctor.photo !== photo
+        ) {
+
+            await deleteDoctorPhoto(
+                existingDoctor.photo
+            );
+        }
+
+
+        /* ---------------------------------------------
+           GET UPDATED DOCTOR
+        --------------------------------------------- */
+
+        const updatedDoctor =
+            await getDoctorById(id);
+
 
         return res.status(200).json({
+
             success: true,
-            message: "Doctor updated successfully",
-            doctor: updatedDoctor,
+
+            message:
+                "Doctor updated successfully",
+
+            doctor:
+                updatedDoctor,
+
         });
 
     } catch (error) {
-        console.error("Edit doctor error:", error);
 
-        // Cleanup newly uploaded photo if update fails
-        if (req.file) {
-            try {
-                const filePath = path.join(
-                    __dirname,
-                    "..",
-                    "uploads",
-                    "doctors",
-                    req.file.filename
-                );
+        console.error(
+            "Edit doctor error:",
+            error
+        );
 
-                if (fs.existsSync(filePath)) {
-                    fs.unlinkSync(filePath);
-                }
-            } catch (fileError) {
-                console.error(
-                    "Uploaded photo cleanup error:",
-                    fileError.message
-                );
-            }
+
+        /*
+         * If new Cloudinary photo was uploaded
+         * but database update failed,
+         * remove the new image.
+         */
+
+        if (
+            newUploadedPhoto &&
+            newUploadedPhoto.secure_url
+        ) {
+
+            await deleteDoctorPhoto(
+                newUploadedPhoto.secure_url
+            );
         }
 
+
         return res.status(500).json({
+
             success: false,
-            message: "Failed to update doctor",
-            error: error.message,
+
+            message:
+                "Failed to update doctor",
+
+            error:
+                error.message,
+
         });
     }
 };
@@ -420,16 +842,35 @@ const editDoctor = async (req, res) => {
    DELETE DOCTOR
    DELETE /api/doctors/:id
 ========================================================= */
-const removeDoctor = async (req, res) => {
-    try {
-        const { id } = req.params;
 
-        const doctor = await getDoctorById(id);
+const removeDoctor = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const { id } =
+            req.params;
+
+
+        /* ---------------------------------------------
+           FIND DOCTOR
+        --------------------------------------------- */
+
+        const doctor =
+            await getDoctorById(id);
+
 
         if (!doctor) {
+
             return res.status(404).json({
+
                 success: false,
-                message: "Doctor not found",
+
+                message:
+                    "Doctor not found",
+
             });
         }
 
@@ -437,29 +878,48 @@ const removeDoctor = async (req, res) => {
         /* ---------------------------------------------
            DELETE DATABASE RECORD
         --------------------------------------------- */
+
         await deleteDoctorById(id);
 
 
         /* ---------------------------------------------
-           DELETE PHOTO FILE
+           DELETE CLOUDINARY PHOTO
         --------------------------------------------- */
+
         if (doctor.photo) {
-            deleteDoctorPhoto(doctor.photo);
+
+            await deleteDoctorPhoto(
+                doctor.photo
+            );
         }
 
 
         return res.status(200).json({
+
             success: true,
-            message: "Doctor deleted successfully",
+
+            message:
+                "Doctor deleted successfully",
+
         });
 
     } catch (error) {
-        console.error("Delete doctor error:", error);
+
+        console.error(
+            "Delete doctor error:",
+            error
+        );
 
         return res.status(500).json({
+
             success: false,
-            message: "Failed to delete doctor",
-            error: error.message,
+
+            message:
+                "Failed to delete doctor",
+
+            error:
+                error.message,
+
         });
     }
 };
@@ -468,11 +928,19 @@ const removeDoctor = async (req, res) => {
 /* =========================================================
    EXPORTS
 ========================================================= */
+
 module.exports = {
+
     getDoctors,
+
     getDoctor,
+
     getNextDoctorCode,
+
     addDoctor,
+
     editDoctor,
+
     removeDoctor,
+
 };

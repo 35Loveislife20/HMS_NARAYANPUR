@@ -1,7 +1,5 @@
 const express = require("express");
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 
 const {
     getDoctors,
@@ -12,114 +10,27 @@ const {
     removeDoctor,
 } = require("../controllers/doctors.controller");
 
-const authMiddleware = require("../middleware/auth.middleware");
+const authMiddleware =
+    require("../middleware/auth.middleware");
 
 const router = express.Router();
 
 /* =========================================================
-   ENVIRONMENT
-========================================================= */
+   MULTER MEMORY STORAGE
+   =========================================================
 
-const isVercel =
-    process.env.VERCEL === "1" ||
-    process.env.VERCEL_ENV;
-
-/* =========================================================
-   DOCTOR PHOTO UPLOAD DIRECTORY
-========================================================= */
-
-const localUploadDirectory = path.join(
-    __dirname,
-    "..",
-    "uploads",
-    "doctors"
-);
-
-/*
    IMPORTANT:
 
-   Vercel serverless filesystem:
-   /var/task -> READ ONLY
+   Vercel serverless environment me permanent local
+   filesystem available nahi hota.
 
-   Local development:
-   backend/uploads/doctors -> writable
+   Isliye photo ko disk par save nahi karenge.
 
-   Vercel:
-   /tmp -> writable temporarily
-*/
-
-const uploadDirectory = isVercel
-    ? path.join("/tmp", "hms", "doctors")
-    : localUploadDirectory;
-
-
-/* =========================================================
-   CREATE UPLOAD DIRECTORY
+   Photo memory buffer me jayegi aur controller usse
+   Cloudinary par upload karega.
 ========================================================= */
 
-try {
-    if (!fs.existsSync(uploadDirectory)) {
-        fs.mkdirSync(uploadDirectory, {
-            recursive: true,
-        });
-    }
-} catch (error) {
-    console.error(
-        "Doctor upload directory creation failed:",
-        error.message
-    );
-}
-
-
-/* =========================================================
-   MULTER STORAGE
-========================================================= */
-
-const storage = multer.diskStorage({
-
-    destination: (req, file, cb) => {
-
-        /*
-           Make sure temporary directory exists
-           before multer writes the file.
-        */
-
-        try {
-            if (!fs.existsSync(uploadDirectory)) {
-                fs.mkdirSync(uploadDirectory, {
-                    recursive: true,
-                });
-            }
-
-            cb(null, uploadDirectory);
-
-        } catch (error) {
-
-            console.error(
-                "Doctor upload destination error:",
-                error.message
-            );
-
-            cb(error);
-        }
-    },
-
-
-    filename: (req, file, cb) => {
-
-        const extension = path
-            .extname(file.originalname)
-            .toLowerCase();
-
-        const uniqueName =
-            `doctor-${Date.now()}-${Math.round(
-                Math.random() * 1E9
-            )}${extension}`;
-
-        cb(null, uniqueName);
-    },
-
-});
+const storage = multer.memoryStorage();
 
 
 /* =========================================================
@@ -303,7 +214,8 @@ router.use((error, req, res, next) => {
 
             success: false,
 
-            message: error.message ||
+            message:
+                error.message ||
                 "Doctor photo upload failed.",
 
         });
