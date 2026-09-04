@@ -341,3 +341,32 @@ HMS/
 │
 ├── .gitignore
 └── README.md
+
+## 👨‍💻 Developer
+
+**Satish Kumar**
+
+Full-Stack Web Developer
+
+### Project
+
+**HMS Hospital Narayanpur — Hospital Management System**
+
+This project was designed and developed as a full-stack web application for managing hospital operations digitally.
+
+---
+
+## 📬 Contact & Repository
+
+* **Developer:** Satish Kumar
+* **GitHub:** 35Loveislife20
+* **Repository:** HMS_NARAYANPUR
+* **Live Application:** hms-narayanpur.vercel.app
+
+---
+
+## ⭐ Acknowledgement
+
+This project was developed with a focus on clean UI, responsive design, database integration, REST API development, authentication, and practical hospital management workflows.
+
+**© 2026 Satish Kumar. All Rights Reserved.**
