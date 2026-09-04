@@ -29,159 +29,175 @@ app.use(
 
 
 // =====================================================
-// START SERVER
+// LOCAL DEVELOPMENT SERVER
 // =====================================================
+//
+// Vercel पर app को सीधे export किया जाएगा.
+// Local machine पर ही app.listen() चलेगा.
+//
 
-const startServer = async () => {
+if (require.main === module) {
 
-    try {
+    const startServer = async () => {
 
-        // -------------------------------------------------
-        // TEST DATABASE FIRST
-        // -------------------------------------------------
+        try {
 
-        const databaseConnected =
-            await testDatabaseConnection();
+            // -------------------------------------------------
+            // TEST DATABASE FIRST
+            // -------------------------------------------------
 
-
-        if (!databaseConnected) {
-
-            console.error(
-                "❌ Server was not started because database connection failed."
-            );
-
-            process.exit(1);
-        }
+            const databaseConnected =
+                await testDatabaseConnection();
 
 
-        // -------------------------------------------------
-        // VERIFY EMAIL SERVICE
-        // -------------------------------------------------
+            if (!databaseConnected) {
 
-        await verifyEmailConnection();
-
-
-        // -------------------------------------------------
-        // START EXPRESS SERVER
-        // -------------------------------------------------
-
-        const server =
-            app.listen(
-                PORT,
-                () => {
-
-                    console.log(
-                        "========================================"
-                    );
-
-                    console.log(
-                        "🚀 HMS Backend Server Started"
-                    );
-
-                    console.log(
-                        `📡 Port: ${PORT}`
-                    );
-
-                    console.log(
-                        `🌐 API: http://localhost:${PORT}/api`
-                    );
-
-                    console.log(
-                        `⚙️ Settings: http://localhost:${PORT}/api/settings`
-                    );
-
-                    console.log(
-                        "========================================"
-                    );
-
-                }
-            );
-
-
-        // -------------------------------------------------
-        // GRACEFUL SHUTDOWN
-        // -------------------------------------------------
-
-        const shutdown =
-            async (signal) => {
-
-                console.log(
-                    `\n${signal} received.`
+                console.error(
+                    "❌ Server was not started because database connection failed."
                 );
 
+                process.exit(1);
+            }
 
-                server.close(
-                    async () => {
+
+            // -------------------------------------------------
+            // VERIFY EMAIL SERVICE
+            // -------------------------------------------------
+
+            await verifyEmailConnection();
+
+
+            // -------------------------------------------------
+            // START EXPRESS SERVER
+            // -------------------------------------------------
+
+            const server =
+                app.listen(
+                    PORT,
+                    () => {
 
                         console.log(
-                            "HTTP server closed."
+                            "========================================"
                         );
 
+                        console.log(
+                            "🚀 HMS Backend Server Started"
+                        );
 
-                        try {
+                        console.log(
+                            `📡 Port: ${PORT}`
+                        );
 
-                            await closeDatabase();
+                        console.log(
+                            `🌐 API: http://localhost:${PORT}/api`
+                        );
 
-                            console.log(
-                                "Database connection closed."
-                            );
+                        console.log(
+                            `⚙️ Settings: http://localhost:${PORT}/api/settings`
+                        );
 
-                        } catch (error) {
-
-                            console.error(
-                                "❌ Error while closing database:",
-                                error
-                            );
-
-                        }
-
-
-                        process.exit(0);
+                        console.log(
+                            "========================================"
+                        );
 
                     }
                 );
 
-            };
+
+            // -------------------------------------------------
+            // GRACEFUL SHUTDOWN
+            // -------------------------------------------------
+
+            const shutdown =
+                async (signal) => {
+
+                    console.log(
+                        `\n${signal} received.`
+                    );
 
 
-        // -------------------------------------------------
-        // PROCESS SIGNALS
-        // -------------------------------------------------
+                    server.close(
+                        async () => {
 
-        process.on(
-            "SIGINT",
-            () => {
-                shutdown("SIGINT");
-            }
-        );
+                            console.log(
+                                "HTTP server closed."
+                            );
 
 
-        process.on(
-            "SIGTERM",
-            () => {
-                shutdown("SIGTERM");
-            }
-        );
+                            try {
 
-    } catch (error) {
+                                await closeDatabase();
 
-        console.error(
-            "❌ Server startup failed:"
-        );
+                                console.log(
+                                    "Database connection closed."
+                                );
 
-        console.error(
-            error
-        );
+                            } catch (error) {
 
-        process.exit(1);
+                                console.error(
+                                    "❌ Error while closing database:",
+                                    error
+                                );
 
-    }
+                            }
 
-};
+
+                            process.exit(0);
+
+                        }
+                    );
+
+                };
+
+
+            // -------------------------------------------------
+            // PROCESS SIGNALS
+            // -------------------------------------------------
+
+            process.on(
+                "SIGINT",
+                () => {
+                    shutdown("SIGINT");
+                }
+            );
+
+
+            process.on(
+                "SIGTERM",
+                () => {
+                    shutdown("SIGTERM");
+                }
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "❌ Server startup failed:"
+            );
+
+            console.error(
+                error
+            );
+
+            process.exit(1);
+
+        }
+
+    };
+
+
+    // -------------------------------------------------
+    // RUN LOCAL SERVER
+    // -------------------------------------------------
+
+    startServer();
+
+}
 
 
 // =====================================================
-// RUN SERVER
+// VERCEL EXPORT
 // =====================================================
 
-startServer();
+module.exports = app;
