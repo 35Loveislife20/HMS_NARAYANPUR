@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
     FaSignInAlt,
     FaUserMd,
     FaHospital,
     FaShieldAlt,
-    FaHeartbeat,
+    FaUserPlus,
+    FaCalendarPlus,
+    FaHistory,
+    FaStethoscope,
+    FaGraduationCap,
+    FaBriefcase,
 } from "react-icons/fa";
 
 import LoginModal from "../auth/LoginModal";
 import "./Home.css";
 
 const API_BASE = "http://localhost:5000/api";
+const BACKEND_BASE = "http://localhost:5000";
 
 const DEFAULT_SETTINGS = {
     hospitalName: "HMS Hospital",
@@ -20,6 +27,7 @@ const DEFAULT_SETTINGS = {
 };
 
 function Home() {
+    const navigate = useNavigate();
 
     const [showLoginModal, setShowLoginModal] = useState(false);
 
@@ -35,19 +43,17 @@ function Home() {
         DEFAULT_SETTINGS.logo
     );
 
+    const [doctors, setDoctors] = useState([]);
 
     // =====================================================
-    // LOAD HOSPITAL SETTINGS FROM DATABASE
+    // LOAD HOSPITAL SETTINGS
     // =====================================================
 
     useEffect(() => {
-
         let mounted = true;
 
         const loadSettings = async () => {
-
             try {
-
                 const response = await fetch(
                     `${API_BASE}/settings`
                 );
@@ -60,51 +66,34 @@ function Home() {
 
                 const result = await response.json();
 
-                if (!mounted) {
-                    return;
-                }
+                if (!mounted) return;
 
                 const settings = result?.data || {};
 
                 setHospitalName(
-                    settings.hospitalName?.trim()
+                    typeof settings.hospitalName === "string" &&
+                        settings.hospitalName.trim()
                         ? settings.hospitalName.trim()
                         : DEFAULT_SETTINGS.hospitalName
                 );
 
                 setTagline(
-                    settings.tagline?.trim()
+                    typeof settings.tagline === "string" &&
+                        settings.tagline.trim()
                         ? settings.tagline.trim()
                         : DEFAULT_SETTINGS.tagline
                 );
 
                 setHospitalLogo(
-                    settings.logo?.trim()
+                    typeof settings.logo === "string" &&
+                        settings.logo.trim()
                         ? settings.logo.trim()
                         : DEFAULT_SETTINGS.logo
                 );
-
             } catch (error) {
-
                 console.error(
                     "Unable to load hospital settings:",
                     error
-                );
-
-                if (!mounted) {
-                    return;
-                }
-
-                setHospitalName(
-                    DEFAULT_SETTINGS.hospitalName
-                );
-
-                setTagline(
-                    DEFAULT_SETTINGS.tagline
-                );
-
-                setHospitalLogo(
-                    DEFAULT_SETTINGS.logo
                 );
             }
         };
@@ -114,9 +103,63 @@ function Home() {
         return () => {
             mounted = false;
         };
-
     }, []);
 
+    // =====================================================
+    // LOAD DOCTORS
+    // =====================================================
+
+    useEffect(() => {
+        let mounted = true;
+
+        const loadDoctors = async () => {
+            try {
+                const response = await fetch(
+                    `${API_BASE}/doctors`
+                );
+
+                if (!response.ok) {
+                    throw new Error(
+                        `Doctors API failed: ${response.status}`
+                    );
+                }
+
+                const result = await response.json();
+
+                if (!mounted) return;
+
+                const doctorsList = Array.isArray(result?.doctors)
+                    ? result.doctors
+                    : Array.isArray(result?.data)
+                        ? result.data
+                        : Array.isArray(result)
+                            ? result
+                            : [];
+
+                console.log(
+                    "HMS Doctors loaded:",
+                    doctorsList
+                );
+
+                setDoctors(doctorsList);
+            } catch (error) {
+                console.error(
+                    "Unable to load doctors:",
+                    error
+                );
+
+                if (mounted) {
+                    setDoctors([]);
+                }
+            }
+        };
+
+        loadDoctors();
+
+        return () => {
+            mounted = false;
+        };
+    }, []);
 
     // =====================================================
     // LOGIN
@@ -126,66 +169,278 @@ function Home() {
         setShowLoginModal(true);
     };
 
-
     const closeLoginModal = () => {
         setShowLoginModal(false);
     };
 
+    // =====================================================
+    // PATIENT SERVICE NAVIGATION
+    // =====================================================
+
+    const goToPatientRegistration = () => {
+        navigate("/patients");
+    };
+
+    const goToNewAppointment = () => {
+        navigate("/appointments");
+    };
+
+    const goToOldAppointment = () => {
+        navigate("/appointments");
+    };
 
     // =====================================================
-    // LOGO ERROR FALLBACK
+    // LOGO FALLBACK
     // =====================================================
 
     const handleLogoError = (event) => {
-
         if (
-            event.currentTarget.src.endsWith(
-                DEFAULT_SETTINGS.logo
-            )
+            event.currentTarget.dataset.fallback === "true"
         ) {
             return;
         }
 
-        event.currentTarget.src =
-            DEFAULT_SETTINGS.logo;
+        event.currentTarget.dataset.fallback = "true";
+        event.currentTarget.src = DEFAULT_SETTINGS.logo;
     };
 
+    // =====================================================
+    // DOCTOR PHOTO FALLBACK
+    // =====================================================
+
+    const handleDoctorPhotoError = (event) => {
+        if (
+            event.currentTarget.dataset.fallback === "true"
+        ) {
+            return;
+        }
+
+        event.currentTarget.dataset.fallback = "true";
+        event.currentTarget.src = "/default-doctor.png";
+    };
+
+    // =====================================================
+    // DOCTOR PHOTO URL
+    // =====================================================
+
+    const getDoctorPhoto = (doctor) => {
+        const photo =
+            doctor?.photo ||
+            doctor?.profile_photo ||
+            doctor?.profilePhoto ||
+            doctor?.image ||
+            doctor?.image_url ||
+            doctor?.photo_url;
+
+        if (
+            !photo ||
+            typeof photo !== "string" ||
+            !photo.trim()
+        ) {
+            return "/default-doctor.png";
+        }
+
+        const cleanPhoto = photo.trim();
+
+        // Full backend/frontend URL
+        if (
+            cleanPhoto.startsWith("http://") ||
+            cleanPhoto.startsWith("https://")
+        ) {
+            return cleanPhoto;
+        }
+
+        // /uploads/doctors/file.jpg
+        if (
+            cleanPhoto.startsWith("/uploads/")
+        ) {
+            return `${BACKEND_BASE}${cleanPhoto}`;
+        }
+
+        // uploads/doctors/file.jpg
+        if (
+            cleanPhoto.startsWith("uploads/")
+        ) {
+            return `${BACKEND_BASE}/${cleanPhoto}`;
+        }
+
+        // Any other absolute path
+        if (
+            cleanPhoto.startsWith("/")
+        ) {
+            return `${BACKEND_BASE}${cleanPhoto}`;
+        }
+
+        // Only filename
+        if (
+            !cleanPhoto.includes("/")
+        ) {
+            return `${BACKEND_BASE}/uploads/doctors/${cleanPhoto}`;
+        }
+
+        // Other relative path
+        return `${BACKEND_BASE}/${cleanPhoto.replace(
+            /^\/+/,
+            ""
+        )}`;
+    };
+
+    // =====================================================
+    // DOCTOR NAME
+    // =====================================================
+
+    const getDoctorName = (doctor) => {
+        return (
+            doctor?.name ||
+            doctor?.doctor_name ||
+            doctor?.full_name ||
+            doctor?.fullName ||
+            "Doctor"
+        );
+    };
+
+    // =====================================================
+    // SPECIALIZATION
+    // =====================================================
+
+    const getSpecialization = (doctor) => {
+        return (
+            doctor?.specialization ||
+            doctor?.speciality ||
+            doctor?.specialty ||
+            doctor?.department_name ||
+            doctor?.department ||
+            "Medical Specialist"
+        );
+    };
+
+    // =====================================================
+    // QUALIFICATION
+    // =====================================================
+
+    const getQualification = (doctor) => {
+        return (
+            doctor?.qualification ||
+            doctor?.qualifications ||
+            doctor?.degree ||
+            doctor?.education ||
+            "MBBS"
+        );
+    };
+
+    // =====================================================
+    // EXPERIENCE
+    // =====================================================
+
+    const getExperience = (doctor) => {
+        const experience =
+            doctor?.experience_years ??
+            doctor?.experience ??
+            doctor?.years_of_experience;
+
+        if (
+            experience !== undefined &&
+            experience !== null &&
+            experience !== ""
+        ) {
+            return `${experience} Years`;
+        }
+
+        return "Experienced";
+    };
+
+    // =====================================================
+    // DOCTOR CARD
+    // =====================================================
+
+    const DoctorCard = ({
+        doctor,
+        duplicate = false,
+    }) => {
+        const doctorPhoto = getDoctorPhoto(doctor);
+        const doctorName = getDoctorName(doctor);
+
+        return (
+            <article
+                className="doctor-card"
+                aria-hidden={
+                    duplicate ? "true" : "false"
+                }
+            >
+                <div className="doctor-card-photo">
+
+                    <img
+                        src={doctorPhoto}
+                        alt={
+                            duplicate
+                                ? ""
+                                : doctorName
+                        }
+                        loading="lazy"
+                        onError={handleDoctorPhotoError}
+                    />
+
+                    <div className="doctor-photo-badge">
+                        <FaUserMd />
+                    </div>
+
+                </div>
+
+                <div className="doctor-card-info">
+
+                    <div className="doctor-card-label">
+
+                        <FaStethoscope />
+
+                        <span>
+                            Medical Specialist
+                        </span>
+
+                    </div>
+
+                    <h3>
+                        {doctorName}
+                    </h3>
+
+                    <p className="doctor-specialization">
+                        {getSpecialization(doctor)}
+                    </p>
+
+                    <div className="doctor-meta">
+
+                        <span>
+                            <FaGraduationCap />
+                            {getQualification(doctor)}
+                        </span>
+
+                        <span>
+                            <FaBriefcase />
+                            {getExperience(doctor)}
+                        </span>
+
+                    </div>
+
+                </div>
+            </article>
+        );
+    };
 
     // =====================================================
     // RENDER
     // =====================================================
 
     return (
-
         <main className="home-page">
 
-            {/* =================================================
-                HIDDEN HEADER
-            ================================================= */}
-
-            <header className="home-header">
-                {/* Header intentionally hidden */}
-            </header>
-
-
-            {/* =================================================
-                MAIN CONTENT
-            ================================================= */}
+            <header className="home-header"></header>
 
             <section className="home-content">
 
-
                 {/* =================================================
-                    LEFT SIDE
+                    MAIN HOME AREA
                 ================================================= */}
 
                 <div className="home-left">
-
-
-                    {/* =================================================
-                        SMART HEALTHCARE MANAGEMENT
-                        TOP
-                    ================================================= */}
 
                     <div className="home-badge">
 
@@ -197,18 +452,7 @@ function Home() {
 
                     </div>
 
-
-                    {/* =================================================
-                        HOSPITAL BRAND
-                        LOGO LEFT + DATABASE NAME RIGHT
-                    ================================================= */}
-
                     <div className="home-brand">
-
-
-                        {/* =================================================
-                            LARGE REAL HOSPITAL LOGO
-                        ================================================= */}
 
                         <div className="home-brand-icon">
 
@@ -219,11 +463,6 @@ function Home() {
                             />
 
                         </div>
-
-
-                        {/* =================================================
-                            DATABASE HOSPITAL NAME
-                        ================================================= */}
 
                         <div className="home-brand-text">
 
@@ -239,23 +478,11 @@ function Home() {
 
                     </div>
 
-
-                    {/* =================================================
-                        DESCRIPTION
-                    ================================================= */}
-
                     <p className="home-description">
-
                         Manage patients, doctors, appointments,
                         departments and hospital operations
                         from one secure platform.
-
                     </p>
-
-
-                    {/* =================================================
-                        LOGIN BUTTON
-                    ================================================= */}
 
                     <div className="home-login-wrapper">
 
@@ -275,94 +502,15 @@ function Home() {
 
                     </div>
 
-
-                    {/* =================================================
-                        FEATURES
-                    ================================================= */}
-
-                    <div className="home-features">
-
-
-                        {/* DOCTORS */}
-
-                        <div className="home-feature">
-
-                            <FaUserMd />
-
-                            <div>
-
-                                <h3>
-                                    Doctors
-                                </h3>
-
-                                <p>
-                                    Manage doctors and
-                                    medical staff.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        {/* PATIENTS */}
-
-                        <div className="home-feature">
-
-                            <FaHeartbeat />
-
-                            <div>
-
-                                <h3>
-                                    Patients
-                                </h3>
-
-                                <p>
-                                    Manage complete
-                                    patient records.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        {/* DEPARTMENTS */}
-
-                        <div className="home-feature">
-
-                            <FaHospital />
-
-                            <div>
-
-                                <h3>
-                                    Departments
-                                </h3>
-
-                                <p>
-                                    Organize hospital
-                                    departments.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
                 </div>
 
-
                 {/* =================================================
-                    RIGHT SIDE
+                    PATIENT SERVICES
                 ================================================= */}
 
                 <div className="home-right">
 
                     <div className="hospital-card">
-
-
-                        {/* CARD LOGO */}
 
                         <div className="hospital-card-icon">
 
@@ -374,71 +522,90 @@ function Home() {
 
                         </div>
 
-
-                        {/* DYNAMIC HOSPITAL NAME */}
-
                         <h3>
                             {hospitalName}
                         </h3>
-
 
                         <p>
                             Everything you need to manage
                             your hospital efficiently.
                         </p>
 
-
-                        {/* MANAGEMENT LIST */}
+                        {/* PATIENT SERVICES */}
 
                         <div className="hospital-management-list">
 
+                            <h4>
+                                Patient Services
+                            </h4>
 
-                            <div className="management-item">
+                            {/* NEW PATIENT REGISTRATION */}
 
-                                <FaUserMd />
+                            <button
+                                type="button"
+                                className="management-item"
+                                onClick={
+                                    goToPatientRegistration
+                                }
+                            >
+
+                                <FaUserPlus />
 
                                 <span>
-                                    Doctors
+                                    New Patient Registration
                                 </span>
 
                                 <small>
-                                    Manage
+                                    Register
                                 </small>
 
-                            </div>
+                            </button>
 
+                            {/* NEW PATIENT APPOINTMENT */}
 
-                            <div className="management-item">
+                            <button
+                                type="button"
+                                className="management-item"
+                                onClick={
+                                    goToNewAppointment
+                                }
+                            >
 
-                                <FaHeartbeat />
+                                <FaCalendarPlus />
 
                                 <span>
-                                    Patients
+                                    New Patient Appointment
                                 </span>
 
                                 <small>
-                                    Manage
+                                    Book
                                 </small>
 
-                            </div>
+                            </button>
 
+                            {/* OLD PATIENT APPOINTMENT */}
 
-                            <div className="management-item">
+                            <button
+                                type="button"
+                                className="management-item"
+                                onClick={
+                                    goToOldAppointment
+                                }
+                            >
 
-                                <FaHospital />
+                                <FaHistory />
 
                                 <span>
-                                    Departments
+                                    Old Patient Appointment
                                 </span>
 
                                 <small>
-                                    Organize
+                                    View
                                 </small>
 
-                            </div>
+                            </button>
 
                         </div>
-
 
                         {/* SECURITY */}
 
@@ -456,12 +623,64 @@ function Home() {
 
                 </div>
 
+                {/* =================================================
+                    DOCTORS MARQUEE
+                ================================================= */}
+
+                {doctors.length > 0 && (
+
+                    <section className="doctors-section">
+
+                        <div className="doctors-marquee">
+
+                            <div className="doctors-marquee-track">
+
+                                {/* FIRST SET */}
+
+                                {doctors.map(
+                                    (doctor, index) => (
+                                        <DoctorCard
+                                            key={
+                                                `doctor-a-${doctor.id ||
+                                                doctor._id ||
+                                                index
+                                                }`
+                                            }
+                                            doctor={doctor}
+                                        />
+                                    )
+                                )}
+
+                                {/* DUPLICATE SET */}
+
+                                {doctors.map(
+                                    (doctor, index) => (
+                                        <DoctorCard
+                                            key={
+                                                `doctor-b-${doctor.id ||
+                                                doctor._id ||
+                                                index
+                                                }`
+                                            }
+                                            doctor={doctor}
+                                            duplicate
+                                        />
+                                    )
+                                )}
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                )}
+
             </section>
 
-
-            {/* =================================================
+            {/* =====================================================
                 FOOTER
-            ================================================= */}
+            ===================================================== */}
 
             <footer className="home-footer">
 
@@ -475,10 +694,9 @@ function Home() {
 
             </footer>
 
-
-            {/* =================================================
+            {/* =====================================================
                 LOGIN MODAL
-            ================================================= */}
+            ===================================================== */}
 
             {showLoginModal && (
 
@@ -491,6 +709,5 @@ function Home() {
         </main>
     );
 }
-
 
 export default Home;

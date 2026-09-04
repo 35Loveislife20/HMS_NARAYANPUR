@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 // =====================================================
 // ROUTES
@@ -64,23 +65,32 @@ app.use(
 );
 
 // =====================================================
+// STATIC UPLOADS
+// =====================================================
+
+// Doctor photos will be available through:
+// http://localhost:5000/uploads/doctors/filename.jpg
+
+app.use(
+    "/uploads",
+    express.static(
+        path.join(__dirname, "uploads")
+    )
+);
+
+// =====================================================
 // HEALTH CHECK
 // =====================================================
 
 app.get("/", (req, res) => {
-
     res.status(200).json({
         success: true,
         message: "HMS Backend API is running",
     });
-
 });
 
 // =====================================================
 // AUTH
-// REGISTER
-// LOGIN
-// FORGOT PASSWORD
 // =====================================================
 
 app.use(
@@ -170,7 +180,7 @@ app.use(
 );
 
 // =====================================================
-// USER SETTINGS
+// SETTINGS
 // =====================================================
 
 app.use(
@@ -179,11 +189,10 @@ app.use(
 );
 
 // =====================================================
-// 404 - ROUTE NOT FOUND
+// 404
 // =====================================================
 
 app.use((req, res) => {
-
     console.warn(
         "⚠️ API ROUTE NOT FOUND:",
         req.method,
@@ -191,17 +200,10 @@ app.use((req, res) => {
     );
 
     res.status(404).json({
-
         success: false,
-
-        message:
-            "API route not found",
-
-        path:
-            req.originalUrl,
-
+        message: "API route not found",
+        path: req.originalUrl,
     });
-
 });
 
 // =====================================================
@@ -210,7 +212,6 @@ app.use((req, res) => {
 
 app.use(
     (error, req, res, next) => {
-
         console.error(
             "========================================"
         );
@@ -246,15 +247,11 @@ app.use(
         res.status(
             error.status || 500
         ).json({
-
             success: false,
-
             message:
                 error.message ||
                 "Internal server error",
-
         });
-
     }
 );
 

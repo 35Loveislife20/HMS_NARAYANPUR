@@ -18,6 +18,9 @@ import {
     FaUserTie,
     FaHospitalUser,
     FaChevronDown,
+    FaSignInAlt,
+    FaUserPlus,
+    FaKey,
 } from "react-icons/fa";
 
 import { useAuth } from "../../context/AuthContext";
@@ -26,7 +29,7 @@ import "./LoginModal.css";
 
 
 // =====================================================
-// EXACT 9 HMS ROLES
+// HMS ROLES
 // =====================================================
 
 const ROLE_CONFIG = {
@@ -115,15 +118,8 @@ const normalizeRole = (role) => {
 // =====================================================
 
 function LoginModal({ onClose }) {
-
     const navigate = useNavigate();
-
     const { login } = useAuth();
-
-
-    // =================================================
-    // STATE
-    // =================================================
 
     const [showPassword, setShowPassword] = useState(false);
 
@@ -134,7 +130,6 @@ function LoginModal({ onClose }) {
     });
 
     const [loading, setLoading] = useState(false);
-
     const [error, setError] = useState("");
 
 
@@ -151,7 +146,7 @@ function LoginModal({ onClose }) {
 
 
     // =================================================
-    // SUPER ADMIN CHECK
+    // SUPER ADMIN
     // =================================================
 
     const isSuperAdmin =
@@ -163,9 +158,7 @@ function LoginModal({ onClose }) {
     // =================================================
 
     useEffect(() => {
-
         const handleEscape = (event) => {
-
             if (
                 event.key === "Escape" &&
                 !loading
@@ -185,16 +178,14 @@ function LoginModal({ onClose }) {
                 handleEscape
             );
         };
-
     }, [onClose, loading]);
 
 
     // =================================================
-    // HANDLE INPUT
+    // INPUT CHANGE
     // =================================================
 
     const handleChange = (event) => {
-
         const {
             name,
             value,
@@ -210,11 +201,10 @@ function LoginModal({ onClose }) {
 
 
     // =================================================
-    // HANDLE ROLE
+    // ROLE CHANGE
     // =================================================
 
     const handleRoleChange = (event) => {
-
         const role = normalizeRole(
             event.target.value
         );
@@ -237,26 +227,21 @@ function LoginModal({ onClose }) {
     // =================================================
 
     const handleForgotPassword = () => {
-
         if (loading) {
             return;
         }
 
         onClose();
 
-        navigate(
-            "/forgot-password"
-        );
+        navigate("/forgot-password");
     };
 
 
     // =================================================
     // REGISTER
-    // ONLY SUPER ADMIN
     // =================================================
 
     const handleRegister = () => {
-
         if (
             loading ||
             !isSuperAdmin
@@ -271,19 +256,13 @@ function LoginModal({ onClose }) {
 
 
     // =================================================
-    // LOGIN SUBMIT
+    // LOGIN
     // =================================================
 
     const handleSubmit = async (event) => {
-
         event.preventDefault();
 
         setError("");
-
-
-        // -------------------------------------------------
-        // ROLE
-        // -------------------------------------------------
 
         const selectedRoleName =
             normalizeRole(formData.role);
@@ -298,11 +277,6 @@ function LoginModal({ onClose }) {
             return;
         }
 
-
-        // -------------------------------------------------
-        // EMAIL
-        // -------------------------------------------------
-
         const email =
             formData.email.trim();
 
@@ -314,11 +288,6 @@ function LoginModal({ onClose }) {
             return;
         }
 
-
-        // -------------------------------------------------
-        // PASSWORD
-        // -------------------------------------------------
-
         if (!formData.password) {
             setError(
                 "Please enter your password."
@@ -327,25 +296,13 @@ function LoginModal({ onClose }) {
             return;
         }
 
-
         setLoading(true);
 
-
         try {
-
-            // =================================================
-            // AUTH CONTEXT
-            // =================================================
-
             const response = await login(
                 email,
                 formData.password
             );
-
-
-            // =================================================
-            // RESPONSE VALIDATION
-            // =================================================
 
             if (
                 !response ||
@@ -359,16 +316,10 @@ function LoginModal({ onClose }) {
                 );
             }
 
-
-            // =================================================
-            // BACKEND ROLE
-            // =================================================
-
             const actualRole =
                 normalizeRole(
                     response.user.role
                 );
-
 
             if (
                 !ROLE_CONFIG[actualRole]
@@ -378,25 +329,14 @@ function LoginModal({ onClose }) {
                 );
             }
 
-
-            // =================================================
-            // ROLE SECURITY CHECK
-            // =================================================
-
             if (
                 actualRole !==
                 selectedRoleName
             ) {
-
                 throw new Error(
                     `Selected role is "${ROLE_CONFIG[selectedRoleName].label}", but this account is registered as "${ROLE_CONFIG[actualRole].label}". Please select the correct role.`
                 );
             }
-
-
-            // =================================================
-            // SUCCESS
-            // =================================================
 
             console.log(
                 "HMS Login Successful:",
@@ -406,13 +346,7 @@ function LoginModal({ onClose }) {
                 }
             );
 
-
-            // Close modal
-
             onClose();
-
-
-            // All roles -> dashboard
 
             navigate(
                 "/dashboard",
@@ -420,9 +354,7 @@ function LoginModal({ onClose }) {
                     replace: true,
                 }
             );
-
         } catch (loginError) {
-
             console.error(
                 "HMS LOGIN ERROR:",
                 loginError
@@ -432,30 +364,25 @@ function LoginModal({ onClose }) {
                 loginError?.message ||
                 "Unable to connect to HMS server."
             );
-
         } finally {
-
             setLoading(false);
         }
     };
 
 
-    // =====================================================
+    // =================================================
     // UI
-    // =====================================================
+    // =================================================
 
     return (
         <div
             className="login-modal-overlay"
             onClick={() => {
-
                 if (!loading) {
                     onClose();
                 }
-
             }}
         >
-
             <div
                 className="login-modal"
                 onClick={(event) =>
@@ -463,9 +390,7 @@ function LoginModal({ onClose }) {
                 }
             >
 
-                {/* =================================================
-                    CLOSE
-                ================================================= */}
+                {/* CLOSE */}
 
                 <button
                     type="button"
@@ -478,52 +403,43 @@ function LoginModal({ onClose }) {
                 </button>
 
 
-                {/* =================================================
-                    LOGO
-                ================================================= */}
+                {/* HEADER */}
 
-                <div className="modal-logo">
-                    <FaHeartbeat />
+                <div className="modal-header">
+
+                    <div className="modal-logo">
+                        <FaHeartbeat />
+                    </div>
+
+                    <h2>
+                        HMS
+                    </h2>
+
+                    <p className="modal-subtitle">
+                        Hospital Management System
+                    </p>
+
+                    <div className="modal-heading">
+                        <span>
+                            SECURE SIGN IN
+                        </span>
+                    </div>
+
                 </div>
 
 
-                <h2>
-                    HMS
-                </h2>
-
-
-                <p className="modal-subtitle">
-                    Hospital Management System
-                </p>
-
-
-                {/* =================================================
-                    SIGN IN
-                ================================================= */}
-
-                <div className="modal-heading">
-                    <span>
-                        SIGN IN
-                    </span>
-                </div>
-
-
-                {/* =================================================
-                    FORM
-                ================================================= */}
+                {/* FORM */}
 
                 <form
                     className="modal-form"
                     onSubmit={handleSubmit}
                 >
 
-                    {/* =================================================
-                        ROLE - FIRST
-                    ================================================= */}
+                    {/* ROLE */}
 
                     <div className="modal-field">
 
-                        <label>
+                        <label htmlFor="login-role">
                             Select Role
                         </label>
 
@@ -532,6 +448,7 @@ function LoginModal({ onClose }) {
                             <selectedRole.icon />
 
                             <select
+                                id="login-role"
                                 name="role"
                                 value={formData.role}
                                 onChange={handleRoleChange}
@@ -539,10 +456,8 @@ function LoginModal({ onClose }) {
                                 aria-label="Select HMS role"
                                 required
                             >
-
                                 {ROLE_OPTIONS.map(
                                     (role) => {
-
                                         const config =
                                             ROLE_CONFIG[role];
 
@@ -556,7 +471,6 @@ function LoginModal({ onClose }) {
                                         );
                                     }
                                 )}
-
                             </select>
 
                             <FaChevronDown
@@ -568,9 +482,7 @@ function LoginModal({ onClose }) {
                     </div>
 
 
-                    {/* =================================================
-                        SELECTED ROLE
-                    ================================================= */}
+                    {/* SELECTED ROLE */}
 
                     <div className="modal-selected-role">
 
@@ -585,13 +497,11 @@ function LoginModal({ onClose }) {
                     </div>
 
 
-                    {/* =================================================
-                        EMAIL
-                    ================================================= */}
+                    {/* EMAIL */}
 
                     <div className="modal-field">
 
-                        <label>
+                        <label htmlFor="login-email">
                             Email Address
                         </label>
 
@@ -600,6 +510,7 @@ function LoginModal({ onClose }) {
                             <FaUser />
 
                             <input
+                                id="login-email"
                                 type="email"
                                 name="email"
                                 placeholder="Enter your email"
@@ -615,13 +526,11 @@ function LoginModal({ onClose }) {
                     </div>
 
 
-                    {/* =================================================
-                        PASSWORD
-                    ================================================= */}
+                    {/* PASSWORD */}
 
                     <div className="modal-field">
 
-                        <label>
+                        <label htmlFor="login-password">
                             Password
                         </label>
 
@@ -630,6 +539,7 @@ function LoginModal({ onClose }) {
                             <FaLock />
 
                             <input
+                                id="login-password"
                                 type={
                                     showPassword
                                         ? "text"
@@ -660,13 +570,11 @@ function LoginModal({ onClose }) {
                                         : "Show password"
                                 }
                             >
-
                                 {showPassword ? (
                                     <FaEyeSlash />
                                 ) : (
                                     <FaEye />
                                 )}
-
                             </button>
 
                         </div>
@@ -674,29 +582,25 @@ function LoginModal({ onClose }) {
                     </div>
 
 
-                    {/* =================================================
-                        ERROR
-                    ================================================= */}
+                    {/* ERROR */}
 
                     {error && (
-
                         <div
                             className="modal-error"
                             role="alert"
                         >
-                            <span>⚠</span>
+                            <span>
+                                ⚠
+                            </span>
 
                             <span>
                                 {error}
                             </span>
                         </div>
-
                     )}
 
 
-                    {/* =================================================
-                        OPTIONS
-                    ================================================= */}
+                    {/* PASSWORD / REGISTER */}
 
                     <div
                         className={
@@ -706,8 +610,6 @@ function LoginModal({ onClose }) {
                         }
                     >
 
-                        {/* FORGOT - EVERY ROLE */}
-
                         <button
                             type="button"
                             onClick={
@@ -715,14 +617,11 @@ function LoginModal({ onClose }) {
                             }
                             disabled={loading}
                         >
+                            <FaKey />
                             Forgot Password?
                         </button>
 
-
-                        {/* REGISTER - SUPER ADMIN ONLY */}
-
                         {isSuperAdmin && (
-
                             <button
                                 type="button"
                                 onClick={
@@ -730,17 +629,15 @@ function LoginModal({ onClose }) {
                                 }
                                 disabled={loading}
                             >
+                                <FaUserPlus />
                                 Register
                             </button>
-
                         )}
 
                     </div>
 
 
-                    {/* =================================================
-                        LOGIN
-                    ================================================= */}
+                    {/* LOGIN */}
 
                     <button
                         type="submit"
@@ -754,26 +651,16 @@ function LoginModal({ onClose }) {
                                 Signing in...
                             </>
                         ) : (
-                            "Login"
+                            <>
+                                <FaSignInAlt />
+                                Login to HMS
+                            </>
                         )}
 
                     </button>
 
 
-                    {/* =================================================
-                        OR
-                    ================================================= */}
-
-                    <div className="modal-or">
-                        <span>
-                            OR
-                        </span>
-                    </div>
-
-
-                    {/* =================================================
-                        SECURITY
-                    ================================================= */}
+                    {/* SECURITY */}
 
                     <div className="modal-security">
 
@@ -783,8 +670,12 @@ function LoginModal({ onClose }) {
                             Secure Login
                         </span>
 
+                        <span className="security-dot">
+                            •
+                        </span>
+
                         <span>
-                            • Your data is protected
+                            Your data is protected
                         </span>
 
                     </div>
@@ -792,10 +683,8 @@ function LoginModal({ onClose }) {
                 </form>
 
             </div>
-
         </div>
     );
 }
-
 
 export default LoginModal;

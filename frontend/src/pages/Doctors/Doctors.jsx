@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+
 import {
     FaPlus,
     FaSyncAlt,
@@ -15,22 +16,106 @@ import {
     FaMoneyBillWave,
     FaBuilding,
     FaExclamationTriangle,
+    FaCamera,
 } from "react-icons/fa";
 
 import "./Doctors.css";
 
-function Doctors() {
-    const API_URL =
-        import.meta.env.VITE_API_URL ||
-        "http://localhost:5000/api";
 
-    // =====================================================
-    // STATE
-    // =====================================================
+/* =========================================================
+   API
+========================================================= */
+
+const API_URL =
+    import.meta.env.VITE_API_URL ||
+    "http://localhost:5000/api";
+
+
+/* =========================================================
+   DEFAULT FORM
+========================================================= */
+
+const EMPTY_FORM = {
+    doctor_code: "",
+    name: "",
+    specialization: "",
+    qualification: "",
+    phone: "",
+    email: "",
+    experience_years: "",
+    consultation_fee: "",
+    department_id: "",
+    hospital_id: "",
+    status: "available",
+};
+
+
+/* =========================================================
+   IMAGE HELPERS
+========================================================= */
+
+const BACKEND_URL = API_URL.replace(/\/api\/?$/, "");
+
+
+const getDoctorPhoto = (doctor) => {
+    if (!doctor) {
+        return "/default-doctor.png";
+    }
+
+    const photo =
+        doctor.photo ||
+        doctor.profile_photo ||
+        doctor.profilePhoto ||
+        doctor.image ||
+        doctor.image_url ||
+        doctor.photo_url;
+
+    if (!photo) {
+        return "/default-doctor.png";
+    }
+
+    if (
+        photo.startsWith("http://") ||
+        photo.startsWith("https://")
+    ) {
+        return photo;
+    }
+
+    if (photo.startsWith("/")) {
+        return `${BACKEND_URL}${photo}`;
+    }
+
+    return `${BACKEND_URL}/${photo}`;
+};
+
+
+const handleImageError = (event) => {
+    if (
+        event.currentTarget.src.includes(
+            "default-doctor.png"
+        )
+    ) {
+        return;
+    }
+
+    event.currentTarget.src = "/default-doctor.png";
+};
+
+
+/* =========================================================
+   COMPONENT
+========================================================= */
+
+const Doctors = () => {
+
+    /* =====================================================
+       STATES
+    ===================================================== */
 
     const [doctors, setDoctors] = useState([]);
 
     const [loading, setLoading] = useState(true);
+
     const [refreshing, setRefreshing] = useState(false);
 
     const [error, setError] = useState("");
@@ -38,55 +123,62 @@ function Doctors() {
     const [search, setSearch] = useState("");
 
     const [showModal, setShowModal] = useState(false);
-    const [showViewModal, setShowViewModal] = useState(false);
 
-    const [editingDoctor, setEditingDoctor] = useState(null);
-    const [selectedDoctor, setSelectedDoctor] = useState(null);
+    const [showViewModal, setShowViewModal] =
+        useState(false);
+
+    const [editingDoctor, setEditingDoctor] =
+        useState(null);
+
+    const [selectedDoctor, setSelectedDoctor] =
+        useState(null);
 
     const [saving, setSaving] = useState(false);
 
-    const [deleteLoading, setDeleteLoading] = useState(null);
+    const [deleteLoading, setDeleteLoading] =
+        useState(null);
 
-    const [form, setForm] = useState({
-        doctor_code: "",
-        name: "",
-        specialization: "",
-        qualification: "",
-        phone: "",
-        email: "",
-        experience_years: "",
-        consultation_fee: "",
-        department_id: "",
-        hospital_id: "",
-        status: "available",
-    });
+    const [form, setForm] = useState(EMPTY_FORM);
 
-    // =====================================================
-    // AUTH HEADERS
-    // =====================================================
+    const [selectedPhoto, setSelectedPhoto] =
+        useState(null);
 
-    const getHeaders = () => {
-        const token = localStorage.getItem("hms_token");
+    const [photoPreview, setPhotoPreview] =
+        useState("");
 
-        if (!token) {
-            throw new Error(
-                "Login session expired. Please login again."
-            );
+    /* =====================================================
+       AUTH HEADERS
+    ===================================================== */
+
+    const getAuthHeaders = () => {
+
+        const token =
+            localStorage.getItem("hms_token");
+
+        const headers = {};
+
+        if (token) {
+            headers.Authorization =
+                `Bearer ${token}`;
         }
 
-        return {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        };
+        return headers;
     };
 
-    // =====================================================
-    // FETCH DOCTORS
-    // =====================================================
 
-    const fetchDoctors = async (showLoader = true) => {
+    /* =====================================================
+       FETCH DOCTORS
+    ===================================================== */
+
+    const fetchDoctors = async (
+        showRefresh = false
+    ) => {
+
         try {
-            if (showLoader) {
+
+            if (showRefresh) {
+                setRefreshing(true);
+            } else {
                 setLoading(true);
             }
 
@@ -96,23 +188,26 @@ function Doctors() {
                 `${API_URL}/doctors`,
                 {
                     method: "GET",
-                    headers: getHeaders(),
+                    headers: {
+                        ...getAuthHeaders(),
+                    },
                 }
             );
 
-            const data = await response.json();
+            const data =
+                await response.json();
 
             if (!response.ok) {
                 throw new Error(
                     data.message ||
-                    "Unable to load doctors."
+                    "Failed to fetch doctors"
                 );
             }
 
             if (!data.success) {
                 throw new Error(
                     data.message ||
-                    "Unable to load doctors."
+                    "Failed to fetch doctors"
                 );
             }
 
@@ -121,136 +216,51 @@ function Doctors() {
                     ? data.doctors
                     : []
             );
+
         } catch (err) {
+
             console.error(
-                "Fetch Doctors Error:",
+                "Fetch doctors error:",
                 err
             );
 
-            setDoctors([]);
-
             setError(
                 err.message ||
-                "Unable to connect to server."
+                "Failed to load doctors"
             );
+
         } finally {
-            if (showLoader) {
-                setLoading(false);
-            }
-        }
-    };
 
-    // =====================================================
-    // INITIAL LOAD
-    // =====================================================
-
-    useEffect(() => {
-        fetchDoctors(true);
-    }, []);
-
-    // =====================================================
-    // REFRESH
-    // =====================================================
-
-    const handleRefresh = async () => {
-        if (refreshing) {
-            return;
-        }
-
-        try {
-            setRefreshing(true);
-
-            await fetchDoctors(false);
-        } finally {
+            setLoading(false);
             setRefreshing(false);
         }
     };
 
-    // =====================================================
-    // SEARCH
-    // =====================================================
 
-    const filteredDoctors = useMemo(() => {
-        const query =
-            search.trim().toLowerCase();
+    /* =====================================================
+       INITIAL LOAD
+    ===================================================== */
 
-        if (!query) {
-            return doctors;
-        }
+    useEffect(() => {
+        fetchDoctors();
+    }, []);
 
-        return doctors.filter((doctor) => {
-            return (
-                String(
-                    doctor.doctor_code || ""
-                )
-                    .toLowerCase()
-                    .includes(query) ||
-                String(
-                    doctor.name || ""
-                )
-                    .toLowerCase()
-                    .includes(query) ||
-                String(
-                    doctor.specialization || ""
-                )
-                    .toLowerCase()
-                    .includes(query) ||
-                String(
-                    doctor.phone || ""
-                )
-                    .toLowerCase()
-                    .includes(query) ||
-                String(
-                    doctor.email || ""
-                )
-                    .toLowerCase()
-                    .includes(query)
-            );
-        });
-    }, [doctors, search]);
 
-    // =====================================================
-    // TOTAL DOCTORS
-    // =====================================================
+    /* =====================================================
+       REFRESH
+    ===================================================== */
 
-    const totalDoctors = doctors.length;
+    const handleRefresh = () => {
+        fetchDoctors(true);
+    };
 
-    // =====================================================
-    // AVAILABLE DOCTORS
-    // =====================================================
 
-    const availableDoctors = doctors.filter(
-        (doctor) =>
-            String(
-                doctor.status || ""
-            ).toLowerCase() === "available"
-    ).length;
-
-    // =====================================================
-    // AVERAGE CONSULTATION FEE
-    // =====================================================
-
-    const averageConsultation =
-        doctors.length > 0
-            ? doctors.reduce(
-                (total, doctor) => {
-                    return (
-                        total +
-                        Number(
-                            doctor.consultation_fee ||
-                            0
-                        )
-                    );
-                },
-                0
-            ) / doctors.length
-            : 0;
-
-    // =====================================================
-    // FORM CHANGE
-    // =====================================================
+    /* =====================================================
+       FORM CHANGE
+    ===================================================== */
 
     const handleChange = (event) => {
+
         const {
             name,
             value,
@@ -262,43 +272,119 @@ function Doctors() {
         }));
     };
 
-    // =====================================================
-    // RESET FORM
-    // =====================================================
 
-    const resetForm = () => {
-        setForm({
-            doctor_code: "",
-            name: "",
-            specialization: "",
-            qualification: "",
-            phone: "",
-            email: "",
-            experience_years: "",
-            consultation_fee: "",
-            department_id: "",
-            hospital_id: "",
-            status: "available",
-        });
+    /* =====================================================
+       PHOTO CHANGE
+    ===================================================== */
+
+    const handlePhotoChange = (event) => {
+
+        const file =
+            event.target.files?.[0];
+
+        if (!file) {
+            return;
+        }
+
+        /* ---------------------------------------------
+           VALIDATE TYPE
+        --------------------------------------------- */
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/webp",
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+
+            alert(
+                "Only JPG, JPEG, PNG and WEBP images are allowed."
+            );
+
+            event.target.value = "";
+            return;
+        }
+
+
+        /* ---------------------------------------------
+           VALIDATE SIZE
+        --------------------------------------------- */
+
+        if (file.size > 5 * 1024 * 1024) {
+
+            alert(
+                "Doctor photo must be 5 MB or smaller."
+            );
+
+            event.target.value = "";
+            return;
+        }
+
+
+        /* ---------------------------------------------
+           SET FILE
+        --------------------------------------------- */
+
+        setSelectedPhoto(file);
+
+
+        /* ---------------------------------------------
+           PREVIEW
+        --------------------------------------------- */
+
+        const previewUrl =
+            URL.createObjectURL(file);
+
+        setPhotoPreview(previewUrl);
     };
 
-    // =====================================================
-    // OPEN ADD MODAL
-    // =====================================================
+
+    /* =====================================================
+       CLEAR PHOTO
+    ===================================================== */
+
+    const clearSelectedPhoto = () => {
+
+        setSelectedPhoto(null);
+
+        if (photoPreview) {
+            URL.revokeObjectURL(photoPreview);
+        }
+
+        setPhotoPreview("");
+    };
+
+
+    /* =====================================================
+       OPEN ADD MODAL
+    ===================================================== */
 
     const openAddModal = async () => {
-        resetForm();
-
-        setEditingDoctor(null);
-
-        setShowModal(true);
 
         try {
+
+            setEditingDoctor(null);
+
+            setForm(EMPTY_FORM);
+
+            clearSelectedPhoto();
+
+            setShowModal(true);
+
+
+            /* -----------------------------------------
+               GET NEXT DOCTOR CODE
+            ----------------------------------------- */
+
             const response = await fetch(
                 `${API_URL}/doctors/next-code`,
                 {
                     method: "GET",
-                    headers: getHeaders(),
+                    headers: {
+                        ...getAuthHeaders(),
+                    },
                 }
             );
 
@@ -309,31 +395,31 @@ function Doctors() {
                 response.ok &&
                 data.success
             ) {
-                const nextCode =
-                    data.doctor_code ||
-                    data.nextCode ||
-                    data.code ||
-                    "";
 
                 setForm((previous) => ({
                     ...previous,
                     doctor_code:
-                        nextCode,
+                        data.doctor_code ||
+                        "",
                 }));
             }
+
         } catch (err) {
+
             console.error(
-                "Next Doctor Code Error:",
+                "Generate doctor code error:",
                 err
             );
         }
     };
 
-    // =====================================================
-    // OPEN EDIT MODAL
-    // =====================================================
+
+    /* =====================================================
+       OPEN EDIT MODAL
+    ===================================================== */
 
     const openEditModal = (doctor) => {
+
         setEditingDoctor(doctor);
 
         setForm({
@@ -356,294 +442,408 @@ function Doctors() {
                 doctor.email || "",
 
             experience_years:
-                doctor.experience_years ??
-                "",
+                doctor.experience_years ?? "",
 
             consultation_fee:
-                doctor.consultation_fee ??
-                "",
+                doctor.consultation_fee ?? "",
 
             department_id:
-                doctor.department_id ??
-                "",
+                doctor.department_id ?? "",
 
             hospital_id:
-                doctor.hospital_id ??
-                "",
+                doctor.hospital_id ?? "",
 
             status:
-                doctor.status ||
-                "available",
+                doctor.status || "available",
         });
+
+
+        setSelectedPhoto(null);
+
+        setPhotoPreview(
+            doctor.photo
+                ? getDoctorPhoto(doctor)
+                : ""
+        );
 
         setShowModal(true);
     };
 
-    // =====================================================
-    // VIEW DOCTOR
-    // =====================================================
 
-    const openViewModal = (doctor) => {
-        setSelectedDoctor(doctor);
-
-        setShowViewModal(true);
-    };
-
-    // =====================================================
-    // CLOSE MODAL
-    // =====================================================
+    /* =====================================================
+       CLOSE MODAL
+    ===================================================== */
 
     const closeModal = () => {
-        if (saving) {
-            return;
+
+        if (photoPreview) {
+            URL.revokeObjectURL(photoPreview);
         }
 
         setShowModal(false);
 
         setEditingDoctor(null);
 
-        resetForm();
+        setForm(EMPTY_FORM);
+
+        setSelectedPhoto(null);
+
+        setPhotoPreview("");
     };
 
-    const closeViewModal = () => {
-        setShowViewModal(false);
 
-        setSelectedDoctor(null);
-    };
-
-    // =====================================================
-    // SAVE DOCTOR
-    // =====================================================
+    /* =====================================================
+       SUBMIT
+    ===================================================== */
 
     const handleSubmit = async (event) => {
+
         event.preventDefault();
 
         if (!form.name.trim()) {
-            setError(
+
+            alert(
                 "Doctor name is required."
             );
 
             return;
         }
 
+
         try {
+
             setSaving(true);
 
             setError("");
 
-            const isEdit =
+
+            /* -----------------------------------------
+               FORM DATA
+            ----------------------------------------- */
+
+            const formData =
+                new FormData();
+
+
+            Object.entries(form).forEach(
+                ([key, value]) => {
+
+                    formData.append(
+                        key,
+                        value ?? ""
+                    );
+                }
+            );
+
+
+            /* -----------------------------------------
+               PHOTO
+            ----------------------------------------- */
+
+            if (selectedPhoto) {
+
+                formData.append(
+                    "photo",
+                    selectedPhoto
+                );
+            }
+
+
+            /* -----------------------------------------
+               URL + METHOD
+            ----------------------------------------- */
+
+            const isEditing =
                 Boolean(editingDoctor);
 
-            const url = isEdit
+            const url = isEditing
                 ? `${API_URL}/doctors/${editingDoctor.id}`
                 : `${API_URL}/doctors`;
 
-            const method = isEdit
+            const method = isEditing
                 ? "PUT"
                 : "POST";
 
-            const body = {
-                doctor_code:
-                    form.doctor_code.trim(),
 
-                name:
-                    form.name.trim(),
+            /* -----------------------------------------
+               REQUEST
+            ----------------------------------------- */
 
-                specialization:
-                    form.specialization.trim(),
-
-                qualification:
-                    form.qualification.trim(),
-
-                phone:
-                    form.phone.trim(),
-
-                email:
-                    form.email.trim(),
-
-                experience_years:
-                    form.experience_years ===
-                        ""
-                        ? 0
-                        : Number(
-                            form.experience_years
-                        ),
-
-                consultation_fee:
-                    form.consultation_fee ===
-                        ""
-                        ? 0
-                        : Number(
-                            form.consultation_fee
-                        ),
-
-                department_id:
-                    form.department_id ===
-                        ""
-                        ? null
-                        : Number(
-                            form.department_id
-                        ),
-
-                hospital_id:
-                    form.hospital_id ===
-                        ""
-                        ? null
-                        : Number(
-                            form.hospital_id
-                        ),
-
-                status:
-                    form.status ||
-                    "available",
-            };
-
-            const response = await fetch(
-                url,
-                {
+            const response =
+                await fetch(url, {
                     method,
-                    headers: getHeaders(),
-                    body: JSON.stringify(
-                        body
-                    ),
-                }
-            );
+                    headers: {
+                        ...getAuthHeaders(),
+                    },
+                    body: formData,
+                });
+
 
             const data =
                 await response.json();
 
+
             if (!response.ok) {
+
                 throw new Error(
                     data.message ||
-                    "Unable to save doctor."
+                    "Failed to save doctor"
                 );
             }
+
 
             if (!data.success) {
+
                 throw new Error(
                     data.message ||
-                    "Unable to save doctor."
+                    "Failed to save doctor"
                 );
             }
 
-            setShowModal(false);
 
-            setEditingDoctor(null);
+            /* -----------------------------------------
+               SUCCESS
+            ----------------------------------------- */
 
-            resetForm();
+            closeModal();
 
-            await fetchDoctors(false);
+            await fetchDoctors();
+
+
+            alert(
+                isEditing
+                    ? "Doctor updated successfully."
+                    : "Doctor added successfully."
+            );
+
         } catch (err) {
+
             console.error(
-                "Save Doctor Error:",
+                "Save doctor error:",
                 err
             );
 
             setError(
                 err.message ||
-                "Unable to save doctor."
+                "Failed to save doctor"
             );
+
+            alert(
+                err.message ||
+                "Failed to save doctor"
+            );
+
         } finally {
+
             setSaving(false);
         }
     };
 
-    // =====================================================
-    // DELETE DOCTOR
-    // =====================================================
+
+    /* =====================================================
+       DELETE DOCTOR
+    ===================================================== */
 
     const handleDelete = async (doctor) => {
+
         const confirmed =
             window.confirm(
-                `Are you sure you want to delete ${doctor.name}?`
+                `Are you sure you want to delete Dr. ${doctor.name}?`
             );
 
         if (!confirmed) {
             return;
         }
 
+
         try {
-            setDeleteLoading(
-                doctor.id
-            );
+
+            setDeleteLoading(doctor.id);
 
             setError("");
 
-            const response = await fetch(
-                `${API_URL}/doctors/${doctor.id}`,
-                {
-                    method: "DELETE",
-                    headers: getHeaders(),
-                }
-            );
+
+            const response =
+                await fetch(
+                    `${API_URL}/doctors/${doctor.id}`,
+                    {
+                        method: "DELETE",
+                        headers: {
+                            ...getAuthHeaders(),
+                        },
+                    }
+                );
+
 
             const data =
                 await response.json();
 
+
             if (!response.ok) {
+
                 throw new Error(
                     data.message ||
-                    "Unable to delete doctor."
+                    "Failed to delete doctor"
                 );
             }
+
 
             if (!data.success) {
+
                 throw new Error(
                     data.message ||
-                    "Unable to delete doctor."
+                    "Failed to delete doctor"
                 );
             }
 
-            await fetchDoctors(false);
+
+            await fetchDoctors();
+
         } catch (err) {
+
             console.error(
-                "Delete Doctor Error:",
+                "Delete doctor error:",
                 err
             );
 
             setError(
                 err.message ||
-                "Unable to delete doctor."
+                "Failed to delete doctor"
             );
+
+            alert(
+                err.message ||
+                "Failed to delete doctor"
+            );
+
         } finally {
+
             setDeleteLoading(null);
         }
     };
 
-    // =====================================================
-    // STATUS CLASS
-    // =====================================================
 
-    const getStatusClass = (status) => {
-        switch (
-        String(
-            status || ""
-        ).toLowerCase()
-        ) {
-            case "available":
-                return "available";
+    /* =====================================================
+       VIEW DOCTOR
+    ===================================================== */
 
-            case "busy":
-                return "busy";
+    const openViewModal = (doctor) => {
 
-            case "offline":
-                return "offline";
+        setSelectedDoctor(doctor);
 
-            default:
-                return "offline";
-        }
+        setShowViewModal(true);
     };
 
-    // =====================================================
-    // STATUS TEXT
-    // =====================================================
 
-    const getStatusText = (status) => {
-        switch (
-        String(
-            status || ""
-        ).toLowerCase()
-        ) {
+    const closeViewModal = () => {
+
+        setShowViewModal(false);
+
+        setSelectedDoctor(null);
+    };
+
+
+    /* =====================================================
+       FILTER DOCTORS
+    ===================================================== */
+
+    const filteredDoctors =
+        useMemo(() => {
+
+            const keyword =
+                search
+                    .trim()
+                    .toLowerCase();
+
+            if (!keyword) {
+                return doctors;
+            }
+
+            return doctors.filter(
+                (doctor) => {
+
+                    return (
+                        String(
+                            doctor.doctor_code || ""
+                        )
+                            .toLowerCase()
+                            .includes(keyword) ||
+
+                        String(
+                            doctor.name || ""
+                        )
+                            .toLowerCase()
+                            .includes(keyword) ||
+
+                        String(
+                            doctor.specialization ||
+                            ""
+                        )
+                            .toLowerCase()
+                            .includes(keyword) ||
+
+                        String(
+                            doctor.qualification ||
+                            ""
+                        )
+                            .toLowerCase()
+                            .includes(keyword) ||
+
+                        String(
+                            doctor.phone || ""
+                        )
+                            .toLowerCase()
+                            .includes(keyword) ||
+
+                        String(
+                            doctor.email || ""
+                        )
+                            .toLowerCase()
+                            .includes(keyword)
+                    );
+                }
+            );
+
+        }, [doctors, search]);
+
+
+    /* =====================================================
+       STATS
+    ===================================================== */
+
+    const totalDoctors =
+        doctors.length;
+
+    const availableDoctors =
+        doctors.filter(
+            (doctor) =>
+                doctor.status ===
+                "available"
+        ).length;
+
+    const busyDoctors =
+        doctors.filter(
+            (doctor) =>
+                doctor.status ===
+                "busy"
+        ).length;
+
+    const offlineDoctors =
+        doctors.filter(
+            (doctor) =>
+                doctor.status ===
+                "offline"
+        ).length;
+
+
+    /* =====================================================
+       STATUS LABEL
+    ===================================================== */
+
+    const getStatusLabel = (status) => {
+
+        switch (status) {
+
             case "available":
                 return "Available";
 
@@ -654,69 +854,152 @@ function Doctors() {
                 return "Offline";
 
             default:
-                return "Offline";
+                return status || "Available";
         }
     };
 
-    // =====================================================
-    // FORMAT CURRENCY
-    // =====================================================
 
-    const formatCurrency = (value) => {
-        return Number(
-            value || 0
-        ).toLocaleString(
-            "en-IN",
-            {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 2,
-            }
-        );
+    /* =====================================================
+       FORMAT FEE
+    ===================================================== */
+
+    const formatFee = (fee) => {
+
+        if (
+            fee === null ||
+            fee === undefined ||
+            fee === ""
+        ) {
+            return "₹0";
+        }
+
+        const number =
+            Number(fee);
+
+        if (Number.isNaN(number)) {
+            return `₹${fee}`;
+        }
+
+        return `₹${number.toLocaleString(
+            "en-IN"
+        )}`;
     };
 
-    // =====================================================
-    // RENDER
-    // =====================================================
+
+    /* =====================================================
+       LOADING
+    ===================================================== */
+
+    if (
+        loading &&
+        doctors.length === 0
+    ) {
+
+        return (
+            <div className="doctors-page">
+
+                <div className="doctors-loading">
+
+                    <FaSyncAlt
+                        className="loading-spin"
+                    />
+
+                    <span>
+                        Loading doctors...
+                    </span>
+
+                </div>
+
+            </div>
+        );
+    }
+
+
+    /* =====================================================
+       RENDER
+    ===================================================== */
 
     return (
-        <main className="doctors-page">
+
+        <div className="doctors-page">
 
             {/* =================================================
                 PAGE HEADER
             ================================================= */}
 
-            <header className="doctors-header">
+            <div className="doctors-header">
 
-                <div>
-                    <h1>Doctors</h1>
+                <div className="doctors-header-left">
 
-                    <p>
-                        Manage hospital doctors
-                        and their information
-                    </p>
+                    <div className="doctors-title-icon">
+                        <FaUserMd />
+                    </div>
+
+                    <div>
+
+                        <h1>
+                            Doctors
+                        </h1>
+
+                        <p>
+                            Manage hospital doctors
+                            and their information
+                        </p>
+
+                    </div>
+
                 </div>
 
-                <button
-                    type="button"
-                    className="add-doctor-btn"
-                    onClick={
-                        openAddModal
-                    }
-                >
-                    <FaPlus />
 
-                    <span>
-                        Add Doctor
-                    </span>
-                </button>
+                <div className="doctors-header-actions">
 
-            </header>
+                    <button
+                        type="button"
+                        className="doctors-refresh-btn"
+                        onClick={handleRefresh}
+                        disabled={refreshing}
+                    >
+
+                        <FaSyncAlt
+                            className={
+                                refreshing
+                                    ? "loading-spin"
+                                    : ""
+                            }
+                        />
+
+                        <span>
+                            Refresh
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        className="doctors-add-btn"
+                        onClick={openAddModal}
+                    >
+
+                        <FaPlus />
+
+                        <span>
+                            Add Doctor
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
 
             {/* =================================================
                 ERROR
             ================================================= */}
 
             {error && (
+
                 <div className="doctors-error">
 
                     <FaExclamationTriangle />
@@ -727,22 +1010,23 @@ function Doctors() {
 
                     <button
                         type="button"
-                        onClick={() => {
-                            setError("");
-                            fetchDoctors(true);
-                        }}
+                        onClick={() =>
+                            setError("")
+                        }
                     >
-                        Retry
+                        <FaTimes />
                     </button>
 
                 </div>
+
             )}
 
+
             {/* =================================================
-                SUMMARY CARDS
+                STATS
             ================================================= */}
 
-            <section className="doctor-stats">
+            <div className="doctors-stats">
 
                 <div className="doctor-stat-card">
 
@@ -751,6 +1035,7 @@ function Doctors() {
                     </div>
 
                     <div>
+
                         <span>
                             Total Doctors
                         </span>
@@ -758,17 +1043,20 @@ function Doctors() {
                         <strong>
                             {totalDoctors}
                         </strong>
+
                     </div>
 
                 </div>
 
-                <div className="doctor-stat-card">
+
+                <div className="doctor-stat-card available">
 
                     <div className="doctor-stat-icon">
                         <FaUserMd />
                     </div>
 
                     <div>
+
                         <span>
                             Available
                         </span>
@@ -776,398 +1064,456 @@ function Doctors() {
                         <strong>
                             {availableDoctors}
                         </strong>
+
                     </div>
 
                 </div>
 
-                <div className="doctor-stat-card">
+
+                <div className="doctor-stat-card busy">
 
                     <div className="doctor-stat-icon">
-                        <FaMoneyBillWave />
+                        <FaBriefcase />
                     </div>
 
                     <div>
+
                         <span>
-                            Avg. Consultation
+                            Busy
                         </span>
 
                         <strong>
-                            ₹
-                            {averageConsultation.toFixed(
-                                2
-                            )}
+                            {busyDoctors}
                         </strong>
+
                     </div>
 
                 </div>
 
-            </section>
 
-            {/* =================================================
-                DOCTOR LIST
-            ================================================= */}
+                <div className="doctor-stat-card offline">
 
-            <section className="doctors-panel">
-
-                <div className="doctors-panel-header">
-
-                    <div>
-                        <h2>
-                            Doctor List
-                        </h2>
-
-                        <p>
-                            {filteredDoctors.length}{" "}
-                            doctor
-                            {filteredDoctors.length !==
-                                1
-                                ? "s"
-                                : ""}{" "}
-                            found
-                        </p>
+                    <div className="doctor-stat-icon">
+                        <FaTimes />
                     </div>
 
-                    <div className="doctor-tools">
+                    <div>
 
-                        <div className="doctor-search">
+                        <span>
+                            Offline
+                        </span>
 
-                            <FaSearch />
+                        <strong>
+                            {offlineDoctors}
+                        </strong>
 
-                            <input
-                                type="text"
-                                placeholder="Search doctors..."
-                                value={search}
-                                onChange={(event) =>
-                                    setSearch(
-                                        event.target
-                                            .value
-                                    )
-                                }
-                            />
+                    </div>
 
-                            {search && (
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setSearch(
-                                            ""
-                                        )
-                                    }
-                                >
-                                    <FaTimes />
-                                </button>
-                            )}
+                </div>
 
-                        </div>
+            </div>
+
+
+            {/* =================================================
+                SEARCH
+            ================================================= */}
+
+            <div className="doctors-toolbar">
+
+                <div className="doctors-search">
+
+                    <FaSearch />
+
+                    <input
+                        type="text"
+                        placeholder="Search doctors..."
+                        value={search}
+                        onChange={(event) =>
+                            setSearch(
+                                event.target.value
+                            )
+                        }
+                    />
+
+                    {search && (
 
                         <button
                             type="button"
-                            className="refresh-btn"
-                            onClick={
-                                handleRefresh
-                            }
-                            disabled={
-                                refreshing
+                            onClick={() =>
+                                setSearch("")
                             }
                         >
-                            <FaSyncAlt
-                                className={
-                                    refreshing
-                                        ? "spin"
-                                        : ""
-                                }
-                            />
-
-                            <span>
-                                Refresh
-                            </span>
+                            <FaTimes />
                         </button>
 
-                    </div>
+                    )}
 
                 </div>
 
-                {/* =================================================
-                    LOADING
-                ================================================= */}
+                <span className="doctors-result-count">
+                    {filteredDoctors.length} doctor
+                    {filteredDoctors.length !== 1
+                        ? "s"
+                        : ""}
+                </span>
 
-                {loading ? (
-                    <div className="doctor-loading">
+            </div>
 
-                        <FaSyncAlt className="spin" />
 
-                        <span>
-                            Loading doctors...
-                        </span>
+            {/* =================================================
+                TABLE
+            ================================================= */}
 
-                    </div>
-                ) : filteredDoctors.length ===
-                    0 ? (
-                    <div className="doctor-empty">
+            <div className="doctors-table-wrapper">
 
-                        <FaUserMd />
+                <table className="doctors-table">
 
-                        <h3>
-                            No doctors found
-                        </h3>
+                    <thead>
 
-                        <p>
-                            {search
-                                ? "Try a different search."
-                                : "Add your first doctor to get started."}
-                        </p>
+                        <tr>
 
-                    </div>
-                ) : (
-                    <div className="doctor-table-wrapper">
+                            <th>
+                                Doctor
+                            </th>
 
-                        <table className="doctor-table">
+                            <th>
+                                Specialization
+                            </th>
 
-                            <thead>
-                                <tr>
-                                    <th>
-                                        Doctor ID
-                                    </th>
+                            <th>
+                                Qualification
+                            </th>
 
-                                    <th>
-                                        Doctor
-                                    </th>
+                            <th>
+                                Contact
+                            </th>
 
-                                    <th>
-                                        Specialization
-                                    </th>
+                            <th>
+                                Experience
+                            </th>
 
-                                    <th>
-                                        Phone
-                                    </th>
+                            <th>
+                                Fee
+                            </th>
 
-                                    <th>
-                                        Experience
-                                    </th>
+                            <th>
+                                Status
+                            </th>
 
-                                    <th>
-                                        Consultation
-                                    </th>
+                            <th>
+                                Actions
+                            </th>
 
-                                    <th>
-                                        Status
-                                    </th>
+                        </tr>
 
-                                    <th>
-                                        Action
-                                    </th>
-                                </tr>
-                            </thead>
+                    </thead>
 
-                            <tbody>
 
-                                {filteredDoctors.map(
-                                    (doctor) => {
-                                        const name =
-                                            doctor.name ||
-                                            "Unknown Doctor";
+                    <tbody>
 
-                                        const firstLetter =
-                                            name
-                                                .charAt(
-                                                    0
-                                                )
-                                                .toUpperCase();
+                        {filteredDoctors.length === 0 ? (
 
-                                        return (
-                                            <tr
-                                                key={
-                                                    doctor.id
-                                                }
-                                            >
+                            <tr>
 
-                                                {/* ID */}
+                                <td
+                                    colSpan="8"
+                                    className="doctors-empty"
+                                >
 
-                                                <td>
-                                                    <strong className="doctor-code">
-                                                        {doctor.doctor_code ||
-                                                            `D-${doctor.id}`}
-                                                    </strong>
-                                                </td>
+                                    <FaUserMd />
 
-                                                {/* DOCTOR */}
+                                    <h3>
+                                        No doctors found
+                                    </h3>
 
-                                                <td>
+                                    <p>
+                                        Add a doctor or
+                                        change your search.
+                                    </p>
 
-                                                    <div className="doctor-person">
+                                </td>
 
-                                                        <div className="doctor-avatar">
-                                                            {firstLetter}
-                                                        </div>
+                            </tr>
 
-                                                        <div className="doctor-person-info">
+                        ) : (
 
-                                                            <strong>
-                                                                {
-                                                                    name
-                                                                }
-                                                            </strong>
+                            filteredDoctors.map(
+                                (doctor) => (
 
-                                                            <span>
-                                                                {doctor.email ||
-                                                                    "No email"}
-                                                            </span>
+                                    <tr
+                                        key={doctor.id}
+                                    >
 
-                                                        </div>
+                                        {/* DOCTOR */}
 
-                                                    </div>
+                                        <td>
 
-                                                </td>
+                                            <div className="doctor-table-profile">
 
-                                                {/* SPECIALIZATION */}
+                                                <div className="doctor-table-photo">
 
-                                                <td>
-                                                    <span className="specialization">
-                                                        {doctor.specialization ||
-                                                            "General Medicine"}
-                                                    </span>
-                                                </td>
-
-                                                {/* PHONE */}
-
-                                                <td>
-                                                    <div className="table-contact">
-                                                        <FaPhone />
-
-                                                        <span>
-                                                            {doctor.phone ||
-                                                                "N/A"}
-                                                        </span>
-                                                    </div>
-                                                </td>
-
-                                                {/* EXPERIENCE */}
-
-                                                <td>
-                                                    <strong>
-                                                        {Number(
-                                                            doctor.experience_years ||
-                                                            0
-                                                        )}{" "}
-                                                        yrs
-                                                    </strong>
-                                                </td>
-
-                                                {/* FEE */}
-
-                                                <td>
-                                                    <strong className="consultation-fee">
-                                                        ₹
-                                                        {formatCurrency(
-                                                            doctor.consultation_fee
+                                                    <img
+                                                        src={getDoctorPhoto(
+                                                            doctor
                                                         )}
-                                                    </strong>
-                                                </td>
-
-                                                {/* STATUS */}
-
-                                                <td>
+                                                        alt={
+                                                            doctor.name ||
+                                                            "Doctor"
+                                                        }
+                                                        onError={
+                                                            handleImageError
+                                                        }
+                                                    />
 
                                                     <span
-                                                        className={`doctor-status ${getStatusClass(
-                                                            doctor.status
-                                                        )}`}
-                                                    >
-                                                        <span className="status-dot"></span>
+                                                        className={`doctor-photo-status ${doctor.status || "available"}`}
+                                                    />
 
-                                                        {getStatusText(
-                                                            doctor.status
-                                                        )}
+                                                </div>
+
+                                                <div>
+
+                                                    <strong>
+                                                        Dr.{" "}
+                                                        {doctor.name ||
+                                                            "Doctor"}
+                                                    </strong>
+
+                                                    <small>
+                                                        {doctor.doctor_code ||
+                                                            "N/A"}
+                                                    </small>
+
+                                                </div>
+
+                                            </div>
+
+                                        </td>
+
+
+                                        {/* SPECIALIZATION */}
+
+                                        <td>
+
+                                            <span className="doctor-specialization">
+
+                                                {doctor.specialization ||
+                                                    "General Physician"}
+
+                                            </span>
+
+                                        </td>
+
+
+                                        {/* QUALIFICATION */}
+
+                                        <td>
+
+                                            <div className="doctor-qualification">
+
+                                                <FaGraduationCap />
+
+                                                <span>
+                                                    {doctor.qualification ||
+                                                        "MBBS"}
+                                                </span>
+
+                                            </div>
+
+                                        </td>
+
+
+                                        {/* CONTACT */}
+
+                                        <td>
+
+                                            <div className="doctor-contact">
+
+                                                {doctor.phone && (
+
+                                                    <span>
+
+                                                        <FaPhone />
+
+                                                        {doctor.phone}
+
                                                     </span>
 
-                                                </td>
+                                                )}
 
-                                                {/* ACTIONS */}
+                                                {doctor.email && (
 
-                                                <td>
+                                                    <span>
 
-                                                    <div className="doctor-actions">
+                                                        <FaEnvelope />
 
-                                                        <button
-                                                            type="button"
-                                                            className="action-btn view"
-                                                            title="View Doctor"
-                                                            onClick={() =>
-                                                                openViewModal(
-                                                                    doctor
-                                                                )
-                                                            }
-                                                        >
-                                                            <FaEye />
-                                                        </button>
+                                                        {doctor.email}
 
-                                                        <button
-                                                            type="button"
-                                                            className="action-btn edit"
-                                                            title="Edit Doctor"
-                                                            onClick={() =>
-                                                                openEditModal(
-                                                                    doctor
-                                                                )
-                                                            }
-                                                        >
-                                                            <FaEdit />
-                                                        </button>
+                                                    </span>
 
-                                                        <button
-                                                            type="button"
-                                                            className="action-btn delete"
-                                                            title="Delete Doctor"
-                                                            disabled={
-                                                                deleteLoading ===
-                                                                doctor.id
-                                                            }
-                                                            onClick={() =>
-                                                                handleDelete(
-                                                                    doctor
-                                                                )
-                                                            }
-                                                        >
-                                                            {deleteLoading ===
-                                                                doctor.id ? (
-                                                                <FaSyncAlt className="spin" />
-                                                            ) : (
-                                                                <FaTrash />
-                                                            )}
-                                                        </button>
+                                                )}
 
-                                                    </div>
+                                                {!doctor.phone &&
+                                                    !doctor.email && (
+                                                        <span>
+                                                            No contact
+                                                        </span>
+                                                    )}
 
-                                                </td>
+                                            </div>
 
-                                            </tr>
-                                        );
-                                    }
-                                )}
+                                        </td>
 
-                            </tbody>
 
-                        </table>
+                                        {/* EXPERIENCE */}
 
-                    </div>
-                )}
+                                        <td>
 
-            </section>
+                                            <span className="doctor-experience">
+
+                                                {Number(
+                                                    doctor.experience_years
+                                                ) || 0}{" "}
+                                                Years
+
+                                            </span>
+
+                                        </td>
+
+
+                                        {/* FEE */}
+
+                                        <td>
+
+                                            <div className="doctor-fee">
+
+                                                <FaMoneyBillWave />
+
+                                                {formatFee(
+                                                    doctor.consultation_fee
+                                                )}
+
+                                            </div>
+
+                                        </td>
+
+
+                                        {/* STATUS */}
+
+                                        <td>
+
+                                            <span
+                                                className={`doctor-status ${doctor.status || "available"}`}
+                                            >
+
+                                                <span />
+
+                                                {getStatusLabel(
+                                                    doctor.status
+                                                )}
+
+                                            </span>
+
+                                        </td>
+
+
+                                        {/* ACTIONS */}
+
+                                        <td>
+
+                                            <div className="doctor-actions">
+
+                                                <button
+                                                    type="button"
+                                                    className="doctor-action view"
+                                                    title="View"
+                                                    onClick={() =>
+                                                        openViewModal(
+                                                            doctor
+                                                        )
+                                                    }
+                                                >
+
+                                                    <FaEye />
+
+                                                </button>
+
+
+                                                <button
+                                                    type="button"
+                                                    className="doctor-action edit"
+                                                    title="Edit"
+                                                    onClick={() =>
+                                                        openEditModal(
+                                                            doctor
+                                                        )
+                                                    }
+                                                >
+
+                                                    <FaEdit />
+
+                                                </button>
+
+
+                                                <button
+                                                    type="button"
+                                                    className="doctor-action delete"
+                                                    title="Delete"
+                                                    disabled={
+                                                        deleteLoading ===
+                                                        doctor.id
+                                                    }
+                                                    onClick={() =>
+                                                        handleDelete(
+                                                            doctor
+                                                        )
+                                                    }
+                                                >
+
+                                                    {deleteLoading ===
+                                                        doctor.id ? (
+                                                        <FaSyncAlt className="loading-spin" />
+                                                    ) : (
+                                                        <FaTrash />
+                                                    )}
+
+                                                </button>
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+                                )
+                            )
+
+                        )}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
 
             {/* =================================================
                 ADD / EDIT MODAL
             ================================================= */}
 
             {showModal && (
+
                 <div
                     className="doctor-modal-overlay"
                     onMouseDown={(event) => {
+
                         if (
                             event.target ===
                             event.currentTarget
                         ) {
                             closeModal();
                         }
+
                     }}
                 >
 
@@ -1176,41 +1522,136 @@ function Doctors() {
                         <div className="doctor-modal-header">
 
                             <div>
+
                                 <h2>
+
                                     {editingDoctor
                                         ? "Edit Doctor"
                                         : "Add Doctor"}
+
                                 </h2>
 
                                 <p>
                                     {editingDoctor
                                         ? "Update doctor information"
-                                        : "Enter doctor information"}
+                                        : "Add a new doctor to the hospital"}
                                 </p>
+
                             </div>
+
 
                             <button
                                 type="button"
-                                className="modal-close"
-                                onClick={
-                                    closeModal
-                                }
-                                disabled={saving}
+                                onClick={closeModal}
                             >
+
                                 <FaTimes />
+
                             </button>
 
                         </div>
 
+
                         <form
-                            onSubmit={
-                                handleSubmit
-                            }
+                            onSubmit={handleSubmit}
+                            className="doctor-form"
                         >
+
+                            {/* =================================
+                                PHOTO
+                            ================================= */}
+
+                            <div className="doctor-photo-upload-section">
+
+                                <div className="doctor-photo-preview">
+
+                                    {photoPreview ? (
+
+                                        <img
+                                            src={
+                                                photoPreview
+                                            }
+                                            alt="Doctor preview"
+                                            onError={
+                                                handleImageError
+                                            }
+                                        />
+
+                                    ) : (
+
+                                        <FaUserMd />
+
+                                    )}
+
+                                </div>
+
+
+                                <div className="doctor-photo-upload-content">
+
+                                    <h4>
+                                        Doctor Photo
+                                    </h4>
+
+                                    <p>
+                                        JPG, PNG or WEBP
+                                        • Maximum 5 MB
+                                    </p>
+
+
+                                    <label className="doctor-photo-upload-btn">
+
+                                        <FaCamera />
+
+                                        <span>
+                                            {selectedPhoto
+                                                ? "Change Photo"
+                                                : "Choose Photo"}
+                                        </span>
+
+                                        <input
+                                            type="file"
+                                            accept="image/jpeg,image/jpg,image/png,image/webp"
+                                            onChange={
+                                                handlePhotoChange
+                                            }
+                                        />
+
+                                    </label>
+
+
+                                    {selectedPhoto && (
+
+                                        <button
+                                            type="button"
+                                            className="doctor-remove-photo"
+                                            onClick={
+                                                clearSelectedPhoto
+                                            }
+                                        >
+
+                                            <FaTimes />
+
+                                            Remove selected photo
+
+                                        </button>
+
+                                    )}
+
+                                </div>
+
+                            </div>
+
+
+                            {/* =================================
+                                FORM GRID
+                            ================================= */}
 
                             <div className="doctor-form-grid">
 
-                                <div className="form-group">
+
+                                {/* Doctor Code */}
+
+                                <div className="doctor-form-group">
 
                                     <label>
                                         Doctor Code
@@ -1225,17 +1666,15 @@ function Doctors() {
                                         onChange={
                                             handleChange
                                         }
-                                        placeholder="D-20260001"
-                                        readOnly={
-                                            Boolean(
-                                                editingDoctor
-                                            )
-                                        }
+                                        readOnly
                                     />
 
                                 </div>
 
-                                <div className="form-group">
+
+                                {/* Name */}
+
+                                <div className="doctor-form-group">
 
                                     <label>
                                         Doctor Name *
@@ -1250,13 +1689,16 @@ function Doctors() {
                                         onChange={
                                             handleChange
                                         }
-                                        placeholder="Dr. John Doe"
+                                        placeholder="Enter doctor name"
                                         required
                                     />
 
                                 </div>
 
-                                <div className="form-group">
+
+                                {/* Specialization */}
+
+                                <div className="doctor-form-group">
 
                                     <label>
                                         Specialization
@@ -1271,12 +1713,15 @@ function Doctors() {
                                         onChange={
                                             handleChange
                                         }
-                                        placeholder="Cardiology"
+                                        placeholder="e.g. Cardiology"
                                     />
 
                                 </div>
 
-                                <div className="form-group">
+
+                                {/* Qualification */}
+
+                                <div className="doctor-form-group">
 
                                     <label>
                                         Qualification
@@ -1291,12 +1736,15 @@ function Doctors() {
                                         onChange={
                                             handleChange
                                         }
-                                        placeholder="MBBS, MD"
+                                        placeholder="e.g. MBBS, MD"
                                     />
 
                                 </div>
 
-                                <div className="form-group">
+
+                                {/* Phone */}
+
+                                <div className="doctor-form-group">
 
                                     <label>
                                         Phone
@@ -1311,12 +1759,15 @@ function Doctors() {
                                         onChange={
                                             handleChange
                                         }
-                                        placeholder="9876543210"
+                                        placeholder="Enter phone number"
                                     />
 
                                 </div>
 
-                                <div className="form-group">
+
+                                {/* Email */}
+
+                                <div className="doctor-form-group">
 
                                     <label>
                                         Email
@@ -1331,16 +1782,18 @@ function Doctors() {
                                         onChange={
                                             handleChange
                                         }
-                                        placeholder="doctor@hms.com"
+                                        placeholder="Enter email"
                                     />
 
                                 </div>
 
-                                <div className="form-group">
+
+                                {/* Experience */}
+
+                                <div className="doctor-form-group">
 
                                     <label>
-                                        Experience
-                                        (Years)
+                                        Experience (Years)
                                     </label>
 
                                     <input
@@ -1353,16 +1806,18 @@ function Doctors() {
                                         onChange={
                                             handleChange
                                         }
-                                        placeholder="10"
+                                        placeholder="0"
                                     />
 
                                 </div>
 
-                                <div className="form-group">
+
+                                {/* Consultation Fee */}
+
+                                <div className="doctor-form-group">
 
                                     <label>
-                                        Consultation
-                                        Fee
+                                        Consultation Fee
                                     </label>
 
                                     <input
@@ -1376,12 +1831,15 @@ function Doctors() {
                                         onChange={
                                             handleChange
                                         }
-                                        placeholder="500"
+                                        placeholder="0"
                                     />
 
                                 </div>
 
-                                <div className="form-group">
+
+                                {/* Department */}
+
+                                <div className="doctor-form-group">
 
                                     <label>
                                         Department ID
@@ -1389,7 +1847,7 @@ function Doctors() {
 
                                     <input
                                         type="number"
-                                        min="1"
+                                        min="0"
                                         name="department_id"
                                         value={
                                             form.department_id
@@ -1397,12 +1855,15 @@ function Doctors() {
                                         onChange={
                                             handleChange
                                         }
-                                        placeholder="Optional"
+                                        placeholder="Department ID"
                                     />
 
                                 </div>
 
-                                <div className="form-group">
+
+                                {/* Hospital */}
+
+                                <div className="doctor-form-group">
 
                                     <label>
                                         Hospital ID
@@ -1410,7 +1871,7 @@ function Doctors() {
 
                                     <input
                                         type="number"
-                                        min="1"
+                                        min="0"
                                         name="hospital_id"
                                         value={
                                             form.hospital_id
@@ -1418,12 +1879,15 @@ function Doctors() {
                                         onChange={
                                             handleChange
                                         }
-                                        placeholder="Optional"
+                                        placeholder="Hospital ID"
                                     />
 
                                 </div>
 
-                                <div className="form-group">
+
+                                {/* Status */}
+
+                                <div className="doctor-form-group">
 
                                     <label>
                                         Status
@@ -1438,6 +1902,7 @@ function Doctors() {
                                             handleChange
                                         }
                                     >
+
                                         <option value="available">
                                             Available
                                         </option>
@@ -1449,47 +1914,62 @@ function Doctors() {
                                         <option value="offline">
                                             Offline
                                         </option>
+
                                     </select>
 
                                 </div>
 
                             </div>
 
+
+                            {/* =================================
+                                FORM ACTIONS
+                            ================================= */}
+
                             <div className="doctor-modal-footer">
 
                                 <button
                                     type="button"
-                                    className="cancel-btn"
-                                    onClick={
-                                        closeModal
-                                    }
-                                    disabled={
-                                        saving
-                                    }
+                                    className="doctor-cancel-btn"
+                                    onClick={closeModal}
+                                    disabled={saving}
                                 >
+
                                     Cancel
+
                                 </button>
+
 
                                 <button
                                     type="submit"
-                                    className="save-doctor-btn"
-                                    disabled={
-                                        saving
-                                    }
+                                    className="doctor-save-btn"
+                                    disabled={saving}
                                 >
-                                    {saving ? (
-                                        <>
-                                            <FaSyncAlt className="spin" />
 
-                                            Saving...
-                                        </>
-                                    ) : (
+                                    {saving ? (
+
                                         <>
-                                            {editingDoctor
-                                                ? "Update Doctor"
-                                                : "Save Doctor"}
+                                            <FaSyncAlt className="loading-spin" />
+
+                                            <span>
+                                                Saving...
+                                            </span>
                                         </>
+
+                                    ) : (
+
+                                        <>
+                                            <FaPlus />
+
+                                            <span>
+                                                {editingDoctor
+                                                    ? "Update Doctor"
+                                                    : "Add Doctor"}
+                                            </span>
+                                        </>
+
                                     )}
+
                                 </button>
 
                             </div>
@@ -1499,7 +1979,9 @@ function Doctors() {
                     </div>
 
                 </div>
+
             )}
+
 
             {/* =================================================
                 VIEW MODAL
@@ -1507,17 +1989,18 @@ function Doctors() {
 
             {showViewModal &&
                 selectedDoctor && (
+
                     <div
                         className="doctor-modal-overlay"
-                        onMouseDown={(
-                            event
-                        ) => {
+                        onMouseDown={(event) => {
+
                             if (
                                 event.target ===
                                 event.currentTarget
                             ) {
                                 closeViewModal();
                             }
+
                         }}
                     >
 
@@ -1526,256 +2009,251 @@ function Doctors() {
                             <div className="doctor-modal-header">
 
                                 <div>
+
                                     <h2>
                                         Doctor Details
                                     </h2>
 
                                     <p>
-                                        Complete doctor
-                                        information
+                                        Complete doctor information
                                     </p>
+
                                 </div>
+
 
                                 <button
                                     type="button"
-                                    className="modal-close"
                                     onClick={
                                         closeViewModal
                                     }
                                 >
+
                                     <FaTimes />
+
                                 </button>
 
                             </div>
 
-                            <div className="doctor-profile">
 
-                                <div className="large-doctor-avatar">
-                                    {(
-                                        selectedDoctor.name ||
-                                        "D"
-                                    )
-                                        .charAt(
-                                            0
-                                        )
-                                        .toUpperCase()}
+                            {/* PROFILE */}
+
+                            <div className="doctor-view-profile">
+
+                                <div className="doctor-view-photo">
+
+                                    <img
+                                        src={getDoctorPhoto(
+                                            selectedDoctor
+                                        )}
+                                        alt={
+                                            selectedDoctor.name ||
+                                            "Doctor"
+                                        }
+                                        onError={
+                                            handleImageError
+                                        }
+                                    />
+
                                 </div>
 
-                                <div>
+
+                                <div className="doctor-view-profile-info">
+
+                                    <span className="doctor-view-label">
+                                        {selectedDoctor.doctor_code ||
+                                            "Doctor"}
+                                    </span>
 
                                     <h3>
-                                        {
-                                            selectedDoctor.name
-                                        }
+                                        Dr.{" "}
+                                        {selectedDoctor.name ||
+                                            "Doctor"}
                                     </h3>
 
                                     <p>
-                                        {
-                                            selectedDoctor.specialization ||
-                                            "General Medicine"
-                                        }
+                                        {selectedDoctor.specialization ||
+                                            "General Physician"}
                                     </p>
 
                                     <span
-                                        className={`doctor-status ${getStatusClass(
-                                            selectedDoctor.status
-                                        )}`}
+                                        className={`doctor-status ${selectedDoctor.status || "available"}`}
                                     >
-                                        <span className="status-dot"></span>
 
-                                        {getStatusText(
+                                        <span />
+
+                                        {getStatusLabel(
                                             selectedDoctor.status
                                         )}
+
                                     </span>
 
                                 </div>
 
                             </div>
 
-                            <div className="doctor-detail-grid">
 
-                                <div className="detail-item">
+                            {/* DETAILS */}
 
-                                    <FaUserMd />
+                            <div className="doctor-view-details">
 
-                                    <div>
-                                        <span>
-                                            Doctor ID
-                                        </span>
-
-                                        <strong>
-                                            {
-                                                selectedDoctor.doctor_code
-                                            }
-                                        </strong>
-                                    </div>
-
-                                </div>
-
-                                <div className="detail-item">
-
-                                    <FaEnvelope />
-
-                                    <div>
-                                        <span>
-                                            Email
-                                        </span>
-
-                                        <strong>
-                                            {
-                                                selectedDoctor.email ||
-                                                "N/A"
-                                            }
-                                        </strong>
-                                    </div>
-
-                                </div>
-
-                                <div className="detail-item">
-
-                                    <FaPhone />
-
-                                    <div>
-                                        <span>
-                                            Phone
-                                        </span>
-
-                                        <strong>
-                                            {
-                                                selectedDoctor.phone ||
-                                                "N/A"
-                                            }
-                                        </strong>
-                                    </div>
-
-                                </div>
-
-                                <div className="detail-item">
+                                <div className="doctor-view-detail">
 
                                     <FaGraduationCap />
 
                                     <div>
+
                                         <span>
                                             Qualification
                                         </span>
 
                                         <strong>
-                                            {
-                                                selectedDoctor.qualification ||
-                                                "N/A"
-                                            }
+                                            {selectedDoctor.qualification ||
+                                                "MBBS"}
                                         </strong>
+
                                     </div>
 
                                 </div>
 
-                                <div className="detail-item">
+
+                                <div className="doctor-view-detail">
 
                                     <FaBriefcase />
 
                                     <div>
+
                                         <span>
                                             Experience
                                         </span>
 
                                         <strong>
                                             {Number(
-                                                selectedDoctor.experience_years ||
-                                                0
-                                            )}{" "}
-                                            years
+                                                selectedDoctor.experience_years
+                                            ) || 0}{" "}
+                                            Years
                                         </strong>
+
                                     </div>
 
                                 </div>
 
-                                <div className="detail-item">
+
+                                <div className="doctor-view-detail">
+
+                                    <FaPhone />
+
+                                    <div>
+
+                                        <span>
+                                            Phone
+                                        </span>
+
+                                        <strong>
+                                            {selectedDoctor.phone ||
+                                                "Not available"}
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div className="doctor-view-detail">
+
+                                    <FaEnvelope />
+
+                                    <div>
+
+                                        <span>
+                                            Email
+                                        </span>
+
+                                        <strong>
+                                            {selectedDoctor.email ||
+                                                "Not available"}
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div className="doctor-view-detail">
 
                                     <FaMoneyBillWave />
 
                                     <div>
+
                                         <span>
-                                            Consultation
-                                            Fee
+                                            Consultation Fee
                                         </span>
 
                                         <strong>
-                                            ₹
-                                            {formatCurrency(
+                                            {formatFee(
                                                 selectedDoctor.consultation_fee
                                             )}
                                         </strong>
+
                                     </div>
 
                                 </div>
 
-                                <div className="detail-item">
+
+                                <div className="doctor-view-detail">
 
                                     <FaBuilding />
 
                                     <div>
+
                                         <span>
-                                            Department
-                                            ID
+                                            Department ID
                                         </span>
 
                                         <strong>
-                                            {
-                                                selectedDoctor.department_id ||
-                                                "N/A"
-                                            }
+                                            {selectedDoctor.department_id ||
+                                                "Not assigned"}
                                         </strong>
-                                    </div>
 
-                                </div>
-
-                                <div className="detail-item">
-
-                                    <FaBuilding />
-
-                                    <div>
-                                        <span>
-                                            Hospital ID
-                                        </span>
-
-                                        <strong>
-                                            {
-                                                selectedDoctor.hospital_id ||
-                                                "N/A"
-                                            }
-                                        </strong>
                                     </div>
 
                                 </div>
 
                             </div>
 
+
                             <div className="doctor-view-footer">
 
                                 <button
                                     type="button"
-                                    className="cancel-btn"
+                                    className="doctor-cancel-btn"
                                     onClick={
                                         closeViewModal
                                     }
                                 >
+
                                     Close
+
                                 </button>
+
 
                                 <button
                                     type="button"
-                                    className="save-doctor-btn"
+                                    className="doctor-save-btn"
                                     onClick={() => {
+
                                         closeViewModal();
 
                                         openEditModal(
                                             selectedDoctor
                                         );
+
                                     }}
                                 >
+
                                     <FaEdit />
 
                                     Edit Doctor
+
                                 </button>
 
                             </div>
@@ -1783,10 +2261,12 @@ function Doctors() {
                         </div>
 
                     </div>
+
                 )}
 
-        </main>
+        </div>
     );
-}
+};
+
 
 export default Doctors;

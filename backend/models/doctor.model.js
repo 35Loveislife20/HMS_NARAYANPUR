@@ -1,15 +1,15 @@
 const { pool } = require("../config/db");
 
-// =====================================================
-// GET ALL DOCTORS
-// =====================================================
-
+/* =========================================================
+   GET ALL DOCTORS
+========================================================= */
 const getAllDoctors = async () => {
     const [rows] = await pool.query(`
         SELECT
             id,
             doctor_code,
             name,
+            photo,
             specialization,
             qualification,
             phone,
@@ -28,10 +28,9 @@ const getAllDoctors = async () => {
     return rows;
 };
 
-// =====================================================
-// GET DOCTOR BY ID
-// =====================================================
-
+/* =========================================================
+   GET DOCTOR BY ID
+========================================================= */
 const getDoctorById = async (id) => {
     const [rows] = await pool.query(
         `
@@ -39,6 +38,7 @@ const getDoctorById = async (id) => {
             id,
             doctor_code,
             name,
+            photo,
             specialization,
             qualification,
             phone,
@@ -60,10 +60,9 @@ const getDoctorById = async (id) => {
     return rows[0] || null;
 };
 
-// =====================================================
-// SEARCH DOCTORS
-// =====================================================
-
+/* =========================================================
+   SEARCH DOCTORS
+========================================================= */
 const searchDoctors = async (search) => {
     const keyword = `%${search}%`;
 
@@ -73,6 +72,7 @@ const searchDoctors = async (search) => {
             id,
             doctor_code,
             name,
+            photo,
             specialization,
             qualification,
             phone,
@@ -107,52 +107,63 @@ const searchDoctors = async (search) => {
     return rows;
 };
 
-// =====================================================
-// GENERATE DOCTOR CODE
-// =====================================================
-
+/* =========================================================
+   GENERATE DOCTOR CODE
+========================================================= */
 const generateDoctorCode = async () => {
     const year = new Date().getFullYear();
 
-    const [rows] = await pool.query(`
+    const [rows] = await pool.query(
+        `
         SELECT doctor_code
         FROM doctors
         WHERE doctor_code LIKE ?
         ORDER BY id DESC
         LIMIT 1
-    `, [`D-${year}%`]);
+        `,
+        [`D-${year}%`]
+    );
 
     let nextNumber = 1;
 
     if (rows.length > 0 && rows[0].doctor_code) {
         const lastCode = rows[0].doctor_code;
-        const number = parseInt(
-            lastCode.substring(6),
-            10
-        );
 
-        if (!Number.isNaN(number)) {
-            nextNumber = number + 1;
+        const match = lastCode.match(/D-\d{4}(\d+)/);
+
+        if (match) {
+            nextNumber = parseInt(match[1], 10) + 1;
         }
     }
 
     return `D-${year}${String(nextNumber).padStart(4, "0")}`;
 };
 
-// =====================================================
-// CREATE DOCTOR
-// =====================================================
-
-const createDoctor = async (doctor) => {
-    const doctorCode =
-        doctor.doctor_code ||
-        await generateDoctorCode();
+/* =========================================================
+   CREATE DOCTOR
+========================================================= */
+const createDoctor = async (doctorData) => {
+    const {
+        doctor_code,
+        name,
+        photo,
+        specialization,
+        qualification,
+        phone,
+        email,
+        experience_years,
+        consultation_fee,
+        department_id,
+        hospital_id,
+        status,
+    } = doctorData;
 
     const [result] = await pool.query(
         `
         INSERT INTO doctors (
             doctor_code,
             name,
+            photo,
             specialization,
             qualification,
             phone,
@@ -163,39 +174,56 @@ const createDoctor = async (doctor) => {
             hospital_id,
             status
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
-            doctorCode,
-            doctor.name,
-            doctor.specialization || null,
-            doctor.qualification || null,
-            doctor.phone || null,
-            doctor.email || null,
-            Number(doctor.experience_years) || 0,
-            Number(doctor.consultation_fee) || 0,
-            doctor.department_id || null,
-            doctor.hospital_id || null,
-            doctor.status || "available",
+            doctor_code,
+            name,
+            photo || null,
+            specialization || null,
+            qualification || null,
+            phone || null,
+            email || null,
+            experience_years || 0,
+            consultation_fee || 0,
+            department_id || null,
+            hospital_id || null,
+            status || "available",
         ]
     );
 
     return {
         id: result.insertId,
-        doctor_code: doctorCode,
+        doctor_code,
     };
 };
 
-// =====================================================
-// UPDATE DOCTOR
-// =====================================================
+/* =========================================================
+   UPDATE DOCTOR
+========================================================= */
+const updateDoctor = async (id, doctorData) => {
+    const {
+        doctor_code,
+        name,
+        photo,
+        specialization,
+        qualification,
+        phone,
+        email,
+        experience_years,
+        consultation_fee,
+        department_id,
+        hospital_id,
+        status,
+    } = doctorData;
 
-const updateDoctor = async (id, doctor) => {
     const [result] = await pool.query(
         `
         UPDATE doctors
         SET
+            doctor_code = ?,
             name = ?,
+            photo = ?,
             specialization = ?,
             qualification = ?,
             phone = ?,
@@ -208,28 +236,29 @@ const updateDoctor = async (id, doctor) => {
         WHERE id = ?
         `,
         [
-            doctor.name,
-            doctor.specialization || null,
-            doctor.qualification || null,
-            doctor.phone || null,
-            doctor.email || null,
-            Number(doctor.experience_years) || 0,
-            Number(doctor.consultation_fee) || 0,
-            doctor.department_id || null,
-            doctor.hospital_id || null,
-            doctor.status || "available",
+            doctor_code,
+            name,
+            photo || null,
+            specialization || null,
+            qualification || null,
+            phone || null,
+            email || null,
+            experience_years || 0,
+            consultation_fee || 0,
+            department_id || null,
+            hospital_id || null,
+            status || "available",
             id,
         ]
     );
 
-    return result.affectedRows > 0;
+    return result;
 };
 
-// =====================================================
-// DELETE DOCTOR
-// =====================================================
-
-const deleteDoctor = async (id) => {
+/* =========================================================
+   DELETE DOCTOR
+========================================================= */
+const deleteDoctorById = async (id) => {
     const [result] = await pool.query(
         `
         DELETE FROM doctors
@@ -238,13 +267,12 @@ const deleteDoctor = async (id) => {
         [id]
     );
 
-    return result.affectedRows > 0;
+    return result;
 };
 
-// =====================================================
-// EXPORT
-// =====================================================
-
+/* =========================================================
+   EXPORTS
+========================================================= */
 module.exports = {
     getAllDoctors,
     getDoctorById,
@@ -252,5 +280,5 @@ module.exports = {
     generateDoctorCode,
     createDoctor,
     updateDoctor,
-    deleteDoctor,
+    deleteDoctorById,
 };

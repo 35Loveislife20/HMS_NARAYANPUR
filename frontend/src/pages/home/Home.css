@@ -1,62 +1,85 @@
-/* =====================================================
+/* =========================================================
    HMS HOME PAGE
-   COMPLETE REPLACEMENT
-   Dynamic Hospital Branding
-   Large Logo + Database Hospital Name
-   ===================================================== */
+   COMPLETE REPLACEMENT CSS
 
+   LAYOUT
+   ---------------------------------------------------------
+   LEFT   : HMS BRAND / DESCRIPTION / LOGIN
+   RIGHT  : PATIENT SERVICES - COMPACT
+   BOTTOM : FULL WIDTH DOCTORS MARQUEE
+   ========================================================= */
 
-/* =====================================================
+* {
+    box-sizing: border-box;
+}
+
+/* =========================================================
    ROOT PAGE
-===================================================== */
+   ========================================================= */
 
 .home-page {
     width: 100%;
     min-height: 100vh;
-    height: 100vh;
 
     position: relative;
 
     display: flex;
     flex-direction: column;
 
-    box-sizing: border-box;
-
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 
     color: #ffffff;
 
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
     background:
-        radial-gradient(circle at 10% 45%,
-            rgba(0, 255, 55, 0.11),
-            transparent 34%),
-        radial-gradient(circle at 90% 42%,
-            rgba(0, 255, 55, 0.08),
-            transparent 32%),
-        linear-gradient(135deg,
+        radial-gradient(
+            circle at 8% 38%,
+            rgba(0, 255, 55, 0.12),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 92% 35%,
+            rgba(0, 255, 55, 0.09),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 50% 100%,
+            rgba(0, 255, 55, 0.05),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
             #020806 0%,
-            #06150d 50%,
-            #020806 100%);
+            #06150d 48%,
+            #020806 100%
+        );
 }
 
-
-/* =====================================================
+/* =========================================================
    BACKGROUND GRID
-===================================================== */
+   ========================================================= */
 
 .home-page::before {
     content: "";
 
-    position: absolute;
-
+    position: fixed;
     inset: 0;
 
     background-image:
-        linear-gradient(rgba(0, 255, 80, 0.045) 1px,
-            transparent 1px),
-        linear-gradient(90deg,
-            rgba(0, 255, 80, 0.045) 1px,
-            transparent 1px);
+        linear-gradient(
+            rgba(0, 255, 80, 0.035) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(0, 255, 80, 0.035) 1px,
+            transparent 1px
+        );
 
     background-size: 65px 65px;
 
@@ -65,167 +88,147 @@
     z-index: 0;
 }
 
-
-/* =====================================================
-   HIDDEN HEADER
-===================================================== */
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 .home-header {
     display: none !important;
 }
 
-
-/* =====================================================
+/* =========================================================
    MAIN CONTENT
-===================================================== */
+
+   TOP
+   LEFT  = BRAND
+   RIGHT = PATIENT SERVICES
+
+   BOTTOM
+   FULL WIDTH DOCTORS
+   ========================================================= */
 
 .home-content {
     width: 100%;
+    max-width: 1800px;
 
-    flex: 1;
+    margin: 0 auto;
 
-    min-height: 0;
-
-    padding: 42px 70px 32px;
-
-    box-sizing: border-box;
-
-    display: grid;
-
-    grid-template-columns:
-        minmax(0, 1.25fr) minmax(350px, 0.75fr);
-
-    gap: 70px;
-
-    align-items: center;
+    padding:
+        30px 45px 22px;
 
     position: relative;
 
     z-index: 2;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(400px, 500px);
+
+    column-gap: 30px;
+
+    row-gap: 28px;
+
+    align-items: center;
 }
 
-
-/* =====================================================
-   LEFT SECTION
-===================================================== */
+/* =========================================================
+   LEFT HERO
+   ========================================================= */
 
 .home-left {
     width: 100%;
-
-    max-width: 920px;
-
     min-width: 0;
+
+    min-height: 290px;
 
     display: flex;
 
     flex-direction: column;
 
     justify-content: center;
+
+    align-items: flex-start;
 }
 
-
-/* =====================================================
+/* =========================================================
    SMART HEALTHCARE BADGE
-   TOP
-===================================================== */
+   ========================================================= */
 
 .home-badge {
     width: fit-content;
-
     max-width: 100%;
 
     display: flex;
 
     align-items: center;
 
-    gap: 10px;
+    gap: 9px;
 
-    margin: 0 0 20px;
+    margin-bottom: 15px;
 
-    padding: 9px 17px;
+    padding:
+        8px 15px;
 
-    box-sizing: border-box;
-
-    border: 1px solid rgba(0,
-            255,
-            55,
-            0.42);
+    border:
+        1px solid rgba(0, 255, 55, 0.38);
 
     border-radius: 30px;
 
     background:
-        rgba(0,
-            255,
-            55,
-            0.055);
+        rgba(0, 255, 55, 0.055);
 
     color: #00ff37;
 
-    font-size: 11px;
+    font-size: 10px;
 
     font-weight: 800;
 
-    letter-spacing: 1.3px;
+    letter-spacing: 1.2px;
 
     line-height: 1.2;
 
     box-shadow:
-        0 0 22px rgba(0,
-            255,
-            55,
-            0.05);
+        0 0 25px rgba(0, 255, 55, 0.04);
 }
-
 
 .home-badge svg {
     flex-shrink: 0;
 
     color: #00ff37;
 
-    font-size: 15px;
+    font-size: 14px;
 }
 
-
-/* =====================================================
-   BRAND AREA
-   LOGO LEFT
-   NAME RIGHT
-===================================================== */
+/* =========================================================
+   BRAND
+   ========================================================= */
 
 .home-brand {
     width: 100%;
 
     min-width: 0;
 
-    min-height: 180px;
-
     display: flex;
 
     align-items: center;
 
-    gap: 32px;
+    gap: 23px;
 
-    margin: 0 0 24px;
-
-    padding: 0;
-
-    box-sizing: border-box;
+    margin-bottom: 15px;
 }
 
-
-/* =====================================================
-   LARGE REAL LOGO
-   NO SQUARE
-   NO BACKGROUND
-   NO BORDER
-===================================================== */
+/* =========================================================
+   BRAND LOGO
+   ========================================================= */
 
 .home-brand-icon {
-    width: 170px;
+    width: 135px;
 
-    height: 170px;
+    height: 135px;
 
-    min-width: 170px;
+    min-width: 135px;
 
     flex-shrink: 0;
 
@@ -235,34 +238,21 @@
 
     justify-content: center;
 
+    background: transparent !important;
+
     border: none !important;
 
     border-radius: 0 !important;
 
-    background: transparent !important;
-
     box-shadow: none !important;
 
     overflow: visible;
-
-    padding: 0;
-
-    margin: 0;
 }
-
-
-/* =====================================================
-   REAL LOGO IMAGE
-===================================================== */
 
 .home-brand-icon img {
     width: 100%;
 
     height: 100%;
-
-    max-width: 100%;
-
-    max-height: 100%;
 
     display: block;
 
@@ -277,35 +267,23 @@
     border-radius: 0 !important;
 
     box-shadow: none !important;
-
-    outline: none;
 }
 
-
-/* =====================================================
-   HOSPITAL NAME AREA
-===================================================== */
+/* =========================================================
+   BRAND TEXT
+   ========================================================= */
 
 .home-brand-text {
-    flex: 1;
-
     min-width: 0;
 
-    max-width: 100%;
+    flex: 1;
 
     display: flex;
 
     flex-direction: column;
 
     justify-content: center;
-
-    overflow: visible;
 }
-
-
-/* =====================================================
-   DATABASE HOSPITAL NAME
-===================================================== */
 
 .home-brand-text h1 {
     width: 100%;
@@ -316,95 +294,64 @@
 
     color: #ffffff;
 
-    font-size: clamp(38px,
-            4.2vw,
-            64px);
+    font-size:
+        clamp(
+            40px,
+            4vw,
+            66px
+        );
 
     font-weight: 800;
 
-    line-height: 1.05;
+    line-height: 1.04;
 
-    letter-spacing: -1.8px;
-
-    white-space: normal;
+    letter-spacing: -1.7px;
 
     overflow-wrap: anywhere;
 
-    word-break: normal;
-
     text-shadow:
-        0 0 28px rgba(0,
-            255,
-            55,
-            0.10);
+        0 0 30px rgba(0, 255, 55, 0.10);
 }
-
-
-/* =====================================================
-   HOSPITAL NAME FIRST LETTER
-===================================================== */
-
-.home-brand-text h1::first-letter {
-    color: #00ff37;
-}
-
-
-/* =====================================================
-   HOSPITAL SYSTEM / TAGLINE
-===================================================== */
 
 .home-brand-text span {
     display: block;
 
-    margin-top: 10px;
+    margin-top: 7px;
 
     color: #00ff37;
 
-    font-size: 15px;
+    font-size: 14px;
 
     font-weight: 600;
 
-    letter-spacing: 1.5px;
+    letter-spacing: 1.4px;
 
     line-height: 1.4;
-
-    white-space: normal;
 }
 
-
-/* =====================================================
-   OLD HERO HEADING COMPLETELY REMOVED
-===================================================== */
-
-.home-left>h2 {
-    display: none !important;
-}
-
-
-/* =====================================================
+/* =========================================================
    DESCRIPTION
-===================================================== */
+   ========================================================= */
 
 .home-description {
     width: 100%;
 
-    max-width: 690px;
+    max-width: 740px;
 
-    margin: 0 0 2px;
+    margin: 0;
 
-    color: #a2b3aa;
+    color: #9eafa6;
 
-    font-size: 16px;
+    font-size: 14px;
 
     font-weight: 400;
 
-    line-height: 1.7;
+    line-height: 1.6;
 }
 
-
-/* =====================================================
-   LOGIN WRAPPER
-===================================================== */
+/* =========================================================
+   LOGIN
+   ========================================================= */
 
 .home-login-wrapper {
     width: 100%;
@@ -416,21 +363,15 @@
     justify-content: flex-start;
 }
 
-
-/* =====================================================
-   LOGIN BUTTON
-===================================================== */
-
 .home-login-button {
-    width: 215px;
+    width: 205px;
 
-    height: 52px;
+    height: 48px;
 
-    margin-top: 22px;
+    margin-top: 17px;
 
-    padding: 0 22px;
-
-    box-sizing: border-box;
+    padding:
+        0 20px;
 
     display: flex;
 
@@ -438,20 +379,22 @@
 
     justify-content: center;
 
-    gap: 10px;
+    gap: 9px;
 
     border: none;
 
     border-radius: 10px;
 
     background:
-        linear-gradient(180deg,
+        linear-gradient(
+            180deg,
             #00ff55,
-            #00d948);
+            #00d948
+        );
 
     color: #001207;
 
-    font-size: 15px;
+    font-size: 14px;
 
     font-weight: 800;
 
@@ -459,10 +402,7 @@
 
     box-shadow:
         0 5px 0 #008d31,
-        0 10px 25px rgba(0,
-            255,
-            55,
-            0.20);
+        0 10px 25px rgba(0, 255, 55, 0.20);
 
     transition:
         transform 0.2s ease,
@@ -470,157 +410,38 @@
         background 0.2s ease;
 }
 
-
 .home-login-button:hover {
     transform: translateY(-3px);
 
     background:
-        linear-gradient(180deg,
+        linear-gradient(
+            180deg,
             #16ff61,
-            #00df4c);
+            #00df4c
+        );
 
     box-shadow:
         0 7px 0 #008d31,
-        0 15px 35px rgba(0,
-            255,
-            55,
-            0.30);
+        0 15px 35px rgba(0, 255, 55, 0.30);
 }
-
 
 .home-login-button:active {
     transform: translateY(2px);
 
     box-shadow:
         0 2px 0 #008d31,
-        0 5px 15px rgba(0,
-            255,
-            55,
-            0.18);
+        0 5px 15px rgba(0, 255, 55, 0.18);
 }
-
 
 .home-login-button svg {
     flex-shrink: 0;
 
-    font-size: 16px;
+    font-size: 15px;
 }
 
-
-/* =====================================================
-   FEATURES
-===================================================== */
-
-.home-features {
-    width: 100%;
-
-    margin-top: 27px;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-
-    gap: 13px;
-}
-
-
-.home-feature {
-    min-width: 0;
-
-    padding: 15px;
-
-    box-sizing: border-box;
-
-    display: flex;
-
-    align-items: flex-start;
-
-    gap: 11px;
-
-    border:
-        1px solid rgba(0,
-            255,
-            55,
-            0.14);
-
-    border-radius: 12px;
-
-    background:
-        rgba(0,
-            20,
-            12,
-            0.55);
-
-    backdrop-filter: blur(8px);
-
-    transition:
-        transform 0.25s ease,
-        border-color 0.25s ease,
-        background 0.25s ease,
-        box-shadow 0.25s ease;
-}
-
-
-.home-feature:hover {
-    transform: translateY(-4px);
-
-    border-color:
-        rgba(0,
-            255,
-            55,
-            0.45);
-
-    background:
-        rgba(0,
-            255,
-            55,
-            0.06);
-
-    box-shadow:
-        0 12px 28px rgba(0,
-            0,
-            0,
-            0.30);
-}
-
-
-.home-feature>svg {
-    flex-shrink: 0;
-
-    margin-top: 2px;
-
-    color: #00ff37;
-
-    font-size: 19px;
-}
-
-
-.home-feature h3 {
-    margin: 0 0 4px;
-
-    color: #ffffff;
-
-    font-size: 13px;
-
-    font-weight: 700;
-}
-
-
-.home-feature p {
-    margin: 0;
-
-    color: #82958b;
-
-    font-size: 11px;
-
-    line-height: 1.45;
-}
-
-
-/* =====================================================
+/* =========================================================
    RIGHT SIDE
-===================================================== */
+   ========================================================= */
 
 .home-right {
     width: 100%;
@@ -634,79 +455,67 @@
     justify-content: center;
 }
 
-
-/* =====================================================
-   HOSPITAL CARD
-===================================================== */
+/* =========================================================
+   PATIENT SERVICES CARD
+   COMPACT VERSION
+   ========================================================= */
 
 .hospital-card {
-    width: 370px;
+    width: 70%;
 
-    max-width: 100%;
+    max-width: 500px;
 
-    padding: 30px 27px;
-
-    box-sizing: border-box;
+    padding:
+        10px 18px 17px;
 
     text-align: center;
 
     border:
-        1px solid rgba(0,
-            255,
-            55,
-            0.42);
+        1px solid rgba(0, 255, 55, 0.34);
 
-    border-radius: 22px;
+    border-radius: 18px;
 
     background:
-        linear-gradient(145deg,
-            rgba(8, 30, 19, 0.98),
-            rgba(2, 12, 8, 0.98));
+        linear-gradient(
+            145deg,
+            rgba(8, 31, 19, 0.98),
+            rgba(2, 13, 8, 0.99)
+        );
 
     box-shadow:
-        0 25px 70px rgba(0,
-            0,
-            0,
-            0.48),
-        0 0 40px rgba(0,
-            255,
-            55,
-            0.08);
+        0 18px 48px rgba(0, 0, 0, 0.42),
+        0 0 30px rgba(0, 255, 55, 0.07);
 
     backdrop-filter: blur(15px);
 
     transition:
         transform 0.3s ease,
-        box-shadow 0.3s ease;
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
 }
-
 
 .hospital-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
+
+    border-color:
+        rgba(0, 255, 55, 0.45);
 
     box-shadow:
-        0 30px 80px rgba(0,
-            0,
-            0,
-            0.52),
-        0 0 50px rgba(0,
-            255,
-            55,
-            0.14);
+        0 22px 55px rgba(0, 0, 0, 0.50),
+        0 0 38px rgba(0, 255, 55, 0.10);
 }
 
-
-/* =====================================================
-   CARD LOGO
-   NO SQUARE
-===================================================== */
+/* =========================================================
+   HOSPITAL CARD LOGO
+   ========================================================= */
 
 .hospital-card-icon {
-    width: 85px;
+    width: 64px;
 
-    height: 85px;
+    height: 64px;
 
-    margin: 0 auto 16px;
+    margin:
+        0 auto 8px;
 
     display: flex;
 
@@ -714,17 +523,16 @@
 
     justify-content: center;
 
+    background: transparent !important;
+
     border: none !important;
 
     border-radius: 0 !important;
-
-    background: transparent !important;
 
     box-shadow: none !important;
 
     overflow: visible;
 }
-
 
 .hospital-card-icon img {
     width: 100%;
@@ -737,165 +545,224 @@
 
     object-position: center;
 
+    background: transparent !important;
+
     border: none !important;
 
     border-radius: 0 !important;
 
-    background: transparent !important;
-
     box-shadow: none !important;
 }
 
-
-/* =====================================================
-   CARD HOSPITAL NAME
-===================================================== */
+/* =========================================================
+   HOSPITAL NAME
+   ========================================================= */
 
 .hospital-card h3 {
     margin: 0;
 
     color: #ffffff;
 
-    font-size: 23px;
+    font-size: 18px;
 
-    font-weight: 750;
+    font-weight: 800;
 
     line-height: 1.25;
 
     overflow-wrap: anywhere;
 }
 
+/* =========================================================
+   HOSPITAL DESCRIPTION
+   ========================================================= */
 
-/* =====================================================
-   CARD DESCRIPTION
-===================================================== */
+.hospital-card > p {
+    width: 100%;
 
-.hospital-card>p {
-    max-width: 290px;
+    max-width: 430px;
 
-    margin: 9px auto 19px;
+    margin:
+        6px auto 13px;
 
     color: #8fa39a;
 
-    font-size: 12px;
+    font-size: 10px;
 
-    line-height: 1.6;
+    line-height: 1.5;
 }
 
-
-/* =====================================================
-   MANAGEMENT LIST
-===================================================== */
+/* =========================================================
+   PATIENT SERVICES
+   ========================================================= */
 
 .hospital-management-list {
     width: 100%;
+
+    padding-top: 12px;
+
+    border-top:
+        1px solid rgba(255, 255, 255, 0.07);
 
     display: flex;
 
     flex-direction: column;
 
-    gap: 8px;
+    gap: 7px;
 
-    margin-top: 8px;
+    text-align: left;
 }
 
+.hospital-management-list h4 {
+    margin:
+        0 0 3px;
 
-/* =====================================================
-   MANAGEMENT ITEM
-===================================================== */
+    color: #00ff37;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.8px;
+
+    text-transform: uppercase;
+}
+
+/* =========================================================
+   PATIENT SERVICE ITEM
+   ========================================================= */
 
 .management-item {
     width: 100%;
 
-    min-height: 49px;
+    min-height: 52px;
 
-    padding: 0 13px;
+    display: grid;
 
-    box-sizing: border-box;
-
-    display: flex;
+    grid-template-columns:
+        36px
+        minmax(0, 1fr)
+        auto;
 
     align-items: center;
 
     gap: 10px;
 
+    padding:
+        7px 10px;
+
     border:
-        1px solid rgba(0,
-            255,
-            55,
-            0.13);
+        1px solid rgba(0, 255, 55, 0.11);
 
     border-radius: 10px;
 
     background:
-        rgba(0,
-            255,
-            55,
-            0.025);
-
-    text-align: left;
+        linear-gradient(
+            90deg,
+            rgba(0, 255, 55, 0.045),
+            rgba(0, 255, 55, 0.018)
+        );
 
     transition:
         background 0.2s ease,
         border-color 0.2s ease,
-        transform 0.2s ease;
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
-
 
 .management-item:hover {
     background:
-        rgba(0,
-            255,
-            55,
-            0.07);
+        rgba(0, 255, 55, 0.07);
 
     border-color:
-        rgba(0,
-            255,
-            55,
-            0.35);
+        rgba(0, 255, 55, 0.28);
 
-    transform: translateX(3px);
+    transform: translateX(2px);
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.20);
 }
 
+/* =========================================================
+   SERVICE ICON
+   ========================================================= */
 
-.management-item svg {
-    flex-shrink: 0;
+.management-item > svg {
+    width: 34px;
+
+    height: 34px;
+
+    padding: 8px;
+
+    border-radius: 8px;
+
+    background:
+        rgba(0, 255, 55, 0.08);
 
     color: #00ff37;
 
-    font-size: 16px;
+    font-size: 14px;
 }
 
+/* =========================================================
+   SERVICE TEXT
+   ========================================================= */
 
-.management-item span {
-    flex: 1;
-
+.management-item > span {
     min-width: 0;
 
     color: #ffffff;
 
-    font-size: 13px;
+    font-size: 10px;
 
-    font-weight: 600;
+    font-weight: 700;
+
+    line-height: 1.25;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
+/* =========================================================
+   SERVICE ACTION
+   ========================================================= */
 
 .management-item small {
     flex-shrink: 0;
 
+    min-width: 55px;
+
+    padding:
+        5px 7px;
+
+    text-align: center;
+
+    border-radius: 5px;
+
+    background:
+        rgba(0, 255, 55, 0.08);
+
     color: #00ff37;
 
-    font-size: 11px;
+    font-size: 7px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.3px;
+
+    text-transform: uppercase;
 }
 
-
-/* =====================================================
+/* =========================================================
    SECURITY
-===================================================== */
+   ========================================================= */
 
 .hospital-security {
-    margin-top: 17px;
+    margin-top: 11px;
+
+    padding-top: 9px;
 
     display: flex;
 
@@ -903,37 +770,443 @@
 
     justify-content: center;
 
-    gap: 7px;
+    gap: 5px;
+
+    border-top:
+        1px solid rgba(255, 255, 255, 0.06);
 
     color: #687d72;
 
-    font-size: 11px;
-}
+    font-size: 8px;
 
+    font-weight: 600;
+}
 
 .hospital-security svg {
     flex-shrink: 0;
 
     color: #00ff37;
 
-    font-size: 13px;
+    font-size: 10px;
 }
 
+/* =========================================================
+   DOCTORS SECTION
+   FULL WIDTH
+   ========================================================= */
 
-/* =====================================================
+.doctors-section {
+    grid-column: 1 / -1;
+
+    width: 100%;
+
+    max-width: none;
+
+    min-width: 0;
+
+    margin-top: 0;
+
+    overflow: hidden;
+}
+
+/* =========================================================
+   DOCTORS MARQUEE
+   ========================================================= */
+
+.doctors-marquee {
+    width: 100%;
+
+    max-width: none;
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding:
+        4px 0 13px;
+}
+
+/* =========================================================
+   MARQUEE EDGE FADE
+   ========================================================= */
+
+.doctors-marquee::before,
+.doctors-marquee::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    bottom: 0;
+
+    width: 75px;
+
+    z-index: 5;
+
+    pointer-events: none;
+}
+
+.doctors-marquee::before {
+    left: 0;
+
+    background:
+        linear-gradient(
+            to right,
+            #06150d,
+            transparent
+        );
+}
+
+.doctors-marquee::after {
+    right: 0;
+
+    background:
+        linear-gradient(
+            to left,
+            #06150d,
+            transparent
+        );
+}
+
+/* =========================================================
+   MARQUEE TRACK
+   LEFT -> RIGHT
+   ========================================================= */
+
+.doctors-marquee-track {
+    width: max-content;
+
+    display: flex;
+
+    align-items: stretch;
+
+    gap: 18px;
+
+    animation:
+        doctorsMarqueeRight 32s linear infinite;
+
+    will-change: transform;
+}
+
+.doctors-marquee:hover
+.doctors-marquee-track {
+    animation-play-state: paused;
+}
+
+/* =========================================================
+   LEFT TO RIGHT ANIMATION
+   ========================================================= */
+
+@keyframes doctorsMarqueeRight {
+
+    0% {
+        transform: translateX(-50%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* =========================================================
+   DOCTOR CARD
+   ========================================================= */
+
+.doctor-card {
+    width: 330px;
+
+    min-width: 330px;
+
+    height: 150px;
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 10px;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(0, 255, 55, 0.16);
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(9, 31, 19, 0.98),
+            rgba(2, 14, 8, 0.99)
+        );
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.32);
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+/* =========================================================
+   DOCTOR TOP LINE
+   ========================================================= */
+
+.doctor-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    right: 0;
+
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #00ff37,
+            transparent
+        );
+
+    opacity: 0.8;
+}
+
+.doctor-card:hover {
+    transform: translateY(-4px);
+
+    border-color:
+        rgba(0, 255, 55, 0.42);
+
+    box-shadow:
+        0 16px 38px rgba(0, 0, 0, 0.42),
+        0 0 25px rgba(0, 255, 55, 0.07);
+}
+
+/* =========================================================
+   DOCTOR PHOTO
+   ========================================================= */
+
+.doctor-card-photo {
+    width: 108px;
+
+    min-width: 108px;
+
+    height: 128px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(0, 255, 55, 0.20);
+
+    border-radius: 11px;
+
+    background:
+        rgba(0, 30, 18, 0.90);
+}
+
+.doctor-card-photo img {
+    width: 100%;
+
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    object-position: center;
+
+    transition:
+        transform 0.4s ease;
+}
+
+.doctor-card:hover
+.doctor-card-photo img {
+    transform: scale(1.05);
+}
+
+/* =========================================================
+   DOCTOR PHOTO BADGE
+   ========================================================= */
+
+.doctor-photo-badge {
+    width: 26px;
+
+    height: 26px;
+
+    position: absolute;
+
+    right: 6px;
+
+    bottom: 6px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #00ff37;
+
+    color: #001207;
+
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.38);
+}
+
+.doctor-photo-badge svg {
+    font-size: 12px;
+}
+
+/* =========================================================
+   DOCTOR INFO
+   ========================================================= */
+
+.doctor-card-info {
+    min-width: 0;
+
+    flex: 1;
+
+    padding-left: 2px;
+}
+
+.doctor-card-label {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    margin-bottom: 5px;
+
+    color: #00ff37;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.7px;
+
+    text-transform: uppercase;
+}
+
+.doctor-card-label svg {
+    flex-shrink: 0;
+
+    font-size: 8px;
+}
+
+.doctor-card-info h3 {
+    margin:
+        0 0 4px;
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    line-height: 1.25;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.doctor-specialization {
+    margin: 0;
+
+    color: #9eb1a7;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    line-height: 1.35;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+/* =========================================================
+   DOCTOR META
+   ========================================================= */
+
+.doctor-meta {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+    margin-top: 9px;
+}
+
+.doctor-meta span {
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    color: #70857a;
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.doctor-meta svg {
+    flex-shrink: 0;
+
+    color: #00ff37;
+
+    font-size: 10px;
+}
+
+/* =========================================================
    FOOTER
-===================================================== */
+   ========================================================= */
 
 .home-footer {
     width: 100%;
 
-    height: 52px;
+    min-height: 42px;
 
     flex-shrink: 0;
 
-    padding: 0 50px;
+    padding:
+        0 45px;
 
-    box-sizing: border-box;
+    position: relative;
+
+    z-index: 5;
 
     display: flex;
 
@@ -941,390 +1214,702 @@
 
     justify-content: space-between;
 
-    position: relative;
-
-    z-index: 5;
-
     border-top:
-        1px solid rgba(0,
-            255,
-            55,
-            0.15);
+        1px solid rgba(0, 255, 55, 0.12);
 
     background:
-        rgba(0,
-            0,
-            0,
-            0.25);
+        rgba(0, 0, 0, 0.28);
 
     color: #60736a;
 
-    font-size: 11px;
+    font-size: 9px;
 }
 
-
-/* =====================================================
+/* =========================================================
    LARGE DESKTOP
-===================================================== */
+   ========================================================= */
 
-@media (min-width: 1400px) {
+@media (min-width: 1500px) {
 
     .home-content {
-        padding-left: 90px;
-        padding-right: 90px;
+        max-width: 1900px;
 
-        gap: 90px;
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(430px, 520px);
+
+        column-gap: 40px;
+
+        padding:
+            34px 55px 23px;
     }
-
-
-    .home-brand {
-        gap: 38px;
-    }
-
 
     .home-brand-icon {
-        width: 185px;
-        height: 185px;
+        width: 145px;
 
-        min-width: 185px;
+        height: 145px;
+
+        min-width: 145px;
     }
 
-
     .home-brand-text h1 {
-        font-size: clamp(44px,
+        font-size:
+            clamp(
+                44px,
                 4vw,
-                68px);
+                68px
+            );
     }
 
-
     .hospital-card {
-        width: 390px;
+        max-width: 520px;
+    }
+
+    .doctor-card {
+        width: 335px;
+
+        min-width: 335px;
+
+        height: 153px;
     }
 }
 
+/* =========================================================
+   LAPTOP
+   ========================================================= */
 
-/* =====================================================
-   TABLET / SMALL DESKTOP
-===================================================== */
-
-@media (max-width: 1100px) {
+@media (max-width: 1250px) {
 
     .home-content {
-        padding: 35px 40px 30px;
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(380px, 460px);
 
-        gap: 45px;
+        column-gap: 25px;
+
+        padding:
+            27px 30px 22px;
     }
-
 
     .home-brand {
-        gap: 25px;
-
-        min-height: 145px;
+        gap: 20px;
     }
-
 
     .home-brand-icon {
-        width: 135px;
-        height: 135px;
+        width: 120px;
 
-        min-width: 135px;
+        height: 120px;
+
+        min-width: 120px;
     }
 
-
     .home-brand-text h1 {
-        font-size: clamp(32px,
+        font-size:
+            clamp(
+                34px,
                 4vw,
-                50px);
+                55px
+            );
     }
-
-
-    .home-brand-text span {
-        font-size: 13px;
-    }
-
 
     .hospital-card {
-        width: 330px;
+        max-width: 460px;
+
+        padding:
+            19px 16px 16px;
+    }
+
+    .management-item {
+        min-height: 50px;
+    }
+
+    .doctor-card {
+        width: 310px;
+
+        min-width: 310px;
+
+        height: 145px;
+    }
+
+    .doctor-card-photo {
+        width: 103px;
+
+        min-width: 103px;
+
+        height: 123px;
     }
 }
 
+/* =========================================================
+   SMALL LAPTOP
+   ========================================================= */
 
-/* =====================================================
-   TABLET
-===================================================== */
-
-@media (max-width: 900px) {
-
-    .home-page {
-        height: auto;
-
-        min-height: 100vh;
-
-        overflow-y: auto;
-
-        overflow-x: hidden;
-    }
-
+@media (max-width: 1050px) {
 
     .home-content {
-        flex: none;
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(350px, 420px);
 
-        padding: 38px 30px 40px;
+        column-gap: 20px;
 
-        grid-template-columns: 1fr;
-
-        gap: 40px;
-
-        align-items: start;
+        padding:
+            22px 22px 18px;
     }
-
-
-    .home-left {
-        max-width: 100%;
-    }
-
 
     .home-brand {
-        min-height: 145px;
-
-        margin-bottom: 20px;
-
-        gap: 25px;
+        gap: 16px;
     }
-
-
-    .home-brand-icon {
-        width: 135px;
-        height: 135px;
-
-        min-width: 135px;
-    }
-
-
-    .home-brand-text h1 {
-        font-size: clamp(32px,
-                7vw,
-                50px);
-    }
-
-
-    .home-login-wrapper {
-        justify-content: center;
-    }
-
-
-    .hospital-card {
-        width: 420px;
-
-        max-width: 100%;
-    }
-
-
-    .home-footer {
-        height: auto;
-
-        padding: 16px 30px;
-
-        flex-direction: column;
-
-        gap: 6px;
-
-        text-align: center;
-    }
-}
-
-
-/* =====================================================
-   MOBILE
-===================================================== */
-
-@media (max-width: 600px) {
-
-    .home-content {
-        padding: 28px 18px 35px;
-
-        gap: 32px;
-    }
-
-
-    .home-badge {
-        margin-bottom: 16px;
-
-        padding: 7px 12px;
-
-        font-size: 9px;
-
-        letter-spacing: 0.9px;
-    }
-
-
-    .home-brand {
-        min-height: 105px;
-
-        gap: 18px;
-
-        margin-bottom: 18px;
-    }
-
 
     .home-brand-icon {
         width: 105px;
+
         height: 105px;
 
         min-width: 105px;
     }
 
-
     .home-brand-text h1 {
-        font-size: 29px;
-
-        line-height: 1.08;
-
-        letter-spacing: -0.8px;
+        font-size: 34px;
     }
-
 
     .home-brand-text span {
-        margin-top: 7px;
-
-        font-size: 10px;
-
-        letter-spacing: 1px;
+        font-size: 11px;
     }
-
 
     .home-description {
-        font-size: 14px;
-
-        line-height: 1.6;
+        font-size: 12px;
     }
-
 
     .home-login-button {
+        width: 190px;
+
+        height: 44px;
+
+        font-size: 12px;
+    }
+
+    .hospital-card {
+        max-width: 420px;
+
+        padding:
+            18px 15px 15px;
+    }
+
+    .hospital-card-icon {
+        width: 60px;
+
+        height: 60px;
+    }
+
+    .hospital-card h3 {
+        font-size: 16px;
+    }
+
+    .management-item {
+        min-height: 48px;
+
+        grid-template-columns:
+            34px
+            minmax(0, 1fr)
+            auto;
+
+        gap: 8px;
+    }
+
+    .management-item > svg {
+        width: 32px;
+
+        height: 32px;
+
+        padding: 7px;
+    }
+
+    .management-item > span {
+        font-size: 9px;
+    }
+
+    .management-item small {
+        min-width: 50px;
+
+        padding:
+            4px 6px;
+
+        font-size: 6px;
+    }
+
+    .doctor-card {
+        width: 290px;
+
+        min-width: 290px;
+
+        height: 140px;
+    }
+
+    .doctor-card-photo {
+        width: 96px;
+
+        min-width: 96px;
+
+        height: 118px;
+    }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .home-page {
+        min-height: 100vh;
+
+        overflow-x: hidden;
+
+        overflow-y: auto;
+    }
+
+    .home-content {
         width: 100%;
 
-        max-width: 300px;
-    }
-
-
-    .home-features {
         grid-template-columns: 1fr;
 
-        gap: 10px;
+        column-gap: 0;
+
+        row-gap: 26px;
+
+        padding:
+            28px 25px 30px;
     }
 
+    .home-left {
+        width: 100%;
+
+        min-height: auto;
+    }
+
+    .home-right {
+        width: 100%;
+
+        justify-content: center;
+    }
 
     .hospital-card {
         width: 100%;
 
-        padding: 25px 18px;
+        max-width: 520px;
+
+        padding:
+            21px 18px 17px;
     }
 
+    .doctors-section {
+        grid-column: 1;
 
-    .hospital-card-icon {
-        width: 75px;
-        height: 75px;
+        width: 100%;
+
+        margin-top: 0;
     }
 
-
-    .hospital-card h3 {
-        font-size: 20px;
+    .doctors-marquee {
+        width: 100%;
     }
 
+    .home-brand-icon {
+        width: 115px;
+
+        height: 115px;
+
+        min-width: 115px;
+    }
+
+    .home-brand-text h1 {
+        font-size:
+            clamp(
+                34px,
+                6vw,
+                50px
+            );
+    }
+
+    .home-description {
+        max-width: 850px;
+
+        font-size: 13px;
+    }
 
     .home-footer {
-        padding: 14px 18px;
+        min-height: 48px;
 
-        font-size: 10px;
+        padding:
+            12px 25px;
+
+        flex-wrap: wrap;
+
+        justify-content: center;
+
+        gap: 8px;
+
+        text-align: center;
     }
 }
 
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
-/* =====================================================
-   VERY SMALL MOBILE
-===================================================== */
-
-@media (max-width: 380px) {
+@media (max-width: 600px) {
 
     .home-content {
-        padding: 24px 14px 30px;
+        padding:
+            22px 16px 28px;
 
-        gap: 28px;
+        row-gap: 23px;
     }
 
+    /* BADGE */
+
+    .home-badge {
+        margin-bottom: 12px;
+
+        padding:
+            7px 11px;
+
+        font-size: 8px;
+
+        letter-spacing: 0.8px;
+    }
+
+    /* BRAND */
 
     .home-brand {
-        gap: 14px;
+        gap: 12px;
 
-        min-height: 88px;
+        margin-bottom: 12px;
     }
-
 
     .home-brand-icon {
         width: 88px;
+
         height: 88px;
 
         min-width: 88px;
     }
 
-
     .home-brand-text h1 {
-        font-size: 24px;
+        font-size: 26px;
 
-        letter-spacing: -0.5px;
+        letter-spacing: -0.6px;
     }
-
 
     .home-brand-text span {
+        margin-top: 5px;
+
         font-size: 9px;
 
-        letter-spacing: 0.7px;
+        letter-spacing: 0.8px;
     }
 
+    /* DESCRIPTION */
 
-    .home-badge {
-        font-size: 8px;
+    .home-description {
+        font-size: 11px;
 
-        padding: 6px 10px;
+        line-height: 1.55;
     }
 
+    /* LOGIN */
+
+    .home-login-button {
+        width: 100%;
+
+        max-width: 280px;
+
+        height: 42px;
+
+        font-size: 11px;
+    }
+
+    /* PATIENT SERVICES */
 
     .hospital-card {
-        padding: 21px 14px;
+        width: 100%;
+
+        max-width: 100%;
+
+        padding:
+            19px 13px 16px;
+
+        border-radius: 16px;
     }
 
-
     .hospital-card-icon {
-        width: 68px;
-        height: 68px;
+        width: 62px;
+
+        height: 62px;
+    }
+
+    .hospital-card h3 {
+        font-size: 17px;
+    }
+
+    .hospital-card > p {
+        font-size: 9px;
+
+        margin:
+            6px auto 12px;
+    }
+
+    .hospital-management-list {
+        padding-top: 11px;
+
+        gap: 7px;
+    }
+
+    .hospital-management-list h4 {
+        font-size: 10px;
+    }
+
+    .management-item {
+        min-height: 50px;
+
+        grid-template-columns:
+            34px
+            minmax(0, 1fr)
+            auto;
+
+        gap: 8px;
+
+        padding:
+            7px 8px;
+    }
+
+    .management-item > svg {
+        width: 32px;
+
+        height: 32px;
+
+        padding: 7px;
+    }
+
+    .management-item > span {
+        font-size: 9px;
+    }
+
+    .management-item small {
+        min-width: 48px;
+
+        padding:
+            5px 6px;
+
+        font-size: 6px;
+    }
+
+    .hospital-security {
+        margin-top: 10px;
+
+        padding-top: 8px;
+
+        font-size: 8px;
+    }
+
+    /* DOCTORS */
+
+    .doctors-section {
+        margin-top: 0;
+    }
+
+    .doctors-marquee {
+        padding:
+            3px 0 10px;
+    }
+
+    .doctors-marquee-track {
+        gap: 12px;
+
+        animation-duration: 26s;
+    }
+
+    .doctor-card {
+        width: 275px;
+
+        min-width: 275px;
+
+        height: 135px;
+
+        padding: 9px;
+
+        gap: 10px;
+    }
+
+    .doctor-card-photo {
+        width: 92px;
+
+        min-width: 92px;
+
+        height: 115px;
+    }
+
+    .doctor-card-info {
+        padding-left: 0;
+    }
+
+    .doctor-card-info h3 {
+        font-size: 13px;
+    }
+
+    .doctor-specialization {
+        font-size: 9px;
+    }
+
+    .doctor-meta {
+        margin-top: 7px;
+
+        gap: 4px;
+    }
+
+    .doctor-meta span {
+        font-size: 7px;
+    }
+
+    /* FOOTER */
+
+    .home-footer {
+        min-height: 48px;
+
+        padding:
+            11px 16px;
+
+        font-size: 8px;
     }
 }
 
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
 
-/* =====================================================
+@media (max-width: 380px) {
+
+    .home-content {
+        padding:
+            20px 12px 25px;
+
+        row-gap: 21px;
+    }
+
+    .home-brand {
+        gap: 9px;
+    }
+
+    .home-brand-icon {
+        width: 74px;
+
+        height: 74px;
+
+        min-width: 74px;
+    }
+
+    .home-brand-text h1 {
+        font-size: 21px;
+    }
+
+    .home-brand-text span {
+        font-size: 8px;
+    }
+
+    .home-description {
+        font-size: 10px;
+    }
+
+    .home-login-button {
+        max-width: 100%;
+    }
+
+    .hospital-card {
+        padding:
+            17px 10px 14px;
+    }
+
+    .hospital-card-icon {
+        width: 57px;
+
+        height: 57px;
+    }
+
+    .hospital-card h3 {
+        font-size: 15px;
+    }
+
+    .management-item {
+        min-height: 47px;
+
+        grid-template-columns:
+            31px
+            minmax(0, 1fr)
+            auto;
+
+        gap: 6px;
+    }
+
+    .management-item > svg {
+        width: 30px;
+
+        height: 30px;
+
+        padding: 6px;
+    }
+
+    .management-item > span {
+        font-size: 8px;
+    }
+
+    .management-item small {
+        min-width: 44px;
+
+        font-size: 6px;
+    }
+
+    .doctor-card {
+        width: 255px;
+
+        min-width: 255px;
+
+        height: 130px;
+    }
+
+    .doctor-card-photo {
+        width: 86px;
+
+        min-width: 86px;
+
+        height: 110px;
+    }
+}
+
+/* =========================================================
    ACCESSIBILITY
-===================================================== */
+   ========================================================= */
 
 .home-login-button:focus-visible {
-    outline: 2px solid #ffffff;
+    outline:
+        2px solid #ffffff;
 
     outline-offset: 4px;
 }
 
-
-/* =====================================================
+/* =========================================================
    REDUCED MOTION
-===================================================== */
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
+
+    .doctors-marquee-track {
+        animation: none !important;
+    }
 
     *,
     *::before,
     *::after {
-        animation-duration: 0.01ms !important;
-
-        animation-iteration-count: 1 !important;
-
         transition-duration: 0.01ms !important;
 
         scroll-behavior: auto !important;
