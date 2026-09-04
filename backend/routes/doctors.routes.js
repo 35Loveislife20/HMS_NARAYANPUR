@@ -16,24 +16,58 @@ const authMiddleware = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
-
 /* =========================================================
-   DOCTOR PHOTO UPLOAD CONFIGURATION
+   ENVIRONMENT
 ========================================================= */
 
-const uploadDirectory = path.join(
+const isVercel =
+    process.env.VERCEL === "1" ||
+    process.env.VERCEL_ENV;
+
+/* =========================================================
+   DOCTOR PHOTO UPLOAD DIRECTORY
+========================================================= */
+
+const localUploadDirectory = path.join(
     __dirname,
     "..",
     "uploads",
     "doctors"
 );
 
+/*
+   IMPORTANT:
 
-/* Make sure upload directory exists */
-if (!fs.existsSync(uploadDirectory)) {
-    fs.mkdirSync(uploadDirectory, {
-        recursive: true,
-    });
+   Vercel serverless filesystem:
+   /var/task -> READ ONLY
+
+   Local development:
+   backend/uploads/doctors -> writable
+
+   Vercel:
+   /tmp -> writable temporarily
+*/
+
+const uploadDirectory = isVercel
+    ? path.join("/tmp", "hms", "doctors")
+    : localUploadDirectory;
+
+
+/* =========================================================
+   CREATE UPLOAD DIRECTORY
+========================================================= */
+
+try {
+    if (!fs.existsSync(uploadDirectory)) {
+        fs.mkdirSync(uploadDirectory, {
+            recursive: true,
+        });
+    }
+} catch (error) {
+    console.error(
+        "Doctor upload directory creation failed:",
+        error.message
+    );
 }
 
 
@@ -44,15 +78,43 @@ if (!fs.existsSync(uploadDirectory)) {
 const storage = multer.diskStorage({
 
     destination: (req, file, cb) => {
-        cb(null, uploadDirectory);
+
+        /*
+           Make sure temporary directory exists
+           before multer writes the file.
+        */
+
+        try {
+            if (!fs.existsSync(uploadDirectory)) {
+                fs.mkdirSync(uploadDirectory, {
+                    recursive: true,
+                });
+            }
+
+            cb(null, uploadDirectory);
+
+        } catch (error) {
+
+            console.error(
+                "Doctor upload destination error:",
+                error.message
+            );
+
+            cb(error);
+        }
     },
+
 
     filename: (req, file, cb) => {
 
-        const extension = path.extname(file.originalname);
+        const extension = path
+            .extname(file.originalname)
+            .toLowerCase();
 
         const uniqueName =
-            `doctor-${Date.now()}-${Math.round(Math.random() * 1E9)}${extension}`;
+            `doctor-${Date.now()}-${Math.round(
+                Math.random() * 1E9
+            )}${extension}`;
 
         cb(null, uniqueName);
     },
@@ -62,7 +124,7 @@ const storage = multer.diskStorage({
 
 /* =========================================================
    FILE FILTER
-   Allowed: JPG, JPEG, PNG, WEBP
+   JPG / JPEG / PNG / WEBP ONLY
 ========================================================= */
 
 const fileFilter = (req, file, cb) => {
@@ -75,8 +137,11 @@ const fileFilter = (req, file, cb) => {
     ];
 
     if (allowedTypes.includes(file.mimetype)) {
+
         cb(null, true);
+
     } else {
+
         cb(
             new Error(
                 "Only JPG, JPEG, PNG and WEBP images are allowed."
@@ -88,23 +153,26 @@ const fileFilter = (req, file, cb) => {
 
 
 /* =========================================================
-   MULTER INSTANCE
-   Maximum file size: 5 MB
+   MULTER
+   MAX SIZE = 5 MB
 ========================================================= */
 
 const uploadDoctorPhoto = multer({
+
     storage,
+
     fileFilter,
+
     limits: {
         fileSize: 5 * 1024 * 1024,
     },
+
 });
 
 
 /* =========================================================
    GET ALL DOCTORS
    PUBLIC
-   Home page uses this
 ========================================================= */
 
 router.get(
@@ -115,6 +183,7 @@ router.get(
 
 /* =========================================================
    GET NEXT DOCTOR CODE
+   PROTECTED
 ========================================================= */
 
 router.get(
@@ -126,6 +195,7 @@ router.get(
 
 /* =========================================================
    GET SINGLE DOCTOR
+   PROTECTED
 ========================================================= */
 
 router.get(
@@ -137,7 +207,8 @@ router.get(
 
 /* =========================================================
    ADD DOCTOR
-   PHOTO FIELD NAME = photo
+   PHOTO FIELD = photo
+   PROTECTED
 ========================================================= */
 
 router.post(
@@ -150,7 +221,8 @@ router.post(
 
 /* =========================================================
    UPDATE DOCTOR
-   PHOTO FIELD NAME = photo
+   PHOTO FIELD = photo
+   PROTECTED
 ========================================================= */
 
 router.put(
@@ -163,6 +235,7 @@ router.put(
 
 /* =========================================================
    DELETE DOCTOR
+   PROTECTED
 ========================================================= */
 
 router.delete(
@@ -178,29 +251,62 @@ router.delete(
 
 router.use((error, req, res, next) => {
 
-    if (error instanceof multer.MulterError) {
+    console.error(
+        "Doctor route error:",
+        error
+    );
 
-        if (error.code === "LIMIT_FILE_SIZE") {
-            return res.status(400).json({
-                success: false,
-                message: "Doctor photo must be 5 MB or smaller.",
-            });
-        }
+
+    /* -----------------------------------------------------
+       FILE SIZE ERROR
+    ----------------------------------------------------- */
+
+    if (
+        error instanceof multer.MulterError &&
+        error.code === "LIMIT_FILE_SIZE"
+    ) {
 
         return res.status(400).json({
+
             success: false,
-            message: error.message,
+
+            message:
+                "Doctor photo must be 5 MB or smaller.",
+
         });
     }
 
 
+    /* -----------------------------------------------------
+       OTHER MULTER ERRORS
+    ----------------------------------------------------- */
+
+    if (error instanceof multer.MulterError) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message: error.message,
+
+        });
+    }
+
+
+    /* -----------------------------------------------------
+       CUSTOM FILE VALIDATION ERROR
+    ----------------------------------------------------- */
+
     if (error) {
 
         return res.status(400).json({
-            success: false,
-            message: error.message,
-        });
 
+            success: false,
+
+            message: error.message ||
+                "Doctor photo upload failed.",
+
+        });
     }
 
 
