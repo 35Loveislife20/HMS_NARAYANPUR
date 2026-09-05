@@ -17,8 +17,14 @@ import {
 import LoginModal from "../auth/LoginModal";
 import "./Home.css";
 
-const API_BASE = "http://localhost:5000/api";
-const BACKEND_BASE = "http://localhost:5000";
+const API_BASE =
+    import.meta.env.VITE_API_URL ||
+    "http://localhost:5000/api";
+
+const BACKEND_BASE = API_BASE.replace(
+    /\/api\/?$/,
+    ""
+);
 
 const DEFAULT_SETTINGS = {
     hospitalName: "HMS Hospital",
