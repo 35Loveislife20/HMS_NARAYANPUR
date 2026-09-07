@@ -6,43 +6,63 @@ const {
     addAppointment,
     editAppointment,
     removeAppointment,
+    getPublicAppointments,
+    addPublicAppointment,
 } = require("../controllers/appointment.controller");
 
 const router = express.Router();
 
 // =====================================================
-// GET ALL APPOINTMENTS
+// PUBLIC APPOINTMENT ROUTES
+// IMPORTANT: These must come BEFORE /:id
+// =====================================================
+
+// GET /api/appointments/public
+// Check booked slots for public patient appointment
+router.get(
+    "/public",
+    getPublicAppointments
+);
+
+// POST /api/appointments/public
+// Book appointment without HMS staff login
+router.post(
+    "/public",
+    addPublicAppointment
+);
+
+// =====================================================
+// PROTECTED / HMS APPOINTMENT ROUTES
+// =====================================================
+
 // GET /api/appointments
-// =====================================================
+router.get(
+    "/",
+    getAppointments
+);
 
-router.get("/", getAppointments);
-
-// =====================================================
-// GET APPOINTMENT BY ID
 // GET /api/appointments/:id
-// =====================================================
+router.get(
+    "/:id",
+    getAppointment
+);
 
-router.get("/:id", getAppointment);
-
-// =====================================================
-// CREATE APPOINTMENT
 // POST /api/appointments
-// =====================================================
+router.post(
+    "/",
+    addAppointment
+);
 
-router.post("/", addAppointment);
-
-// =====================================================
-// UPDATE APPOINTMENT
 // PUT /api/appointments/:id
-// =====================================================
+router.put(
+    "/:id",
+    editAppointment
+);
 
-router.put("/:id", editAppointment);
-
-// =====================================================
-// DELETE APPOINTMENT
 // DELETE /api/appointments/:id
-// =====================================================
-
-router.delete("/:id", removeAppointment);
+router.delete(
+    "/:id",
+    removeAppointment
+);
 
 module.exports = router;

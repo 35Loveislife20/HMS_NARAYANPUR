@@ -3,6 +3,8 @@ import React, {
     useMemo,
     useState,
 } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 import "./Reports.css";
 
@@ -189,6 +191,8 @@ const EmptyState = ({ message }) => {
 ========================================================= */
 
 const Reports = () => {
+    const navigate = useNavigate();
+
     const [activeReport, setActiveReport] =
         useState("overview");
 
@@ -2252,6 +2256,16 @@ const Reports = () => {
             <header className="reports-header">
 
                 <div className="reports-title-row">
+
+                    <button
+                        type="button"
+                        className="reports-back-button"
+                        onClick={() => navigate("/dashboard")}
+                        title="Back to Dashboard"
+                        aria-label="Back to Dashboard"
+                    >
+                        <FaArrowLeft />
+                    </button>
 
                     <div className="reports-title-icon">
                         📊

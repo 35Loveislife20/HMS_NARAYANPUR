@@ -1,10 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-    FiArrowLeft,
+    FiSearch,
+    FiRefreshCw,
     FiPlus,
     FiEdit2,
     FiTrash2,
+    FiArrowRight,
+    FiLayers,
 } from "react-icons/fi";
+import {
+    FaHospital,
+    FaHeartbeat,
+    FaXRay,
+    FaBone,
+    FaBrain,
+    FaStethoscope,
+    FaMicroscope,
+    FaPills,
+    FaAmbulance,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./Departments.css";
 
@@ -17,12 +31,50 @@ const emptyForm = {
     status: "active",
 };
 
+// =====================================================
+// DEPARTMENT VISUAL IDENTITY (icon + accent color)
+// =====================================================
+
+const DEPARTMENT_STYLES = {
+    cardiology: { color: "#ff4d6d", icon: FaHeartbeat },
+    radiology: { color: "#3b82f6", icon: FaXRay },
+    orthopedics: { color: "#22c55e", icon: FaBone },
+    neurology: { color: "#8b5cf6", icon: FaBrain },
+    "general medicine": { color: "#f5a623", icon: FaStethoscope },
+    laboratory: { color: "#06b6d4", icon: FaMicroscope },
+    pharmacy: { color: "#ec4899", icon: FaPills },
+    emergency: { color: "#ef4444", icon: FaAmbulance },
+};
+
+const FALLBACK_PALETTE = [
+    "#00ff22",
+    "#3b82f6",
+    "#f5a623",
+    "#8b5cf6",
+    "#ec4899",
+    "#06b6d4",
+    "#ef4444",
+    "#22c55e",
+];
+
+const getDepartmentStyle = (name, index) => {
+    const key = (name || "").trim().toLowerCase();
+
+    if (DEPARTMENT_STYLES[key]) return DEPARTMENT_STYLES[key];
+
+    return {
+        color: FALLBACK_PALETTE[index % FALLBACK_PALETTE.length],
+        icon: FaHospital,
+    };
+};
+
 const Departments = () => {
     const navigate = useNavigate();
 
     const [departments, setDepartments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
 
     const [showModal, setShowModal] = useState(false);
     const [editingId, setEditingId] = useState(null);
@@ -144,12 +196,12 @@ const Departments = () => {
             return;
         }
 
+        const isEditing = editingId !== null;
+
         try {
             setSaving(true);
 
             const token = localStorage.getItem("hms_token");
-
-            const isEditing = editingId !== null;
 
             const url = isEditing
                 ? `${API_URL}/departments/${editingId}`
@@ -255,24 +307,18 @@ const Departments = () => {
     };
 
     // =====================================================
-    // FORMAT DATE
+    // SEARCH FILTER
     // =====================================================
 
-    const formatDate = (date) => {
-        if (!date) return "-";
+    const filteredDepartments = useMemo(() => {
+        const term = searchTerm.trim().toLowerCase();
 
-        const parsedDate = new Date(date);
+        if (!term) return departments;
 
-        if (Number.isNaN(parsedDate.getTime())) {
-            return "-";
-        }
-
-        return parsedDate.toLocaleDateString("en-IN", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-        });
-    };
+        return departments.filter((department) =>
+            (department.name || "").toLowerCase().includes(term)
+        );
+    }, [departments, searchTerm]);
 
     // =====================================================
     // UI
@@ -287,42 +333,96 @@ const Departments = () => {
 
             <div className="departments-header">
 
-                <div className="departments-header-left">
-
-                    {/* BACK BUTTON */}
+                <div
+                    className="departments-header-left"
+                    onClick={handleBack}
+                    title="Back to Dashboard"
+                    role="button"
+                    tabIndex={0}
+                >
 
                     <button
                         type="button"
-                        className="back-dashboard-button"
+                        className="departments-back-button"
                         onClick={handleBack}
                         title="Back to Dashboard"
                         aria-label="Back to Dashboard"
                     >
-                        <FiArrowLeft className="back-arrow-icon" />
+                        <FiArrowRight className="departments-back-icon" />
                     </button>
 
-                    {/* TITLE */}
+                    <div className="departments-header-icon">
+                        <FaHospital />
+                    </div>
 
                     <div>
                         <h1>Departments</h1>
 
                         <p>
-                            Manage hospital departments
+                            Manage hospital departments and their information
                         </p>
                     </div>
 
                 </div>
 
-                {/* ADD DEPARTMENT */}
+                <div className="departments-header-right">
 
-                <button
-                    type="button"
-                    className="add-department-btn"
-                    onClick={openAddModal}
-                >
-                    <FiPlus />
-                    <span>Add Department</span>
-                </button>
+                    {/* SEARCH */}
+
+                    <div className="departments-search">
+                        <FiSearch className="departments-search-icon" />
+
+                        <input
+                            type="text"
+                            placeholder="Search department..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+
+                    {/* REFRESH */}
+
+                    <button
+                        type="button"
+                        className="refresh-btn"
+                        onClick={fetchDepartments}
+                        disabled={loading}
+                    >
+                        <FiRefreshCw
+                            className={loading ? "spin-icon" : ""}
+                        />
+                        <span>Refresh</span>
+                    </button>
+
+                    {/* ADD DEPARTMENT */}
+
+                    <button
+                        type="button"
+                        className="add-department-btn"
+                        onClick={openAddModal}
+                    >
+                        <FiPlus />
+                        <span>Add Department</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+            {/* =================================================
+                TOTAL DEPARTMENTS STAT
+            ================================================= */}
+
+            <div className="departments-stat">
+
+                <div className="departments-stat-icon">
+                    <FiLayers />
+                </div>
+
+                <div>
+                    <p>Total Departments</p>
+                    <h2>{departments.length}</h2>
+                </div>
 
             </div>
 
@@ -353,137 +453,256 @@ const Departments = () => {
                 </div>
             )}
 
+            <section className="departments-panel">
+
+                <div className="departments-toolbar">
+
+                    <div>
+                        <h2>Department List</h2>
+                        <span>
+                            {filteredDepartments.length} department
+                            {filteredDepartments.length !== 1 ? "s" : ""} found
+                        </span>
+                    </div>
+
+                    <div className="departments-toolbar-actions">
+                        <div className="department-panel-search">
+                            <FiSearch />
+                            <input
+                                type="text"
+                                placeholder="Search department..."
+                                value={searchTerm}
+                                onChange={(event) => setSearchTerm(event.target.value)}
+                            />
+                        </div>
+
+                        <button
+                            type="button"
+                            className="department-panel-refresh"
+                            onClick={fetchDepartments}
+                            disabled={loading}
+                        >
+                            <FiRefreshCw className={loading ? "spin-icon" : ""} />
+                            <span>Refresh</span>
+                        </button>
+                    </div>
+
+                </div>
+
+                {loading ? (
+                    <div className="departments-table-message">
+                        <FiRefreshCw className="spin-icon" />
+                        <span>Loading departments...</span>
+                    </div>
+                ) : (
+                    <div className="departments-table-wrapper">
+                        <table className="departments-table">
+                            <thead>
+                                <tr>
+                                    <th>Department</th>
+                                    <th>Description</th>
+                                    <th>Doctors</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredDepartments.length > 0 ? (
+                                    filteredDepartments.map((department, index) => {
+                                        const { color, icon: Icon } =
+                                            getDepartmentStyle(department.name, index);
+                                        const doctorCount =
+                                            department.doctor_count ??
+                                            department.doctors_count ??
+                                            department.doctorsCount ??
+                                            0;
+
+                                        return (
+                                            <tr key={department.id}>
+                                                <td>
+                                                    <div className="department-table-name">
+                                                        <div
+                                                            className="department-table-icon"
+                                                            style={{
+                                                                "--dept-color": color,
+                                                            }}
+                                                        >
+                                                            <Icon />
+                                                        </div>
+                                                        <strong>{department.name}</strong>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span className="department-table-description">
+                                                        {department.description ||
+                                                            "No description available"}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span className="department-table-count">
+                                                        {doctorCount} {doctorCount === 1 ? "Doctor" : "Doctors"}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span
+                                                        className={`department-table-status ${department.status || "active"}`}
+                                                    >
+                                                        {String(department.status || "active")
+                                                            .charAt(0)
+                                                            .toUpperCase() +
+                                                            String(department.status || "active").slice(1)}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div className="department-table-actions">
+                                                        <button
+                                                            type="button"
+                                                            className="department-table-edit"
+                                                            onClick={() => openEditModal(department)}
+                                                            title="Edit Department"
+                                                            aria-label="Edit Department"
+                                                        >
+                                                            <FiEdit2 />
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            className="department-table-delete"
+                                                            onClick={() => handleDelete(department)}
+                                                            title="Delete Department"
+                                                            aria-label="Delete Department"
+                                                        >
+                                                            <FiTrash2 />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5" className="departments-table-empty">
+                                            No departments found. Add a department or change your search.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
+            </section>
+
             {/* =================================================
-                TABLE
+                DEPARTMENT CARDS GRID
             ================================================= */}
 
             {!loading && !error && (
-                <div className="departments-table-wrapper">
 
-                    <table className="departments-table">
+                <div className="departments-grid">
 
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Department</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                                <th>Created</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
+                    {filteredDepartments.length > 0 ? (
 
-                        <tbody>
+                        filteredDepartments.map((department, index) => {
 
-                            {departments.length > 0 ? (
+                            const { color, icon: Icon } =
+                                getDepartmentStyle(department.name, index);
 
-                                departments.map((department) => (
+                            const doctorCount =
+                                department.doctor_count ??
+                                department.doctors_count ??
+                                department.doctorsCount ??
+                                0;
 
-                                    <tr key={department.id}>
+                            return (
 
-                                        {/* ID */}
+                                <div
+                                    key={department.id}
+                                    className="department-card"
+                                    style={{ "--dept-color": color }}
+                                >
 
-                                        <td>
-                                            {department.id}
-                                        </td>
+                                    <div className="department-card-top">
 
-                                        {/* NAME */}
+                                        <div className="department-card-icon">
+                                            <Icon />
+                                        </div>
 
-                                        <td className="department-name">
-                                            {department.name}
-                                        </td>
+                                        <div className="department-card-actions">
 
-                                        {/* DESCRIPTION */}
-
-                                        <td className="department-description">
-                                            {department.description || "-"}
-                                        </td>
-
-                                        {/* STATUS */}
-
-                                        <td>
-                                            <span
-                                                className={`status-badge ${department.status || "active"
-                                                    }`}
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    openEditModal(department)
+                                                }
+                                                title="Edit Department"
+                                                aria-label="Edit Department"
                                             >
-                                                {department.status || "active"}
-                                            </span>
-                                        </td>
+                                                <FiEdit2 />
+                                            </button>
 
-                                        {/* CREATED */}
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleDelete(department)
+                                                }
+                                                title="Delete Department"
+                                                aria-label="Delete Department"
+                                            >
+                                                <FiTrash2 />
+                                            </button>
 
-                                        <td>
-                                            {formatDate(
-                                                department.created_at
-                                            )}
-                                        </td>
+                                        </div>
 
-                                        {/* ACTIONS */}
+                                    </div>
 
-                                        <td>
+                                    <h3 className="department-card-name">
+                                        {department.name}
+                                    </h3>
 
-                                            <div className="department-actions">
+                                    <p className="department-card-doctors">
+                                        {doctorCount}{" "}
+                                        {doctorCount === 1
+                                            ? "Doctor"
+                                            : "Doctors"}
+                                    </p>
 
-                                                {/* EDIT */}
+                                    <div className="department-card-bottom">
 
-                                                <button
-                                                    type="button"
-                                                    className="department-edit-btn"
-                                                    onClick={() =>
-                                                        openEditModal(
-                                                            department
-                                                        )
-                                                    }
-                                                    title="Edit Department"
-                                                >
-                                                    <FiEdit2 />
-                                                    <span>Edit</span>
-                                                </button>
+                                        <p className="department-card-desc">
+                                            {department.description ||
+                                                "No description available"}
+                                        </p>
 
-                                                {/* DELETE */}
+                                        <button
+                                            type="button"
+                                            className="department-arrow-btn"
+                                            onClick={() =>
+                                                openEditModal(department)
+                                            }
+                                            title="View Department"
+                                            aria-label="View Department"
+                                        >
+                                            <FiArrowRight />
+                                        </button>
 
-                                                <button
-                                                    type="button"
-                                                    className="department-delete-btn"
-                                                    onClick={() =>
-                                                        handleDelete(
-                                                            department
-                                                        )
-                                                    }
-                                                    title="Delete Department"
-                                                >
-                                                    <FiTrash2 />
-                                                    <span>Delete</span>
-                                                </button>
+                                    </div>
 
-                                            </div>
+                                </div>
 
-                                        </td>
+                            );
 
-                                    </tr>
+                        })
 
-                                ))
+                    ) : (
 
-                            ) : (
+                        <div className="no-departments">
+                            No departments found
+                        </div>
 
-                                <tr>
-
-                                    <td
-                                        colSpan="6"
-                                        className="no-departments"
-                                    >
-                                        No departments found
-                                    </td>
-
-                                </tr>
-
-                            )}
-
-                        </tbody>
-
-                    </table>
+                    )}
 
                 </div>
+
             )}
 
             {/* =================================================

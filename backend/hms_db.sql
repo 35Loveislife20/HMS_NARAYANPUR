@@ -149,12 +149,19 @@ CREATE TABLE `doctors` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
   `name` varchar(100) DEFAULT NULL,
+  `photo` varchar(500) DEFAULT NULL,
   `department_id` int DEFAULT NULL,
   `doctor_code` varchar(50) NOT NULL,
   `specialization` varchar(150) DEFAULT NULL,
+  `qualification` varchar(255) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
+  `email` varchar(150) DEFAULT NULL,
+  `experience_years` int DEFAULT '0',
   `consultation_fee` decimal(10,2) DEFAULT '0.00',
+  `hospital_id` int DEFAULT NULL,
+  `status` enum('available','busy','offline') DEFAULT 'available',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `doctor_code` (`doctor_code`),
   KEY `user_id` (`user_id`),
@@ -170,7 +177,7 @@ CREATE TABLE `doctors` (
 
 LOCK TABLES `doctors` WRITE;
 /*!40000 ALTER TABLE `doctors` DISABLE KEYS */;
-INSERT INTO `doctors` VALUES (1,NULL,'Dr. Rajesh Kumar',NULL,'DOC-001','General Medicine','9876543211',500.00,'2026-08-10 13:24:00'),(2,NULL,NULL,NULL,'DOC-002','Orthopedics','9517653021',200.00,'2026-08-11 16:30:46');
+INSERT INTO `doctors` (`id`, `user_id`, `name`, `department_id`, `doctor_code`, `specialization`, `phone`, `consultation_fee`, `created_at`) VALUES (1,NULL,'Dr. Rajesh Kumar',NULL,'DOC-001','General Medicine','9876543211',500.00,'2026-08-10 13:24:00'),(2,NULL,NULL,NULL,'DOC-002','Orthopedics','9517653021',200.00,'2026-08-11 16:30:46');
 /*!40000 ALTER TABLE `doctors` ENABLE KEYS */;
 UNLOCK TABLES;
 

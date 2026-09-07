@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import {
+    useNavigate,
+    useSearchParams,
+} from "react-router-dom";
+
+import {
     FaPlus,
     FaSyncAlt,
     FaSearch,
@@ -15,14 +20,20 @@ import {
     FaTint,
     FaVenusMars,
     FaExclamationTriangle,
+    FaArrowLeft,
 } from "react-icons/fa";
 
 import "./Patients.css";
 
+const API_URL =
+    import.meta.env.VITE_API_URL ||
+    "http://localhost:5000/api";
+
 function Patients() {
-    const API_URL =
-        import.meta.env.VITE_API_URL ||
-        "http://localhost:5000/api";
+    const navigate = useNavigate();
+
+    const [searchParams, setSearchParams] =
+        useSearchParams();
 
     // =====================================================
     // STATE
@@ -34,7 +45,6 @@ function Patients() {
     const [refreshing, setRefreshing] = useState(false);
 
     const [error, setError] = useState("");
-
     const [search, setSearch] = useState("");
 
     const [showModal, setShowModal] = useState(false);
@@ -61,7 +71,10 @@ function Patients() {
     // =====================================================
 
     const getHeaders = () => {
-        const token = localStorage.getItem("hms_token");
+        const token =
+            localStorage.getItem("hms_token") ||
+            localStorage.getItem("token") ||
+            localStorage.getItem("authToken");
 
         if (!token) {
             throw new Error(
@@ -71,7 +84,7 @@ function Patients() {
 
         return {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token} `,
+            Authorization: `Bearer ${token}`,
         };
     };
 
@@ -95,29 +108,38 @@ function Patients() {
                 }
             );
 
-            const data = await response.json();
+            let data = {};
+
+            try {
+                data = await response.json();
+            } catch {
+                data = {};
+            }
 
             if (!response.ok) {
                 throw new Error(
-                    data.message ||
-                    "Unable to load patients."
+                    data?.message ||
+                    `Unable to load patients. Server returned ${response.status}.`
                 );
             }
 
-            if (
-                data.success === false
-            ) {
+            if (data?.success === false) {
                 throw new Error(
-                    data.message ||
+                    data?.message ||
                     "Unable to load patients."
                 );
             }
 
-            setPatients(
-                Array.isArray(data.patients)
+            const patientsList =
+                Array.isArray(data?.patients)
                     ? data.patients
-                    : []
-            );
+                    : Array.isArray(data?.data)
+                        ? data.data
+                        : Array.isArray(data)
+                            ? data
+                            : [];
+
+            setPatients(patientsList);
         } catch (err) {
             console.error(
                 "Fetch Patients Error:",
@@ -125,7 +147,7 @@ function Patients() {
             );
 
             setError(
-                err.message ||
+                err?.message ||
                 "Unable to connect to server."
             );
         } finally {
@@ -144,6 +166,41 @@ function Patients() {
     }, []);
 
     // =====================================================
+    // HOME PAGE REGISTRATION FLOW
+    //
+    // Home:
+    // /patients?action=register
+    //
+    // Now opens dedicated public registration page.
+    // =====================================================
+
+    useEffect(() => {
+        const action =
+            searchParams.get("action");
+
+        if (action !== "register") {
+            return;
+        }
+
+        // Remove query parameter from URL
+        setSearchParams(
+            {},
+            {
+                replace: true,
+            }
+        );
+
+        // Open dedicated public registration page
+        navigate(
+            "/patient-registration"
+        );
+    }, [
+        searchParams,
+        setSearchParams,
+        navigate,
+    ]);
+
+    // =====================================================
     // REFRESH
     // =====================================================
 
@@ -154,6 +211,7 @@ function Patients() {
 
         try {
             setRefreshing(true);
+
             await fetchPatients(false);
         } finally {
             setRefreshing(false);
@@ -165,74 +223,80 @@ function Patients() {
     // =====================================================
 
     const filteredPatients = useMemo(() => {
-        const query = search
-            .trim()
-            .toLowerCase();
+        const query =
+            search
+                .trim()
+                .toLowerCase();
 
         if (!query) {
             return patients;
         }
 
-        return patients.filter((patient) => {
-            return (
-                String(
-                    patient.patient_code || ""
-                )
-                    .toLowerCase()
-                    .includes(query) ||
+        return patients.filter(
+            (patient) => {
+                return (
+                    String(
+                        patient?.patient_code || ""
+                    )
+                        .toLowerCase()
+                        .includes(query) ||
 
-                String(
-                    patient.name || ""
-                )
-                    .toLowerCase()
-                    .includes(query) ||
+                    String(
+                        patient?.name || ""
+                    )
+                        .toLowerCase()
+                        .includes(query) ||
 
-                String(
-                    patient.phone || ""
-                )
-                    .toLowerCase()
-                    .includes(query) ||
+                    String(
+                        patient?.phone || ""
+                    )
+                        .toLowerCase()
+                        .includes(query) ||
 
-                String(
-                    patient.email || ""
-                )
-                    .toLowerCase()
-                    .includes(query) ||
+                    String(
+                        patient?.email || ""
+                    )
+                        .toLowerCase()
+                        .includes(query) ||
 
-                String(
-                    patient.gender || ""
-                )
-                    .toLowerCase()
-                    .includes(query) ||
+                    String(
+                        patient?.gender || ""
+                    )
+                        .toLowerCase()
+                        .includes(query) ||
 
-                String(
-                    patient.blood_group || ""
-                )
-                    .toLowerCase()
-                    .includes(query)
-            );
-        });
+                    String(
+                        patient?.blood_group || ""
+                    )
+                        .toLowerCase()
+                        .includes(query)
+                );
+            }
+        );
     }, [patients, search]);
 
     // =====================================================
     // STATISTICS
     // =====================================================
 
-    const totalPatients = patients.length;
+    const totalPatients =
+        patients.length;
 
-    const malePatients = patients.filter(
-        (patient) =>
-            String(
-                patient.gender || ""
-            ).toLowerCase() === "male"
-    ).length;
+    const malePatients =
+        patients.filter(
+            (patient) =>
+                String(
+                    patient?.gender || ""
+                ).toLowerCase() === "male"
+        ).length;
 
-    const femalePatients = patients.filter(
-        (patient) =>
-            String(
-                patient.gender || ""
-            ).toLowerCase() === "female"
-    ).length;
+    const femalePatients =
+        patients.filter(
+            (patient) =>
+                String(
+                    patient?.gender || ""
+                ).toLowerCase() === "female"
+        ).length;
 
     // =====================================================
     // FORM CHANGE
@@ -244,10 +308,12 @@ function Patients() {
             value,
         } = event.target;
 
-        setFormData((previous) => ({
-            ...previous,
-            [name]: value,
-        }));
+        setFormData(
+            (previous) => ({
+                ...previous,
+                [name]: value,
+            })
+        );
     };
 
     // =====================================================
@@ -288,29 +354,30 @@ function Patients() {
         setEditingPatient(patient);
 
         setFormData({
-            name: patient.name || "",
+            name:
+                patient?.name || "",
 
             gender:
-                patient.gender || "male",
+                patient?.gender || "male",
 
             date_of_birth:
-                patient.date_of_birth
+                patient?.date_of_birth
                     ? String(
                         patient.date_of_birth
                     ).slice(0, 10)
                     : "",
 
             phone:
-                patient.phone || "",
+                patient?.phone || "",
 
             email:
-                patient.email || "",
+                patient?.email || "",
 
             address:
-                patient.address || "",
+                patient?.address || "",
 
             blood_group:
-                patient.blood_group || "",
+                patient?.blood_group || "",
         });
 
         setError("");
@@ -329,7 +396,7 @@ function Patients() {
     };
 
     // =====================================================
-    // CLOSE MODALS
+    // CLOSE ADD / EDIT MODAL
     // =====================================================
 
     const closeModal = () => {
@@ -342,7 +409,13 @@ function Patients() {
         setEditingPatient(null);
 
         resetForm();
+
+        setError("");
     };
+
+    // =====================================================
+    // CLOSE VIEW MODAL
+    // =====================================================
 
     const closeViewModal = () => {
         setShowViewModal(false);
@@ -373,8 +446,12 @@ function Patients() {
             const isEdit =
                 Boolean(editingPatient);
 
+            const patientId =
+                editingPatient?.id ||
+                editingPatient?._id;
+
             const url = isEdit
-                ? `${API_URL}/patients/${editingPatient.id}`
+                ? `${API_URL}/patients/${patientId}`
                 : `${API_URL}/patients`;
 
             const method = isEdit
@@ -406,37 +483,48 @@ function Patients() {
             };
 
             const response =
-                await fetch(url, {
-                    method,
-                    headers: getHeaders(),
-                    body: JSON.stringify(body),
-                });
+                await fetch(
+                    url,
+                    {
+                        method,
+                        headers:
+                            getHeaders(),
+                        body:
+                            JSON.stringify(body),
+                    }
+                );
 
-            const data =
-                await response.json();
+            let data = {};
+
+            try {
+                data =
+                    await response.json();
+            } catch {
+                data = {};
+            }
 
             if (!response.ok) {
                 throw new Error(
-                    data.message ||
+                    data?.message ||
                     "Unable to save patient."
                 );
             }
 
-            if (
-                data.success === false
-            ) {
+            if (data?.success === false) {
                 throw new Error(
-                    data.message ||
+                    data?.message ||
                     "Unable to save patient."
                 );
             }
 
+            // Close modal
             setShowModal(false);
 
             setEditingPatient(null);
 
             resetForm();
 
+            // Reload patient list
             await fetchPatients(false);
         } catch (err) {
             console.error(
@@ -445,7 +533,7 @@ function Patients() {
             );
 
             setError(
-                err.message ||
+                err?.message ||
                 "Unable to save patient."
             );
         } finally {
@@ -458,9 +546,17 @@ function Patients() {
     // =====================================================
 
     const handleDelete = async (patient) => {
+        const patientId =
+            patient?.id ||
+            patient?._id;
+
+        const patientName =
+            patient?.name ||
+            "this patient";
+
         const confirmed =
             window.confirm(
-                `Are you sure you want to delete ${patient.name}?`
+                `Are you sure you want to delete ${patientName}?`
             );
 
         if (!confirmed) {
@@ -468,34 +564,41 @@ function Patients() {
         }
 
         try {
-            setDeleteLoading(patient.id);
+            setDeleteLoading(
+                patientId
+            );
 
             setError("");
 
             const response =
                 await fetch(
-                    `${API_URL}/patients/${patient.id}`,
+                    `${API_URL}/patients/${patientId}`,
                     {
                         method: "DELETE",
-                        headers: getHeaders(),
+                        headers:
+                            getHeaders(),
                     }
                 );
 
-            const data =
-                await response.json();
+            let data = {};
+
+            try {
+                data =
+                    await response.json();
+            } catch {
+                data = {};
+            }
 
             if (!response.ok) {
                 throw new Error(
-                    data.message ||
+                    data?.message ||
                     "Unable to delete patient."
                 );
             }
 
-            if (
-                data.success === false
-            ) {
+            if (data?.success === false) {
                 throw new Error(
-                    data.message ||
+                    data?.message ||
                     "Unable to delete patient."
                 );
             }
@@ -508,7 +611,7 @@ function Patients() {
             );
 
             setError(
-                err.message ||
+                err?.message ||
                 "Unable to delete patient."
             );
         } finally {
@@ -572,6 +675,18 @@ function Patients() {
     };
 
     // =====================================================
+    // PATIENT ID
+    // =====================================================
+
+    const getPatientId = (patient) => {
+        return (
+            patient?.patient_code ||
+            patient?.patientCode ||
+            `P-${patient?.id || patient?._id || "N/A"}`
+        );
+    };
+
+    // =====================================================
     // RENDER
     // =====================================================
 
@@ -579,12 +694,22 @@ function Patients() {
         <main className="patients-page">
 
             {/* =================================================
-                PAGE HEADER
+                HEADER
             ================================================= */}
 
             <header className="patients-header">
 
                 <div>
+                    <button
+                        type="button"
+                        className="patients-back-button"
+                        onClick={() => navigate("/dashboard")}
+                        title="Back to Dashboard"
+                        aria-label="Back to Dashboard"
+                    >
+                        <FaArrowLeft />
+                    </button>
+
                     <h1>
                         Patients
                     </h1>
@@ -666,7 +791,7 @@ function Patients() {
             )}
 
             {/* =================================================
-                SUMMARY CARDS
+                STATS
             ================================================= */}
 
             <section className="patient-stats">
@@ -743,8 +868,7 @@ function Patients() {
                         <p>
                             {filteredPatients.length}{" "}
                             patient
-                            {filteredPatients.length !==
-                                1
+                            {filteredPatients.length !== 1
                                 ? "s"
                                 : ""}{" "}
                             found
@@ -760,16 +884,10 @@ function Patients() {
                             <input
                                 type="text"
                                 placeholder="Search patients..."
-                                value={
-                                    search
-                                }
-                                onChange={(
-                                    event
-                                ) =>
+                                value={search}
+                                onChange={(event) =>
                                     setSearch(
-                                        event
-                                            .target
-                                            .value
+                                        event.target.value
                                     )
                                 }
                             />
@@ -778,9 +896,7 @@ function Patients() {
                                 <button
                                     type="button"
                                     onClick={() =>
-                                        setSearch(
-                                            ""
-                                        )
+                                        setSearch("")
                                     }
                                 >
                                     <FaTimes />
@@ -807,8 +923,9 @@ function Patients() {
                         </span>
 
                     </div>
-                ) : filteredPatients.length ===
-                    0 ? (
+
+                ) : filteredPatients.length === 0 ? (
+
                     <div className="patients-empty">
 
                         <FaUserInjured />
@@ -837,12 +954,15 @@ function Patients() {
                         )}
 
                     </div>
+
                 ) : (
+
                     <div className="patients-table-wrapper">
 
                         <table className="patients-table">
 
                             <thead>
+
                                 <tr>
 
                                     <th>
@@ -874,40 +994,46 @@ function Patients() {
                                     </th>
 
                                 </tr>
+
                             </thead>
 
                             <tbody>
 
                                 {filteredPatients.map(
-                                    (patient) => {
+                                    (patient, index) => {
+
+                                        const patientId =
+                                            patient?.id ||
+                                            patient?._id ||
+                                            index;
+
                                         const name =
-                                            patient.name ||
+                                            patient?.name ||
                                             "Unknown Patient";
 
                                         const firstLetter =
                                             name
-                                                .charAt(
-                                                    0
-                                                )
+                                                .charAt(0)
                                                 .toUpperCase();
 
                                         return (
                                             <tr
                                                 key={
-                                                    patient.id
+                                                    patientId
                                                 }
                                             >
 
-                                                {/* PATIENT ID */}
-
                                                 <td>
-                                                    <strong className="patient-code">
-                                                        {patient.patient_code ||
-                                                            `P-${patient.id}`}
-                                                    </strong>
-                                                </td>
 
-                                                {/* PATIENT */}
+                                                    <strong className="patient-code">
+                                                        {
+                                                            getPatientId(
+                                                                patient
+                                                            )
+                                                        }
+                                                    </strong>
+
+                                                </td>
 
                                                 <td>
 
@@ -928,7 +1054,7 @@ function Patients() {
                                                             </strong>
 
                                                             <span>
-                                                                {patient.email ||
+                                                                {patient?.email ||
                                                                     "No email"}
                                                             </span>
 
@@ -938,51 +1064,61 @@ function Patients() {
 
                                                 </td>
 
-                                                {/* GENDER */}
-
                                                 <td>
+
                                                     <span className="gender-badge">
-                                                        {getGenderText(
-                                                            patient.gender
-                                                        )}
+
+                                                        {
+                                                            getGenderText(
+                                                                patient?.gender
+                                                            )
+                                                        }
+
                                                     </span>
+
                                                 </td>
 
-                                                {/* DOB */}
-
                                                 <td>
-                                                    {formatDate(
-                                                        patient.date_of_birth
-                                                    )}
+
+                                                    {
+                                                        formatDate(
+                                                            patient?.date_of_birth
+                                                        )
+                                                    }
+
                                                 </td>
 
-                                                {/* PHONE */}
-
                                                 <td>
+
                                                     <div className="table-contact">
+
                                                         <FaPhone />
 
                                                         <span>
-                                                            {patient.phone ||
+                                                            {patient?.phone ||
                                                                 "N/A"}
                                                         </span>
-                                                    </div>
-                                                </td>
 
-                                                {/* BLOOD GROUP */}
+                                                    </div>
+
+                                                </td>
 
                                                 <td>
-                                                    <span className="blood-badge">
-                                                        {patient.blood_group ||
-                                                            "-"}
-                                                    </span>
-                                                </td>
 
-                                                {/* ACTIONS */}
+                                                    <span className="blood-badge">
+
+                                                        {patient?.blood_group ||
+                                                            "-"}
+
+                                                    </span>
+
+                                                </td>
 
                                                 <td>
 
                                                     <div className="patient-row-actions">
+
+                                                        {/* VIEW */}
 
                                                         <button
                                                             type="button"
@@ -997,6 +1133,8 @@ function Patients() {
                                                             <FaEye />
                                                         </button>
 
+                                                        {/* EDIT */}
+
                                                         <button
                                                             type="button"
                                                             className="action-btn edit edit-button"
@@ -1010,13 +1148,15 @@ function Patients() {
                                                             <FaEdit />
                                                         </button>
 
+                                                        {/* DELETE */}
+
                                                         <button
                                                             type="button"
                                                             className="action-btn delete delete-button"
                                                             title="Delete Patient"
                                                             disabled={
                                                                 deleteLoading ===
-                                                                patient.id
+                                                                patientId
                                                             }
                                                             onClick={() =>
                                                                 handleDelete(
@@ -1024,12 +1164,14 @@ function Patients() {
                                                                 )
                                                             }
                                                         >
+
                                                             {deleteLoading ===
-                                                                patient.id ? (
+                                                                patientId ? (
                                                                 <FaSyncAlt className="spin" />
                                                             ) : (
                                                                 <FaTrash />
                                                             )}
+
                                                         </button>
 
                                                     </div>
@@ -1055,15 +1197,18 @@ function Patients() {
             ================================================= */}
 
             {showModal && (
+
                 <div
                     className="patient-modal-overlay"
                     onMouseDown={(event) => {
+
                         if (
                             event.target ===
                             event.currentTarget
                         ) {
                             closeModal();
                         }
+
                     }}
                 >
 
@@ -1076,13 +1221,13 @@ function Patients() {
                                 <h2>
                                     {editingPatient
                                         ? "Edit Patient"
-                                        : "Add Patient"}
+                                        : "New Patient Registration"}
                                 </h2>
 
                                 <p>
                                     {editingPatient
                                         ? "Update patient information"
-                                        : "Enter patient information"}
+                                        : "Enter new patient information"}
                                 </p>
 
                             </div>
@@ -1127,8 +1272,9 @@ function Patients() {
                                         onChange={
                                             handleChange
                                         }
-                                        placeholder="Enter patient name"
+                                        placeholder="Enter patient full name"
                                         required
+                                        autoFocus
                                     />
 
                                 </div>
@@ -1207,6 +1353,7 @@ function Patients() {
                                             handleChange
                                         }
                                         placeholder="9876543210"
+                                        inputMode="numeric"
                                     />
 
                                 </div>
@@ -1315,7 +1462,7 @@ function Patients() {
 
                             </div>
 
-                            {/* FOOTER */}
+                            {/* FORM FOOTER */}
 
                             <div className="patient-form-actions">
 
@@ -1339,6 +1486,7 @@ function Patients() {
                                         saving
                                     }
                                 >
+
                                     {saving ? (
                                         <>
                                             <FaSyncAlt className="spin" />
@@ -1349,9 +1497,10 @@ function Patients() {
                                         <>
                                             {editingPatient
                                                 ? "Update Patient"
-                                                : "Save Patient"}
+                                                : "Register Patient"}
                                         </>
                                     )}
+
                                 </button>
 
                             </div>
@@ -1369,21 +1518,22 @@ function Patients() {
 
             {showViewModal &&
                 selectedPatient && (
+
                     <div
                         className="patient-modal-overlay"
                         onMouseDown={(event) => {
+
                             if (
                                 event.target ===
                                 event.currentTarget
                             ) {
                                 closeViewModal();
                             }
+
                         }}
                     >
 
                         <div className="patient-view-modal">
-
-                            {/* HEADER */}
 
                             <div className="patient-modal-header">
 
@@ -1418,7 +1568,7 @@ function Patients() {
                                 <div className="large-patient-avatar">
 
                                     {(
-                                        selectedPatient.name ||
+                                        selectedPatient?.name ||
                                         "P"
                                     )
                                         .charAt(0)
@@ -1430,13 +1580,17 @@ function Patients() {
 
                                     <h3>
                                         {
-                                            selectedPatient.name
+                                            selectedPatient?.name ||
+                                            "Unknown Patient"
                                         }
                                     </h3>
 
                                     <p>
-                                        {selectedPatient.patient_code ||
-                                            `P-${selectedPatient.id}`}
+                                        {
+                                            getPatientId(
+                                                selectedPatient
+                                            )
+                                        }
                                     </p>
 
                                 </div>
@@ -1452,14 +1606,19 @@ function Patients() {
                                     <FaUserInjured />
 
                                     <div>
+
                                         <span>
                                             Patient ID
                                         </span>
 
                                         <strong>
-                                            {selectedPatient.patient_code ||
-                                                `P-${selectedPatient.id}`}
+                                            {
+                                                getPatientId(
+                                                    selectedPatient
+                                                )
+                                            }
                                         </strong>
+
                                     </div>
 
                                 </div>
@@ -1469,15 +1628,19 @@ function Patients() {
                                     <FaVenusMars />
 
                                     <div>
+
                                         <span>
                                             Gender
                                         </span>
 
                                         <strong>
-                                            {getGenderText(
-                                                selectedPatient.gender
-                                            )}
+                                            {
+                                                getGenderText(
+                                                    selectedPatient?.gender
+                                                )
+                                            }
                                         </strong>
+
                                     </div>
 
                                 </div>
@@ -1487,15 +1650,19 @@ function Patients() {
                                     <FaCalendarAlt />
 
                                     <div>
+
                                         <span>
                                             Date of Birth
                                         </span>
 
                                         <strong>
-                                            {formatDate(
-                                                selectedPatient.date_of_birth
-                                            )}
+                                            {
+                                                formatDate(
+                                                    selectedPatient?.date_of_birth
+                                                )
+                                            }
                                         </strong>
+
                                     </div>
 
                                 </div>
@@ -1505,14 +1672,18 @@ function Patients() {
                                     <FaPhone />
 
                                     <div>
+
                                         <span>
                                             Phone
                                         </span>
 
                                         <strong>
-                                            {selectedPatient.phone ||
-                                                "N/A"}
+                                            {
+                                                selectedPatient?.phone ||
+                                                "N/A"
+                                            }
                                         </strong>
+
                                     </div>
 
                                 </div>
@@ -1522,14 +1693,18 @@ function Patients() {
                                     <FaEnvelope />
 
                                     <div>
+
                                         <span>
                                             Email
                                         </span>
 
                                         <strong>
-                                            {selectedPatient.email ||
-                                                "N/A"}
+                                            {
+                                                selectedPatient?.email ||
+                                                "N/A"
+                                            }
                                         </strong>
+
                                     </div>
 
                                 </div>
@@ -1539,14 +1714,18 @@ function Patients() {
                                     <FaTint />
 
                                     <div>
+
                                         <span>
                                             Blood Group
                                         </span>
 
                                         <strong>
-                                            {selectedPatient.blood_group ||
-                                                "N/A"}
+                                            {
+                                                selectedPatient?.blood_group ||
+                                                "N/A"
+                                            }
                                         </strong>
+
                                     </div>
 
                                 </div>
@@ -1556,21 +1735,25 @@ function Patients() {
                                     <FaMapMarkerAlt />
 
                                     <div>
+
                                         <span>
                                             Address
                                         </span>
 
                                         <strong>
-                                            {selectedPatient.address ||
-                                                "N/A"}
+                                            {
+                                                selectedPatient?.address ||
+                                                "N/A"
+                                            }
                                         </strong>
+
                                     </div>
 
                                 </div>
 
                             </div>
 
-                            {/* FOOTER */}
+                            {/* VIEW FOOTER */}
 
                             <div className="patient-view-footer">
 
@@ -1588,6 +1771,7 @@ function Patients() {
                                     type="button"
                                     className="save-button"
                                     onClick={() => {
+
                                         const patient =
                                             selectedPatient;
 
@@ -1596,11 +1780,14 @@ function Patients() {
                                         openEditModal(
                                             patient
                                         );
+
                                     }}
                                 >
+
                                     <FaEdit />
 
                                     Edit Patient
+
                                 </button>
 
                             </div>

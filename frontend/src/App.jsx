@@ -18,6 +18,14 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 
 // =====================================================
+// PUBLIC PATIENT SERVICES
+// =====================================================
+
+import PatientRegistration from "./pages/patients/PatientRegistration";
+import NewPatientAppointment from "./pages/Appointments/NewPatientAppointment";
+import OldPatientAppointment from "./pages/Appointments/OldPatientAppointment";
+
+// =====================================================
 // PROTECTED PAGES
 // =====================================================
 
@@ -66,7 +74,6 @@ export const ROLES = {
 // =====================================================
 
 export const PERMISSIONS = {
-
   dashboard: [
     ROLES.SUPER_ADMIN,
     ROLES.HOSPITAL_ADMIN,
@@ -153,7 +160,6 @@ export const PERMISSIONS = {
 // =====================================================
 
 const AccessDenied = () => {
-
   return (
     <div
       style={{
@@ -169,7 +175,6 @@ const AccessDenied = () => {
         fontFamily: "Arial, sans-serif",
       }}
     >
-
       <div
         style={{
           width: "100%",
@@ -179,12 +184,10 @@ const AccessDenied = () => {
           borderRadius: "20px",
           border: "1px solid rgba(0,255,55,.25)",
           background: "rgba(5,20,12,.95)",
-          boxShadow:
-            "0 25px 70px rgba(0,0,0,.5)",
+          boxShadow: "0 25px 70px rgba(0,0,0,.5)",
           boxSizing: "border-box",
         }}
       >
-
         <div
           style={{
             fontSize: "60px",
@@ -212,21 +215,17 @@ const AccessDenied = () => {
             fontSize: "14px",
           }}
         >
-          You do not have permission to access
-          this section of HMS.
+          You do not have permission to access this section of HMS.
         </p>
 
         <button
           type="button"
-          onClick={() =>
-            window.history.back()
-          }
+          onClick={() => window.history.back()}
           style={{
             border: "1px solid rgba(0,255,55,.35)",
             borderRadius: "10px",
             padding: "11px 20px",
-            background:
-              "rgba(0,255,55,.08)",
+            background: "rgba(0,255,55,.08)",
             color: "#00ff37",
             cursor: "pointer",
             fontWeight: 700,
@@ -234,9 +233,7 @@ const AccessDenied = () => {
         >
           Go Back
         </button>
-
       </div>
-
     </div>
   );
 };
@@ -249,7 +246,6 @@ const ProtectedPage = ({
   element,
   roles,
 }) => {
-
   return (
     <ProtectedRoute
       allowedRoles={roles}
@@ -262,51 +258,86 @@ const ProtectedPage = ({
 
 // =====================================================
 // APP
-// IMPORTANT:
-// BrowserRouter must exist only once in main.jsx
+//
+// BrowserRouter exists only in main.jsx
+// AuthProvider exists only here
 // =====================================================
 
 function App() {
-
   return (
-
     <AuthProvider>
-
       <Routes>
 
         {/* =================================================
-                    PUBLIC ROUTES
-                ================================================= */}
+                        PUBLIC ROUTES
+        ================================================= */}
+
+        {/* HOME */}
 
         <Route
           path="/"
           element={<Home />}
         />
 
+        {/* USER REGISTER */}
+
         <Route
           path="/register"
           element={<Register />}
         />
+
+        {/* FORGOT PASSWORD */}
 
         <Route
           path="/forgot-password"
           element={<ForgotPassword />}
         />
 
-        {/* =================================================
-                    RESET PASSWORD
-                    PUBLIC ROUTE
-                ================================================= */}
+        {/* RESET PASSWORD */}
 
         <Route
           path="/reset-password"
           element={<ResetPassword />}
         />
 
+        {/* =================================================
+                    PUBLIC PATIENT REGISTRATION
+
+                    NO LOGIN REQUIRED
+        ================================================= */}
+
+        <Route
+          path="/patient-registration"
+          element={<PatientRegistration />}
+        />
 
         {/* =================================================
-                    PROTECTED LAYOUT
-                ================================================= */}
+                    PUBLIC NEW PATIENT APPOINTMENT
+
+                    NO LOGIN REQUIRED
+        ================================================= */}
+
+        <Route
+          path="/new-patient-appointment"
+          element={<NewPatientAppointment />}
+        />
+
+        {/* =================================================
+                    PUBLIC OLD PATIENT APPOINTMENT
+
+                    NO LOGIN REQUIRED
+        ================================================= */}
+
+        <Route
+          path="/old-patient-appointment"
+          element={<OldPatientAppointment />}
+        />
+
+        {/* =================================================
+                    PROTECTED HMS LAYOUT
+
+                    LOGIN REQUIRED
+        ================================================= */}
 
         <Route
           element={
@@ -318,7 +349,7 @@ function App() {
 
           {/* =============================================
                         DASHBOARD
-                    ============================================= */}
+          ============================================= */}
 
           <Route
             path="/dashboard"
@@ -330,10 +361,9 @@ function App() {
             }
           />
 
-
           {/* =============================================
-                        PATIENTS
-                    ============================================= */}
+                    STAFF PATIENT MANAGEMENT
+          ============================================= */}
 
           <Route
             path="/patients"
@@ -345,10 +375,9 @@ function App() {
             }
           />
 
-
           {/* =============================================
                         DOCTORS
-                    ============================================= */}
+          ============================================= */}
 
           <Route
             path="/doctors"
@@ -360,10 +389,9 @@ function App() {
             }
           />
 
-
           {/* =============================================
-                        APPOINTMENTS
-                    ============================================= */}
+                    STAFF APPOINTMENTS
+          ============================================= */}
 
           <Route
             path="/appointments"
@@ -375,10 +403,9 @@ function App() {
             }
           />
 
-
           {/* =============================================
                         DEPARTMENTS
-                    ============================================= */}
+          ============================================= */}
 
           <Route
             path="/departments"
@@ -390,10 +417,9 @@ function App() {
             }
           />
 
-
           {/* =============================================
                         LABORATORY
-                    ============================================= */}
+          ============================================= */}
 
           <Route
             path="/laboratory"
@@ -405,10 +431,9 @@ function App() {
             }
           />
 
-
           {/* =============================================
                         PHARMACY
-                    ============================================= */}
+          ============================================= */}
 
           <Route
             path="/pharmacy"
@@ -420,10 +445,9 @@ function App() {
             }
           />
 
-
           {/* =============================================
                         BILLING
-                    ============================================= */}
+          ============================================= */}
 
           <Route
             path="/billing"
@@ -435,10 +459,9 @@ function App() {
             }
           />
 
-
           {/* =============================================
                         REPORTS
-                    ============================================= */}
+          ============================================= */}
 
           <Route
             path="/reports"
@@ -450,10 +473,9 @@ function App() {
             }
           />
 
-
           {/* =============================================
                         SETTINGS
-                    ============================================= */}
+          ============================================= */}
 
           <Route
             path="/settings"
@@ -465,10 +487,9 @@ function App() {
             }
           />
 
-
           {/* =============================================
                         USER MANAGEMENT
-                    ============================================= */}
+          ============================================= */}
 
           <Route
             path="/users"
@@ -482,10 +503,9 @@ function App() {
 
         </Route>
 
-
         {/* =================================================
-                    FALLBACK
-                ================================================= */}
+                    FALLBACK ROUTE
+        ================================================= */}
 
         <Route
           path="*"
@@ -498,7 +518,6 @@ function App() {
         />
 
       </Routes>
-
     </AuthProvider>
   );
 }

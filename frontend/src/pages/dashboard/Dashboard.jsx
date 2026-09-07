@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 import {
     FaUsers,
@@ -9,12 +10,24 @@ import {
     FaSignOutAlt,
     FaSyncAlt,
     FaExclamationTriangle,
+    FaUserInjured,
+    FaUserMd,
+    FaClipboardList,
+    FaHospital,
+    FaFlask,
+    FaCapsules,
+    FaFileInvoiceDollar,
+    FaChartBar,
+    FaCog,
+    FaEllipsisV,
 } from "react-icons/fa";
 
 import "./Dashboard.css";
 
 function Dashboard() {
     const navigate = useNavigate();
+    const { user: authenticatedUser, role: authenticatedRole } = useAuth();
+    const [mobileHeaderMenuOpen, setMobileHeaderMenuOpen] = useState(false);
 
     const [user, setUser] = useState({});
 
@@ -46,6 +59,16 @@ function Dashboard() {
     const [appointmentsError, setAppointmentsError] =
         useState("");
 
+    const displayHospitalName = String(
+        hospitalName || "HMS Hospital Narayanpur"
+    )
+        .replace(
+            /HMS\s*Hospital\s*Narayanpur/i,
+            "HMS Hospital Narayanpur"
+        )
+        .replace(/\s+/g, " ")
+        .trim();
+
     /*
     =====================================================
     API URL
@@ -55,6 +78,90 @@ function Dashboard() {
     const API_URL =
         import.meta.env.VITE_API_URL ||
         "http://localhost:5000/api";
+
+    const STAFF_MODULES = [
+        {
+            key: "patients",
+            label: "Patients",
+            description: "Manage patient records and care details",
+            route: "/patients",
+            icon: FaUserInjured,
+            theme: "cyan",
+            roles: ["hospital_admin", "receptionist", "doctor", "nurse"],
+        },
+        {
+            key: "doctors",
+            label: "Doctors",
+            description: "View hospital doctors and specialties",
+            route: "/doctors",
+            icon: FaUserMd,
+            theme: "blue",
+            roles: ["hospital_admin"],
+        },
+        {
+            key: "appointments",
+            label: "Appointments",
+            description: "Coordinate schedules and visits",
+            route: "/appointments",
+            icon: FaClipboardList,
+            theme: "red",
+            roles: ["hospital_admin", "receptionist", "doctor", "nurse", "patient"],
+        },
+        {
+            key: "departments",
+            label: "Departments",
+            description: "Browse hospital departments and services",
+            route: "/departments",
+            icon: FaHospital,
+            theme: "green",
+            roles: ["hospital_admin", "doctor", "nurse"],
+        },
+        {
+            key: "laboratory",
+            label: "Laboratory",
+            description: "Manage diagnostic tests and reports",
+            route: "/laboratory",
+            icon: FaFlask,
+            theme: "cyan",
+            roles: ["hospital_admin", "doctor", "lab_technician"],
+        },
+        {
+            key: "pharmacy",
+            label: "Pharmacy",
+            description: "Manage medicines and prescriptions",
+            route: "/pharmacy",
+            icon: FaCapsules,
+            theme: "pink",
+            roles: ["hospital_admin", "pharmacist", "accountant"],
+        },
+        {
+            key: "billing",
+            label: "Billing",
+            description: "Track invoices and hospital payments",
+            route: "/billing",
+            icon: FaFileInvoiceDollar,
+            theme: "yellow",
+            roles: ["hospital_admin", "pharmacist", "accountant"],
+        },
+        {
+            key: "reports",
+            label: "Reports",
+            description: "Review operational hospital reports",
+            route: "/reports",
+            icon: FaChartBar,
+            theme: "purple",
+            roles: ["hospital_admin", "doctor", "lab_technician", "pharmacist", "accountant"],
+        },
+        {
+            key: "settings",
+            label: "Settings",
+            description: "Update hospital and account settings",
+            route: "/settings",
+            icon: FaCog,
+            theme: "orange",
+            roles: ["hospital_admin"],
+        },
+    ];
 
     /*
     =====================================================
@@ -758,6 +865,17 @@ function Dashboard() {
         },
     ];
 
+    const currentRole = String(authenticatedRole || authenticatedUser?.role || user?.role || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[\s-]+/g, "_");
+    const staffModuleCards =
+        currentRole === "super_admin"
+            ? []
+            : STAFF_MODULES.filter((module) =>
+                module.roles.includes(currentRole)
+            );
+
     /*
     =====================================================
     UI
@@ -777,19 +895,63 @@ function Dashboard() {
 
                     <div className="brand-section">
 
-                        <h1>
-                            {hospitalName} Dashboard
-                        </h1>
+                        <img
+                            className="dashboard-brand-logo"
+                            src="/hms-logo.png"
+                            alt="HMS Hospital Narayanpur"
+                        />
 
-                        <p className="subtitle">
-                            Hospital Management System
-                        </p>
+                        <div className="dashboard-brand-copy">
+                            <h1>
+                                {displayHospitalName
+                                    .split(" ")
+                                    .map((word, index) => (
+                                        <span
+                                            className={`brand-word brand-word-${index % 4}`}
+                                            key={`${word}-${index}`}
+                                        >
+                                            {word}{" "}
+                                        </span>
+                                    ))}
+                            </h1>
+                            <p className="subtitle">
+                                Hospital Management System
+                            </p>
+                        </div>
+
 
                     </div>
 
                 </div>
 
-                <div className="topbar-right">
+                <button
+                    type="button"
+                    className="mobile-refresh-button"
+                    onClick={handleRefresh}
+                    disabled={refreshing}
+                    title="Refresh"
+                    aria-label="Refresh dashboard"
+                >
+                    <FaSyncAlt
+                        className={refreshing ? "refresh-spinning" : ""}
+                    />
+                </button>
+
+                <button
+                    type="button"
+                    className="mobile-header-menu-button"
+                    onClick={() =>
+                        setMobileHeaderMenuOpen((previous) => !previous)
+                    }
+                    aria-label="Open header menu"
+                    aria-expanded={mobileHeaderMenuOpen}
+                >
+                    <FaEllipsisV />
+                </button>
+
+                <div
+                    className={`topbar-right ${mobileHeaderMenuOpen ? "mobile-header-menu-open" : ""}`}
+                >
 
                     <button
                         type="button"
@@ -854,6 +1016,27 @@ function Dashboard() {
 
             </header>
 
+            <div
+                className="dashboard-marquee"
+                aria-label="Hospital announcement"
+            >
+                <span>
+                    <strong className="marquee-emergency">
+                        Emergency
+                    </strong>
+                    <span className="marquee-separator"> • </span>
+                    HMS Hospital Narayanpur
+                    <span className="marquee-separator"> • </span>
+                    Hospital Management System
+                    <span className="marquee-separator"> • </span>
+                    Welcome to your staff dashboard
+                    <strong className="marquee-emergency">
+                        <span className="marquee-separator"> • </span>
+                        Emergency
+                    </strong>
+                </span>
+            </div>
+
 
             {/* =================================================
                 ERROR
@@ -884,7 +1067,8 @@ function Dashboard() {
                 STATS
             ================================================= */}
 
-            <section className="stats-grid">
+            {currentRole === "super_admin" && (
+                <section className="stats-grid">
 
                 {statCards.map((stat) => (
                     <div
@@ -917,14 +1101,46 @@ function Dashboard() {
                     </div>
                 ))}
 
-            </section>
+                </section>
+            )}
+
+            {currentRole !== "super_admin" && (
+                <section className="staff-module-section">
+
+                    <div className="staff-module-grid">
+                        {staffModuleCards.map((module) => {
+                            const ModuleIcon = module.icon;
+
+                            return (
+                                <button
+                                    type="button"
+                                    className={`staff-module-card ${module.theme}`}
+                                    key={module.key}
+                                    onClick={() => navigate(module.route)}
+                                >
+                                    <span className="staff-module-icon">
+                                        <ModuleIcon />
+                                    </span>
+                                    <span className="staff-module-copy">
+                                        <strong>{module.label}</strong>
+                                        <small>{module.description}</small>
+                                    </span>
+                                    <span className="staff-module-arrow">→</span>
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                </section>
+            )}
 
 
             {/* =================================================
                 CONTENT
             ================================================= */}
 
-            <section className="dashboard-content">
+            {currentRole === "super_admin" && (
+                <section className="dashboard-content">
 
                 {/* APPOINTMENTS */}
 
@@ -1104,7 +1320,8 @@ function Dashboard() {
 
                 </div>
 
-            </section>
+                </section>
+            )}
 
         </main>
     );

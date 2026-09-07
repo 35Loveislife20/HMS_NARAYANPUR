@@ -206,3 +206,8 @@
         max-width: 290px;
     }
 }
+
+.staff-layout .main-content {
+    margin-left: 0;
+    width: 100%;
+}

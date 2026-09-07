@@ -1,0 +1,2901 @@
+/* =========================================================
+   OLD PATIENT APPOINTMENT
+   HMS PUBLIC PATIENT SERVICE
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+.old-appointment-page {
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    background:
+        radial-gradient(
+            circle at 15% 10%,
+            rgba(34, 197, 94, 0.09),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 85% 30%,
+            rgba(16, 185, 129, 0.07),
+            transparent 30%
+        ),
+        #07110d;
+    color: #e8f5ee;
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+/* =========================================================
+   BACKGROUND GLOW
+   ========================================================= */
+
+.old-appointment-bg-glow {
+    position: fixed;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.12;
+}
+
+.glow-one {
+    top: -180px;
+    left: -150px;
+    background: #22c55e;
+}
+
+.glow-two {
+    right: -180px;
+    bottom: -150px;
+    background: #10b981;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.old-public-header {
+    position: relative;
+    z-index: 10;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+    background: rgba(5, 15, 11, 0.88);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.old-header-inner {
+    width: min(1420px, calc(100% - 48px));
+    min-height: 78px;
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.old-home-button,
+.old-refresh-button {
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: rgba(15, 30, 23, 0.75);
+    color: #dcebe3;
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.old-home-button {
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 13px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.old-home-button svg {
+    font-size: 12px;
+    color: #4ade80;
+}
+
+.old-home-button:hover,
+.old-refresh-button:hover {
+    transform: translateY(-1px);
+    background: rgba(22, 50, 36, 0.9);
+    border-color: rgba(74, 222, 128, 0.35);
+    color: #ffffff;
+}
+
+.old-header-right {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.old-refresh-button {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: 12px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.old-refresh-button svg {
+    font-size: 14px;
+    color: #4ade80;
+}
+
+.old-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.old-brand-icon {
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+
+    border-radius: 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #4ade80;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(34, 197, 94, 0.17),
+            rgba(16, 185, 129, 0.07)
+        );
+
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    box-shadow:
+        0 8px 25px rgba(34, 197, 94, 0.08),
+        inset 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.old-brand-icon svg {
+    font-size: 18px;
+}
+
+.old-header-brand > div:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.old-header-brand strong {
+    color: #f1f8f4;
+    font-size: 15px;
+    line-height: 1.2;
+    font-weight: 800;
+
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.old-header-brand span {
+    color: #7e9589;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+/* =========================================================
+   MAIN CONTAINER
+   ========================================================= */
+
+.old-appointment-container {
+    position: relative;
+    z-index: 2;
+
+    width: min(1420px, calc(100% - 48px));
+    margin: 0 auto;
+
+    padding: 42px 0 55px;
+}
+
+/* =========================================================
+   PAGE HEADING
+   ========================================================= */
+
+.old-page-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.old-heading-icon {
+    width: 58px;
+    height: 58px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 17px;
+
+    color: #4ade80;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(34, 197, 94, 0.17),
+            rgba(16, 185, 129, 0.06)
+        );
+
+    border: 1px solid rgba(74, 222, 128, 0.2);
+
+    box-shadow:
+        0 15px 35px rgba(34, 197, 94, 0.08),
+        inset 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.old-heading-icon svg {
+    font-size: 22px;
+}
+
+.old-heading-eyebrow {
+    display: block;
+    margin-bottom: 4px;
+
+    color: #4ade80;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.old-page-heading h1 {
+    margin: 0;
+
+    color: #f5fbf7;
+    font-size: clamp(26px, 3vw, 36px);
+    line-height: 1.15;
+    font-weight: 850;
+    letter-spacing: -0.7px;
+}
+
+.old-page-heading p {
+    max-width: 760px;
+    margin: 9px 0 0;
+
+    color: #8fa59a;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* =========================================================
+   ALERT
+   ========================================================= */
+
+.old-alert {
+    margin-bottom: 22px;
+    padding: 14px 16px;
+
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    border-radius: 15px;
+}
+
+.old-alert-error {
+    border: 1px solid rgba(248, 113, 113, 0.22);
+    background: rgba(127, 29, 29, 0.15);
+}
+
+.old-alert-symbol {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: rgba(239, 68, 68, 0.14);
+    color: #f87171;
+
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.old-alert > div:nth-child(2) {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.old-alert strong {
+    color: #fca5a5;
+    font-size: 13px;
+}
+
+.old-alert span {
+    color: #d19a9a;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.old-alert button {
+    width: 30px;
+    height: 30px;
+    margin-left: auto;
+
+    border: 0;
+    background: transparent;
+    color: #9f6c6c;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+}
+
+.old-alert button:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+}
+
+/* =========================================================
+   MAIN GRID
+   ========================================================= */
+
+.old-main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(310px, 0.75fr);
+    gap: 24px;
+    align-items: start;
+}
+
+/* =========================================================
+   FORM CARD
+   ========================================================= */
+
+.old-form-card {
+    min-width: 0;
+
+    border: 1px solid rgba(148, 163, 184, 0.13);
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 30, 23, 0.97),
+            rgba(8, 20, 14, 0.97)
+        );
+
+    box-shadow:
+        0 24px 65px rgba(0, 0, 0, 0.25),
+        inset 0 1px rgba(255, 255, 255, 0.025);
+
+    overflow: hidden;
+}
+
+.old-card-header {
+    padding: 24px 26px;
+
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.old-card-title {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.old-card-icon {
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.15);
+
+    color: #4ade80;
+}
+
+.old-card-icon svg {
+    font-size: 16px;
+}
+
+.old-card-title h2 {
+    margin: 0 0 3px;
+
+    color: #edf7f1;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.old-card-title p {
+    margin: 0;
+
+    color: #71877c;
+    font-size: 11px;
+}
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.old-search-area {
+    position: relative;
+    padding: 24px 26px 0;
+}
+
+.old-search-area label,
+.old-form-group > label {
+    display: block;
+    margin-bottom: 9px;
+
+    color: #c8d8d0;
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.old-search-area label span,
+.old-form-group > label span {
+    margin-left: 4px;
+    color: #4ade80;
+}
+
+.old-search-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 115px;
+    gap: 10px;
+}
+
+.old-search-input-wrapper {
+    position: relative;
+}
+
+.old-search-input-wrapper > svg {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+
+    transform: translateY(-50%);
+
+    color: #5f766a;
+    font-size: 13px;
+    pointer-events: none;
+}
+
+.old-search-input-wrapper input,
+.old-search-type,
+.old-select-wrapper select,
+.old-input-icon-wrapper input,
+.old-form-group textarea {
+    width: 100%;
+
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    outline: none;
+
+    background: rgba(5, 16, 11, 0.7);
+    color: #e7f2eb;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.old-search-input-wrapper input {
+    height: 48px;
+    padding: 0 42px 0 43px;
+    border-radius: 13px;
+
+    font-size: 13px;
+}
+
+.old-search-input-wrapper input::placeholder,
+.old-form-group textarea::placeholder {
+    color: #52685d;
+}
+
+.old-search-input-wrapper input:focus,
+.old-search-type:focus,
+.old-select-wrapper select:focus,
+.old-input-icon-wrapper input:focus,
+.old-form-group textarea:focus {
+    border-color: rgba(74, 222, 128, 0.48);
+    background: rgba(8, 23, 15, 0.95);
+
+    box-shadow:
+        0 0 0 3px rgba(34, 197, 94, 0.07);
+}
+
+.old-clear-search {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+
+    width: 29px;
+    height: 29px;
+
+    transform: translateY(-50%);
+
+    border: 0;
+    border-radius: 8px;
+
+    background: rgba(148, 163, 184, 0.08);
+    color: #789086;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.old-clear-search:hover {
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+}
+
+.old-search-type {
+    height: 48px;
+    padding: 0 12px;
+    border-radius: 13px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.old-search-type option,
+.old-select-wrapper select option {
+    background: #0c1b14;
+    color: #e8f5ee;
+}
+
+/* =========================================================
+   PATIENT RESULTS
+   ========================================================= */
+
+.old-patient-results {
+    position: absolute;
+    top: calc(100% - 2px);
+    left: 26px;
+    right: 26px;
+
+    z-index: 50;
+
+    max-height: 320px;
+    overflow-y: auto;
+
+    border: 1px solid rgba(74, 222, 128, 0.17);
+    border-radius: 15px;
+
+    background: #0b1b14;
+
+    box-shadow:
+        0 22px 45px rgba(0, 0, 0, 0.4);
+}
+
+.old-patient-results::-webkit-scrollbar {
+    width: 6px;
+}
+
+.old-patient-results::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.old-patient-results::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: rgba(74, 222, 128, 0.18);
+}
+
+.old-patient-result {
+    width: 100%;
+    padding: 13px 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    border: 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+
+    background: transparent;
+    color: #e8f5ee;
+
+    text-align: left;
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        padding 0.18s ease;
+}
+
+.old-patient-result:last-child {
+    border-bottom: 0;
+}
+
+.old-patient-result:hover {
+    padding-left: 17px;
+    background: rgba(34, 197, 94, 0.07);
+}
+
+.old-result-avatar {
+    width: 39px;
+    height: 39px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+}
+
+.old-result-info {
+    min-width: 0;
+    flex: 1;
+}
+
+.old-result-info > strong {
+    display: block;
+
+    color: #e8f4ed;
+    font-size: 13px;
+    font-weight: 750;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.old-result-meta {
+    margin-top: 5px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.old-result-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    color: #71877c;
+    font-size: 10px;
+}
+
+.old-result-meta svg {
+    color: #4ade80;
+    font-size: 9px;
+}
+
+.old-result-arrow {
+    color: #496157;
+    font-size: 12px;
+}
+
+.old-patient-result:hover .old-result-arrow {
+    color: #4ade80;
+}
+
+.old-result-empty {
+    min-height: 145px;
+    padding: 25px 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    color: #657a70;
+    text-align: center;
+}
+
+.old-result-empty > svg {
+    margin-bottom: 4px;
+    color: #4b6257;
+    font-size: 20px;
+}
+
+.old-result-empty strong {
+    color: #b4c7bd;
+    font-size: 12px;
+}
+
+.old-result-empty span {
+    max-width: 280px;
+    color: #61766b;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.old-small-loader {
+    width: 23px;
+    height: 23px;
+
+    border: 2px solid rgba(74, 222, 128, 0.15);
+    border-top-color: #4ade80;
+    border-radius: 50%;
+
+    animation: oldSpin 0.8s linear infinite;
+}
+
+/* =========================================================
+   SELECTED PATIENT
+   ========================================================= */
+
+.old-selected-patient {
+    margin: 22px 26px 0;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(74, 222, 128, 0.18);
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(34, 197, 94, 0.07),
+            rgba(8, 24, 16, 0.8)
+        );
+}
+
+.old-selected-header {
+    min-height: 43px;
+    padding: 9px 13px 9px 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+}
+
+.old-selected-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    color: #72e69a;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.old-selected-title svg {
+    font-size: 13px;
+}
+
+.old-selected-header button {
+    border: 0;
+    background: transparent;
+    color: #72b989;
+
+    font-size: 10px;
+    font-weight: 750;
+
+    cursor: pointer;
+}
+
+.old-selected-header button:hover {
+    color: #4ade80;
+}
+
+.old-selected-body {
+    padding: 17px;
+
+    display: flex;
+    gap: 14px;
+}
+
+.old-selected-avatar {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: rgba(34, 197, 94, 0.13);
+    color: #4ade80;
+}
+
+.old-selected-avatar svg {
+    font-size: 17px;
+}
+
+.old-selected-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.old-selected-info h3 {
+    margin: 0 0 12px;
+
+    color: #f0f8f3;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.old-selected-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.old-selected-grid > div {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.old-selected-grid span {
+    color: #637a6e;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.old-selected-grid strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #bdd0c6;
+    font-size: 11px;
+}
+
+/* =========================================================
+   BOOKING FORM
+   ========================================================= */
+
+.old-booking-form {
+    padding: 27px 26px 26px;
+}
+
+.old-section-heading {
+    margin-bottom: 23px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+.old-section-heading span {
+    display: block;
+    margin-bottom: 4px;
+
+    color: #4ade80;
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: 1.4px;
+}
+
+.old-section-heading h2 {
+    margin: 0;
+
+    color: #e8f3ed;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.old-form-group {
+    margin-bottom: 21px;
+}
+
+.old-select-wrapper,
+.old-input-icon-wrapper {
+    position: relative;
+}
+
+.old-select-wrapper > svg,
+.old-input-icon-wrapper > svg {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+
+    z-index: 2;
+
+    transform: translateY(-50%);
+
+    color: #5c7468;
+    font-size: 13px;
+
+    pointer-events: none;
+}
+
+.old-select-wrapper select,
+.old-input-icon-wrapper input {
+    height: 48px;
+    padding: 0 15px 0 42px;
+    border-radius: 13px;
+
+    font-size: 13px;
+}
+
+.old-select-wrapper select {
+    appearance: auto;
+    cursor: pointer;
+}
+
+.old-select-wrapper select:disabled,
+.old-input-icon-wrapper input:disabled,
+.old-form-group textarea:disabled {
+    opacity: 0.52;
+    cursor: not-allowed;
+}
+
+.old-doctor-hint {
+    margin-top: 8px;
+    padding: 8px 10px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    border: 1px solid rgba(74, 222, 128, 0.1);
+    border-radius: 9px;
+
+    background: rgba(34, 197, 94, 0.05);
+    color: #79a98a;
+
+    font-size: 10px;
+}
+
+.old-doctor-hint svg {
+    color: #4ade80;
+}
+
+/* =========================================================
+   TIME SLOT HEADING
+   ========================================================= */
+
+.old-dynamic-slot-section {
+    margin-top: 4px;
+}
+
+.old-time-heading {
+    min-height: 30px;
+    margin-bottom: 10px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.old-time-heading label {
+    margin-bottom: 0;
+}
+
+.old-slot-date-info {
+    display: block;
+    margin-top: 4px;
+
+    color: #647b70;
+    font-size: 10px;
+}
+
+.old-availability-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    color: #6f887a;
+    font-size: 10px;
+}
+
+.old-dot-loader {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+    background: #4ade80;
+
+    animation: oldPulse 1s ease-in-out infinite;
+}
+
+/* =========================================================
+   SLOT MESSAGE
+   ========================================================= */
+
+.old-slot-message {
+    min-height: 100px;
+    padding: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    border: 1px dashed rgba(148, 163, 184, 0.15);
+    border-radius: 16px;
+
+    background: rgba(5, 16, 11, 0.45);
+
+    color: #657a70;
+    text-align: center;
+
+    font-size: 11px;
+}
+
+.old-slot-message svg {
+    color: #4c6759;
+    font-size: 14px;
+}
+
+/* =========================================================
+   SLOT LOADING
+   ========================================================= */
+
+.old-slot-loading {
+    min-height: 160px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 18px;
+
+    background: rgba(5, 16, 11, 0.5);
+
+    color: #71877b;
+    font-size: 11px;
+}
+
+.old-loader {
+    width: 31px;
+    height: 31px;
+
+    border: 3px solid rgba(74, 222, 128, 0.12);
+    border-top-color: #4ade80;
+    border-right-color: #22c55e;
+
+    border-radius: 50%;
+
+    animation: oldSpin 0.75s linear infinite;
+}
+
+/* =========================================================
+   ONLY TIME SLOT DESIGN
+   बाकी CSS को बिल्कुल न बदलें
+   ========================================================= */
+
+.old-dynamic-slots-wrapper {
+    padding: 16px;
+}
+
+.old-time-slots {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.old-time-slot {
+    position: relative;
+    min-height: 60px;
+    padding: 9px 10px;
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: rgba(255, 255, 255, 0.035);
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Old large-card elements hide */
+.old-time-slot .old-slot-time-icon,
+.old-time-slot .old-slot-status-indicator {
+    display: none;
+}
+
+/* Compact vertical content */
+.old-slot-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    text-align: center;
+}
+
+.old-slot-content strong {
+    display: block;
+    color: #f1f5f9;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.old-slot-content span {
+    display: block;
+    color: #86efac;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Available */
+.old-time-slot.slot-available {
+    border-color: rgba(34, 197, 94, 0.25);
+    background: rgba(34, 197, 94, 0.045);
+}
+
+.old-time-slot.slot-available:hover {
+    transform: translateY(-2px);
+    border-color: rgba(34, 197, 94, 0.65);
+    background: rgba(34, 197, 94, 0.11);
+    box-shadow: 0 7px 18px rgba(34, 197, 94, 0.12);
+}
+
+/* Selected */
+.old-time-slot.slot-selected,
+.old-time-slot.is-selected {
+    border-color: #22c55e;
+    background: rgba(34, 197, 94, 0.18);
+    box-shadow:
+        0 0 0 2px rgba(34, 197, 94, 0.10),
+        0 8px 20px rgba(34, 197, 94, 0.14);
+}
+
+.old-time-slot.slot-selected .old-slot-content strong,
+.old-time-slot.is-selected .old-slot-content strong {
+    color: #bbf7d0;
+}
+
+.old-time-slot.slot-selected::after,
+.old-time-slot.is-selected::after {
+    content: "✓";
+
+    position: absolute;
+    top: 5px;
+    right: 6px;
+
+    width: 16px;
+    height: 16px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+    background: #22c55e;
+    color: #052e16;
+
+    font-size: 9px;
+    font-weight: 900;
+}
+
+/* Booked */
+.old-time-slot.slot-booked,
+.old-time-slot.slot-disabled {
+    cursor: not-allowed;
+    opacity: 0.48;
+
+    border-color: rgba(239, 68, 68, 0.18);
+    background: rgba(239, 68, 68, 0.035);
+}
+
+.old-time-slot.slot-booked .old-slot-content strong,
+.old-time-slot.slot-disabled .old-slot-content strong {
+    color: #9ca3af;
+}
+
+.old-time-slot.slot-booked .old-slot-content span,
+.old-time-slot.slot-disabled .old-slot-content span {
+    color: #f87171;
+}
+
+/* Responsive */
+@media (max-width: 950px) {
+    .old-time-slots {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .old-time-slots {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
+
+    .old-time-slot {
+        min-height: 58px;
+    }
+}
+
+@media (max-width: 380px) {
+    .old-time-slots {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   SLOT SUMMARY CARD
+   ========================================================= */
+
+.old-slot-summary {
+    padding: 15px 16px;
+
+    border: 1px solid rgba(74, 222, 128, 0.12);
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(34, 197, 94, 0.075),
+            rgba(16, 185, 129, 0.025)
+        );
+}
+
+.old-slot-summary-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    margin-bottom: 14px;
+}
+
+.old-slot-summary-title > div {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.old-slot-summary-title svg {
+    color: #4ade80;
+    font-size: 15px;
+}
+
+.old-slot-summary-title span {
+    color: #d5e5dc;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.old-slot-summary-title > strong {
+    padding: 6px 9px;
+
+    border-radius: 8px;
+
+    background: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.old-slot-summary-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.slot-stat {
+    min-height: 58px;
+    padding: 9px 11px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+
+    border: 1px solid rgba(148, 163, 184, 0.09);
+    border-radius: 11px;
+
+    background: rgba(3, 12, 8, 0.4);
+}
+
+.slot-stat span {
+    color: #61766c;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.slot-stat strong {
+    color: #d8e8df;
+    font-size: 17px;
+    line-height: 1;
+}
+
+.slot-stat.available {
+    border-color: rgba(74, 222, 128, 0.12);
+}
+
+.slot-stat.available strong {
+    color: #4ade80;
+}
+
+.slot-stat.booked {
+    border-color: rgba(248, 113, 113, 0.1);
+}
+
+.slot-stat.booked strong {
+    color: #f87171;
+}
+
+/* =========================================================
+   SELECTED SLOT BANNER
+   ========================================================= */
+
+.old-selected-slot-banner {
+    margin-top: 12px;
+    padding: 10px 11px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    border: 1px solid rgba(74, 222, 128, 0.28);
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(34, 197, 94, 0.13),
+            rgba(34, 197, 94, 0.04)
+        );
+
+    box-shadow:
+        0 8px 25px rgba(34, 197, 94, 0.05);
+}
+
+.selected-slot-icon {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #22c55e;
+    color: #031108;
+
+    box-shadow: 0 5px 16px rgba(34, 197, 94, 0.2);
+}
+
+.selected-slot-icon svg {
+    font-size: 13px;
+}
+
+.old-selected-slot-banner > div:nth-child(2) {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.old-selected-slot-banner > div:nth-child(2) span {
+    color: #739083;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.old-selected-slot-banner > div:nth-child(2) strong {
+    color: #dff8e8;
+    font-size: 13px;
+}
+
+.old-selected-slot-banner button {
+    margin-left: auto;
+    padding: 7px 10px;
+
+    border: 1px solid rgba(74, 222, 128, 0.16);
+    border-radius: 8px;
+
+    background: rgba(34, 197, 94, 0.07);
+    color: #70d693;
+
+    cursor: pointer;
+
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.old-selected-slot-banner button:hover {
+    background: rgba(34, 197, 94, 0.14);
+    color: #9af2b5;
+}
+
+/* =========================================================
+   SLOT PERIOD
+   ========================================================= */
+
+.old-slot-period {
+    margin-top: 18px;
+}
+
+.old-slot-period-header {
+    margin-bottom: 10px;
+    padding: 0 3px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.old-slot-period-header > div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.old-period-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #4ade80;
+    box-shadow:
+        0 0 0 4px rgba(74, 222, 128, 0.07);
+}
+
+.old-slot-period-header h3 {
+    margin: 0;
+
+    color: #cbdcd3;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.old-slot-period-header > span {
+    color: #556c60;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+/* =========================================================
+   TIME SLOT GRID
+   ========================================================= */
+
+.old-time-slots {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+}
+
+/* =========================================================
+   TIME SLOT CARD
+   ========================================================= */
+
+.old-time-slot {
+    position: relative;
+
+    min-height: 82px;
+    padding: 12px 11px;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    border: 1px solid rgba(148, 163, 184, 0.13);
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 31, 23, 0.96),
+            rgba(8, 20, 14, 0.96)
+        );
+
+    color: #dcebe3;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        background 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.old-time-slot.slot-available:hover {
+    transform: translateY(-2px);
+
+    border-color: rgba(74, 222, 128, 0.38);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(20, 46, 32, 0.98),
+            rgba(9, 28, 18, 0.98)
+        );
+
+    box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(74, 222, 128, 0.05);
+}
+
+/* =========================================================
+   SLOT ICON
+   ========================================================= */
+
+.old-slot-time-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: rgba(74, 222, 128, 0.08);
+    color: #4ade80;
+
+    transition:
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+.old-slot-time-icon svg {
+    font-size: 12px;
+}
+
+/* =========================================================
+   SLOT CONTENT
+   ========================================================= */
+
+.old-slot-content {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.old-slot-content strong {
+    color: #e4f1e9;
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.old-slot-content span {
+    color: #648073;
+    font-size: 9px;
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+/* =========================================================
+   SLOT STATUS INDICATOR
+   ========================================================= */
+
+.old-slot-status-indicator {
+    width: 18px;
+    height: 18px;
+
+    margin-left: auto;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.old-slot-status-indicator > span {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #4ade80;
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.06);
+}
+
+.old-slot-status-indicator svg {
+    font-size: 9px;
+}
+
+/* =========================================================
+   AVAILABLE SLOT
+   ========================================================= */
+
+.old-time-slot.slot-available {
+    border-color: rgba(74, 222, 128, 0.12);
+}
+
+.old-time-slot.slot-available .old-slot-content span {
+    color: #5fae78;
+}
+
+/* =========================================================
+   BOOKED SLOT
+   ========================================================= */
+
+.old-time-slot.slot-booked {
+    cursor: not-allowed;
+
+    border-color: rgba(248, 113, 113, 0.08);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(28, 19, 20, 0.88),
+            rgba(15, 15, 14, 0.9)
+        );
+
+    opacity: 0.72;
+}
+
+.old-time-slot.slot-booked .old-slot-time-icon {
+    background: rgba(248, 113, 113, 0.08);
+    color: #ef7373;
+}
+
+.old-time-slot.slot-booked .old-slot-content strong {
+    color: #9e9a9a;
+}
+
+.old-time-slot.slot-booked .old-slot-content span {
+    color: #9d6262;
+}
+
+.old-time-slot.slot-booked .old-slot-status-indicator {
+    color: #c76666;
+}
+
+/* =========================================================
+   SELECTED SLOT
+   ========================================================= */
+
+.old-time-slot.slot-selected,
+.old-time-slot.is-selected {
+    transform: translateY(-1px);
+
+    border-color: rgba(74, 222, 128, 0.65);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(28, 91, 53, 0.62),
+            rgba(10, 48, 27, 0.72)
+        );
+
+    box-shadow:
+        0 10px 26px rgba(34, 197, 94, 0.13),
+        inset 0 0 0 1px rgba(74, 222, 128, 0.08);
+}
+
+.old-time-slot.slot-selected .old-slot-time-icon,
+.old-time-slot.is-selected .old-slot-time-icon {
+    background: #22c55e;
+    color: #031108;
+}
+
+.old-time-slot.slot-selected .old-slot-content strong,
+.old-time-slot.is-selected .old-slot-content strong {
+    color: #effff4;
+}
+
+.old-time-slot.slot-selected .old-slot-content span,
+.old-time-slot.is-selected .old-slot-content span {
+    color: #80e5a0;
+}
+
+.old-time-slot.slot-selected .old-slot-status-indicator,
+.old-time-slot.is-selected .old-slot-status-indicator {
+    color: #4ade80;
+}
+
+/* =========================================================
+   SLOT LEGEND
+   ========================================================= */
+
+.old-slot-legend {
+    margin-top: 17px;
+    padding: 12px 4px 1px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 18px;
+
+    border-top: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+.old-slot-legend > div {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    color: #647b70;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.legend-box {
+    width: 9px;
+    height: 9px;
+
+    border-radius: 3px;
+}
+
+.legend-box.available {
+    background: #4ade80;
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.07);
+}
+
+.legend-box.selected {
+    background: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.09);
+}
+
+.legend-box.booked {
+    background: #ef7373;
+    opacity: 0.75;
+}
+
+/* =========================================================
+   TEXTAREA
+   ========================================================= */
+
+.old-form-group textarea {
+    min-height: 110px;
+    padding: 13px 14px;
+
+    resize: vertical;
+
+    border-radius: 13px;
+
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.old-textarea-footer {
+    margin-top: 6px;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+
+    color: #53695e;
+    font-size: 9px;
+}
+
+.old-textarea-footer span:last-child {
+    color: #60786b;
+    font-weight: 700;
+}
+
+/* =========================================================
+   SUBMIT BUTTON
+   ========================================================= */
+
+.old-submit-button {
+    width: 100%;
+    min-height: 52px;
+    margin-top: 4px;
+
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #16a34a
+        );
+
+    color: #031108;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+    font-weight: 850;
+
+    box-shadow:
+        0 10px 25px rgba(34, 197, 94, 0.13);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+
+.old-submit-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 32px rgba(34, 197, 94, 0.2);
+
+    filter: brightness(1.05);
+}
+
+.old-submit-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.old-submit-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.38;
+    filter: grayscale(0.25);
+    box-shadow: none;
+}
+
+.old-submit-button svg {
+    font-size: 12px;
+}
+
+.old-button-loader {
+    width: 17px;
+    height: 17px;
+
+    border: 2px solid rgba(3, 17, 8, 0.22);
+    border-top-color: #031108;
+
+    border-radius: 50%;
+
+    animation: oldSpin 0.7s linear infinite;
+}
+
+/* =========================================================
+   RIGHT INFO COLUMN
+   ========================================================= */
+
+.old-info-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    position: sticky;
+    top: 18px;
+}
+
+.old-info-card,
+.old-help-card,
+.old-hospital-card {
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(14, 29, 22, 0.95),
+            rgba(7, 18, 13, 0.95)
+        );
+
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.18),
+        inset 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.old-info-card {
+    padding: 22px;
+}
+
+.old-info-card-icon {
+    width: 44px;
+    height: 44px;
+
+    margin-bottom: 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+
+    border: 1px solid rgba(74, 222, 128, 0.13);
+}
+
+.old-info-card h2 {
+    margin: 0 0 7px;
+
+    color: #e9f4ee;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.old-info-card > p {
+    margin: 0;
+
+    color: #71877c;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.old-info-list {
+    margin-top: 19px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+.old-info-list > div {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    color: #91a79c;
+    font-size: 10px;
+}
+
+.old-info-list svg {
+    flex-shrink: 0;
+    color: #4ade80;
+    font-size: 11px;
+}
+
+/* =========================================================
+   HELP CARD
+   ========================================================= */
+
+.old-help-card {
+    padding: 17px;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    border-color: rgba(74, 222, 128, 0.12);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(34, 197, 94, 0.07),
+            rgba(8, 20, 14, 0.94)
+        );
+}
+
+.old-help-icon {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.old-help-card > div:last-child {
+    min-width: 0;
+}
+
+.old-help-card h3 {
+    margin: 0 0 5px;
+
+    color: #d8e8df;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.old-help-card p {
+    margin: 0 0 12px;
+
+    color: #71877c;
+    font-size: 10px;
+    line-height: 1.55;
+}
+
+.old-help-card button {
+    padding: 8px 10px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    border: 1px solid rgba(74, 222, 128, 0.15);
+    border-radius: 9px;
+
+    background: rgba(34, 197, 94, 0.07);
+    color: #70d693;
+
+    cursor: pointer;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease;
+}
+
+.old-help-card button:hover {
+    background: rgba(34, 197, 94, 0.13);
+    border-color: rgba(74, 222, 128, 0.3);
+    color: #9aefb2;
+}
+
+.old-help-card button svg {
+    font-size: 9px;
+}
+
+/* =========================================================
+   HOSPITAL CARD
+   ========================================================= */
+
+.old-hospital-card {
+    padding: 17px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.old-hospital-card-icon {
+    width: 39px;
+    height: 39px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: rgba(34, 197, 94, 0.08);
+    color: #4ade80;
+}
+
+.old-hospital-card-icon svg {
+    font-size: 15px;
+}
+
+.old-hospital-card > div:last-child {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.old-hospital-card span {
+    color: #5e7569;
+    font-size: 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.old-hospital-card strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #cfe0d7;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.old-hospital-card small {
+    color: #62796d;
+    font-size: 8px;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.old-public-footer {
+    position: relative;
+    z-index: 2;
+
+    width: min(1420px, calc(100% - 48px));
+    margin: 0 auto;
+
+    min-height: 65px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    border-top: 1px solid rgba(148, 163, 184, 0.08);
+
+    color: #52685d;
+    font-size: 9px;
+}
+
+.old-public-footer span:last-child {
+    color: #60786b;
+}
+
+/* =========================================================
+   SUCCESS PAGE
+   ========================================================= */
+
+.old-success-wrapper {
+    position: relative;
+    z-index: 2;
+
+    width: min(800px, calc(100% - 40px));
+
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 55px 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.old-success-card {
+    width: 100%;
+    padding: 38px;
+
+    border: 1px solid rgba(74, 222, 128, 0.17);
+    border-radius: 26px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 32, 23, 0.98),
+            rgba(7, 18, 13, 0.98)
+        );
+
+    box-shadow:
+        0 35px 80px rgba(0, 0, 0, 0.3),
+        inset 0 1px rgba(255, 255, 255, 0.03);
+
+    text-align: center;
+}
+
+.old-success-icon {
+    width: 74px;
+    height: 74px;
+    margin: 0 auto 17px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(34, 197, 94, 0.2),
+            rgba(16, 185, 129, 0.08)
+        );
+
+    border: 1px solid rgba(74, 222, 128, 0.22);
+
+    color: #4ade80;
+
+    box-shadow:
+        0 15px 35px rgba(34, 197, 94, 0.1);
+}
+
+.old-success-icon svg {
+    font-size: 30px;
+}
+
+.old-success-label {
+    color: #4ade80;
+    font-size: 10px;
+    font-weight: 850;
+    letter-spacing: 1.8px;
+}
+
+.old-success-card h1 {
+    margin: 7px 0 7px;
+
+    color: #f2faf5;
+    font-size: 28px;
+    font-weight: 850;
+}
+
+.old-success-message {
+    margin: 0;
+
+    color: #758c80;
+    font-size: 12px;
+}
+
+.old-success-hospital {
+    margin: 23px auto 17px;
+    padding: 10px 14px;
+
+    width: fit-content;
+    max-width: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    border: 1px solid rgba(74, 222, 128, 0.1);
+    border-radius: 11px;
+
+    background: rgba(34, 197, 94, 0.05);
+    color: #a5bcb0;
+
+    font-size: 11px;
+    font-weight: 750;
+}
+
+.old-success-hospital svg {
+    color: #4ade80;
+}
+
+.old-appointment-number {
+    margin: 0 auto 23px;
+    padding: 12px 17px;
+
+    width: fit-content;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    border: 1px dashed rgba(74, 222, 128, 0.2);
+    border-radius: 11px;
+
+    background: rgba(5, 16, 11, 0.45);
+}
+
+.old-appointment-number span {
+    color: #637a6e;
+    font-size: 9px;
+}
+
+.old-appointment-number strong {
+    color: #4ade80;
+    font-size: 13px;
+}
+
+.old-success-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+
+    text-align: left;
+}
+
+.old-detail-item {
+    min-width: 0;
+    padding: 13px;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+
+    border: 1px solid rgba(148, 163, 184, 0.09);
+    border-radius: 13px;
+
+    background: rgba(5, 16, 11, 0.45);
+}
+
+.old-detail-full {
+    grid-column: 1 / -1;
+}
+
+.old-detail-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: rgba(34, 197, 94, 0.08);
+    color: #4ade80;
+}
+
+.old-detail-icon svg {
+    font-size: 11px;
+}
+
+.old-detail-item > div:last-child {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.old-detail-item span {
+    color: #60776b;
+    font-size: 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.old-detail-item strong {
+    color: #d1e0d8;
+    font-size: 11px;
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+}
+
+.old-detail-item small {
+    color: #688074;
+    font-size: 9px;
+}
+
+.old-success-actions {
+    margin-top: 23px;
+
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 10px;
+}
+
+.old-btn {
+    min-height: 47px;
+    padding: 0 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    transition:
+        transform 0.18s ease,
+        background 0.18s ease;
+}
+
+.old-btn:hover {
+    transform: translateY(-1px);
+}
+
+.old-btn-secondary {
+    border: 1px solid rgba(148, 163, 184, 0.13);
+    background: rgba(15, 30, 23, 0.8);
+    color: #b5c8be;
+}
+
+.old-btn-secondary:hover {
+    background: rgba(25, 45, 34, 0.9);
+}
+
+.old-btn-primary {
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    background: #22c55e;
+    color: #031108;
+
+    box-shadow:
+        0 8px 22px rgba(34, 197, 94, 0.12);
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes oldSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes oldPulse {
+    0%,
+    100% {
+        opacity: 0.35;
+        transform: scale(0.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* =========================================================
+   RESPONSIVE - 1200px
+   ========================================================= */
+
+@media (max-width: 1200px) {
+    .old-main-grid {
+        grid-template-columns: minmax(0, 1.5fr) minmax(285px, 0.75fr);
+    }
+
+    .old-selected-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* =========================================================
+   RESPONSIVE - 950px
+   ========================================================= */
+
+@media (max-width: 950px) {
+    .old-main-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .old-info-column {
+        position: static;
+
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .old-info-card {
+        grid-row: span 2;
+    }
+
+    .old-hospital-card {
+        align-self: start;
+    }
+}
+
+/* =========================================================
+   RESPONSIVE - 700px
+   ========================================================= */
+
+@media (max-width: 700px) {
+    .old-header-inner,
+    .old-appointment-container,
+    .old-public-footer {
+        width: min(100% - 28px, 1420px);
+    }
+
+    .old-header-inner {
+        min-height: 70px;
+    }
+
+    .old-home-button {
+        width: 42px;
+        padding: 0;
+
+        justify-content: center;
+    }
+
+    .old-home-button span {
+        display: none;
+    }
+
+    .old-header-brand span {
+        display: none;
+    }
+
+    .old-header-brand strong {
+        max-width: 180px;
+        font-size: 13px;
+    }
+
+    .old-brand-icon {
+        width: 39px;
+        height: 39px;
+    }
+
+    .old-appointment-container {
+        padding-top: 30px;
+    }
+
+    .old-page-heading {
+        gap: 13px;
+        margin-bottom: 21px;
+    }
+
+    .old-heading-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+    }
+
+    .old-heading-icon svg {
+        font-size: 18px;
+    }
+
+    .old-page-heading h1 {
+        font-size: 24px;
+    }
+
+    .old-page-heading p {
+        font-size: 11px;
+    }
+
+    .old-card-header,
+    .old-search-area,
+    .old-booking-form {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .old-search-row {
+        grid-template-columns: 1fr;
+    }
+
+    .old-search-type {
+        height: 44px;
+    }
+
+    .old-patient-results {
+        left: 18px;
+        right: 18px;
+    }
+
+    .old-selected-patient {
+        margin-left: 18px;
+        margin-right: 18px;
+    }
+
+    .old-selected-body {
+        flex-direction: column;
+    }
+
+    .old-selected-avatar {
+        width: 42px;
+        height: 42px;
+    }
+
+    .old-selected-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .old-time-slots {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .old-info-column {
+        grid-template-columns: 1fr;
+    }
+
+    .old-info-card {
+        grid-row: auto;
+    }
+
+    .old-public-footer {
+        min-height: 58px;
+        padding: 10px 0;
+
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .old-success-wrapper {
+        width: min(100% - 28px, 800px);
+        padding: 30px 0;
+    }
+
+    .old-success-card {
+        padding: 28px 18px;
+        border-radius: 21px;
+    }
+
+    .old-success-card h1 {
+        font-size: 24px;
+    }
+}
+
+/* =========================================================
+   RESPONSIVE - 500px
+   ========================================================= */
+
+@media (max-width: 500px) {
+    .old-header-right {
+        gap: 7px;
+    }
+
+    .old-refresh-button {
+        width: 38px;
+        height: 38px;
+    }
+
+    .old-header-brand {
+        gap: 7px;
+    }
+
+    .old-header-brand strong {
+        max-width: 125px;
+        font-size: 11px;
+    }
+
+    .old-page-heading {
+        align-items: center;
+    }
+
+    .old-heading-eyebrow {
+        font-size: 8px;
+        letter-spacing: 1.2px;
+    }
+
+    .old-page-heading h1 {
+        font-size: 20px;
+    }
+
+    .old-page-heading p {
+        display: none;
+    }
+
+    .old-form-card {
+        border-radius: 19px;
+    }
+
+    .old-card-header {
+        padding-top: 18px;
+        padding-bottom: 18px;
+    }
+
+    .old-card-title h2 {
+        font-size: 15px;
+    }
+
+    .old-card-title p {
+        font-size: 9px;
+    }
+
+    .old-booking-form {
+        padding-top: 21px;
+    }
+
+    .old-dynamic-slots-wrapper {
+        padding: 11px;
+        border-radius: 17px;
+    }
+
+    .old-slot-summary {
+        padding: 12px;
+        border-radius: 14px;
+    }
+
+    .old-slot-summary-title {
+        align-items: flex-start;
+    }
+
+    .old-slot-summary-title span {
+        font-size: 10px;
+    }
+
+    .old-slot-summary-title > strong {
+        font-size: 8px;
+    }
+
+    .slot-stat {
+        min-height: 52px;
+        padding: 7px;
+    }
+
+    .slot-stat span {
+        font-size: 7px;
+    }
+
+    .slot-stat strong {
+        font-size: 15px;
+    }
+
+    .old-time-slots {
+        gap: 7px;
+    }
+
+    .old-time-slot {
+        min-height: 72px;
+        padding: 9px 8px;
+        gap: 7px;
+
+        border-radius: 12px;
+    }
+
+    .old-slot-time-icon {
+        width: 27px;
+        height: 27px;
+        border-radius: 8px;
+    }
+
+    .old-slot-time-icon svg {
+        font-size: 10px;
+    }
+
+    .old-slot-content strong {
+        font-size: 10px;
+    }
+
+    .old-slot-content span {
+        font-size: 8px;
+    }
+
+    .old-slot-status-indicator {
+        display: none;
+    }
+
+    .old-slot-legend {
+        gap: 11px;
+    }
+
+    .old-slot-legend > div {
+        font-size: 8px;
+    }
+
+    .old-selected-slot-banner {
+        padding: 8px;
+    }
+
+    .selected-slot-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .old-selected-slot-banner button {
+        padding: 6px 8px;
+    }
+
+    .old-success-details {
+        grid-template-columns: 1fr;
+    }
+
+    .old-detail-full {
+        grid-column: auto;
+    }
+
+    .old-success-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   RESPONSIVE - 380px
+   ========================================================= */
+
+@media (max-width: 380px) {
+    .old-header-brand > div:last-child {
+        display: none;
+    }
+
+    .old-heading-icon {
+        width: 43px;
+        height: 43px;
+    }
+
+    .old-page-heading h1 {
+        font-size: 18px;
+    }
+
+    .old-time-slots {
+        grid-template-columns: 1fr;
+    }
+
+    .old-time-slot {
+        min-height: 65px;
+    }
+
+    .old-slot-status-indicator {
+        display: flex;
+    }
+
+    .old-slot-summary-stats {
+        gap: 5px;
+    }
+
+    .old-slot-summary-title {
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .old-slot-summary-title > strong {
+        align-self: flex-start;
+    }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+.old-time-slot:focus-visible,
+.old-submit-button:focus-visible,
+.old-home-button:focus-visible,
+.old-refresh-button:focus-visible,
+.old-help-card button:focus-visible,
+.old-btn:focus-visible {
+    outline: 2px solid #4ade80;
+    outline-offset: 2px;
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

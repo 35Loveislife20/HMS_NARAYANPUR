@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 
 import Sidebar from "../sidebar/Sidebar";
+import { useAuth } from "../../context/AuthContext";
 
 import {
     FaBars,
@@ -19,6 +20,9 @@ import "./Layout.css";
 // =====================================================
 
 const Layout = () => {
+
+    const { role } = useAuth();
+    const isSuperAdmin = role === "super_admin";
 
     const [
         isSidebarOpen,
@@ -54,13 +58,16 @@ const Layout = () => {
 
     return (
 
-        <div className="layout-container">
+        <div
+            className={`layout-container ${isSuperAdmin ? "" : "staff-layout"}`}
+        >
 
             {/* =================================================
                 MOBILE HAMBURGER
             ================================================= */}
 
-            <button
+            {isSuperAdmin && (
+                <button
                 type="button"
                 className="hamburger-menu"
                 onClick={toggleSidebar}
@@ -80,14 +87,15 @@ const Layout = () => {
                     <FaBars />
                 )}
 
-            </button>
+                </button>
+            )}
 
 
             {/* =================================================
                 MOBILE OVERLAY
             ================================================= */}
 
-            {isSidebarOpen && (
+            {isSuperAdmin && isSidebarOpen && (
 
                 <div
                     className="sidebar-overlay"
@@ -102,7 +110,8 @@ const Layout = () => {
                 SIDEBAR
             ================================================= */}
 
-            <div
+            {isSuperAdmin && (
+                <div
                 className={
                     `sidebar-wrapper ${isSidebarOpen
                         ? "open"
@@ -115,7 +124,8 @@ const Layout = () => {
                     onNavigate={closeSidebar}
                 />
 
-            </div>
+                </div>
+            )}
 
 
             {/* =================================================

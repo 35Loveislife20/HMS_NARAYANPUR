@@ -1,0 +1,2004 @@
+/* =========================================================
+   PATIENT REGISTRATION PAGE
+   HMS DARK + GREEN PROFESSIONAL THEME
+   COMPLETE REPLACEMENT CSS
+========================================================= */
+
+
+/* =========================================================
+   GLOBAL PAGE
+========================================================= */
+
+.patient-registration-page {
+    min-height: 100vh;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    box-sizing: border-box;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(34, 197, 94, 0.08),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 90% 15%,
+            rgba(16, 185, 129, 0.05),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            #050c08 0%,
+            #07120c 45%,
+            #06100a 100%
+        );
+
+    color: #e5f3ea;
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   TOP HEADER
+   LEFT  = BACK TO HOME
+   RIGHT = HMS LOGO + HOSPITAL NAME
+========================================================= */
+
+.registration-topbar {
+    width: 100%;
+    min-height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    box-sizing: border-box;
+
+    padding: 0 42px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(10, 25, 18, 0.98),
+            rgba(7, 18, 13, 0.97)
+        );
+
+    border-bottom:
+        1px solid rgba(74, 222, 128, 0.12);
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.28);
+
+    position: sticky;
+    top: 0;
+
+    z-index: 100;
+}
+
+
+/* =========================================================
+   BACK TO HOME
+   LEFT SIDE
+========================================================= */
+
+.top-back-button {
+    order: 1;
+
+    height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 0 14px;
+
+    box-sizing: border-box;
+
+    border:
+        1px solid rgba(74, 222, 128, 0.18);
+
+    border-radius: 8px;
+
+    background:
+        rgba(16, 35, 25, 0.80);
+
+    color: #b7cdbd;
+
+    font-family: inherit;
+
+    font-size: 11px;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.top-back-button svg {
+    flex-shrink: 0;
+
+    font-size: 11px;
+}
+
+.top-back-button:hover:not(:disabled) {
+    background:
+        rgba(34, 197, 94, 0.10);
+
+    border-color:
+        rgba(74, 222, 128, 0.40);
+
+    color: #7df0a1;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 18px rgba(34, 197, 94, 0.08);
+}
+
+.top-back-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.top-back-button:disabled {
+    opacity: 0.5;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   HMS BRAND
+   RIGHT SIDE
+========================================================= */
+
+.registration-brand {
+    order: 2;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    min-width: 0;
+
+    margin-left: auto;
+}
+
+
+/* =========================================================
+   HMS LOGO
+========================================================= */
+
+.brand-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #16a34a
+        );
+
+    color: #04120a;
+
+    font-size: 19px;
+
+    box-shadow:
+        0 8px 22px rgba(34, 197, 94, 0.22);
+}
+
+
+/* =========================================================
+   BRAND NAME
+========================================================= */
+
+.brand-name {
+    max-width: 300px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    color: #f1fdf5;
+
+    font-size: 15px;
+    font-weight: 750;
+
+    line-height: 1.25;
+
+    letter-spacing: -0.1px;
+}
+
+.brand-subtitle {
+    margin-top: 2px;
+
+    color: #7e9b89;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    line-height: 1.3;
+
+    letter-spacing: 0.2px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.registration-main {
+    width: min(100%, 1060px);
+
+    margin: 0 auto;
+
+    padding:
+        44px 28px
+        55px;
+
+    box-sizing: border-box;
+
+    flex: 1;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.registration-header {
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    margin-bottom: 28px;
+}
+
+.header-icon {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 13px;
+
+    background:
+        rgba(34, 197, 94, 0.10);
+
+    border:
+        1px solid rgba(74, 222, 128, 0.20);
+
+    color: #4ade80;
+
+    font-size: 20px;
+
+    box-shadow:
+        0 10px 30px rgba(34, 197, 94, 0.08);
+}
+
+.registration-header h1 {
+    margin: 0;
+
+    color: #f0fdf4;
+
+    font-size: 25px;
+    font-weight: 750;
+
+    line-height: 1.2;
+
+    letter-spacing: -0.4px;
+}
+
+.registration-header p {
+    margin:
+        6px 0 0;
+
+    color: #789183;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+========================================================= */
+
+.registration-error {
+    width: 100%;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+    padding:
+        12px 14px;
+
+    box-sizing: border-box;
+
+    border:
+        1px solid rgba(248, 113, 113, 0.24);
+
+    border-left:
+        3px solid #ef4444;
+
+    border-radius: 8px;
+
+    background:
+        rgba(127, 29, 29, 0.13);
+
+    color: #fecaca;
+}
+
+.registration-error > span {
+    width: 18px;
+    height: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background:
+        rgba(239, 68, 68, 0.18);
+
+    color: #f87171;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.registration-error p {
+    margin:
+        1px 0 0;
+
+    color: #fca5a5;
+
+    font-size: 11px;
+    font-weight: 550;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.patient-registration-form {
+    width: 100%;
+}
+
+
+/* =========================================================
+   FORM SECTION CARD
+========================================================= */
+
+.form-section {
+    width: 100%;
+
+    margin-bottom: 20px;
+
+    padding: 24px;
+
+    box-sizing: border-box;
+
+    border:
+        1px solid rgba(74, 222, 128, 0.10);
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(13, 29, 20, 0.96),
+            rgba(8, 20, 14, 0.96)
+        );
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.18);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.form-section:hover {
+    border-color:
+        rgba(74, 222, 128, 0.15);
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.22);
+}
+
+
+/* =========================================================
+   SECTION HEADING
+========================================================= */
+
+.section-heading {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 23px;
+}
+
+.section-number {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 8px;
+
+    background:
+        rgba(34, 197, 94, 0.10);
+
+    border:
+        1px solid rgba(74, 222, 128, 0.18);
+
+    color: #4ade80;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.4px;
+}
+
+.section-heading h2 {
+    margin: 0;
+
+    color: #e9f8ee;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    line-height: 1.35;
+}
+
+.section-heading p {
+    margin:
+        3px 0 0;
+
+    color: #6f8879;
+
+    font-size: 10px;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   FORM GRID
+========================================================= */
+
+.form-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px 20px;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.form-group {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 7px;
+
+    color: #a9beaf;
+
+    font-size: 10px;
+    font-weight: 650;
+
+    line-height: 1.3;
+
+    letter-spacing: 0.1px;
+}
+
+.form-group label span {
+    margin-left: 3px;
+
+    color: #4ade80;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   INPUT / SELECT / TEXTAREA
+========================================================= */
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border:
+        1px solid rgba(91, 117, 101, 0.28);
+
+    border-radius: 7px;
+
+    outline: none;
+
+    background:
+        rgba(5, 15, 10, 0.78);
+
+    color: #dcebe1;
+
+    font-family: inherit;
+
+    font-size: 11px;
+    font-weight: 500;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* =========================================================
+   INPUT + SELECT
+========================================================= */
+
+.form-group input,
+.form-group select {
+    height: 42px;
+
+    padding:
+        0 12px;
+}
+
+
+/* =========================================================
+   TEXTAREA
+========================================================= */
+
+.form-group textarea {
+    min-height: 100px;
+
+    padding:
+        11px 12px;
+
+    resize: vertical;
+
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+========================================================= */
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #50665a;
+
+    opacity: 1;
+}
+
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color:
+        rgba(74, 222, 128, 0.58);
+
+    background:
+        rgba(7, 20, 13, 0.95);
+
+    box-shadow:
+        0 0 0 3px rgba(34, 197, 94, 0.08);
+}
+
+
+/* =========================================================
+   DISABLED
+========================================================= */
+
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled {
+    opacity: 0.58;
+
+    cursor: not-allowed;
+
+    background:
+        rgba(5, 12, 8, 0.60);
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.form-group select {
+    cursor: pointer;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    padding-right: 34px;
+
+    background-image:
+        linear-gradient(
+            45deg,
+            transparent 50%,
+            #708b7a 50%
+        ),
+        linear-gradient(
+            135deg,
+            #708b7a 50%,
+            transparent 50%
+        );
+
+    background-position:
+        calc(100% - 15px) 18px,
+        calc(100% - 11px) 18px;
+
+    background-size:
+        4px 4px,
+        4px 4px;
+
+    background-repeat: no-repeat;
+}
+
+.form-group select option {
+    background: #0b1710;
+
+    color: #dcebe1;
+}
+
+
+/* =========================================================
+   DATE INPUT
+========================================================= */
+
+.form-group input[type="date"] {
+    color-scheme: dark;
+}
+
+.form-group input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0.65;
+
+    cursor: pointer;
+
+    filter:
+        invert(75%)
+        sepia(20%)
+        saturate(500%)
+        hue-rotate(80deg);
+}
+
+
+/* =========================================================
+   IMPORTANT INFORMATION
+========================================================= */
+
+.action-information {
+    width: 100%;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+    padding:
+        13px 15px;
+
+    box-sizing: border-box;
+
+    border:
+        1px solid rgba(74, 222, 128, 0.12);
+
+    border-radius: 8px;
+
+    background:
+        rgba(34, 197, 94, 0.045);
+}
+
+.information-icon {
+    width: 19px;
+    height: 19px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border:
+        1px solid rgba(74, 222, 128, 0.30);
+
+    border-radius: 50%;
+
+    color: #4ade80;
+
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.action-information strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #bce7c9;
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.action-information p {
+    margin: 0;
+
+    color: #718879;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.registration-actions {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 10px;
+}
+
+
+/* =========================================================
+   CANCEL BUTTON
+========================================================= */
+
+.cancel-button {
+    min-width: 88px;
+    height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding:
+        0 18px;
+
+    box-sizing: border-box;
+
+    border:
+        1px solid rgba(110, 133, 118, 0.25);
+
+    border-radius: 8px;
+
+    background:
+        rgba(15, 29, 21, 0.80);
+
+    color: #8da394;
+
+    font-family: inherit;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        all 0.2s ease;
+}
+
+.cancel-button:hover:not(:disabled) {
+    border-color:
+        rgba(125, 153, 135, 0.45);
+
+    background:
+        rgba(22, 39, 28, 0.95);
+
+    color: #c3d5c9;
+
+    transform: translateY(-1px);
+}
+
+.cancel-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.cancel-button:disabled {
+    opacity: 0.5;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   REGISTER BUTTON
+   BASE STYLE
+========================================================= */
+
+.register-button {
+    min-width: 158px;
+    height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding:
+        0 18px;
+
+    box-sizing: border-box;
+
+    border:
+        1px solid rgba(74, 222, 128, 0.45);
+
+    border-radius: 8px;
+
+    background:
+        #22c55e;
+
+    color: #04120a;
+
+    font-family: inherit;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 22px rgba(34, 197, 94, 0.20);
+
+    transition:
+        all 0.2s ease;
+}
+
+.register-button svg {
+    flex-shrink: 0;
+
+    font-size: 12px;
+}
+
+.register-button:hover:not(:disabled) {
+    background:
+        #16a34a;
+
+    border-color:
+        rgba(74, 222, 128, 0.75);
+
+    color: #ffffff;
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 10px 28px rgba(34, 197, 94, 0.28);
+}
+
+.register-button:active:not(:disabled) {
+    transform:
+        translateY(0);
+}
+
+.register-button:disabled {
+    background:
+        #15803d;
+
+    color: #04120a;
+
+    opacity: 0.75;
+
+    cursor: not-allowed;
+
+    box-shadow:
+        none;
+}
+
+
+/* =========================================================
+   LOADING SPINNER
+========================================================= */
+
+.loading-spinner {
+    width: 14px;
+    height: 14px;
+
+    display: inline-block;
+
+    flex-shrink: 0;
+
+    border:
+        2px solid rgba(4, 18, 10, 0.30);
+
+    border-top-color:
+        #04120a;
+
+    border-radius: 50%;
+
+    animation:
+        patientRegisterSpin
+        0.7s
+        linear
+        infinite;
+}
+
+@keyframes patientRegisterSpin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.registration-footer {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding:
+        18px 28px
+        22px;
+
+    text-align: center;
+
+    border-top:
+        1px solid rgba(74, 222, 128, 0.08);
+
+    background:
+        rgba(5, 13, 9, 0.75);
+
+    color: #50675a;
+
+    font-size: 9px;
+    font-weight: 500;
+
+    letter-spacing: 0.2px;
+}
+
+
+/* =========================================================
+   SUCCESS SCREEN
+========================================================= */
+
+.registration-success-card {
+    width: min(100%, 620px);
+
+    margin:
+        20px auto 0;
+
+    padding:
+        38px 34px;
+
+    box-sizing: border-box;
+
+    text-align: center;
+
+    border:
+        1px solid rgba(74, 222, 128, 0.15);
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(13, 30, 20, 0.97),
+            rgba(7, 19, 13, 0.97)
+        );
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.30);
+}
+
+
+/* =========================================================
+   SUCCESS ICON
+========================================================= */
+
+.success-icon {
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin:
+        0 auto 18px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(34, 197, 94, 0.10);
+
+    border:
+        1px solid rgba(74, 222, 128, 0.25);
+
+    color: #4ade80;
+
+    font-size: 28px;
+
+    box-shadow:
+        0 12px 35px rgba(34, 197, 94, 0.12);
+}
+
+
+/* =========================================================
+   SUCCESS TITLE
+========================================================= */
+
+.registration-success-card h1 {
+    margin: 0;
+
+    color: #effdf3;
+
+    font-size: 23px;
+    font-weight: 750;
+
+    line-height: 1.25;
+}
+
+
+/* =========================================================
+   SUCCESS MESSAGE
+========================================================= */
+
+.success-message {
+    max-width: 470px;
+
+    margin:
+        9px auto 25px;
+
+    color: #799082;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+}
+
+.success-message strong {
+    color: #a7eab9;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   REGISTERED PATIENT INFO
+========================================================= */
+
+.registered-patient-info {
+    width: 100%;
+
+    margin:
+        0 auto 25px;
+
+    border:
+        1px solid rgba(74, 222, 128, 0.10);
+
+    border-radius: 9px;
+
+    overflow: hidden;
+
+    background:
+        rgba(4, 13, 8, 0.60);
+
+    text-align: left;
+}
+
+
+/* =========================================================
+   PATIENT INFO ROW
+========================================================= */
+
+.patient-info-row {
+    min-height: 43px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding:
+        8px 14px;
+
+    box-sizing: border-box;
+
+    border-bottom:
+        1px solid rgba(74, 222, 128, 0.07);
+}
+
+.patient-info-row:last-child {
+    border-bottom: none;
+}
+
+.patient-info-row span {
+    color: #708678;
+
+    font-size: 10px;
+    font-weight: 550;
+}
+
+.patient-info-row strong {
+    color: #bce9c8;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-align: right;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   SUCCESS ACTIONS
+========================================================= */
+
+.success-actions {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 9px;
+}
+
+
+/* =========================================================
+   SUCCESS BUTTON COMMON
+========================================================= */
+
+.primary-button,
+.secondary-button,
+.back-home-button {
+    width: 100%;
+    min-height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    box-sizing: border-box;
+
+    border-radius: 8px;
+
+    font-family: inherit;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        all 0.2s ease;
+}
+
+
+/* =========================================================
+   PRIMARY
+========================================================= */
+
+.primary-button {
+    border:
+        1px solid rgba(74, 222, 128, 0.40);
+
+    background:
+        #22c55e;
+
+    color: #04120a;
+
+    box-shadow:
+        0 8px 25px rgba(34, 197, 94, 0.18);
+}
+
+.primary-button:hover {
+    background:
+        #16a34a;
+
+    color: #ffffff;
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 12px 30px rgba(34, 197, 94, 0.25);
+}
+
+.primary-button:active {
+    transform:
+        translateY(0);
+}
+
+
+/* =========================================================
+   SECONDARY
+========================================================= */
+
+.secondary-button {
+    border:
+        1px solid rgba(74, 222, 128, 0.18);
+
+    background:
+        rgba(34, 197, 94, 0.055);
+
+    color: #9de3af;
+}
+
+.secondary-button:hover {
+    border-color:
+        rgba(74, 222, 128, 0.35);
+
+    background:
+        rgba(34, 197, 94, 0.10);
+
+    color: #c7f6d2;
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =========================================================
+   BACK HOME SUCCESS
+========================================================= */
+
+.back-home-button {
+    border:
+        1px solid rgba(96, 117, 103, 0.20);
+
+    background:
+        rgba(12, 25, 18, 0.75);
+
+    color: #788f81;
+}
+
+.back-home-button:hover {
+    border-color:
+        rgba(110, 139, 120, 0.35);
+
+    background:
+        rgba(17, 34, 24, 0.95);
+
+    color: #b5c9bb;
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline:
+        2px solid rgba(74, 222, 128, 0.55);
+
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .registration-topbar {
+        padding:
+            0 25px;
+    }
+
+    .registration-main {
+        padding:
+            35px 22px
+            45px;
+    }
+
+    .form-section {
+        padding:
+            21px;
+    }
+
+    .registration-header h1 {
+        font-size: 23px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .registration-topbar {
+        min-height: 64px;
+
+        padding:
+            0 16px;
+    }
+
+
+    /* LEFT BACK BUTTON */
+
+    .top-back-button {
+        order: 1;
+
+        width: 36px;
+        height: 36px;
+
+        padding: 0;
+
+        border-radius: 8px;
+    }
+
+    .top-back-button span {
+        display: none;
+    }
+
+
+    /* RIGHT BRAND */
+
+    .registration-brand {
+        order: 2;
+
+        gap: 9px;
+
+        margin-left: auto;
+    }
+
+    .brand-icon {
+        width: 37px;
+        height: 37px;
+
+        border-radius: 9px;
+
+        font-size: 16px;
+    }
+
+    .brand-name {
+        max-width: 155px;
+
+        font-size: 12px;
+    }
+
+    .brand-subtitle {
+        max-width: 155px;
+
+        font-size: 8px;
+    }
+
+
+    /* MAIN */
+
+    .registration-main {
+        padding:
+            28px 14px
+            38px;
+    }
+
+
+    /* PAGE HEADING */
+
+    .registration-header {
+        align-items: flex-start;
+
+        gap: 11px;
+
+        margin-bottom: 21px;
+    }
+
+    .header-icon {
+        width: 43px;
+        height: 43px;
+
+        border-radius: 10px;
+
+        font-size: 17px;
+    }
+
+    .registration-header h1 {
+        font-size: 19px;
+    }
+
+    .registration-header p {
+        margin-top: 5px;
+
+        font-size: 10px;
+
+        line-height: 1.5;
+    }
+
+
+    /* FORM */
+
+    .form-grid {
+        grid-template-columns: 1fr;
+
+        gap: 15px;
+    }
+
+    .full-width {
+        grid-column: auto;
+    }
+
+    .form-section {
+        padding:
+            18px 15px;
+
+        border-radius: 10px;
+
+        margin-bottom: 15px;
+    }
+
+
+    /* SECTION */
+
+    .section-heading {
+        margin-bottom: 19px;
+
+        gap: 10px;
+    }
+
+    .section-number {
+        width: 30px;
+        height: 30px;
+
+        border-radius: 7px;
+
+        font-size: 9px;
+    }
+
+    .section-heading h2 {
+        font-size: 12px;
+    }
+
+    .section-heading p {
+        font-size: 9px;
+    }
+
+
+    /* INPUTS */
+
+    .form-group label {
+        font-size: 9px;
+
+        margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group select {
+        height: 40px;
+
+        font-size: 10px;
+    }
+
+    .form-group textarea {
+        min-height: 90px;
+
+        font-size: 10px;
+    }
+
+
+    /* INFO */
+
+    .action-information {
+        padding:
+            11px 12px;
+
+        margin-bottom: 16px;
+    }
+
+    .action-information strong {
+        font-size: 9px;
+    }
+
+    .action-information p {
+        font-size: 9px;
+    }
+
+
+    /* ACTIONS */
+
+    .registration-actions {
+        display: grid;
+
+        grid-template-columns:
+            1fr 1.6fr;
+
+        gap: 8px;
+    }
+
+    .cancel-button,
+    .register-button {
+        width: 100%;
+
+        min-width: 0;
+
+        height: 40px;
+
+        padding:
+            0 10px;
+
+        font-size: 10px;
+    }
+
+
+    /* FOOTER */
+
+    .registration-footer {
+        padding:
+            15px 14px
+            18px;
+
+        font-size: 8px;
+    }
+
+
+    /* SUCCESS */
+
+    .registration-success-card {
+        margin-top: 8px;
+
+        padding:
+            28px 18px;
+
+        border-radius: 11px;
+    }
+
+    .success-icon {
+        width: 56px;
+        height: 56px;
+
+        margin-bottom: 15px;
+
+        font-size: 24px;
+    }
+
+    .registration-success-card h1 {
+        font-size: 19px;
+    }
+
+    .success-message {
+        margin:
+            8px auto 20px;
+
+        font-size: 10px;
+    }
+
+    .patient-info-row {
+        min-height: 41px;
+
+        padding:
+            8px 11px;
+    }
+
+    .patient-info-row span,
+    .patient-info-row strong {
+        font-size: 9px;
+    }
+
+    .primary-button,
+    .secondary-button,
+    .back-home-button {
+        min-height: 40px;
+
+        font-size: 10px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 500px) {
+
+    .registration-topbar {
+        min-height: 60px;
+
+        padding:
+            0 11px;
+    }
+
+
+    /* BRAND */
+
+    .registration-brand {
+        gap: 8px;
+    }
+
+    .brand-icon {
+        width: 34px;
+        height: 34px;
+
+        border-radius: 8px;
+
+        font-size: 14px;
+    }
+
+    .brand-name {
+        max-width: 125px;
+
+        font-size: 11px;
+    }
+
+    .brand-subtitle {
+        max-width: 125px;
+
+        font-size: 7px;
+    }
+
+
+    /* BACK */
+
+    .top-back-button {
+        width: 34px;
+        height: 34px;
+    }
+
+
+    /* MAIN */
+
+    .registration-main {
+        padding:
+            24px 10px
+            32px;
+    }
+
+
+    /* HEADER */
+
+    .registration-header {
+        gap: 9px;
+    }
+
+    .header-icon {
+        width: 39px;
+        height: 39px;
+
+        font-size: 15px;
+    }
+
+    .registration-header h1 {
+        font-size: 17px;
+    }
+
+    .registration-header p {
+        max-width: 280px;
+
+        font-size: 9px;
+    }
+
+
+    /* FORM */
+
+    .form-section {
+        padding:
+            16px 12px;
+    }
+
+    .section-heading {
+        gap: 8px;
+    }
+
+    .section-number {
+        width: 28px;
+        height: 28px;
+
+        font-size: 8px;
+    }
+
+    .section-heading h2 {
+        font-size: 11px;
+    }
+
+    .section-heading p {
+        font-size: 8px;
+    }
+
+    .form-grid {
+        gap: 13px;
+    }
+
+    .form-group input,
+    .form-group select {
+        height: 39px;
+
+        padding:
+            0 10px;
+    }
+
+    .form-group textarea {
+        padding:
+            9px 10px;
+    }
+
+
+    /* ACTIONS */
+
+    .registration-actions {
+        grid-template-columns: 1fr;
+
+        gap: 8px;
+    }
+
+    .cancel-button {
+        order: 2;
+    }
+
+    .register-button {
+        order: 1;
+    }
+
+
+    /* SUCCESS */
+
+    .registration-success-card {
+        padding:
+            25px 14px;
+    }
+
+    .success-icon {
+        width: 52px;
+        height: 52px;
+
+        font-size: 22px;
+    }
+
+    .registration-success-card h1 {
+        font-size: 17px;
+    }
+
+    .success-message {
+        font-size: 9px;
+    }
+}
+
+
+/* =========================================================
+   EXTRA SMALL MOBILE
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .registration-topbar {
+        min-height: 58px;
+
+        padding:
+            0 8px;
+    }
+
+    .registration-brand {
+        gap: 6px;
+    }
+
+    .brand-icon {
+        width: 31px;
+        height: 31px;
+
+        border-radius: 7px;
+
+        font-size: 13px;
+    }
+
+    .brand-name {
+        max-width: 105px;
+
+        font-size: 10px;
+    }
+
+    .brand-subtitle {
+        display: none;
+    }
+
+    .top-back-button {
+        width: 32px;
+        height: 32px;
+    }
+
+
+    /* MAIN */
+
+    .registration-main {
+        padding:
+            20px 8px
+            28px;
+    }
+
+    .registration-header h1 {
+        font-size: 16px;
+    }
+
+    .registration-header p {
+        font-size: 8px;
+    }
+
+
+    /* FORM */
+
+    .form-section {
+        padding:
+            14px 10px;
+    }
+
+    .form-group input,
+    .form-group select {
+        height: 38px;
+
+        font-size: 9px;
+    }
+
+    .form-group textarea {
+        min-height: 82px;
+
+        font-size: 9px;
+    }
+
+
+    /* INFORMATION */
+
+    .action-information {
+        gap: 8px;
+
+        padding:
+            10px;
+    }
+
+    .information-icon {
+        width: 17px;
+        height: 17px;
+
+        font-size: 9px;
+    }
+
+    .action-information strong {
+        font-size: 8px;
+    }
+
+    .action-information p {
+        font-size: 8px;
+    }
+
+
+    /* BUTTONS */
+
+    .cancel-button,
+    .register-button {
+        height: 39px;
+
+        font-size: 9px;
+    }
+
+
+    /* FOOTER */
+
+    .registration-footer {
+        font-size: 7px;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .patient-registration-page *,
+    .patient-registration-page *::before,
+    .patient-registration-page *::after {
+        transition-duration:
+            0.01ms !important;
+
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+    }
+
+    .loading-spinner {
+        animation-duration:
+            1.2s !important;
+    }
+}

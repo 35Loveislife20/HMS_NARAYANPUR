@@ -35,6 +35,10 @@ const DEFAULT_SETTINGS = {
 function Home() {
     const navigate = useNavigate();
 
+    // =====================================================
+    // STATE
+    // =====================================================
+
     const [showLoginModal, setShowLoginModal] = useState(false);
 
     const [hospitalName, setHospitalName] = useState(
@@ -134,13 +138,14 @@ function Home() {
 
                 if (!mounted) return;
 
-                const doctorsList = Array.isArray(result?.doctors)
-                    ? result.doctors
-                    : Array.isArray(result?.data)
-                        ? result.data
-                        : Array.isArray(result)
-                            ? result
-                            : [];
+                const doctorsList =
+                    Array.isArray(result?.doctors)
+                        ? result.doctors
+                        : Array.isArray(result?.data)
+                            ? result.data
+                            : Array.isArray(result)
+                                ? result
+                                : [];
 
                 console.log(
                     "HMS Doctors loaded:",
@@ -180,19 +185,34 @@ function Home() {
     };
 
     // =====================================================
-    // PATIENT SERVICE NAVIGATION
+    // PUBLIC PATIENT SERVICE NAVIGATION
     // =====================================================
 
+    // -----------------------------------------------------
+    // NEW PATIENT REGISTRATION
+    // PUBLIC - NO LOGIN REQUIRED
+    // -----------------------------------------------------
+
     const goToPatientRegistration = () => {
-        navigate("/patients");
+        navigate("/patient-registration");
     };
+
+    // -----------------------------------------------------
+    // NEW PATIENT APPOINTMENT
+    // PUBLIC - NO LOGIN REQUIRED
+    // -----------------------------------------------------
 
     const goToNewAppointment = () => {
-        navigate("/appointments");
+        navigate("/new-patient-appointment");
     };
 
+    // -----------------------------------------------------
+    // OLD PATIENT APPOINTMENT
+    // PUBLIC - NO LOGIN REQUIRED
+    // -----------------------------------------------------
+
     const goToOldAppointment = () => {
-        navigate("/appointments");
+        navigate("/old-patient-appointment");
     };
 
     // =====================================================
@@ -248,7 +268,7 @@ function Home() {
 
         const cleanPhoto = photo.trim();
 
-        // Full backend/frontend URL
+        // Full URL
         if (
             cleanPhoto.startsWith("http://") ||
             cleanPhoto.startsWith("https://")
@@ -438,6 +458,10 @@ function Home() {
     return (
         <main className="home-page">
 
+            {/* =================================================
+                HEADER
+            ================================================= */}
+
             <header className="home-header"></header>
 
             <section className="home-content">
@@ -457,6 +481,10 @@ function Home() {
                         </span>
 
                     </div>
+
+                    {/* =================================================
+                        HOSPITAL BRAND
+                    ================================================= */}
 
                     <div className="home-brand">
 
@@ -484,11 +512,19 @@ function Home() {
 
                     </div>
 
+                    {/* =================================================
+                        DESCRIPTION
+                    ================================================= */}
+
                     <p className="home-description">
                         Manage patients, doctors, appointments,
                         departments and hospital operations
                         from one secure platform.
                     </p>
+
+                    {/* =================================================
+                        LOGIN
+                    ================================================= */}
 
                     <div className="home-login-wrapper">
 
@@ -518,6 +554,10 @@ function Home() {
 
                     <div className="hospital-card">
 
+                        {/* =================================================
+                            HOSPITAL ICON
+                        ================================================= */}
+
                         <div className="hospital-card-icon">
 
                             <img
@@ -537,7 +577,9 @@ function Home() {
                             your hospital efficiently.
                         </p>
 
-                        {/* PATIENT SERVICES */}
+                        {/* =================================================
+                            PATIENT SERVICES
+                        ================================================= */}
 
                         <div className="hospital-management-list">
 
@@ -545,7 +587,9 @@ function Home() {
                                 Patient Services
                             </h4>
 
-                            {/* NEW PATIENT REGISTRATION */}
+                            {/* =================================================
+                                NEW PATIENT REGISTRATION
+                            ================================================= */}
 
                             <button
                                 type="button"
@@ -567,7 +611,9 @@ function Home() {
 
                             </button>
 
-                            {/* NEW PATIENT APPOINTMENT */}
+                            {/* =================================================
+                                NEW PATIENT APPOINTMENT
+                            ================================================= */}
 
                             <button
                                 type="button"
@@ -589,7 +635,9 @@ function Home() {
 
                             </button>
 
-                            {/* OLD PATIENT APPOINTMENT */}
+                            {/* =================================================
+                                OLD PATIENT APPOINTMENT
+                            ================================================= */}
 
                             <button
                                 type="button"
@@ -613,7 +661,9 @@ function Home() {
 
                         </div>
 
-                        {/* SECURITY */}
+                        {/* =================================================
+                            SECURITY
+                        ================================================= */}
 
                         <div className="hospital-security">
 
@@ -641,7 +691,9 @@ function Home() {
 
                             <div className="doctors-marquee-track">
 
-                                {/* FIRST SET */}
+                                {/* =================================================
+                                    FIRST SET
+                                ================================================= */}
 
                                 {doctors.map(
                                     (doctor, index) => (
@@ -657,7 +709,9 @@ function Home() {
                                     )
                                 )}
 
-                                {/* DUPLICATE SET */}
+                                {/* =================================================
+                                    DUPLICATE SET
+                                ================================================= */}
 
                                 {doctors.map(
                                     (doctor, index) => (
@@ -684,9 +738,9 @@ function Home() {
 
             </section>
 
-            {/* =====================================================
+            {/* =================================================
                 FOOTER
-            ===================================================== */}
+            ================================================= */}
 
             <footer className="home-footer">
 
@@ -700,9 +754,9 @@ function Home() {
 
             </footer>
 
-            {/* =====================================================
+            {/* =================================================
                 LOGIN MODAL
-            ===================================================== */}
+            ================================================= */}
 
             {showLoginModal && (
 

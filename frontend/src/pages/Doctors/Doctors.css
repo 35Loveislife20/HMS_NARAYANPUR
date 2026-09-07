@@ -1,278 +1,330 @@
 /* =========================================================
-   HMS - DOCTORS PAGE
-   Same Dark Green Medical Dashboard Theme
-   Matches Appointments Page Colors
+   DOCTORS PAGE
 ========================================================= */
 
 .doctors-page {
-    width: 100%;
-    min-height: 100%;
+    min-height: 100vh;
     padding: 28px;
-    box-sizing: border-box;
-    color: #e8fff0;
-
     background:
         radial-gradient(
-            circle at 85% 5%,
-            rgba(0, 255, 55, 0.055),
-            transparent 28%
+            circle at top right,
+            rgba(0, 255, 170, 0.08),
+            transparent 30%
         ),
-        #050b08;
+        linear-gradient(
+            135deg,
+            #020b08 0%,
+            #03130e 50%,
+            #020806 100%
+        );
+
+    color: #ffffff;
+    box-sizing: border-box;
 }
 
-/* =========================================================
-   LOADING
-========================================================= */
-
-.doctors-loading {
-    min-height: 400px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 13px;
-    color: #71877a;
-}
-
-.loading-spin {
-    color: #00ff37;
-    font-size: 24px;
-    animation: doctorSpin 0.85s linear infinite;
-}
-
-.doctors-loading p {
-    margin: 0;
-    font-size: 13px;
-}
-
-@keyframes doctorSpin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
 
 /* =========================================================
    HEADER
 ========================================================= */
 
 .doctors-header {
-    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 20px;
+
     margin-bottom: 24px;
 }
 
 .doctors-header-left {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 16px;
+}
+
+.doctors-back-button {
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(0, 255, 55, 0.18);
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00ff37;
+    background: #09120d;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.doctors-back-button:hover {
+    color: #061008;
+    background: #00ff37;
+    border-color: #00ff37;
+    transform: translateX(-2px);
+    box-shadow: 0 0 18px rgba(0, 255, 55, 0.18);
 }
 
 .doctors-title-icon {
-    width: 45px;
-    height: 45px;
-    flex-shrink: 0;
+    display: none;
+
+    border-radius: 16px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    color: #00ff37;
-    background: rgba(0, 255, 55, 0.08);
-    border: 1px solid rgba(0, 255, 55, 0.14);
-    border-radius: 12px;
+    font-size: 34px;
 
-    box-sizing: border-box;
+    color: #00f5a0;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(0, 255, 170, 0.22),
+            rgba(0, 255, 170, 0.05)
+        );
+
+    border: 1px solid
+        rgba(0, 255, 170, 0.38);
+
+    box-shadow:
+        0 0 30px
+        rgba(0, 255, 170, 0.08);
 }
 
-.doctors-title-icon svg {
-    font-size: 19px;
-}
-
-.doctors-header-left h1 {
+.doctors-header h1 {
     margin: 0;
-    color: #f0fff5;
+
     font-size: 28px;
-    font-weight: 700;
-    letter-spacing: -0.4px;
+    line-height: 1.1;
+
+    font-weight: 800;
+
+    letter-spacing: 0;
 }
 
-.doctors-header-left p {
+.doctors-header p {
     margin: 6px 0 0;
-    color: #8fa99a;
+
+    color: #9bb6ad;
+
     font-size: 14px;
 }
 
 .doctors-header-actions {
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: 14px;
 }
 
+.doctors-header-actions > .doctors-search-top,
+.doctors-header-actions > .doctors-refresh-btn {
+    display: none;
+}
+
+
 /* =========================================================
-   REFRESH BUTTON
+   TOP SEARCH
 ========================================================= */
 
-.doctors-refresh-btn {
-    min-height: 44px;
-    padding: 0 14px;
+.doctors-search-top {
+    width: 320px;
+    height: 52px;
 
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
 
-    color: #a6bcae;
-    background: #09120d;
+    gap: 12px;
 
-    border: 1px solid rgba(0, 255, 55, 0.14);
-    border-radius: 10px;
+    padding: 0 16px;
 
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
+    border-radius: 16px;
+
+    background:
+        rgba(8, 39, 30, 0.85);
+
+    border: 1px solid
+        rgba(0, 255, 170, 0.10);
+}
+
+.doctors-search-top > svg {
+    color: #a7c8bd;
+    font-size: 18px;
+}
+
+.doctors-search-top input {
+    flex: 1;
+
+    border: 0;
+    outline: none;
+
+    color: #ffffff;
+    background: transparent;
+
+    font-size: 14px;
+}
+
+.doctors-search-top input::placeholder {
+    color: #88a79d;
+}
+
+.doctors-search-top button {
+    border: 0;
+    background: transparent;
+
+    color: #8baaa0;
 
     cursor: pointer;
-    transition: all 0.25s ease;
 }
 
-.doctors-refresh-btn:hover:not(:disabled) {
-    color: #00ff37;
-    background: rgba(0, 255, 55, 0.05);
-    border-color: rgba(0, 255, 55, 0.32);
-}
-
-.doctors-refresh-btn:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-}
-
-.doctors-refresh-btn svg {
-    font-size: 12px;
-}
 
 /* =========================================================
-   ADD DOCTOR BUTTON
+   HEADER BUTTONS
 ========================================================= */
 
+.doctors-refresh-btn,
 .doctors-add-btn {
-    min-height: 44px;
-    padding: 0 18px;
+    height: 52px;
 
-    display: inline-flex;
+    padding: 0 20px;
+
+    border-radius: 15px;
+
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 9px;
 
-    color: #031007;
-    background: #00ff37;
+    gap: 10px;
 
-    border: 1px solid #00ff37;
-    border-radius: 10px;
-
-    font-family: inherit;
     font-size: 14px;
     font-weight: 700;
 
     cursor: pointer;
-    transition: all 0.25s ease;
+
+    transition:
+        0.25s ease;
+}
+
+.doctors-refresh-btn {
+    color: #00f5a0;
+
+    background:
+        rgba(0, 255, 170, 0.04);
+
+    border: 1px solid
+        rgba(0, 255, 170, 0.55);
+}
+
+.doctors-refresh-btn:hover {
+    background:
+        rgba(0, 255, 170, 0.12);
+
+    transform: translateY(-2px);
+}
+
+.doctors-refresh-btn:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+.doctors-add-btn {
+    height: 44px;
+    padding: 0 18px;
+    border-radius: 10px;
+    color: #031007;
+    background: #00ff37;
+
+    border: 1px solid
+        rgba(0, 255, 170, 0.8);
+
+    box-shadow: none;
 }
 
 .doctors-add-btn:hover {
-    background: #39ff65;
-    border-color: #39ff65;
-    box-shadow: 0 0 22px rgba(0, 255, 55, 0.22);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 35px
+        rgba(0, 255, 170, 0.2);
 }
 
-.doctors-add-btn svg {
-    font-size: 13px;
-}
 
 /* =========================================================
    ERROR
 ========================================================= */
 
 .doctors-error {
-    width: 100%;
-    min-height: 48px;
+    margin-top: 20px;
 
-    margin-bottom: 20px;
-    padding: 10px 13px;
-
-    box-sizing: border-box;
+    padding: 14px 18px;
 
     display: flex;
     align-items: center;
-    gap: 10px;
 
-    border: 1px solid rgba(255, 75, 75, 0.25);
-    border-radius: 10px;
+    gap: 12px;
 
-    color: #ffb3b3;
-    background: rgba(100, 20, 20, 0.18);
+    border-radius: 12px;
 
-    font-size: 13px;
-}
+    color: #ff8d8d;
 
-.doctors-error > svg {
-    flex-shrink: 0;
-    color: #ff6262;
+    background:
+        rgba(255, 55, 55, 0.08);
+
+    border: 1px solid
+        rgba(255, 55, 55, 0.25);
 }
 
 .doctors-error span {
     flex: 1;
 }
 
+.doctors-error button {
+    border: 0;
+    background: transparent;
+
+    color: #ff8d8d;
+
+    cursor: pointer;
+}
+
+
 /* =========================================================
-   STATISTICS
+   STATS
 ========================================================= */
 
 .doctors-stats {
-    width: 100%;
-
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
 
-    gap: 16px;
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 20px;
+
+    margin-top: 0;
     margin-bottom: 24px;
 }
 
 .doctor-stat-card {
     min-height: 94px;
-    padding: 18px;
 
-    box-sizing: border-box;
+    padding: 18px;
 
     display: flex;
     align-items: center;
+
     gap: 15px;
 
-    border: 1px solid rgba(0, 255, 55, 0.10);
     border-radius: 13px;
 
     background:
-        linear-gradient(
-            145deg,
-            rgba(12, 25, 17, 0.96),
-            rgba(6, 15, 10, 0.96)
-        );
+        rgba(5, 27, 21, 0.75);
 
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-
-    transition: all 0.25s ease;
-}
-
-.doctor-stat-card:hover {
-    border-color: rgba(0, 255, 55, 0.25);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+    border: 1px solid
+        rgba(0, 255, 170, 0.10);
 }
 
 .doctor-stat-icon {
@@ -287,168 +339,1630 @@
     align-items: center;
     justify-content: center;
 
-    color: #00ff37;
-    background: rgba(0, 255, 55, 0.08);
-    border: 1px solid rgba(0, 255, 55, 0.12);
-}
+    color: #00f5a0;
 
-.doctor-stat-icon svg {
+    background:
+        rgba(0, 255, 170, 0.10);
+
     font-size: 18px;
 }
 
 .doctor-stat-card span {
     display: block;
-    margin-bottom: 5px;
 
-    color: #829b8b;
-    font-size: 12px;
-    font-weight: 500;
+    color: #91ada4;
+
+    font-size: 14px;
 }
 
 .doctor-stat-card strong {
     display: block;
 
-    color: #effff3;
+    margin-top: 5px;
+
+    color: #ffffff;
+
     font-size: 25px;
-    line-height: 1;
-    font-weight: 700;
 }
+
+.doctor-stat-card.available
+    .doctor-stat-icon {
+    color: #00f5a0;
+}
+
+.doctor-stat-card.busy
+    .doctor-stat-icon {
+    color: #ffc857;
+}
+
+.doctor-stat-card.offline
+    .doctor-stat-icon {
+    color: #ff6868;
+}
+
 
 /* =========================================================
-   STATUS STAT COLORS
+   RESULT BAR
 ========================================================= */
 
-.doctor-stat-card.available .doctor-stat-icon {
-    color: #00ff37;
-    background: rgba(0, 255, 55, 0.08);
-    border-color: rgba(0, 255, 55, 0.12);
-}
-
-.doctor-stat-card.busy .doctor-stat-icon {
-    color: #ffc766;
-    background: rgba(255, 177, 0, 0.08);
-    border-color: rgba(255, 177, 0, 0.14);
-}
-
-.doctor-stat-card.offline .doctor-stat-icon {
-    color: #ff7777;
-    background: rgba(255, 55, 55, 0.08);
-    border-color: rgba(255, 55, 55, 0.14);
-}
-
-/* =========================================================
-   TOOLBAR
-========================================================= */
-
-.doctors-toolbar {
-    min-height: 76px;
-
-    padding: 16px 18px;
-    box-sizing: border-box;
+.doctors-result-bar {
+    display: none;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+    color: #8faea4;
+
+    font-size: 14px;
 }
 
-.doctors-toolbar > div:first-child {
+.doctors-result-bar strong {
+    color: #00f5a0;
+    font-size: 18px;
+}
+
+.doctors-result-bar > span {
+    padding: 7px 13px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(0, 255, 170, 0.05);
+
+    border: 1px solid
+        rgba(0, 255, 170, 0.08);
+}
+
+
+/* =========================================================
+   DEPARTMENT GRID
+========================================================= */
+
+.department-cards-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(360px, 1fr));
+
+    gap: 20px;
+}
+
+
+/* =========================================================
+   DEPARTMENT CARD
+========================================================= */
+
+.department-card {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    min-width: 0;
+
+    min-height: 190px;
+
+    padding: 22px;
+
+    border-radius: 16px;
+
+    border: 1px solid
+        var(--department-border);
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--department-bg-1),
+            var(--department-bg-2)
+        );
+
+    box-shadow:
+        0 20px 55px
+        rgba(0, 0, 0, 0.16);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.department-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    right: -80px;
+    top: -80px;
+
+    border-radius: 50%;
+
+    background:
+        var(--department-glow);
+
+    filter: blur(5px);
+
+    pointer-events: none;
+}
+
+.department-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 25px 70px
+        rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================================
+   DEPARTMENT COLORS
+========================================================= */
+
+.department-card.theme-red {
+    --department-color: #ff4663;
+    --department-border: rgba(255, 50, 80, 0.65);
+    --department-bg-1: rgba(83, 4, 23, 0.72);
+    --department-bg-2: rgba(30, 4, 13, 0.92);
+    --department-glow: rgba(255, 40, 80, 0.15);
+}
+
+.department-card.theme-blue {
+    --department-color: #36b8ff;
+    --department-border: rgba(0, 135, 255, 0.65);
+    --department-bg-1: rgba(2, 46, 92, 0.72);
+    --department-bg-2: rgba(2, 21, 42, 0.92);
+    --department-glow: rgba(0, 130, 255, 0.16);
+}
+
+.department-card.theme-green {
+    --department-color: #00f59b;
+    --department-border: rgba(0, 220, 130, 0.65);
+    --department-bg-1: rgba(1, 73, 42, 0.72);
+    --department-bg-2: rgba(1, 31, 20, 0.92);
+    --department-glow: rgba(0, 255, 150, 0.15);
+}
+
+.department-card.theme-purple {
+    --department-color: #a96cff;
+    --department-border: rgba(135, 55, 255, 0.65);
+    --department-bg-1: rgba(55, 17, 105, 0.72);
+    --department-bg-2: rgba(24, 8, 48, 0.92);
+    --department-glow: rgba(140, 65, 255, 0.16);
+}
+
+.department-card.theme-yellow {
+    --department-color: #ffc12f;
+    --department-border: rgba(255, 181, 0, 0.65);
+    --department-bg-1: rgba(83, 57, 3, 0.75);
+    --department-bg-2: rgba(39, 26, 2, 0.94);
+    --department-glow: rgba(255, 190, 0, 0.14);
+}
+
+.department-card.theme-cyan {
+    --department-color: #12e7f3;
+    --department-border: rgba(0, 210, 230, 0.65);
+    --department-bg-1: rgba(0, 65, 73, 0.75);
+    --department-bg-2: rgba(0, 28, 34, 0.94);
+    --department-glow: rgba(0, 220, 240, 0.14);
+}
+
+.department-card.theme-pink {
+    --department-color: #ff5da2;
+    --department-border: rgba(255, 40, 130, 0.65);
+    --department-bg-1: rgba(91, 20, 51, 0.75);
+    --department-bg-2: rgba(42, 10, 25, 0.94);
+    --department-glow: rgba(255, 50, 140, 0.14);
+}
+
+.department-card.theme-orange {
+    --department-color: #ff5555;
+    --department-border: rgba(255, 35, 35, 0.65);
+    --department-bg-1: rgba(92, 12, 12, 0.75);
+    --department-bg-2: rgba(43, 7, 7, 0.94);
+    --department-glow: rgba(255, 40, 40, 0.14);
+}
+
+.department-card.theme-teal {
+    --department-color: #00dcb4;
+    --department-border: rgba(0, 220, 180, 0.65);
+    --department-bg-1: rgba(0, 67, 56, 0.75);
+    --department-bg-2: rgba(0, 29, 25, 0.94);
+    --department-glow: rgba(0, 230, 190, 0.14);
+}
+
+
+/* =========================================================
+   DEPARTMENT HEADER
+========================================================= */
+
+.department-card-header {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+.department-card-header > .department-arrow {
+    display: none;
+}
+
+.department-main-info {
+    display: flex;
+    align-items: center;
+
+    min-width: 0;
+
+    gap: 18px;
+}
+
+.department-card-icon {
+    width: 64px;
+    height: 64px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    color: var(--department-color);
+
+    background:
+        rgba(255, 255, 255, 0.055);
+
+    border: 1px solid
+        var(--department-border);
+
+    box-shadow:
+        inset 0 0 20px
+        rgba(255, 255, 255, 0.025);
+
+    font-size: 28px;
+}
+
+.department-main-info h2 {
+    margin: 0;
+
+    overflow-wrap: anywhere;
+
+    color: #ffffff;
+
+    font-size: 20px;
+
+    font-weight: 800;
+}
+
+.department-main-info strong {
+    display: block;
+
+    margin-top: 7px;
+
+    color: var(--department-color);
+
+    font-size: 14px;
+}
+
+.department-arrow {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: var(--department-color);
+
+    background:
+        rgba(255, 255, 255, 0.025);
+
+    border: 1px solid
+        var(--department-border);
+
+    font-size: 17px;
+
+    cursor: pointer;
+
+    transition:
+        0.25s ease;
+}
+
+.department-arrow:hover {
+    background:
+        var(--department-color);
+
+    color: #06100c;
+
+    transform: translateX(4px);
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.department-description {
+    position: relative;
+    z-index: 2;
+
+    margin: 16px 0;
+
+    min-height: 42px;
+
+    color: #b5cbc4;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   DOCTORS LIST
+========================================================= */
+
+.department-doctors-list {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+/* =========================================================
+   INDIVIDUAL DOCTOR
+========================================================= */
+
+.department-doctor-card {
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 11px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(0, 0, 0, 0.19);
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.055);
+
+    transition:
+        0.25s ease;
+}
+
+.department-doctor-card:hover {
+    background:
+        rgba(0, 0, 0, 0.32);
+
+    border-color:
+        rgba(255, 255, 255, 0.11);
+
+    transform: translateX(3px);
+}
+
+.department-doctor-photo {
+    position: relative;
+
+    width: 54px;
+    height: 54px;
+
+    flex-shrink: 0;
+}
+
+.department-doctor-photo img {
+    width: 54px;
+    height: 54px;
+
+    object-fit: cover;
+
+    border-radius: 13px;
+
+    display: block;
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.13);
+}
+
+.doctor-photo-status {
+    position: absolute;
+
+    right: -2px;
+    bottom: -2px;
+
+    width: 13px;
+    height: 13px;
+
+    border-radius: 50%;
+
+    border: 2px solid #07120e;
+
+    background: #00ed70;
+}
+
+.doctor-photo-status.available {
+    background: #00ed70;
+}
+
+.doctor-photo-status.busy {
+    background: #ffc107;
+}
+
+.doctor-photo-status.offline {
+    background: #ff4545;
+}
+
+.department-doctor-info {
+    min-width: 0;
     flex: 1;
+}
+
+.department-doctor-info h3 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.department-doctor-info span {
+    display: block;
+
+    margin-top: 3px;
+
+    color: var(--department-color);
+
+    font-size: 12px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.department-doctor-info small {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #708d84;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   DOCTOR ACTIONS
+========================================================= */
+
+.department-doctor-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+}
+
+.doctor-action {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    transition:
+        0.2s ease;
+
+    font-size: 12px;
+}
+
+.doctor-action.view {
+    color: #36c8ff;
+
+    background:
+        rgba(0, 180, 255, 0.07);
+
+    border: 1px solid
+        rgba(0, 180, 255, 0.20);
+}
+
+.doctor-action.view:hover {
+    background:
+        rgba(0, 180, 255, 0.18);
+
+    transform: translateY(-2px);
+}
+
+.doctor-action.edit {
+    color: #00ed8f;
+
+    background:
+        rgba(0, 255, 145, 0.07);
+
+    border: 1px solid
+        rgba(0, 255, 145, 0.20);
+}
+
+.doctor-action.edit:hover {
+    background:
+        rgba(0, 255, 145, 0.18);
+
+    transform: translateY(-2px);
+}
+
+.doctor-action.delete {
+    color: #ff6565;
+
+    background:
+        rgba(255, 50, 50, 0.07);
+
+    border: 1px solid
+        rgba(255, 50, 50, 0.20);
+}
+
+.doctor-action.delete:hover {
+    background:
+        rgba(255, 50, 50, 0.18);
+
+    transform: translateY(-2px);
+}
+
+.doctor-action:disabled {
+    opacity: 0.45;
+
+    cursor: not-allowed;
+
+    transform: none !important;
+}
+
+
+/* =========================================================
+   DEPARTMENT FOOTER
+========================================================= */
+
+.department-card-footer {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 15px;
+
+    margin-top: auto;
+    padding-top: 20px;
+
+    border-top: 0;
+}
+
+.department-card-footer span {
+    display: none;
+}
+
+.department-card-footer button {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 0;
+    border: 1px solid var(--department-border);
+    border-radius: 50%;
+    background: transparent;
+
+    color: var(--department-color);
+
+    font-size: 0;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.department-card-footer button svg {
+    transition:
+        0.2s ease;
+}
+
+.department-card-footer button:hover svg {
+    transform: translateX(4px);
+}
+
+.department-card-footer button:hover {
+    background: var(--department-color);
+    color: #06100c;
+    transform: translateX(2px);
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.doctors-empty-wrapper {
+    display: flex;
+    justify-content: center;
+
+    padding: 80px 20px;
+}
+
+.doctors-empty {
+    text-align: center;
+
+    max-width: 400px;
+}
+
+.doctors-empty > svg {
+    font-size: 50px;
+
+    color: #00f5a0;
+
+    opacity: 0.65;
+}
+
+.doctors-empty h3 {
+    margin: 18px 0 8px;
+
+    font-size: 22px;
+}
+
+.doctors-empty p {
+    margin: 0;
+
+    color: #78968c;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.doctors-loading {
+    min-height: 70vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 14px;
+
+    color: #00f5a0;
+
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+.loading-spin {
+    animation:
+        doctors-spin 1s linear infinite;
+}
+
+@keyframes doctors-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   MODAL OVERLAY
+========================================================= */
+
+.doctor-modal-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px;
+
+    background:
+        rgba(0, 0, 0, 0.78);
+
+    backdrop-filter:
+        blur(8px);
+
+    overflow-y: auto;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.doctor-modal,
+.doctor-view-modal {
+    width: min(
+        900px,
+        100%
+    );
+
+    max-height: 92vh;
+
+    overflow-y: auto;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #071a13,
+            #03100c
+        );
+
+    border: 1px solid
+        rgba(0, 255, 170, 0.18);
+
+    box-shadow:
+        0 30px 100px
+        rgba(0, 0, 0, 0.65);
+}
+
+.doctor-view-modal {
+    width: min(
+        720px,
+        100%
+    );
+}
+
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.doctor-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 23px 25px;
+
+    border-bottom: 1px solid
+        rgba(255, 255, 255, 0.07);
+}
+
+.doctor-modal-header h2 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 22px;
+}
+
+.doctor-modal-header p {
+    margin: 5px 0 0;
+
+    color: #78958b;
+
+    font-size: 13px;
+}
+
+.doctor-modal-header > button {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.08);
+
+    background:
+        rgba(255, 255, 255, 0.04);
+
+    color: #9db6ad;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   PHOTO UPLOAD
+========================================================= */
+
+.doctor-photo-upload-section {
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    margin: 25px;
+    padding: 18px;
+
+    border-radius: 16px;
+
+    background:
+        rgba(0, 255, 170, 0.025);
+
+    border: 1px solid
+        rgba(0, 255, 170, 0.08);
+}
+
+.doctor-photo-preview {
+    width: 100px;
+    height: 100px;
+
+    flex-shrink: 0;
+
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+
+    color: #00f5a0;
+
+    font-size: 35px;
+
+    background:
+        rgba(0, 255, 170, 0.08);
+
+    border: 1px solid
+        rgba(0, 255, 170, 0.18);
+}
+
+.doctor-photo-preview img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.doctor-photo-upload-content h4 {
+    margin: 0;
+
+    color: #ffffff;
+}
+
+.doctor-photo-upload-content p {
+    margin: 5px 0 13px;
+
+    color: #78968c;
+
+    font-size: 12px;
+}
+
+.doctor-photo-upload-btn {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 10px 15px;
+
+    border-radius: 10px;
+
+    color: #00150e;
+
+    background: #00f5a0;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.doctor-photo-upload-btn input {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+
+    cursor: pointer;
+}
+
+.doctor-remove-photo {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top: 9px;
+
+    border: 0;
+    background: transparent;
+
+    color: #ff6666;
+
+    font-size: 11px;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.doctor-form {
+    padding-bottom: 20px;
+}
+
+.doctor-form-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 18px;
+
+    padding: 0 25px;
+}
+
+.doctor-form-group {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.doctor-form-group label {
+    color: #9db7ae;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.doctor-form-group input,
+.doctor-form-group select {
+    width: 100%;
+
+    height: 45px;
+
+    box-sizing: border-box;
+
+    padding: 0 13px;
+
+    outline: none;
+
+    border-radius: 10px;
+
+    color: #ffffff;
+
+    background:
+        rgba(0, 0, 0, 0.25);
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.09);
+
+    transition:
+        0.2s ease;
+}
+
+.doctor-form-group input:focus,
+.doctor-form-group select:focus {
+    border-color:
+        rgba(0, 255, 170, 0.45);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(0, 255, 170, 0.06);
+}
+
+.doctor-form-group input::placeholder {
+    color: #607d73;
+}
+
+.doctor-form-group select option {
+    background: #071a13;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   MODAL FOOTER
+========================================================= */
+
+.doctor-modal-footer,
+.doctor-view-footer {
+    display: flex;
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    margin-top: 25px;
+    padding: 18px 25px 0;
+
+    border-top: 1px solid
+        rgba(255, 255, 255, 0.07);
+}
+
+.doctor-cancel-btn,
+.doctor-save-btn {
+    min-height: 43px;
+
+    padding: 0 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border-radius: 10px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.doctor-cancel-btn {
+    color: #a3b7b0;
+
+    background:
+        rgba(255, 255, 255, 0.04);
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.08);
+}
+
+.doctor-save-btn {
+    color: #00150e;
+
+    background:
+        #00f5a0;
+
+    border: 1px solid
+        #00f5a0;
+}
+
+.doctor-save-btn:disabled {
+    opacity: 0.55;
+
+    cursor: not-allowed;
+}
+
+.doctor-cancel-btn:disabled {
+    opacity: 0.55;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   VIEW PROFILE
+========================================================= */
+
+.doctor-view-profile {
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    margin: 25px;
+
+    padding: 20px;
+
+    border-radius: 16px;
+
+    background:
+        rgba(0, 255, 170, 0.035);
+
+    border: 1px solid
+        rgba(0, 255, 170, 0.08);
+}
+
+.doctor-view-photo {
+    width: 100px;
+    height: 100px;
+
+    flex-shrink: 0;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+
+    border: 1px solid
+        rgba(0, 255, 170, 0.22);
+}
+
+.doctor-view-photo img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.doctor-view-label {
+    color: #00f5a0;
+
+    font-size: 12px;
+}
+
+.doctor-view-profile-info h3 {
+    margin: 5px 0;
+
+    color: #ffffff;
+
+    font-size: 24px;
+}
+
+.doctor-view-profile-info p {
+    margin: 0 0 10px;
+
+    color: #8ca79e;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.doctor-status {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.doctor-status > span {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+}
+
+.doctor-status.available {
+    color: #00f5a0;
+
+    background:
+        rgba(0, 255, 150, 0.08);
+}
+
+.doctor-status.available > span {
+    background: #00f5a0;
+}
+
+.doctor-status.busy {
+    color: #ffc857;
+
+    background:
+        rgba(255, 200, 80, 0.08);
+}
+
+.doctor-status.busy > span {
+    background: #ffc857;
+}
+
+.doctor-status.offline {
+    color: #ff6b6b;
+
+    background:
+        rgba(255, 80, 80, 0.08);
+}
+
+.doctor-status.offline > span {
+    background: #ff6b6b;
+}
+
+
+/* =========================================================
+   VIEW DETAILS
+========================================================= */
+
+.doctor-view-details {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 12px;
+
+    padding: 0 25px;
+}
+
+.doctor-view-detail {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 15px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255, 255, 255, 0.025);
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.06);
+}
+
+.doctor-view-detail > svg {
+    flex-shrink: 0;
+
+    color: #00f5a0;
+
+    font-size: 18px;
+}
+
+.doctor-view-detail span {
+    display: block;
+
+    color: #718e85;
+
+    font-size: 11px;
+}
+
+.doctor-view-detail strong {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1300px) {
+    .doctors-header {
+        align-items: flex-start;
+    }
+
+    .doctors-header-actions {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .doctors-search-top {
+        width: 260px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .department-cards-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .doctors-stats {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 800px) {
+    .doctors-page {
+        padding: 20px;
+    }
+
+    .doctors-header {
+        flex-direction: column;
+    }
+
+    .doctors-header-actions {
+        width: 100%;
+
+        justify-content: flex-start;
+    }
+
+    .doctors-search-top {
+        flex: 1;
+        width: auto;
+    }
+
+    .doctors-stats {
+        grid-template-columns:
+            1fr;
+    }
+
+    .doctors-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .doctors-toolbar-actions {
+        width: 100%;
+    }
+
+    .doctor-panel-search {
+        flex: 1;
+        width: auto;
+    }
+
+    .doctor-form-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .doctor-view-details {
+        grid-template-columns:
+            1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .doctors-page {
+        padding: 15px;
+    }
+
+    .doctors-title-icon {
+        width: 58px;
+        height: 58px;
+
+        font-size: 25px;
+    }
+
+    .doctors-header h1 {
+        font-size: 29px;
+    }
+
+    .doctors-header-actions {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .doctors-search-top,
+    .doctors-refresh-btn,
+    .doctors-add-btn {
+        width: 100%;
+    }
+
+    .doctors-toolbar-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .doctor-panel-search,
+    .doctor-panel-refresh {
+        width: 100%;
+    }
+
+    .department-card {
+        padding: 17px;
+    }
+
+    .department-main-info {
+        gap: 12px;
+    }
+
+    .department-card-icon {
+        width: 58px;
+        height: 58px;
+
+        font-size: 27px;
+    }
+
+    .department-main-info h2 {
+        font-size: 20px;
+    }
+
+    .department-arrow {
+        width: 42px;
+        height: 42px;
+    }
+
+    .department-doctor-card {
+        flex-wrap: wrap;
+    }
+
+    .department-doctor-info {
+        max-width: calc(
+            100% - 130px
+        );
+    }
+
+    .department-doctor-actions {
+        width: 100%;
+
+        justify-content: flex-end;
+
+        padding-top: 5px;
+    }
+
+    .department-card-footer {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .doctor-photo-upload-section {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .doctor-modal-overlay {
+        padding: 10px;
+    }
+
+    .doctor-view-profile {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+}
+
+/* =========================================================
+   DOCTORS PANEL
+========================================================= */
+
+.doctors-panel {
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid rgba(0, 255, 55, 0.10);
+    border-radius: 14px;
+    background: #07100b;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
+}
+
+.doctors-toolbar {
+    min-height: 76px;
+    padding: 16px 18px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.055);
 }
 
 .doctors-toolbar h2 {
     margin: 0 0 5px;
-
     color: #effff3;
     font-size: 17px;
     font-weight: 650;
 }
 
-.doctors-result-count {
+.doctors-toolbar > div:first-child span {
     color: #71877a;
     font-size: 12px;
 }
 
-/* =========================================================
-   SEARCH
-========================================================= */
+.doctors-toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-.doctors-search {
+.doctor-panel-search {
     width: 275px;
     height: 40px;
-
     padding: 0 12px;
     box-sizing: border-box;
-
     display: flex;
     align-items: center;
     gap: 9px;
-
     border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 9px;
-
     background: #0a160f;
-
-    transition: all 0.2s ease;
 }
 
-.doctors-search:focus-within {
+.doctor-panel-search:focus-within {
     border-color: rgba(0, 255, 55, 0.42);
     box-shadow: 0 0 0 3px rgba(0, 255, 55, 0.045);
 }
 
-.doctors-search svg {
+.doctor-panel-search svg {
     flex-shrink: 0;
     color: #5f7868;
     font-size: 13px;
 }
 
-.doctors-search input {
+.doctor-panel-search input {
     width: 100%;
     height: 100%;
-
     padding: 0;
-
     border: 0;
     outline: 0;
-
     color: #eaffef;
     background: transparent;
-
-    font-family: inherit;
     font-size: 12px;
 }
 
-.doctors-search input::placeholder {
+.doctor-panel-search input::placeholder {
     color: #5d7165;
 }
 
-/* =========================================================
-   TABLE WRAPPER
-========================================================= */
+.doctor-panel-refresh {
+    height: 40px;
+    padding: 0 13px;
+    border: 1px solid rgba(0, 255, 55, 0.14);
+    border-radius: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #a6bcae;
+    background: #0a160f;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.doctor-panel-refresh:hover:not(:disabled) {
+    color: #00ff37;
+    border-color: rgba(0, 255, 55, 0.32);
+    background: rgba(0, 255, 55, 0.05);
+}
+
+.doctor-panel-refresh:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
 
 .doctors-table-wrapper {
     width: 100%;
     overflow-x: auto;
-
-    border: 1px solid rgba(0, 255, 55, 0.10);
-    border-radius: 14px;
-
-    background: #07100b;
-
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
 }
-
-/* =========================================================
-   TABLE
-========================================================= */
 
 .doctors-table {
     width: 100%;
-    min-width: 1120px;
-
+    min-width: 950px;
     border-collapse: collapse;
 }
 
@@ -458,32 +1972,22 @@
 
 .doctors-table th {
     height: 48px;
-
     padding: 0 16px;
-
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-
     color: #728a7b;
-
     text-align: left;
     white-space: nowrap;
-
     font-size: 11px;
     font-weight: 650;
-
     text-transform: uppercase;
     letter-spacing: 0.45px;
 }
 
 .doctors-table td {
     height: 69px;
-
     padding: 9px 16px;
-
     border-bottom: 1px solid rgba(255, 255, 255, 0.045);
-
     color: #d6e7dc;
-
     font-size: 12px;
     vertical-align: middle;
 }
@@ -500,1225 +2004,110 @@
     border-bottom: 0;
 }
 
-/* =========================================================
-   DOCTOR TABLE PROFILE
-========================================================= */
-
-.doctor-table-profile {
-    min-width: 220px;
-
+.doctor-table-person {
+    min-width: 190px;
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 10px;
 }
 
-.doctor-table-photo {
-    position: relative;
-
-    width: 42px;
-    height: 42px;
-
+.doctor-table-avatar {
+    width: 38px;
+    height: 38px;
     flex-shrink: 0;
-
-    overflow: visible;
-
-    border-radius: 11px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: #00ff37;
-    background: rgba(0, 255, 55, 0.08);
+    overflow: hidden;
+    border-radius: 10px;
     border: 1px solid rgba(0, 255, 55, 0.13);
-
-    font-size: 15px;
-    font-weight: 700;
+    background: rgba(0, 255, 55, 0.08);
 }
 
-.doctor-table-photo img {
+.doctor-table-avatar img {
     width: 100%;
     height: 100%;
-
-    display: block;
-
     object-fit: cover;
-
-    border-radius: 10px;
 }
 
-.doctor-photo-status {
-    position: absolute;
-
-    right: -2px;
-    bottom: -2px;
-
-    width: 10px;
-    height: 10px;
-
-    border: 2px solid #07100b;
-    border-radius: 50%;
-
-    box-sizing: content-box;
-}
-
-.doctor-photo-status.available {
-    background: #00ff37;
-    box-shadow: 0 0 7px rgba(0, 255, 55, 0.35);
-}
-
-.doctor-photo-status.busy {
-    background: #ffc766;
-}
-
-.doctor-photo-status.offline {
-    background: #ff6868;
-}
-
-.doctor-table-profile strong {
+.doctor-table-person strong,
+.doctor-table-contact span {
     display: block;
-
     color: #e7f6ec;
-
     font-size: 12px;
     font-weight: 650;
 }
 
-.doctor-table-profile small {
+.doctor-table-person span,
+.doctor-table-contact small {
     display: block;
-
-    margin-top: 4px;
-
-    color: #657c6d;
-    font-size: 10px;
-}
-
-/* =========================================================
-   SPECIALIZATION
-========================================================= */
-
-.doctor-specialization {
-    display: block;
-
-    color: #bdd1c4;
-
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.doctor-qualification {
-    display: block;
-
-    margin-top: 4px;
-
-    color: #657c6d;
-    font-size: 10px;
-}
-
-/* =========================================================
-   CONTACT
-========================================================= */
-
-.doctor-contact {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-
-    white-space: nowrap;
-}
-
-.doctor-contact span {
-    color: #bdd1c4;
+    margin-top: 3px;
+    color: #718a7a;
     font-size: 11px;
 }
 
-.doctor-contact small {
-    color: #657c6d;
-    font-size: 10px;
+.doctor-table-specialization {
+    color: #b8d7c2;
 }
 
-/* =========================================================
-   EXPERIENCE
-========================================================= */
+.doctor-table-department {
+    color: #9fc5ac;
+}
 
-.doctor-experience {
-    color: #b6c8bc;
+.doctor-table-contact small {
+    max-width: 190px;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.doctor-experience strong {
-    color: #e7f6ec;
-    font-size: 12px;
-}
-
-.doctor-experience span {
-    margin-left: 3px;
-    color: #71877a;
-    font-size: 10px;
-}
-
-/* =========================================================
-   CONSULTATION FEE
-========================================================= */
-
-.doctor-fee {
-    color: #48f27b;
-
-    font-size: 12px;
-    font-weight: 650;
-
-    white-space: nowrap;
-}
-
-/* =========================================================
-   DOCTOR STATUS
-========================================================= */
-
-.doctor-status {
-    min-width: 72px;
-
-    padding: 5px 9px;
-
+.doctor-table-status {
     display: inline-flex;
     align-items: center;
+    min-width: 72px;
     justify-content: center;
-
-    border: 1px solid transparent;
-    border-radius: 20px;
-
-    font-size: 10px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 11px;
     font-weight: 650;
-
-    text-transform: capitalize;
 }
 
-.doctor-status.available {
-    color: #48f27b;
-    background: rgba(0, 255, 55, 0.08);
-    border-color: rgba(0, 255, 55, 0.18);
+.doctor-table-status.available {
+    color: #00ed70;
+    background: rgba(0, 237, 112, 0.09);
+    border: 1px solid rgba(0, 237, 112, 0.18);
 }
 
-.doctor-status.busy {
-    color: #ffc766;
-    background: rgba(255, 177, 0, 0.08);
-    border-color: rgba(255, 177, 0, 0.18);
+.doctor-table-status.busy {
+    color: #ffc857;
+    background: rgba(255, 200, 87, 0.09);
+    border: 1px solid rgba(255, 200, 87, 0.18);
 }
 
-.doctor-status.offline {
-    color: #ff7777;
-    background: rgba(255, 55, 55, 0.08);
-    border-color: rgba(255, 55, 55, 0.18);
+.doctor-table-status.offline {
+    color: #ff6868;
+    background: rgba(255, 104, 104, 0.09);
+    border: 1px solid rgba(255, 104, 104, 0.18);
 }
 
-/* =========================================================
-   ACTIONS
-========================================================= */
-
-.doctor-actions {
+.doctor-table-actions {
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
-.doctor-action {
-    width: 31px;
-    height: 31px;
-
-    padding: 0;
-
-    border: 1px solid transparent;
-    border-radius: 8px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    cursor: pointer;
-
-    transition: all 0.2s ease;
-}
-
-.doctor-action svg {
-    font-size: 11px;
-}
-
-.doctor-action.view {
-    color: #65d9ff;
-    background: rgba(0, 190, 255, 0.07);
-    border-color: rgba(0, 190, 255, 0.12);
-}
-
-.doctor-action.view:hover {
-    color: #061017;
-    background: #65d9ff;
-    border-color: #65d9ff;
-}
-
-.doctor-action.edit {
-    color: #00ff37;
-    background: rgba(0, 255, 55, 0.07);
-    border-color: rgba(0, 255, 55, 0.12);
-}
-
-.doctor-action.edit:hover {
-    color: #031007;
-    background: #00ff37;
-    border-color: #00ff37;
-}
-
-.doctor-action.delete {
-    color: #ff6868;
-    background: rgba(255, 55, 55, 0.07);
-    border-color: rgba(255, 55, 55, 0.12);
-}
-
-.doctor-action.delete:hover {
-    color: #fff;
-    background: #e94545;
-    border-color: #e94545;
-}
-
-/* =========================================================
-   EMPTY
-========================================================= */
-
-.doctors-empty {
-    height: 180px !important;
-
-    text-align: center !important;
-
-    color: #62776a !important;
-
-    font-size: 13px !important;
-}
-
-/* =========================================================
-   MODAL OVERLAY
-========================================================= */
-
-.doctor-modal-overlay {
-    position: fixed;
-    inset: 0;
-
-    z-index: 1000;
-
-    padding: 25px;
-
-    box-sizing: border-box;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    overflow-y: auto;
-
-    background: rgba(0, 0, 0, 0.74);
-
-    backdrop-filter: blur(7px);
-    -webkit-backdrop-filter: blur(7px);
-}
-
-/* =========================================================
-   MODAL
-========================================================= */
-
-.doctor-modal {
-    position: relative;
-
-    width: min(720px, 100%);
-    max-height: calc(100vh - 50px);
-
-    overflow-y: auto;
-
-    padding: 28px;
-
-    box-sizing: border-box;
-
-    border: 1px solid rgba(0, 255, 55, 0.16);
-    border-radius: 17px;
-
-    background:
-        radial-gradient(
-            circle at 50% 0%,
-            rgba(0, 255, 55, 0.055),
-            transparent 35%
-        ),
-        #08110c;
-
-    box-shadow:
-        0 25px 70px rgba(0, 0, 0, 0.55),
-        0 0 35px rgba(0, 255, 55, 0.035);
-
-    animation: doctorModalIn 0.22s ease;
-}
-
-@keyframes doctorModalIn {
-    from {
-        opacity: 0;
-        transform: translateY(12px) scale(0.98);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.doctor-modal::-webkit-scrollbar {
-    width: 5px;
-}
-
-.doctor-modal::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.doctor-modal::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background: #1b3324;
-}
-
-/* =========================================================
-   MODAL HEADER
-========================================================= */
-
-.doctor-modal-header {
-    position: relative;
-
-    padding-right: 42px;
-
-    margin-bottom: 22px;
-}
-
-.doctor-modal-header h2 {
-    margin: 0;
-
-    color: #effff3;
-
-    font-size: 20px;
-    font-weight: 700;
-}
-
-.doctor-modal-header p {
-    margin: 7px 0 0;
-
+.doctors-table-empty,
+.doctors-table-message {
+    height: 180px;
     color: #71877a;
-
-    font-size: 12px;
+    text-align: center;
 }
 
-.doctor-modal-header button {
-    position: absolute;
-
-    top: -5px;
-    right: 0;
-
-    width: 34px;
-    height: 34px;
-
-    padding: 0;
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 9px;
-
+.doctors-table-message {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    color: #718579;
-    background: rgba(255, 255, 255, 0.035);
-
-    cursor: pointer;
+    gap: 10px;
 }
 
-.doctor-modal-header button:hover {
-    color: #ff7777;
-
-    border-color: rgba(255, 75, 75, 0.2);
-    background: rgba(255, 75, 75, 0.07);
-}
-
-/* =========================================================
-   FORM
-========================================================= */
-
-.doctor-form {
-    width: 100%;
-}
-
-.doctor-form-grid {
-    width: 100%;
-
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    gap: 0 14px;
-}
-
-.doctor-form-group {
-    width: 100%;
-    margin-bottom: 17px;
-}
-
-.doctor-form-group.full-width {
-    grid-column: 1 / -1;
-}
-
-.doctor-form-group label {
-    margin-bottom: 7px;
-
-    display: flex;
-    align-items: center;
-    gap: 7px;
-
-    color: #b5cabc;
-
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.doctor-form-group label svg {
-    color: #00d936;
-    font-size: 11px;
-}
-
-.doctor-form-group input,
-.doctor-form-group select,
-.doctor-form-group textarea {
-    width: 100%;
-
-    box-sizing: border-box;
-
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    border-radius: 9px;
-
-    outline: none;
-
-    color: #e8f6ec;
-    background: #0b1710;
-
-    font-family: inherit;
-    font-size: 12px;
-
-    transition: all 0.2s ease;
-}
-
-.doctor-form-group input,
-.doctor-form-group select {
-    height: 43px;
-    padding: 0 12px;
-}
-
-.doctor-form-group textarea {
-    min-height: 85px;
-
-    padding: 11px 12px;
-
-    resize: vertical;
-
-    line-height: 1.5;
-}
-
-.doctor-form-group input::placeholder,
-.doctor-form-group textarea::placeholder {
-    color: #566b5d;
-}
-
-.doctor-form-group input:focus,
-.doctor-form-group select:focus,
-.doctor-form-group textarea:focus {
-    border-color: rgba(0, 255, 55, 0.42);
-
-    box-shadow:
-        0 0 0 3px rgba(0, 255, 55, 0.045);
-}
-
-.doctor-form-group select {
-    cursor: pointer;
-}
-
-.doctor-form-group select option {
-    color: #e8f6ec;
-    background: #0b1710;
-}
-
-.doctor-form-group small {
-    display: block;
-
-    margin-top: 6px;
-
-    color: #687e70;
-
-    font-size: 10px;
-}
-
-/* =========================================================
-   PHOTO UPLOAD
-========================================================= */
-
-.doctor-photo-upload-section {
-    width: 100%;
-
-    margin-bottom: 21px;
-    padding: 14px;
-
-    box-sizing: border-box;
-
-    display: flex;
-    align-items: center;
-    gap: 15px;
-
-    border: 1px solid rgba(0, 255, 55, 0.09);
-    border-radius: 12px;
-
-    background: rgba(0, 255, 55, 0.025);
-}
-
-.doctor-photo-preview {
-    position: relative;
-
-    width: 82px;
-    height: 82px;
-
-    flex-shrink: 0;
-
-    border-radius: 15px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    overflow: hidden;
-
-    color: #00ff37;
-
-    background: rgba(0, 255, 55, 0.07);
-
-    border: 1px solid rgba(0, 255, 55, 0.15);
-}
-
-.doctor-photo-preview img {
-    width: 100%;
-    height: 100%;
-
-    display: block;
-
-    object-fit: cover;
-}
-
-.doctor-photo-preview > svg {
-    font-size: 25px;
-}
-
-.doctor-photo-upload-content {
-    flex: 1;
-    min-width: 0;
-}
-
-.doctor-photo-upload-content strong {
-    display: block;
-
-    margin-bottom: 5px;
-
-    color: #e7f6ec;
-
-    font-size: 13px;
-    font-weight: 650;
-}
-
-.doctor-photo-upload-content p {
-    margin: 0 0 10px;
-
-    color: #687e70;
-
-    font-size: 10px;
-    line-height: 1.5;
-}
-
-.doctor-photo-upload-btn {
-    min-height: 36px;
-
-    padding: 0 12px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-
-    color: #00ff37;
-
-    background: rgba(0, 255, 55, 0.07);
-
-    border: 1px solid rgba(0, 255, 55, 0.16);
-    border-radius: 8px;
-
-    font-family: inherit;
-
-    font-size: 11px;
-    font-weight: 650;
-
-    cursor: pointer;
-
-    transition: all 0.2s ease;
-}
-
-.doctor-photo-upload-btn:hover {
-    color: #031007;
-
-    background: #00ff37;
-
-    border-color: #00ff37;
-
-    box-shadow: 0 0 16px rgba(0, 255, 55, 0.14);
-}
-
-.doctor-photo-upload-btn input {
+.department-cards-grid,
+.doctors-empty-wrapper {
     display: none;
-}
-
-.doctor-remove-photo {
-    margin-left: 7px;
-
-    min-height: 36px;
-
-    padding: 0 11px;
-
-    border: 1px solid rgba(255, 75, 75, 0.14);
-    border-radius: 8px;
-
-    color: #ff7777;
-    background: rgba(255, 55, 55, 0.06);
-
-    font-family: inherit;
-    font-size: 11px;
-    font-weight: 600;
-
-    cursor: pointer;
-}
-
-.doctor-remove-photo:hover {
-    color: #fff;
-
-    background: #d94343;
-    border-color: #d94343;
-}
-
-/* =========================================================
-   MODAL FOOTER
-========================================================= */
-
-.doctor-modal-footer {
-    width: 100%;
-
-    margin-top: 8px;
-    padding-top: 17px;
-
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-
-    border-top: 1px solid rgba(255, 255, 255, 0.055);
-}
-
-.doctor-cancel-btn,
-.doctor-save-btn {
-    min-height: 41px;
-
-    padding: 0 15px;
-
-    border-radius: 9px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
-    font-family: inherit;
-
-    font-size: 12px;
-    font-weight: 650;
-
-    cursor: pointer;
-
-    transition: all 0.2s ease;
-}
-
-.doctor-cancel-btn {
-    color: #a5b7aa;
-
-    background: rgba(255, 255, 255, 0.045);
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.doctor-cancel-btn:hover:not(:disabled) {
-    color: #e5eee8;
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.doctor-save-btn {
-    color: #031007;
-
-    background: #00ff37;
-
-    border: 1px solid #00ff37;
-}
-
-.doctor-save-btn:hover:not(:disabled) {
-    background: #3aff63;
-
-    border-color: #3aff63;
-
-    box-shadow: 0 0 20px rgba(0, 255, 55, 0.18);
-}
-
-.doctor-cancel-btn:disabled,
-.doctor-save-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-/* =========================================================
-   VIEW MODAL
-========================================================= */
-
-.doctor-view-modal {
-    width: min(650px, 100%);
-}
-
-/* =========================================================
-   VIEW PROFILE
-========================================================= */
-
-.doctor-view-profile {
-    width: 100%;
-
-    padding: 15px;
-    margin-bottom: 16px;
-
-    box-sizing: border-box;
-
-    display: flex;
-    align-items: center;
-    gap: 15px;
-
-    border: 1px solid rgba(0, 255, 55, 0.09);
-    border-radius: 12px;
-
-    background: rgba(0, 255, 55, 0.025);
-}
-
-.doctor-view-photo {
-    width: 82px;
-    height: 82px;
-
-    flex-shrink: 0;
-
-    overflow: hidden;
-
-    border-radius: 15px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: #00ff37;
-
-    background: rgba(0, 255, 55, 0.08);
-
-    border: 1px solid rgba(0, 255, 55, 0.14);
-
-    font-size: 24px;
-}
-
-.doctor-view-photo img {
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-
-    display: block;
-}
-
-.doctor-view-profile-info {
-    min-width: 0;
-}
-
-.doctor-view-profile-info h3 {
-    margin: 0;
-
-    color: #eaffef;
-
-    font-size: 17px;
-    font-weight: 700;
-}
-
-.doctor-view-profile-info p {
-    margin: 5px 0 0;
-
-    color: #00d936;
-
-    font-size: 11px;
-    font-weight: 600;
-}
-
-.doctor-view-profile-info small {
-    display: block;
-
-    margin-top: 5px;
-
-    color: #657c6d;
-
-    font-size: 10px;
-}
-
-/* =========================================================
-   VIEW DETAILS
-========================================================= */
-
-.doctor-view-details {
-    display: grid;
-
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    gap: 11px;
-}
-
-.doctor-view-detail {
-    min-height: 78px;
-
-    padding: 13px;
-
-    box-sizing: border-box;
-
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 11px;
-
-    background: #0a160f;
-}
-
-.doctor-view-label {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-
-    margin-bottom: 9px;
-
-    color: #71877a;
-
-    font-size: 10px;
-
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.doctor-view-label svg {
-    color: #00d936;
-}
-
-.doctor-view-detail strong {
-    display: block;
-
-    color: #e8f6ec;
-
-    font-size: 13px;
-}
-
-.doctor-view-detail small {
-    display: block;
-
-    margin-top: 4px;
-
-    color: #657c6d;
-
-    font-size: 10px;
-}
-
-/* =========================================================
-   VIEW FOOTER
-========================================================= */
-
-.doctor-view-footer {
-    margin-top: 17px;
-
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.doctor-view-footer button {
-    min-height: 41px;
-
-    padding: 0 15px;
-
-    border-radius: 9px;
-
-    font-family: inherit;
-
-    font-size: 12px;
-    font-weight: 650;
-
-    cursor: pointer;
-}
-
-.doctor-view-footer button:first-child {
-    color: #a5b7aa;
-
-    background: rgba(255, 255, 255, 0.045);
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.doctor-view-footer button:first-child:hover {
-    color: #e5eee8;
-    background: rgba(255, 255, 255, 0.08);
-}
-
-/* =========================================================
-   COMMON FOCUS / BUTTON
-========================================================= */
-
-.doctors-page button,
-.doctor-modal button {
-    font-family: inherit;
-}
-
-.doctors-page button:focus-visible,
-.doctor-modal button:focus-visible,
-.doctors-page input:focus-visible,
-.doctors-page select:focus-visible,
-.doctors-page textarea:focus-visible {
-    outline: 2px solid rgba(0, 255, 55, 0.35);
-    outline-offset: 2px;
-}
-
-/* =========================================================
-   SCROLLBAR
-========================================================= */
-
-.doctors-table-wrapper::-webkit-scrollbar {
-    height: 6px;
-}
-
-.doctors-table-wrapper::-webkit-scrollbar-track {
-    background: #07100b;
-}
-
-.doctors-table-wrapper::-webkit-scrollbar-thumb {
-    background: #1b3324;
-    border-radius: 10px;
-}
-
-.doctors-table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #285038;
-}
-
-/* =========================================================
-   RESPONSIVE - 1100px
-========================================================= */
-
-@media (max-width: 1100px) {
-
-    .doctors-stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .doctors-search {
-        width: 230px;
-    }
-}
-
-/* =========================================================
-   RESPONSIVE - 850px
-========================================================= */
-
-@media (max-width: 850px) {
-
-    .doctors-page {
-        padding: 20px;
-    }
-
-    .doctors-header {
-        align-items: flex-start;
-    }
-
-    .doctors-toolbar {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .doctors-search {
-        width: 100%;
-    }
-
-    .doctors-toolbar > div:first-child {
-        width: 100%;
-    }
-
-    .doctors-header-actions {
-        flex-shrink: 0;
-    }
-
-    .doctor-form-grid {
-        grid-template-columns: 1fr;
-        gap: 0;
-    }
-
-    .doctor-form-group.full-width {
-        grid-column: auto;
-    }
-}
-
-/* =========================================================
-   RESPONSIVE - 650px
-========================================================= */
-
-@media (max-width: 650px) {
-
-    .doctors-page {
-        padding: 15px;
-    }
-
-    .doctors-header {
-        flex-direction: column;
-    }
-
-    .doctors-header-left {
-        width: 100%;
-    }
-
-    .doctors-header-actions {
-        width: 100%;
-    }
-
-    .doctors-refresh-btn,
-    .doctors-add-btn {
-        flex: 1;
-    }
-
-    .doctors-stats {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-
-    .doctor-stat-card {
-        min-height: 82px;
-    }
-
-    .doctors-toolbar {
-        padding: 14px;
-    }
-
-    .doctors-search {
-        width: 100%;
-    }
-
-    .doctor-photo-upload-section {
-        align-items: flex-start;
-    }
-
-    .doctor-photo-upload-content {
-        min-width: 0;
-    }
-
-    .doctor-view-details {
-        grid-template-columns: 1fr;
-    }
-
-    .doctor-modal-overlay {
-        padding: 12px;
-    }
-
-    .doctor-modal {
-        padding: 22px 18px;
-        max-height: calc(100vh - 24px);
-        border-radius: 14px;
-    }
-
-    .doctor-modal-footer,
-    .doctor-view-footer {
-        flex-direction: column-reverse;
-        align-items: stretch;
-    }
-
-    .doctor-modal-footer button,
-    .doctor-view-footer button {
-        width: 100%;
-    }
-}
-
-/* =========================================================
-   RESPONSIVE - 480px
-========================================================= */
-
-@media (max-width: 480px) {
-
-    .doctors-header-left {
-        gap: 11px;
-    }
-
-    .doctors-title-icon {
-        width: 40px;
-        height: 40px;
-    }
-
-    .doctors-header-left h1 {
-        font-size: 23px;
-    }
-
-    .doctors-header-left p {
-        font-size: 12px;
-    }
-
-    .doctors-header-actions {
-        flex-direction: column;
-    }
-
-    .doctors-refresh-btn,
-    .doctors-add-btn {
-        width: 100%;
-        flex: none;
-    }
-
-    .doctor-stat-card {
-        padding: 14px;
-    }
-
-    .doctor-stat-icon {
-        width: 42px;
-        height: 42px;
-    }
-
-    .doctor-stat-card strong {
-        font-size: 22px;
-    }
-
-    .doctor-photo-upload-section {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .doctor-photo-upload-content {
-        width: 100%;
-    }
-
-    .doctor-photo-upload-btn,
-    .doctor-remove-photo {
-        margin: 3px;
-    }
-
-    .doctor-view-profile {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .doctor-view-profile-info {
-        width: 100%;
-    }
-
-    .doctor-modal-header h2 {
-        font-size: 18px;
-    }
 }

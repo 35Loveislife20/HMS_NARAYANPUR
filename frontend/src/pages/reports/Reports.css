@@ -41,6 +41,29 @@
     gap: 14px;
 }
 
+.reports-back-button {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border: 1px solid rgba(0, 255, 55, 0.18);
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00ff37;
+    background: #09120d;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.reports-back-button:hover {
+    color: #061008;
+    background: #00ff37;
+    border-color: #00ff37;
+    transform: translateX(-2px);
+    box-shadow: 0 0 18px rgba(0, 255, 55, 0.18);
+}
+
 .reports-title-icon {
     width: 54px;
     height: 54px;

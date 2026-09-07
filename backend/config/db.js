@@ -1,17 +1,31 @@
 const mysql = require("mysql2/promise");
 
 // =====================================================
+// DATABASE CONFIGURATION
+// =====================================================
+
+const DB_HOST = process.env.DB_HOST;
+const DB_USER = process.env.DB_USER;
+const DB_PASSWORD = process.env.DB_PASSWORD;
+const DB_NAME = process.env.DB_NAME;
+const DB_PORT = Number(process.env.DB_PORT) || 4000;
+
+// =====================================================
 // DATABASE POOL
 // =====================================================
 
 const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    host: DB_HOST,
+    user: DB_USER,
+    password: DB_PASSWORD,
+    database: DB_NAME,
 
-    port: Number(process.env.DB_PORT) || 4000,
+    port: DB_PORT,
 
+    // Force IPv4
+    family: 4,
+
+    // TiDB Cloud requires SSL
     ssl: {
         rejectUnauthorized: false,
     },
@@ -40,15 +54,19 @@ const testDatabaseConnection = async () => {
     let connection;
 
     try {
+        console.log("========================================");
+        console.log("🔄 Connecting to TiDB...");
+        console.log("🌐 Host:", DB_HOST);
+        console.log("🔌 Port:", DB_PORT);
+        console.log("📦 Database:", DB_NAME);
+        console.log("========================================");
+
         connection = await pool.getConnection();
 
         await connection.query("SELECT 1");
 
         console.log("========================================");
         console.log("✅ MySQL / TiDB Database Connected");
-        console.log(`📦 Database: ${process.env.DB_NAME}`);
-        console.log(`🌐 Host: ${process.env.DB_HOST}`);
-        console.log(`🔌 Port: ${process.env.DB_PORT || 4000}`);
         console.log("========================================");
 
         return true;
@@ -60,6 +78,8 @@ const testDatabaseConnection = async () => {
         console.error("========================================");
         console.error("Error Code:", error.code || "UNKNOWN");
         console.error("Error Message:", error.message);
+        console.error("Error Host:", DB_HOST);
+        console.error("Error Port:", DB_PORT);
         console.error("========================================");
 
         return false;
@@ -77,7 +97,6 @@ const testDatabaseConnection = async () => {
 // =====================================================
 
 const checkDatabaseHealth = async () => {
-
     let connection;
 
     try {
@@ -90,18 +109,18 @@ const checkDatabaseHealth = async () => {
 
         return {
             connected: rows.length > 0,
-            database: process.env.DB_NAME,
-            host: process.env.DB_HOST,
-            port: Number(process.env.DB_PORT) || 4000,
+            database: DB_NAME,
+            host: DB_HOST,
+            port: DB_PORT,
         };
 
     } catch (error) {
 
         return {
             connected: false,
-            database: process.env.DB_NAME,
-            host: process.env.DB_HOST,
-            port: Number(process.env.DB_PORT) || 4000,
+            database: DB_NAME,
+            host: DB_HOST,
+            port: DB_PORT,
             error: error.message,
         };
 

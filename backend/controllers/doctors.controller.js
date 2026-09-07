@@ -8,7 +8,12 @@ const {
     deleteDoctorById,
 } = require("../models/doctor.model");
 
+const fs = require("fs");
+const path = require("path");
+const crypto = require("crypto");
+
 const cloudinary = require("../config/cloudinary");
+const { isCloudinaryConfigured } = cloudinary;
 
 
 /* =========================================================
@@ -19,6 +24,25 @@ const uploadDoctorPhotoToCloudinary = async (file) => {
 
     if (!file || !file.buffer) {
         return null;
+    }
+
+    if (!isCloudinaryConfigured) {
+        const extension =
+            path.extname(file.originalname || ".jpg") || ".jpg";
+        const filename =
+            `doctor-${Date.now()}-${crypto.randomUUID()}${extension}`;
+        const uploadDirectory = path.join(
+            __dirname,
+            "../uploads/doctors"
+        );
+        const filePath = path.join(uploadDirectory, filename);
+
+        await fs.promises.mkdir(uploadDirectory, { recursive: true });
+        await fs.promises.writeFile(filePath, file.buffer);
+
+        return {
+            secure_url: `/uploads/doctors/${filename}`,
+        };
     }
 
     return new Promise((resolve, reject) => {
@@ -64,6 +88,23 @@ const uploadDoctorPhotoToCloudinary = async (file) => {
 const deleteDoctorPhoto = async (photo) => {
 
     if (!photo) {
+        return;
+    }
+
+    if (photo.startsWith("/uploads/")) {
+        try {
+            await fs.promises.unlink(
+                path.join(__dirname, "..", photo)
+            );
+        } catch (error) {
+            if (error.code !== "ENOENT") {
+                console.error(
+                    "Local doctor photo delete error:",
+                    error.message
+                );
+            }
+        }
+
         return;
     }
 
@@ -558,7 +599,9 @@ const addDoctor = async (
             success: false,
 
             message:
-                "Failed to add doctor",
+                error && error.message
+                    ? `Failed to add doctor: ${error.message}`
+                    : "Failed to add doctor",
 
             error:
                 error.message,
