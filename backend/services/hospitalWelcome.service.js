@@ -30,7 +30,7 @@ const getTransporter = () => {
         // config/email.js nahi mili, fallback use hoga
     }
 
-    cachedTransporter = nodemailer.createTransport({
+    cachedTransporter = nodemailer.createTransport({ family: 4,
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT) || 587,
         secure: String(process.env.SMTP_SECURE) === "true",

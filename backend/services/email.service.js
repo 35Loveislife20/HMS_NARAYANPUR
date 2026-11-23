@@ -27,7 +27,7 @@ if (!EMAIL_PASS) {
 // CREATE TRANSPORTER
 // =====================================================
 
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({ family: 4,
 
     service: "gmail",
 

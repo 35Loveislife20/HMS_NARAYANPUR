@@ -11,13 +11,13 @@ function getTransporter() {
 
   const host = process.env.SMTP_HOST;
   transporter = host
-    ? nodemailer.createTransport({
+    ? nodemailer.createTransport({ family: 4,
         host,
         port: Number(process.env.SMTP_PORT) || 587,
         secure: process.env.SMTP_SECURE === "true",
         auth: { user, pass },
       })
-    : nodemailer.createTransport({ service: "gmail", auth: { user, pass } });
+    : nodemailer.createTransport({ family: 4, service: "gmail", auth: { user, pass } });
 
   return transporter;
 }

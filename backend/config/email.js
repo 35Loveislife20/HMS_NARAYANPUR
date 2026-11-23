@@ -18,7 +18,7 @@ const EMAIL_PASS =
 // =====================================================
 
 const transporter =
-    nodemailer.createTransport({
+    nodemailer.createTransport({ family: 4,
 
         service: "gmail",
 

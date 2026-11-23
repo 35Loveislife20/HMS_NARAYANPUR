@@ -1256,7 +1256,7 @@ const buildTransporter = () => {
     // =====================================================
 
     if (service) {
-        return nodemailer.createTransport({
+        return nodemailer.createTransport({ family: 4,
             service,
             auth: {
                 user,
@@ -1292,7 +1292,7 @@ const buildTransporter = () => {
         ).toLowerCase() ===
         "true";
 
-    return nodemailer.createTransport({
+    return nodemailer.createTransport({ family: 4,
         host,
         port,
         secure,
