@@ -2899,3 +2899,399 @@
         scroll-behavior: auto !important;
     }
 }
+
+
+/* =========================================================
+   POLISH: HOSPITAL HEADER, LOGO, HEADING, HOSPITAL CARD
+   (is block ke rules upar ke purane rules ko override karte hain)
+   ========================================================= */
+
+/* ---------- Header ---------- */
+
+.old-public-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(6, 20, 14, 0.96),
+            rgba(5, 15, 11, 0.9)
+        );
+    border-bottom: 1px solid rgba(74, 222, 128, 0.16);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+}
+
+.old-public-header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(74, 222, 128, 0.55),
+            transparent
+        );
+    pointer-events: none;
+}
+
+.old-header-inner {
+    min-height: 84px;
+}
+
+.old-header-right {
+    gap: 16px;
+}
+
+/* Brand: logo + naam + subtitle */
+
+.old-header-brand {
+    gap: 14px;
+    padding: 7px 18px 7px 8px;
+    border-radius: 18px;
+    border: 1px solid rgba(74, 222, 128, 0.16);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(34, 197, 94, 0.1),
+            rgba(15, 30, 23, 0.6)
+        );
+    min-width: 0;
+}
+
+.old-brand-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.old-brand-icon svg {
+    font-size: 22px;
+}
+
+.old-header-brand strong {
+    max-width: 280px;
+    font-size: 17px;
+    font-weight: 850;
+    letter-spacing: -0.2px;
+    color: #ffffff;
+}
+
+.old-header-brand span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 280px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #86efac;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+}
+
+.old-header-brand span::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.9);
+}
+
+/* Logo image (HospitalLogo component) */
+
+.old-logo-box img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    padding: 5px;
+}
+
+.old-logo-box:has(img) {
+    background: #f3fbf6;
+    border-color: rgba(74, 222, 128, 0.45);
+}
+
+/* ---------- Page heading ---------- */
+
+.old-appointment-container {
+    padding-top: 44px;
+}
+
+.old-page-heading {
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 30px;
+    padding: 24px 28px;
+    border-radius: 24px;
+    border: 1px solid rgba(74, 222, 128, 0.14);
+    background:
+        radial-gradient(
+            circle at 0% 0%,
+            rgba(34, 197, 94, 0.14),
+            transparent 55%
+        ),
+        rgba(10, 24, 17, 0.72);
+    box-shadow: 0 22px 55px rgba(0, 0, 0, 0.28);
+}
+
+.old-heading-icon {
+    width: 68px;
+    height: 68px;
+    border-radius: 20px;
+}
+
+.old-heading-icon svg {
+    font-size: 26px;
+}
+
+.old-heading-eyebrow {
+    display: inline-block;
+    margin: 0 10px 8px 0;
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: rgba(74, 222, 128, 0.12);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    font-size: 10.5px;
+}
+
+.old-heading-hospital {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 100%;
+    margin-bottom: 8px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(15, 30, 23, 0.7);
+    color: #d6eadf;
+    font-size: 12px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.old-heading-hospital svg {
+    flex-shrink: 0;
+    font-size: 11px;
+    color: #4ade80;
+}
+
+.old-page-heading h1 {
+    font-size: clamp(27px, 3.2vw, 40px);
+    background: linear-gradient(90deg, #ffffff, #b7f5cd);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: #f5fbf7;
+}
+
+.old-page-heading p {
+    max-width: 680px;
+    color: #98b0a4;
+}
+
+/* ---------- Hospital card (right column) ---------- */
+
+.old-hospital-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 22px;
+    overflow: hidden;
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    background:
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(34, 197, 94, 0.18),
+            transparent 60%
+        ),
+        rgba(10, 24, 17, 0.85);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+}
+
+.old-hospital-card-icon {
+    width: 62px;
+    height: 62px;
+    flex-shrink: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4ade80;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(34, 197, 94, 0.2),
+            rgba(16, 185, 129, 0.07)
+        );
+    border: 1px solid rgba(74, 222, 128, 0.25);
+}
+
+.old-hospital-card-icon svg {
+    font-size: 24px;
+}
+
+.old-hospital-card > div:last-child {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.old-hospital-card span {
+    color: #4ade80;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+}
+
+.old-hospital-card strong {
+    color: #ffffff;
+    font-size: 18px;
+    line-height: 1.25;
+    font-weight: 850;
+    overflow-wrap: anywhere;
+}
+
+.old-hospital-card small {
+    color: #8fa59a;
+    font-size: 12.5px;
+    line-height: 1.4;
+}
+
+/* ---------- Footer ---------- */
+
+.old-public-footer {
+    border-top: 1px solid rgba(74, 222, 128, 0.14);
+    background: rgba(5, 15, 11, 0.85);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 860px) {
+    .old-page-heading {
+        padding: 20px;
+        gap: 16px;
+    }
+
+    .old-header-brand strong,
+    .old-header-brand span {
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 640px) {
+    /* [Back icon] [Brand ............] [Refresh] */
+
+    .old-header-inner {
+        width: calc(100% - 24px);
+        min-height: 0;
+        padding: 10px 0;
+        gap: 10px;
+    }
+
+    .old-header-right {
+        flex: 1;
+        min-width: 0;
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .old-header-brand {
+        flex: 1;
+        min-width: 0;
+        padding: 6px 12px 6px 6px;
+    }
+
+    .old-brand-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+    }
+
+    .old-header-brand strong {
+        max-width: 100%;
+        font-size: 15px;
+    }
+
+    .old-header-brand span {
+        max-width: 100%;
+        font-size: 10px;
+        letter-spacing: 0.6px;
+    }
+
+    .old-appointment-container {
+        width: calc(100% - 24px);
+        padding-top: 22px;
+    }
+
+    .old-page-heading {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 18px;
+        border-radius: 20px;
+    }
+
+    .old-heading-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+    }
+
+    .old-hospital-card {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 500px) {
+    /* original CSS yahan paragraph chhupa deta tha, ab dikhega */
+
+    .old-page-heading h1 {
+        font-size: 24px;
+    }
+
+    .old-page-heading p {
+        display: block;
+        margin-top: 6px;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+}
+/* ---------- Patient ID prefix (P-) ----------
+   OldPatientAppointment.css ke bilkul end me add karein */
+
+.old-search-prefix {
+    position: absolute;
+    top: 50%;
+    left: 43px;
+    transform: translateY(-50%);
+    color: #4ade80;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.old-search-input-wrapper input.has-prefix {
+    padding-left: 66px;
+    letter-spacing: 0.4px;
+}

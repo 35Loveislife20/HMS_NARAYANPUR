@@ -10,15 +10,23 @@ const {
     addPublicAppointment,
 } = require("../controllers/appointment.controller");
 
+const authMiddleware = require("../middleware/auth.middleware");
+const {
+    requirePermission,
+} = require("../middleware/role.middleware");
+
 const router = express.Router();
 
-// =====================================================
-// PUBLIC APPOINTMENT ROUTES
-// IMPORTANT: These must come BEFORE /:id
-// =====================================================
+/*
+=========================================================
+PUBLIC APPOINTMENT ROUTES
+IMPORTANT:
+Keep /public BEFORE /:id
+=========================================================
+*/
 
 // GET /api/appointments/public
-// Check booked slots for public patient appointment
+// Check appointment availability
 router.get(
     "/public",
     getPublicAppointments
@@ -31,9 +39,16 @@ router.post(
     addPublicAppointment
 );
 
-// =====================================================
-// PROTECTED / HMS APPOINTMENT ROUTES
-// =====================================================
+/*
+=========================================================
+PROTECTED / HMS APPOINTMENT ROUTES
+=========================================================
+*/
+
+router.use(authMiddleware);
+router.use(
+    requirePermission("appointments")
+);
 
 // GET /api/appointments
 router.get(

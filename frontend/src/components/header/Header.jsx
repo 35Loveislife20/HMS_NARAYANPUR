@@ -5,6 +5,27 @@ import { useAuth } from "../../context/AuthContext";
 import "./Header.css";
 
 const API_BASE = "http://localhost:5000/api";
+const BACKEND_ORIGIN = "http://localhost:5000";
+
+/*
+ * Logo ka path do tarah ka ho sakta hai:
+ *  - "/hms-logo.png"        -> frontend public/ folder se
+ *  - "/uploads/logo.png"    -> backend server se
+ *  - "https://..." / data:  -> jaise hai waise
+ */
+const resolveLogoUrl = (logo) => {
+    if (!logo) return "";
+
+    if (/^(https?:|data:|blob:)/i.test(logo)) {
+        return logo;
+    }
+
+    if (logo.startsWith("/uploads/") || logo.startsWith("uploads/")) {
+        return `${BACKEND_ORIGIN}/${logo.replace(/^\/+/, "")}`;
+    }
+
+    return logo;
+};
 
 const DEFAULT_SETTINGS = {
     hospitalName: "HMS Hospital Narayanpur",
@@ -17,6 +38,8 @@ const Header = () => {
 
     const [hospitalSettings, setHospitalSettings] =
         useState(DEFAULT_SETTINGS);
+
+    const [logoFailed, setLogoFailed] = useState(false);
 
     /* =========================================================
        LOAD HOSPITAL SETTINGS
@@ -99,6 +122,10 @@ const Header = () => {
         }
     };
 
+    useEffect(() => {
+        setLogoFailed(false);
+    }, [hospitalSettings.logo]);
+
     /* =========================================================
        INITIAL LOAD
        ========================================================= */
@@ -161,18 +188,11 @@ const Header = () => {
             <div className="header-left">
 
                 <div className="header-title-icon">
-                    {hospitalSettings.logo ? (
+                    {resolveLogoUrl(hospitalSettings.logo) && !logoFailed ? (
                         <img
-                            src={
-                                hospitalSettings.logo
-                            }
-                            alt={
-                                hospitalSettings.hospitalName
-                            }
-                            onError={(event) => {
-                                event.currentTarget.style.display =
-                                    "none";
-                            }}
+                            src={resolveLogoUrl(hospitalSettings.logo)}
+                            alt={hospitalSettings.hospitalName}
+                            onError={() => setLogoFailed(true)}
                         />
                     ) : (
                         <FaHospital />

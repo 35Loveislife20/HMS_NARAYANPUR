@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
+    useLocation,
     useNavigate,
     useSearchParams,
 } from "react-router-dom";
@@ -24,6 +25,7 @@ import {
 } from "react-icons/fa";
 
 import "./Patients.css";
+import SuccessPopup from "./SuccessPopup";
 
 const API_URL =
     import.meta.env.VITE_API_URL ||
@@ -31,6 +33,7 @@ const API_URL =
 
 function Patients() {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [searchParams, setSearchParams] =
         useSearchParams();
@@ -55,6 +58,12 @@ function Patients() {
 
     const [saving, setSaving] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(null);
+
+    const [successPopup, setSuccessPopup] = useState({
+        open: false,
+        title: "",
+        message: "",
+    });
 
     const [formData, setFormData] = useState({
         name: "",
@@ -89,6 +98,101 @@ function Patients() {
     };
 
     // =====================================================
+    // HOSPITAL ID
+    // =====================================================
+
+    const toValidHospitalId = (value) => {
+        if (
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+            return null;
+        }
+
+        const number = Number(value);
+
+        return Number.isInteger(number) && number > 0
+            ? number
+            : null;
+    };
+
+    const readStoredUser = () => {
+        try {
+            const saved =
+                localStorage.getItem("hms_user");
+
+            return saved
+                ? JSON.parse(saved) || {}
+                : {};
+        } catch {
+            return {};
+        }
+    };
+
+    /*
+     * Hospital id ke sources (Dashboard.jsx ke hisaab se):
+     * - Super admin: Dashboard me chuna hua hospital
+     *   (navigate state / sessionStorage hms_selected_hospital)
+     * - Baaki staff: login user ka apna hospital (hms_user)
+     * - Purana key hms_hospital_id bhi fallback me chalega
+     */
+    const getHospitalId = () => {
+        const user = readStoredUser();
+
+        const role = String(
+            user?.role || ""
+        ).toLowerCase();
+
+        const ownHospital =
+            toValidHospitalId(
+                user?.hospital_id ??
+                    user?.hospitalId ??
+                    (typeof user?.hospital === "object"
+                        ? user?.hospital?.id
+                        : user?.hospital)
+            );
+
+        let selectedHospital = null;
+
+        try {
+            selectedHospital =
+                toValidHospitalId(
+                    location.state?.hospitalId
+                ) ||
+                toValidHospitalId(
+                    sessionStorage.getItem(
+                        "hms_selected_hospital"
+                    )
+                );
+        } catch {
+            selectedHospital = toValidHospitalId(
+                location.state?.hospitalId
+            );
+        }
+
+        const storedHospital = toValidHospitalId(
+            localStorage.getItem("hms_hospital_id")
+        );
+
+        if (role === "super_admin") {
+            return (
+                selectedHospital ||
+                storedHospital ||
+                ownHospital ||
+                null
+            );
+        }
+
+        return (
+            ownHospital ||
+            storedHospital ||
+            selectedHospital ||
+            null
+        );
+    };
+
+    // =====================================================
     // FETCH PATIENTS
     // =====================================================
 
@@ -100,8 +204,16 @@ function Patients() {
 
             setError("");
 
+            const hospitalId = getHospitalId();
+
+            if (!hospitalId) {
+                throw new Error(
+                    "Hospital information is missing. Please login again."
+                );
+            }
+
             const response = await fetch(
-                `${API_URL}/patients`,
+                `${API_URL}/patients?hospital_id=${hospitalId}`,
                 {
                     method: "GET",
                     headers: getHeaders(),
@@ -167,11 +279,6 @@ function Patients() {
 
     // =====================================================
     // HOME PAGE REGISTRATION FLOW
-    //
-    // Home:
-    // /patients?action=register
-    //
-    // Now opens dedicated public registration page.
     // =====================================================
 
     useEffect(() => {
@@ -182,7 +289,6 @@ function Patients() {
             return;
         }
 
-        // Remove query parameter from URL
         setSearchParams(
             {},
             {
@@ -190,10 +296,9 @@ function Patients() {
             }
         );
 
-        // Open dedicated public registration page
-        navigate(
-            "/patient-registration"
-        );
+        navigate("/patients/register", {
+            state: { from: "/patients" },
+        });
     }, [
         searchParams,
         setSearchParams,
@@ -443,6 +548,15 @@ function Patients() {
 
             setError("");
 
+            const hospitalId =
+                getHospitalId();
+
+            if (!hospitalId) {
+                throw new Error(
+                    "Hospital information is missing. Please login again."
+                );
+            }
+
             const isEdit =
                 Boolean(editingPatient);
 
@@ -451,7 +565,7 @@ function Patients() {
                 editingPatient?._id;
 
             const url = isEdit
-                ? `${API_URL}/patients/${patientId}`
+                ? `${API_URL}/patients/${patientId}?hospital_id=${hospitalId}`
                 : `${API_URL}/patients`;
 
             const method = isEdit
@@ -480,6 +594,9 @@ function Patients() {
 
                 blood_group:
                     formData.blood_group || "",
+
+                hospital_id:
+                    hospitalId,
             };
 
             const response =
@@ -517,15 +634,23 @@ function Patients() {
                 );
             }
 
-            // Close modal
             setShowModal(false);
 
             setEditingPatient(null);
 
             resetForm();
 
-            // Reload patient list
             await fetchPatients(false);
+
+            setSuccessPopup({
+                open: true,
+                title: isEdit
+                    ? "Patient Updated"
+                    : "Patient Added",
+                message: isEdit
+                    ? "Patient ki details successfully update ho gayi hain."
+                    : "Patient successfully register ho gaya hai.",
+            });
         } catch (err) {
             console.error(
                 "Save Patient Error:",
@@ -570,9 +695,18 @@ function Patients() {
 
             setError("");
 
+            const hospitalId =
+                getHospitalId();
+
+            if (!hospitalId) {
+                throw new Error(
+                    "Hospital information is missing. Please login again."
+                );
+            }
+
             const response =
                 await fetch(
-                    `${API_URL}/patients/${patientId}`,
+                    `${API_URL}/patients/${patientId}?hospital_id=${hospitalId}`,
                     {
                         method: "DELETE",
                         headers:
@@ -604,6 +738,12 @@ function Patients() {
             }
 
             await fetchPatients(false);
+
+            setSuccessPopup({
+                open: true,
+                title: "Patient Deleted",
+                message: "Patient record delete ho gaya hai.",
+            });
         } catch (err) {
             console.error(
                 "Delete Patient Error:",
@@ -700,6 +840,8 @@ function Patients() {
             <header className="patients-header">
 
                 <div>
+
+                    {/* BACK TO DASHBOARD */}
                     <button
                         type="button"
                         className="patients-back-button"
@@ -718,6 +860,7 @@ function Patients() {
                         Manage hospital patients
                         and their information
                     </p>
+
                 </div>
 
                 <div className="patients-actions">
@@ -861,6 +1004,7 @@ function Patients() {
                 <div className="patients-panel-header">
 
                     <div>
+
                         <h2>
                             Patient List
                         </h2>
@@ -873,6 +1017,7 @@ function Patients() {
                                 : ""}{" "}
                             found
                         </p>
+
                     </div>
 
                     <div className="patients-toolbar">
@@ -914,6 +1059,7 @@ function Patients() {
                 ================================================= */}
 
                 {loading ? (
+
                     <div className="patients-loading">
 
                         <FaSyncAlt className="spin" />
@@ -1017,6 +1163,7 @@ function Patients() {
                                                 .toUpperCase();
 
                                         return (
+
                                             <tr
                                                 key={
                                                     patientId
@@ -1067,13 +1214,11 @@ function Patients() {
                                                 <td>
 
                                                     <span className="gender-badge">
-
                                                         {
                                                             getGenderText(
                                                                 patient?.gender
                                                             )
                                                         }
-
                                                     </span>
 
                                                 </td>
@@ -1106,10 +1251,8 @@ function Patients() {
                                                 <td>
 
                                                     <span className="blood-badge">
-
                                                         {patient?.blood_group ||
                                                             "-"}
-
                                                     </span>
 
                                                 </td>
@@ -1167,9 +1310,13 @@ function Patients() {
 
                                                             {deleteLoading ===
                                                                 patientId ? (
+
                                                                 <FaSyncAlt className="spin" />
+
                                                             ) : (
+
                                                                 <FaTrash />
+
                                                             )}
 
                                                         </button>
@@ -1179,6 +1326,7 @@ function Patients() {
                                                 </td>
 
                                             </tr>
+
                                         );
                                     }
                                 )}
@@ -1188,6 +1336,7 @@ function Patients() {
                         </table>
 
                     </div>
+
                 )}
 
             </section>
@@ -1488,17 +1637,21 @@ function Patients() {
                                 >
 
                                     {saving ? (
+
                                         <>
                                             <FaSyncAlt className="spin" />
 
                                             Saving...
                                         </>
+
                                     ) : (
+
                                         <>
                                             {editingPatient
                                                 ? "Update Patient"
                                                 : "Register Patient"}
                                         </>
+
                                     )}
 
                                 </button>
@@ -1510,6 +1663,7 @@ function Patients() {
                     </div>
 
                 </div>
+
             )}
 
             {/* =================================================
@@ -1795,7 +1949,20 @@ function Patients() {
                         </div>
 
                     </div>
+
                 )}
+
+            <SuccessPopup
+                open={successPopup.open}
+                title={successPopup.title}
+                message={successPopup.message}
+                onClose={() =>
+                    setSuccessPopup((previous) => ({
+                        ...previous,
+                        open: false,
+                    }))
+                }
+            />
 
         </main>
     );

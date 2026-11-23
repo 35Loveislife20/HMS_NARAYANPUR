@@ -1,0 +1,232 @@
+/* =========================================================
+   SHARED SUCCESS POPUP - EMBOSS DESIGN (SuccessPopup.jsx)
+========================================================= */
+.hms-success-backdrop {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(0, 12, 8, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+
+  z-index: 100000;
+
+  animation: hmsSuccessFade 0.25s ease-out both;
+}
+
+/* ---------- raised plate ---------- */
+
+.hms-success-popup {
+  position: relative;
+
+  width: min(340px, 100%);
+
+  padding: 34px 24px 26px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 30px;
+
+  background: linear-gradient(180deg, #ffffff 0%, #e9f6ee 45%, #c9e3d4 100%);
+  color: #25483a;
+
+  text-align: center;
+
+  box-shadow:
+    0 28px 55px rgba(0, 0, 0, 0.55),
+    0 0 36px rgba(57, 255, 120, 0.16),
+    inset 0 3px 4px rgba(255, 255, 255, 0.95),
+    inset 0 -6px 12px rgba(0, 70, 40, 0.2);
+
+  animation: hmsSuccessPop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* andar ki patli engraved line */
+.hms-success-popup::before {
+  content: "";
+
+  position: absolute;
+  inset: 8px;
+
+  border: 1px solid rgba(0, 90, 50, 0.14);
+  border-radius: 23px;
+
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  pointer-events: none;
+}
+
+/* ---------- checkmark: dabi hui ring + ubhra hua gol badge ---------- */
+
+.hms-success-check {
+  position: relative;
+
+  width: 96px;
+  height: 96px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 8px;
+
+  border-radius: 50%;
+
+  /* recessed (andar dabi) socket */
+  background: linear-gradient(145deg, #bcd8c8, #f3fbf6);
+
+  box-shadow:
+    inset 5px 5px 10px rgba(0, 70, 40, 0.28),
+    inset -5px -5px 10px rgba(255, 255, 255, 0.95),
+    0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.hms-success-check::before {
+  content: "";
+
+  position: absolute;
+  inset: 12px;
+
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+
+  /* ubhra hua green badge */
+  background: linear-gradient(145deg, #5dff98 0%, #1ee87b 55%, #00b85f 100%);
+
+  box-shadow:
+    0 6px 12px rgba(0, 60, 30, 0.4),
+    inset 0 2px 3px rgba(255, 255, 255, 0.6),
+    inset 0 -4px 6px rgba(0, 90, 45, 0.35);
+}
+
+.hms-success-check svg {
+  position: relative;
+
+  width: 40px;
+  height: 40px;
+
+  color: #ffffff;
+
+  filter: drop-shadow(0 2px 1px rgba(0, 70, 35, 0.55));
+}
+
+.hms-success-check path {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+
+  animation: hmsSuccessDraw 0.5s ease-out 0.25s forwards;
+}
+
+/* ---------- letterpress text ---------- */
+
+.hms-success-popup h3 {
+  position: relative;
+
+  margin: 0;
+
+  color: #25483a;
+
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95),
+    0 -1px 0 rgba(0, 60, 30, 0.18);
+}
+
+.hms-success-popup p {
+  position: relative;
+
+  margin: 0 0 12px;
+
+  color: #5a7a6b;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* ---------- embossed pill button ---------- */
+
+.hms-success-button {
+  position: relative;
+
+  height: 44px;
+  padding: 0 34px;
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+
+  background: linear-gradient(180deg, #17744f 0%, #0b3d2a 55%, #062a1c 100%);
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 1px rgba(0, 25, 15, 0.6);
+
+  cursor: pointer;
+
+  box-shadow:
+    0 9px 18px rgba(0, 50, 30, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.hms-success-button:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 13px 24px rgba(0, 50, 30, 0.45),
+    0 0 18px rgba(25, 196, 122, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.hms-success-button:active {
+  transform: translateY(1px);
+
+  box-shadow:
+    0 3px 7px rgba(0, 50, 30, 0.35),
+    inset 0 3px 7px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes hmsSuccessFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes hmsSuccessPop {
+  from { opacity: 0; transform: scale(0.85) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes hmsSuccessDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hms-success-backdrop,
+  .hms-success-popup,
+  .hms-success-check path {
+    animation: none !important;
+    stroke-dashoffset: 0;
+  }
+}

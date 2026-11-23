@@ -9,55 +9,107 @@ const {
     getBillingStats,
 } = require("../controllers/billing.controller");
 
+const authMiddleware = require("../middleware/auth.middleware");
+const {
+    requirePermission,
+} = require("../middleware/role.middleware");
+
 const router = express.Router();
 
-/* =====================================================
-   BILLING ROUTES
-===================================================== */
+/*
+=====================================================
+AUTHENTICATION
+All billing routes require login
+=====================================================
+*/
+
+router.use(authMiddleware);
 
 /*
-   GET /api/billing
-   Get all bills
+=====================================================
+BILLING PERMISSION
+Allowed roles:
+- super_admin
+- hospital_admin
+- pharmacist
+- accountant
+=====================================================
 */
-router.get("/", getAllBilling);
 
+router.use(
+    requirePermission("billing")
+);
 
 /*
-   GET /api/billing/stats
-   Get billing statistics
-
-   IMPORTANT:
-   This route must come BEFORE /:id
+=====================================================
+GET ALL BILLING
+GET /api/billing
+=====================================================
 */
-router.get("/stats", getBillingStats);
 
+router.get(
+    "/",
+    getAllBilling
+);
 
 /*
-   GET /api/billing/:id
-   Get single bill
+=====================================================
+GET BILLING STATS
+GET /api/billing/stats
+=====================================================
 */
-router.get("/:id", getBillingById);
 
+router.get(
+    "/stats",
+    getBillingStats
+);
 
 /*
-   POST /api/billing
-   Create new bill
+=====================================================
+GET SINGLE BILL
+GET /api/billing/:id
+=====================================================
 */
-router.post("/", createBilling);
 
+router.get(
+    "/:id",
+    getBillingById
+);
 
 /*
-   PUT /api/billing/:id
-   Update bill
+=====================================================
+CREATE BILL
+POST /api/billing
+=====================================================
 */
-router.put("/:id", updateBilling);
 
+router.post(
+    "/",
+    createBilling
+);
 
 /*
-   DELETE /api/billing/:id
-   Delete bill
+=====================================================
+UPDATE BILL
+PUT /api/billing/:id
+=====================================================
 */
-router.delete("/:id", deleteBilling);
 
+router.put(
+    "/:id",
+    updateBilling
+);
+
+/*
+=====================================================
+DELETE BILL
+DELETE /api/billing/:id
+=====================================================
+*/
+
+router.delete(
+    "/:id",
+    deleteBilling
+);
 
 module.exports = router;

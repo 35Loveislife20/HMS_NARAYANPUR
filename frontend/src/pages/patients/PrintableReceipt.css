@@ -1,0 +1,351 @@
+/* Shared printable receipt (registration + appointment) */
+
+.hms-receipt {
+    width: 100%;
+    margin-top: 18px;
+    padding: 18px;
+    border: 1px solid rgba(57, 255, 120, 0.2);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.25);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.hms-receipt > :not(.hms-receipt-bg) {
+    position: relative;
+    z-index: 1;
+}
+
+.hms-receipt-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    border-radius: inherit;
+}
+
+.hms-receipt-bg-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.14;
+    filter: grayscale(0.35);
+}
+
+/* ---------- TOP HEADER: logo | hospital | QR ---------- */
+
+.hms-receipt-top {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 64px 1fr 84px;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 12px;
+}
+
+.hms-receipt-top-logo img {
+    display: block;
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.hms-receipt-top-center {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    text-align: center;
+    min-width: 0;
+}
+
+.hms-receipt-top-center strong {
+    color: #eafff3;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.hms-receipt-top-center span {
+    color: rgba(234, 255, 243, 0.6);
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.hms-receipt-top-qr {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.hms-receipt-top-qr svg {
+    display: block;
+    width: 84px;
+    height: 84px;
+    background: #ffffff;
+    padding: 4px;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.hms-receipt-divider {
+    position: relative;
+    z-index: 1;
+    border-bottom: 1px dashed rgba(57, 255, 120, 0.3);
+    margin-bottom: 12px;
+}
+
+/* ---------- BADGE, TITLE, CHECK ---------- */
+
+.hms-receipt-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.hms-receipt-header > div:first-child {
+    min-width: 0;
+}
+
+.hms-receipt-badge {
+    display: inline-block;
+    margin-bottom: 5px;
+    padding: 4px 8px;
+    border-radius: 5px;
+    background: rgba(57, 255, 120, 0.12);
+    color: #39ff78;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.hms-receipt-header h3 {
+    margin: 0;
+    color: #eafff3;
+    font-size: 15px;
+}
+
+.hms-receipt-check {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    color: #39ff78;
+    font-size: 20px;
+}
+
+.hms-receipt-line {
+    height: 1px;
+    margin: 13px 0;
+    background: rgba(57, 255, 120, 0.14);
+}
+
+/* ---------- TABLE ---------- */
+
+.hms-receipt table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.hms-receipt td {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(57, 255, 120, 0.08);
+    color: rgba(234, 255, 243, 0.58);
+    font-size: 11px;
+}
+
+.hms-receipt td:first-child {
+    padding-right: 16px;
+}
+
+.hms-receipt td:last-child {
+    text-align: right;
+    color: #eafff3;
+    word-break: break-word;
+}
+
+/* ---------- NOTE + ACTIONS ---------- */
+
+.hms-receipt-note {
+    margin-top: 13px;
+    padding: 10px;
+    border-radius: 7px;
+    background: rgba(57, 255, 120, 0.05);
+    color: rgba(234, 255, 243, 0.6);
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.hms-receipt-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+
+.hms-receipt-print-button {
+    min-height: 36px;
+    padding: 0 13px;
+    border: 1px solid rgba(57, 255, 120, 0.25);
+    border-radius: 7px;
+    background: rgba(57, 255, 120, 0.07);
+    color: #eafff3;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.hms-receipt-print-button:hover {
+    background: rgba(57, 255, 120, 0.15);
+    border-color: rgba(57, 255, 120, 0.4);
+}
+
+/* =========================================================
+   PRINT — sirf receipt print hoti hai.
+   Rules tabhi lagte hain jab body par .hms-receipt-printing ho
+   (Print Receipt button dabane par).
+========================================================= */
+
+/* Page ke default margin hatao: us margin mein app ka dark
+   background / black frame dikhta tha. Spacing receipt ka
+   apna padding (10mm 12mm) deta hai. */
+@page {
+    size: A4;
+    margin: 0;
+}
+
+@media print {
+
+    /* Poora page safed, koi dark background / border nahi */
+    html:has(body.hms-receipt-printing),
+    body.hms-receipt-printing,
+    body.hms-receipt-printing #root {
+        height: auto !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        outline: 0 !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        background-image: none !important;
+    }
+
+    /* Page ka sab kuch chhupao (navbar, sidebar, layout) */
+    body.hms-receipt-printing * {
+        visibility: hidden !important;
+    }
+
+    /* ...sirf receipt aur uske andar ka sab dikhao */
+    body.hms-receipt-printing .hms-receipt,
+    body.hms-receipt-printing .hms-receipt * {
+        visibility: visible !important;
+    }
+
+    /* Receipt ko parent layout se bahar nikaalo */
+    body.hms-receipt-printing .hms-receipt {
+        position: absolute !important;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
+        padding: 10mm 12mm !important;
+        border: 0 !important;
+        outline: 0 !important;
+        border-radius: 0 !important;
+        background: #ffffff !important;
+        color: #111111 !important;
+        box-shadow: none !important;
+        overflow: hidden !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    body.hms-receipt-printing .hms-receipt::before,
+    body.hms-receipt-printing .hms-receipt::after {
+        content: none !important;
+        display: none !important;
+    }
+
+    body.hms-receipt-printing .hms-receipt * {
+        color: #111111 !important;
+        text-shadow: none !important;
+        outline: 0 !important;
+        box-shadow: none !important;
+    }
+
+    body.hms-receipt-printing .hms-receipt-actions {
+        display: none !important;
+    }
+
+    /* Watermark background image */
+    body.hms-receipt-printing .hms-receipt-bg-image {
+        opacity: 0.1 !important;
+        filter: grayscale(1) !important;
+    }
+
+    /* Header: logo aur QR dono saaf dikhein */
+    body.hms-receipt-printing .hms-receipt-top {
+        grid-template-columns: 70px 1fr 90px;
+    }
+
+    body.hms-receipt-printing .hms-receipt-top-logo img {
+        width: 70px;
+        height: 70px;
+        filter: none !important;
+    }
+
+    body.hms-receipt-printing .hms-receipt-top-qr svg {
+        width: 90px;
+        height: 90px;
+        background: #ffffff !important;
+        border: 0 !important;
+    }
+
+    body.hms-receipt-printing .hms-receipt-top-center strong {
+        font-size: 18px !important;
+    }
+
+    body.hms-receipt-printing .hms-receipt-top-center span {
+        color: #444444 !important;
+        font-size: 12px !important;
+    }
+
+    body.hms-receipt-printing .hms-receipt-divider {
+        border-bottom: 1px dashed #999999 !important;
+    }
+
+    body.hms-receipt-printing .hms-receipt-badge {
+        background: #e6f7ec !important;
+        color: #0a6b32 !important;
+    }
+
+    body.hms-receipt-printing .hms-receipt-check {
+        color: #0a6b32 !important;
+    }
+
+    body.hms-receipt-printing .hms-receipt td {
+        font-size: 13px !important;
+        padding: 10px 0 !important;
+        border-bottom: 1px solid #e5e5e5 !important;
+    }
+
+    body.hms-receipt-printing .hms-receipt td:first-child {
+        color: #555555 !important;
+    }
+
+    body.hms-receipt-printing .hms-receipt-note {
+        color: #444444 !important;
+        border: 1px solid #dddddd !important;
+        background: #ffffff !important;
+        font-size: 12px !important;
+    }
+}

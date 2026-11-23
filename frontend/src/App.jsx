@@ -1,524 +1,250 @@
 import React from "react";
-
 import {
-  Navigate,
-  Route,
   Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
 } from "react-router-dom";
 
-import { AuthProvider } from "./context/AuthContext";
-
-// =====================================================
-// PUBLIC PAGES
-// =====================================================
-
+import MainPage from "./pages/home/MainPage";
 import Home from "./pages/home/Home";
-import Register from "./pages/auth/Register";
-import ForgotPassword from "./pages/auth/ForgotPassword";
-import ResetPassword from "./pages/auth/ResetPassword";
 
-// =====================================================
-// PUBLIC PATIENT SERVICES
-// =====================================================
-
-import PatientRegistration from "./pages/patients/PatientRegistration";
+import Appointments from "./pages/Appointments/Appointments";
 import NewPatientAppointment from "./pages/Appointments/NewPatientAppointment";
 import OldPatientAppointment from "./pages/Appointments/OldPatientAppointment";
 
-// =====================================================
-// PROTECTED PAGES
-// =====================================================
-
-import Dashboard from "./pages/dashboard/Dashboard";
 import Patients from "./pages/patients/Patients";
+import PatientRegistration from "./pages/patients/PatientRegistration";
+
 import Doctors from "./pages/Doctors/Doctors";
-import Appointments from "./pages/Appointments/Appointments";
 import Departments from "./pages/Departments/Departments";
+import Billing from "./pages/Billing/Billing";
 import Laboratory from "./pages/Laboratory/Laboratory";
 import Pharmacy from "./pages/pharmacy/Pharmacy";
-import Billing from "./pages/Billing/Billing";
 import Reports from "./pages/reports/Reports";
 import Settings from "./pages/settings/Settings";
+import HospitalSettings from "./pages/settings/Hospitalsettings";
 import Users from "./pages/users/Users";
+import Dashboard from "./pages/dashboard/Dashboard";
+import SuperAdmin from "./pages/super-admin/SuperAdmin";
 
-// =====================================================
-// LAYOUT
-// =====================================================
+import PatientServices from "./pages/patients/PatientServices";
 
-import Layout from "./components/layout/Layout";
+/* =========================================================
+   SETTINGS ROUTE (role ke hisaab se)
 
-// =====================================================
-// PROTECTED ROUTE
-// =====================================================
+   - Super Admin (seedha)            -> Settings (HMS login / branding)
+   - Super Admin (hospital dashboard
+     se, state.hospitalId ke saath)  -> us hospital ki HospitalSettings
+   - Hospital Admin / baaki staff    -> apne hospital ki HospitalSettings
+========================================================= */
 
-import ProtectedRoute from "./components/common/ProtectedRoute";
+function readStoredUser() {
+  try {
+    return JSON.parse(localStorage.getItem("hms_user") || "null") || {};
+  } catch {
+    return {};
+  }
+}
 
-// =====================================================
-// EXACT 9 ROLES
-// =====================================================
+function isSuperAdminUser(user) {
+  const role = String(user?.role ?? user?.role_name ?? user?.roleName ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
 
-export const ROLES = {
-  SUPER_ADMIN: "super_admin",
-  HOSPITAL_ADMIN: "hospital_admin",
-  RECEPTIONIST: "receptionist",
-  DOCTOR: "doctor",
-  LAB_TECHNICIAN: "lab_technician",
-  PHARMACIST: "pharmacist",
-  ACCOUNTANT: "accountant",
-  NURSE: "nurse",
-  PATIENT: "patient",
-};
-
-// =====================================================
-// EXACT PERMISSION MATRIX
-// =====================================================
-
-export const PERMISSIONS = {
-  dashboard: [
-    ROLES.SUPER_ADMIN,
-    ROLES.HOSPITAL_ADMIN,
-    ROLES.RECEPTIONIST,
-    ROLES.DOCTOR,
-    ROLES.LAB_TECHNICIAN,
-    ROLES.PHARMACIST,
-    ROLES.ACCOUNTANT,
-    ROLES.NURSE,
-    ROLES.PATIENT,
-  ],
-
-  patients: [
-    ROLES.SUPER_ADMIN,
-    ROLES.HOSPITAL_ADMIN,
-    ROLES.RECEPTIONIST,
-    ROLES.DOCTOR,
-    ROLES.NURSE,
-  ],
-
-  doctors: [
-    ROLES.SUPER_ADMIN,
-    ROLES.HOSPITAL_ADMIN,
-  ],
-
-  appointments: [
-    ROLES.SUPER_ADMIN,
-    ROLES.HOSPITAL_ADMIN,
-    ROLES.RECEPTIONIST,
-    ROLES.DOCTOR,
-    ROLES.NURSE,
-    ROLES.PATIENT,
-  ],
-
-  departments: [
-    ROLES.SUPER_ADMIN,
-    ROLES.HOSPITAL_ADMIN,
-    ROLES.DOCTOR,
-    ROLES.NURSE,
-  ],
-
-  laboratory: [
-    ROLES.SUPER_ADMIN,
-    ROLES.HOSPITAL_ADMIN,
-    ROLES.DOCTOR,
-    ROLES.LAB_TECHNICIAN,
-  ],
-
-  pharmacy: [
-    ROLES.SUPER_ADMIN,
-    ROLES.HOSPITAL_ADMIN,
-    ROLES.PHARMACIST,
-    ROLES.ACCOUNTANT,
-  ],
-
-  billing: [
-    ROLES.SUPER_ADMIN,
-    ROLES.HOSPITAL_ADMIN,
-    ROLES.PHARMACIST,
-    ROLES.ACCOUNTANT,
-  ],
-
-  reports: [
-    ROLES.SUPER_ADMIN,
-    ROLES.HOSPITAL_ADMIN,
-    ROLES.DOCTOR,
-    ROLES.LAB_TECHNICIAN,
-    ROLES.PHARMACIST,
-    ROLES.ACCOUNTANT,
-  ],
-
-  settings: [
-    ROLES.SUPER_ADMIN,
-    ROLES.HOSPITAL_ADMIN,
-  ],
-
-  users: [
-    ROLES.SUPER_ADMIN,
-  ],
-};
-
-// =====================================================
-// ACCESS DENIED
-// =====================================================
-
-const AccessDenied = () => {
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        width: "100%",
-        background: "#020806",
-        color: "#ffffff",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "30px",
-        boxSizing: "border-box",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
+    user?.is_super === true ||
+    role === "super" ||
+    role === "superadmin" ||
+    role === "super_admin"
+  );
+}
+
+function getUserHospitalId(user) {
+  return (
+    user?.hospital_id ??
+    user?.hospitalId ??
+    (user?.hospital && typeof user.hospital === "object"
+      ? user.hospital.id
+      : user?.hospital) ??
+    null
+  );
+}
+
+function SettingsRoute() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const user = readStoredUser();
+  const superAdmin = isSuperAdminUser(user);
+
+  const stateHospitalId = location.state?.hospitalId ?? null;
+
+  if (superAdmin && !stateHospitalId) {
+    return <Settings />;
+  }
+
+  const hospitalId = superAdmin ? stateHospitalId : getUserHospitalId(user);
+
+  if (!hospitalId) {
+    return (
       <div
         style={{
-          width: "100%",
-          maxWidth: "520px",
-          padding: "40px",
-          textAlign: "center",
-          borderRadius: "20px",
-          border: "1px solid rgba(0,255,55,.25)",
-          background: "rgba(5,20,12,.95)",
-          boxShadow: "0 25px 70px rgba(0,0,0,.5)",
-          boxSizing: "border-box",
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "14px",
+          background: "#050706",
+          color: "#e8fff0",
+          fontFamily: "Inter, Arial, sans-serif",
         }}
       >
-        <div
-          style={{
-            fontSize: "60px",
-            marginBottom: "15px",
-          }}
-        >
-          🔒
-        </div>
-
-        <h1
-          style={{
-            margin: "0 0 12px",
-            color: "#00ff37",
-            fontSize: "30px",
-          }}
-        >
-          Access Denied
-        </h1>
-
-        <p
-          style={{
-            margin: "0 0 25px",
-            color: "#9aaea3",
-            lineHeight: 1.6,
-            fontSize: "14px",
-          }}
-        >
-          You do not have permission to access this section of HMS.
-        </p>
+        <p>Hospital id nahi mila. Dobara login karein.</p>
 
         <button
           type="button"
-          onClick={() => window.history.back()}
+          onClick={() => navigate("/dashboard")}
           style={{
-            border: "1px solid rgba(0,255,55,.35)",
+            padding: "10px 18px",
             borderRadius: "10px",
-            padding: "11px 20px",
-            background: "rgba(0,255,55,.08)",
-            color: "#00ff37",
-            cursor: "pointer",
+            border: "1px solid rgba(166,255,46,0.5)",
+            background: "rgba(166,255,46,0.12)",
+            color: "#a6ff2e",
             fontWeight: 700,
+            cursor: "pointer",
           }}
         >
-          Go Back
+          Back to Dashboard
         </button>
       </div>
-    </div>
-  );
-};
+    );
+  }
 
-// =====================================================
-// PROTECTED PAGE
-// =====================================================
-
-const ProtectedPage = ({
-  element,
-  roles,
-}) => {
   return (
-    <ProtectedRoute
-      allowedRoles={roles}
-      fallback={<AccessDenied />}
-    >
-      {element}
-    </ProtectedRoute>
+    <HospitalSettings
+      hospitalId={hospitalId}
+      onClose={() => navigate("/dashboard")}
+    />
   );
-};
-
-// =====================================================
-// APP
-//
-// BrowserRouter exists only in main.jsx
-// AuthProvider exists only here
-// =====================================================
+}
 
 function App() {
   return (
-    <AuthProvider>
-      <Routes>
+    <Routes>
+      {/* =========================
+          MAIN PAGE
+      ========================= */}
+      <Route path="/" element={<MainPage />} />
 
-        {/* =================================================
-                        PUBLIC ROUTES
-        ================================================= */}
+      {/* =========================
+          ADMIN / HMS
+      ========================= */}
+      <Route path="/home" element={<Home />} />
 
-        {/* HOME */}
+      {/* =========================
+          PATIENT SERVICES
+      ========================= */}
+      <Route
+        path="/patient-services"
+        element={<PatientServices />}
+      />
 
-        <Route
-          path="/"
-          element={<Home />}
-        />
+      {/* =========================
+          APPOINTMENTS
+      ========================= */}
+      <Route
+        path="/appointments"
+        element={<Appointments />}
+      />
 
-        {/* USER REGISTER */}
+      <Route
+        path="/appointments/new"
+        element={<NewPatientAppointment />}
+      />
 
-        <Route
-          path="/register"
-          element={<Register />}
-        />
+      <Route
+        path="/appointments/old"
+        element={<OldPatientAppointment />}
+      />
 
-        {/* FORGOT PASSWORD */}
+      {/* =========================
+          PATIENTS
+      ========================= */}
+      <Route
+        path="/patients"
+        element={<Patients />}
+      />
 
-        <Route
-          path="/forgot-password"
-          element={<ForgotPassword />}
-        />
+      <Route
+        path="/patients/register"
+        element={<PatientRegistration />}
+      />
 
-        {/* RESET PASSWORD */}
+      {/* =========================
+          ADMIN MODULES
+      ========================= */}
+      <Route
+        path="/doctors"
+        element={<Doctors />}
+      />
 
-        <Route
-          path="/reset-password"
-          element={<ResetPassword />}
-        />
+      <Route
+        path="/departments"
+        element={<Departments />}
+      />
 
-        {/* =================================================
-                    PUBLIC PATIENT REGISTRATION
+      <Route
+        path="/billing"
+        element={<Billing />}
+      />
 
-                    NO LOGIN REQUIRED
-        ================================================= */}
+      <Route
+        path="/laboratory"
+        element={<Laboratory />}
+      />
 
-        <Route
-          path="/patient-registration"
-          element={<PatientRegistration />}
-        />
+      <Route
+        path="/pharmacy"
+        element={<Pharmacy />}
+      />
 
-        {/* =================================================
-                    PUBLIC NEW PATIENT APPOINTMENT
+      <Route
+        path="/reports"
+        element={<Reports />}
+      />
 
-                    NO LOGIN REQUIRED
-        ================================================= */}
+      <Route
+        path="/settings"
+        element={<SettingsRoute />}
+      />
 
-        <Route
-          path="/new-patient-appointment"
-          element={<NewPatientAppointment />}
-        />
+      <Route
+        path="/users"
+        element={<Users />}
+      />
 
-        {/* =================================================
-                    PUBLIC OLD PATIENT APPOINTMENT
+      <Route
+        path="/dashboard"
+        element={<Dashboard />}
+      />
 
-                    NO LOGIN REQUIRED
-        ================================================= */}
+      <Route
+        path="/super-admin"
+        element={<SuperAdmin />}
+      />
 
-        <Route
-          path="/old-patient-appointment"
-          element={<OldPatientAppointment />}
-        />
-
-        {/* =================================================
-                    PROTECTED HMS LAYOUT
-
-                    LOGIN REQUIRED
-        ================================================= */}
-
-        <Route
-          element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }
-        >
-
-          {/* =============================================
-                        DASHBOARD
-          ============================================= */}
-
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedPage
-                roles={PERMISSIONS.dashboard}
-                element={<Dashboard />}
-              />
-            }
-          />
-
-          {/* =============================================
-                    STAFF PATIENT MANAGEMENT
-          ============================================= */}
-
-          <Route
-            path="/patients"
-            element={
-              <ProtectedPage
-                roles={PERMISSIONS.patients}
-                element={<Patients />}
-              />
-            }
-          />
-
-          {/* =============================================
-                        DOCTORS
-          ============================================= */}
-
-          <Route
-            path="/doctors"
-            element={
-              <ProtectedPage
-                roles={PERMISSIONS.doctors}
-                element={<Doctors />}
-              />
-            }
-          />
-
-          {/* =============================================
-                    STAFF APPOINTMENTS
-          ============================================= */}
-
-          <Route
-            path="/appointments"
-            element={
-              <ProtectedPage
-                roles={PERMISSIONS.appointments}
-                element={<Appointments />}
-              />
-            }
-          />
-
-          {/* =============================================
-                        DEPARTMENTS
-          ============================================= */}
-
-          <Route
-            path="/departments"
-            element={
-              <ProtectedPage
-                roles={PERMISSIONS.departments}
-                element={<Departments />}
-              />
-            }
-          />
-
-          {/* =============================================
-                        LABORATORY
-          ============================================= */}
-
-          <Route
-            path="/laboratory"
-            element={
-              <ProtectedPage
-                roles={PERMISSIONS.laboratory}
-                element={<Laboratory />}
-              />
-            }
-          />
-
-          {/* =============================================
-                        PHARMACY
-          ============================================= */}
-
-          <Route
-            path="/pharmacy"
-            element={
-              <ProtectedPage
-                roles={PERMISSIONS.pharmacy}
-                element={<Pharmacy />}
-              />
-            }
-          />
-
-          {/* =============================================
-                        BILLING
-          ============================================= */}
-
-          <Route
-            path="/billing"
-            element={
-              <ProtectedPage
-                roles={PERMISSIONS.billing}
-                element={<Billing />}
-              />
-            }
-          />
-
-          {/* =============================================
-                        REPORTS
-          ============================================= */}
-
-          <Route
-            path="/reports"
-            element={
-              <ProtectedPage
-                roles={PERMISSIONS.reports}
-                element={<Reports />}
-              />
-            }
-          />
-
-          {/* =============================================
-                        SETTINGS
-          ============================================= */}
-
-          <Route
-            path="/settings"
-            element={
-              <ProtectedPage
-                roles={PERMISSIONS.settings}
-                element={<Settings />}
-              />
-            }
-          />
-
-          {/* =============================================
-                        USER MANAGEMENT
-          ============================================= */}
-
-          <Route
-            path="/users"
-            element={
-              <ProtectedPage
-                roles={PERMISSIONS.users}
-                element={<Users />}
-              />
-            }
-          />
-
-        </Route>
-
-        {/* =================================================
-                    FALLBACK ROUTE
-        ================================================= */}
-
-        <Route
-          path="*"
-          element={
-            <Navigate
-              to="/"
-              replace
-            />
-          }
-        />
-
-      </Routes>
-    </AuthProvider>
+      {/* =========================
+          FALLBACK
+      ========================= */}
+      <Route
+        path="*"
+        element={<Navigate to="/" replace />}
+      />
+    </Routes>
   );
 }
 

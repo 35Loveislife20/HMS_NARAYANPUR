@@ -1,136 +1,60 @@
 const jwt = require("jsonwebtoken");
 
-
-/*
-=====================================================
-AUTHENTICATION MIDDLEWARE
-=====================================================
-*/
-
-const authMiddleware = (
-    req,
-    res,
-    next
-) => {
-
+const authMiddleware = (req, res, next) => {
     try {
+        const authHeader = req.headers.authorization;
 
-        const authHeader =
-            req.headers.authorization;
-
-
-        /*
-        ================================
-        CHECK HEADER
-        ================================
-        */
-
-        if (
-            !authHeader ||
-            !authHeader.startsWith(
-                "Bearer "
-            )
-        ) {
-
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return res.status(401).json({
-
                 success: false,
-
-                message:
-                    "Authorization token required",
-
+                message: "Authentication required"
             });
         }
 
-
-        /*
-        ================================
-        GET TOKEN
-        ================================
-        */
-
-        const token =
-            authHeader.split(" ")[1];
-
+        const token = authHeader.split(" ")[1];
 
         if (!token) {
-
             return res.status(401).json({
-
                 success: false,
-
-                message:
-                    "Authorization token required",
-
+                message: "Authentication token missing"
             });
         }
 
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET
+        );
 
         /*
-        ================================
-        VERIFY TOKEN
-        ================================
-        */
+         * JWT structure:
+         * {
+         *   id,
+         *   email,
+         *   role,
+         *   hospital_id
+         * }
+         */
 
-        const decoded =
-            jwt.verify(
-                token,
-                process.env.JWT_SECRET
-            );
-
-
-        /*
-        ================================
-        ATTACH USER
-        ================================
-        */
-
-        req.user = decoded;
-
-
-        /*
-        ================================
-        NEXT
-        ================================
-        */
+        req.user = {
+            id: decoded.id,
+            email: decoded.email,
+            role: decoded.role,
+            hospital_id:
+                decoded.hospital_id !== undefined
+                    ? decoded.hospital_id
+                    : null
+        };
 
         next();
 
     } catch (error) {
-
-        console.error(
-            "AUTH MIDDLEWARE ERROR:",
-            error.message
-        );
-
-
-        if (
-            error.name ===
-            "TokenExpiredError"
-        ) {
-
-            return res.status(401).json({
-
-                success: false,
-
-                message:
-                    "Authorization token expired",
-
-            });
-        }
-
+        console.error("Auth middleware error:", error.message);
 
         return res.status(401).json({
-
             success: false,
-
-            message:
-                "Invalid authorization token",
-
+            message: "Invalid or expired authentication token"
         });
     }
 };
 
-
-module.exports =
-    authMiddleware;
+module.exports = authMiddleware;

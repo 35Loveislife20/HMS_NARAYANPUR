@@ -1,1223 +1,1305 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import {
-    FaArrowLeft,
-    FaCheckCircle,
-    FaHeartbeat,
-    FaHospital,
-    FaUserPlus,
+  FaArrowLeft,
+  FaUserInjured,
+  FaUser,
+  FaVenusMars,
+  FaCalendarAlt,
+  FaPhone,
+  FaEnvelope,
+  FaTint,
+  FaMapMarkerAlt,
+  FaCheckCircle,
+  FaExclamationTriangle,
+  FaSyncAlt,
+  FaIdCard,
+  FaArrowRight,
 } from "react-icons/fa";
+
+import PrintableReceipt from "./PrintableReceipt";
 
 import "./PatientRegistration.css";
 
 const API_URL =
-    import.meta.env.VITE_API_URL ||
-    "http://localhost:5000/api";
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:5000/api";
 
 const EMPTY_FORM = {
-    name: "",
-    phone: "",
-    email: "",
-    gender: "",
-    date_of_birth: "",
-    address: "",
-    blood_group: "",
+  name: "",
+  gender: "",
+  date_of_birth: "",
+  phone: "",
+  email: "",
+  blood_group: "",
+  address: "",
 };
 
-const PatientRegistration = () => {
-    const navigate = useNavigate();
 
-    const [form, setForm] = useState(EMPTY_FORM);
+/* =========================================================
+   MAIN COMPONENT
+========================================================= */
 
-    const [hospitalName, setHospitalName] =
-        useState("HMS Hospital");
+function PatientRegistration() {
 
-    const [loading, setLoading] =
-        useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    const [settingsLoading, setSettingsLoading] =
-        useState(true);
 
-    const [error, setError] =
-        useState("");
+  /* =======================================================
+     HOSPITAL
+  ======================================================= */
 
-    const [success, setSuccess] =
-        useState(false);
+  const routeHospital =
+    location.state?.hospital || null;
 
-    const [registeredPatient, setRegisteredPatient] =
-        useState(null);
 
-    const [registeredPatientId, setRegisteredPatientId] =
-        useState("");
+  const getHospitalId = (hospital) =>
+    hospital?.id ??
+    hospital?.hospital_id ??
+    hospital?.hospitalId ??
+    null;
 
-    /*
-    =====================================================
-    LOAD HOSPITAL SETTINGS
-    =====================================================
-    */
 
-    useEffect(() => {
-        const loadSettings = async () => {
-            try {
-                setSettingsLoading(true);
+  const patientHospitalId =
+    getHospitalId(routeHospital) ??
+    localStorage.getItem(
+      "hms_patient_hospital_id"
+    ) ??
+    null;
 
-                const response = await fetch(
-                    `${API_URL}/settings`
-                );
 
-                if (!response.ok) {
-                    throw new Error(
-                        "Settings request failed"
-                    );
-                }
+  const patientHospitalName =
+    routeHospital?.name ||
+    routeHospital?.hospital_name ||
+    routeHospital?.hospitalName ||
+    localStorage.getItem(
+      "hms_patient_hospital_name"
+    ) ||
+    "Hospital Management System";
 
-                const data =
-                    await response.json();
 
-                const settings =
-                    data?.settings ||
-                    data?.data ||
-                    data;
+  /* Header ki neechi line me hospital ka address.
+     "unavailable" / sirf "India" jaise placeholder address nahi dikhate. */
+  const cleanAddress = (value) => {
+    const text =
+      typeof value === "string"
+        ? value.trim()
+        : "";
 
-                if (
-                    settings &&
-                    typeof settings === "object"
-                ) {
-                    setHospitalName(
-                        settings.hospitalName ||
-                        settings.hospital_name ||
-                        settings.name ||
-                        "HMS Hospital"
-                    );
-                }
-            } catch (err) {
-                console.error(
-                    "SETTINGS ERROR:",
-                    err
-                );
-
-                setHospitalName(
-                    "HMS Hospital"
-                );
-            } finally {
-                setSettingsLoading(false);
-            }
-        };
-
-        loadSettings();
-    }, []);
-
-    /*
-    =====================================================
-    HANDLE INPUT
-    =====================================================
-    */
-
-    const handleChange = (event) => {
-        const {
-            name,
-            value,
-        } = event.target;
-
-        setForm((previous) => ({
-            ...previous,
-            [name]: value,
-        }));
-
-        if (error) {
-            setError("");
-        }
-    };
-
-    /*
-    =====================================================
-    VALIDATION
-    =====================================================
-    */
-
-    const validateForm = () => {
-        const name =
-            form.name.trim();
-
-        const phone =
-            form.phone.trim();
-
-        const email =
-            form.email.trim();
-
-        const address =
-            form.address.trim();
-
-        if (!name) {
-            return "Please enter patient name.";
-        }
-
-        if (!phone) {
-            return "Please enter mobile number.";
-        }
-
-        if (!/^[0-9]{10}$/.test(phone)) {
-            return "Mobile number must contain exactly 10 digits.";
-        }
-
-        if (email) {
-            const emailRegex =
-                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            if (!emailRegex.test(email)) {
-                return "Please enter a valid email address.";
-            }
-        }
-
-        if (!form.gender) {
-            return "Please select gender.";
-        }
-
-        if (!form.date_of_birth) {
-            return "Please select date of birth.";
-        }
-
-        if (!address) {
-            return "Please enter address.";
-        }
-
-        return "";
-    };
-
-    /*
-    =====================================================
-    SUBMIT REGISTRATION
-    =====================================================
-    */
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        setError("");
-
-        const validationError =
-            validateForm();
-
-        if (validationError) {
-            setError(validationError);
-            return;
-        }
-
-        try {
-            setLoading(true);
-
-            const payload = {
-                name:
-                    form.name.trim(),
-
-                phone:
-                    form.phone.trim(),
-
-                email:
-                    form.email.trim() ||
-                    null,
-
-                gender:
-                    form.gender,
-
-                date_of_birth:
-                    form.date_of_birth ||
-                    null,
-
-                address:
-                    form.address.trim(),
-
-                blood_group:
-                    form.blood_group ||
-                    null,
-            };
-
-            const response =
-                await fetch(
-                    `${API_URL}/patients/register`,
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type":
-                                "application/json",
-                        },
-                        body:
-                            JSON.stringify(
-                                payload
-                            ),
-                    }
-                );
-
-            let data = {};
-
-            try {
-                data =
-                    await response.json();
-            } catch {
-                data = {};
-            }
-
-            if (
-                !response.ok ||
-                data?.success === false
-            ) {
-                throw new Error(
-                    data?.message ||
-                    data?.error ||
-                    "Patient registration failed."
-                );
-            }
-
-            /*
-            =================================================
-            EXTRACT PATIENT
-            =================================================
-            */
-
-            const patient =
-                data?.patient ||
-                data?.data?.patient ||
-                data?.data ||
-                data;
-
-            /*
-            =================================================
-            EXTRACT PATIENT ID
-            =================================================
-            */
-
-            const patientId =
-                patient?.id ||
-                patient?.patient_id ||
-                patient?.patientId ||
-                data?.patient_id ||
-                data?.patientId ||
-                data?.id ||
-                "";
-
-            if (!patientId) {
-                throw new Error(
-                    "Patient registered but patient ID was not returned by the server."
-                );
-            }
-
-            /*
-            =================================================
-            EXTRACT PATIENT CODE
-            =================================================
-            */
-
-            const patientCode =
-                patient?.patient_code ||
-                patient?.patientCode ||
-                patient?.code ||
-                "";
-
-            /*
-            =================================================
-            NORMALIZED PATIENT
-            =================================================
-            */
-
-            const finalPatient = {
-                ...patient,
-
-                id:
-                    patientId,
-
-                patient_id:
-                    patientId,
-
-                patient_code:
-                    patientCode,
-
-                name:
-                    patient?.name ||
-                    form.name.trim(),
-
-                phone:
-                    patient?.phone ||
-                    form.phone.trim(),
-
-                gender:
-                    patient?.gender ||
-                    form.gender,
-
-                email:
-                    patient?.email ??
-                    form.email.trim(),
-
-                date_of_birth:
-                    patient?.date_of_birth ||
-                    form.date_of_birth,
-
-                address:
-                    patient?.address ||
-                    form.address.trim(),
-
-                blood_group:
-                    patient?.blood_group ||
-                    form.blood_group,
-            };
-
-            /*
-            =================================================
-            SAVE REACT STATE
-            =================================================
-            */
-
-            setRegisteredPatient(
-                finalPatient
-            );
-
-            setRegisteredPatientId(
-                String(patientId)
-            );
-
-            /*
-            =================================================
-            SAVE SESSION STORAGE
-            =================================================
-            */
-
-            try {
-                sessionStorage.setItem(
-                    "newlyRegisteredPatient",
-                    JSON.stringify(
-                        finalPatient
-                    )
-                );
-
-                sessionStorage.setItem(
-                    "newlyRegisteredPatientId",
-                    String(patientId)
-                );
-            } catch (storageError) {
-                console.warn(
-                    "SESSION STORAGE ERROR:",
-                    storageError
-                );
-            }
-
-            setSuccess(true);
-        } catch (err) {
-            console.error(
-                "PATIENT REGISTRATION ERROR:",
-                err
-            );
-
-            setError(
-                err?.message ||
-                "Unable to register patient. Please try again."
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    /*
-    =====================================================
-    CONTINUE TO APPOINTMENT
-    =====================================================
-    */
-
-    const handleContinue = () => {
-        if (!registeredPatientId) {
-            setError(
-                "Patient ID is missing. Please register the patient again."
-            );
-
-            return;
-        }
-
-        /*
-        IMPORTANT:
-        Patient object + patient ID
-        dono Appointment page ko bhej rahe hain.
-        */
-
-        navigate(
-            `/new-patient-appointment?patient_id=${encodeURIComponent(
-                registeredPatientId
-            )}`,
-            {
-                state: {
-                    patient:
-                        registeredPatient,
-
-                    patient_id:
-                        registeredPatientId,
-                },
-            }
-        );
-    };
-
-    /*
-    =====================================================
-    REGISTER ANOTHER
-    =====================================================
-    */
-
-    const handleRegisterAnother = () => {
-        setForm(EMPTY_FORM);
-
-        setError("");
-
-        setSuccess(false);
-
-        setRegisteredPatient(null);
-
-        setRegisteredPatientId("");
-
-        try {
-            sessionStorage.removeItem(
-                "newlyRegisteredPatient"
-            );
-
-            sessionStorage.removeItem(
-                "newlyRegisteredPatientId"
-            );
-        } catch (storageError) {
-            console.warn(
-                storageError
-            );
-        }
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-        });
-    };
-
-    /*
-    =====================================================
-    SUCCESS SCREEN
-    =====================================================
-    */
-
-    if (success) {
-        return (
-            <div className="patient-registration-page">
-
-                <div className="registration-topbar">
-
-                    <div className="registration-brand">
-
-                        <div className="brand-icon">
-                            <FaHeartbeat />
-                        </div>
-
-                        <div>
-
-                            <div className="brand-name">
-                                {settingsLoading
-                                    ? "HMS Hospital"
-                                    : hospitalName}
-                            </div>
-
-                            <div className="brand-subtitle">
-                                Patient Registration
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <button
-                        type="button"
-                        className="top-back-button"
-                        onClick={() =>
-                            navigate("/")
-                        }
-                    >
-                        <FaArrowLeft />
-
-                        <span>
-                            Back to Home
-                        </span>
-                    </button>
-
-                </div>
-
-                <main className="registration-main">
-
-                    <div className="registration-success-card">
-
-                        <div className="success-icon">
-                            <FaCheckCircle />
-                        </div>
-
-                        <h1>
-                            Registration Successful
-                        </h1>
-
-                        <p className="success-message">
-                            Patient has been successfully
-                            registered with{" "}
-                            <strong>
-                                {hospitalName}
-                            </strong>
-                            .
-                        </p>
-
-                        {registeredPatient && (
-                            <div className="registered-patient-info">
-
-                                <div className="patient-info-row">
-                                    <span>
-                                        Patient ID
-                                    </span>
-
-                                    <strong>
-                                        {registeredPatientId}
-                                    </strong>
-                                </div>
-
-                                {registeredPatient.patient_code && (
-                                    <div className="patient-info-row">
-                                        <span>
-                                            Patient Code
-                                        </span>
-
-                                        <strong>
-                                            {
-                                                registeredPatient.patient_code
-                                            }
-                                        </strong>
-                                    </div>
-                                )}
-
-                                <div className="patient-info-row">
-                                    <span>
-                                        Patient Name
-                                    </span>
-
-                                    <strong>
-                                        {
-                                            registeredPatient.name
-                                        }
-                                    </strong>
-                                </div>
-
-                                <div className="patient-info-row">
-                                    <span>
-                                        Mobile
-                                    </span>
-
-                                    <strong>
-                                        {
-                                            registeredPatient.phone
-                                        }
-                                    </strong>
-                                </div>
-
-                            </div>
-                        )}
-
-                        <div className="success-actions">
-
-                            <button
-                                type="button"
-                                className="primary-button"
-                                onClick={
-                                    handleContinue
-                                }
-                            >
-                                <FaCheckCircle />
-
-                                Continue to Appointment
-                            </button>
-
-                            <button
-                                type="button"
-                                className="secondary-button"
-                                onClick={
-                                    handleRegisterAnother
-                                }
-                            >
-                                <FaUserPlus />
-
-                                Register Another Patient
-                            </button>
-
-                            <button
-                                type="button"
-                                className="back-home-button"
-                                onClick={() =>
-                                    navigate("/")
-                                }
-                            >
-                                <FaArrowLeft />
-
-                                Back to Home
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </main>
-
-                <footer className="registration-footer">
-                    ©{" "}
-                    {new Date().getFullYear()}{" "}
-                    {hospitalName}. All rights reserved.
-                </footer>
-
-            </div>
-        );
+    if (
+      !text ||
+      /unavailable/i.test(text) ||
+      text.toLowerCase() === "india"
+    ) {
+      return "";
     }
 
-    /*
-    =====================================================
-    FORM SCREEN
-    =====================================================
-    */
+    return text;
+  };
+
+  const patientHospitalAddress =
+    cleanAddress(routeHospital?.address) ||
+    cleanAddress(routeHospital?.location) ||
+    cleanAddress(routeHospital?.city) ||
+    cleanAddress(
+      localStorage.getItem(
+        "hms_patient_hospital_address"
+      )
+    );
+
+  /* Reload par bhi address dikhe, isliye yaad rakho */
+  useEffect(() => {
+    if (patientHospitalAddress) {
+      localStorage.setItem(
+        "hms_patient_hospital_address",
+        patientHospitalAddress
+      );
+    }
+  }, [patientHospitalAddress]);
+
+
+  /* =======================================================
+     STATE
+  ======================================================= */
+
+  const [formData, setFormData] =
+    useState({ ...EMPTY_FORM });
+
+  const [saving, setSaving] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  const [success, setSuccess] =
+    useState(false);
+
+  const [createdPatient, setCreatedPatient] =
+    useState(null);
+
+  const [copied, setCopied] =
+    useState(false);
+
+
+  /* =======================================================
+     INPUT CHANGE
+  ======================================================= */
+
+  const handleChange = (event) => {
+
+    const {
+      name,
+      value,
+    } = event.target;
+
+    setError("");
+
+    setFormData((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+  };
+
+
+  /* =======================================================
+     VALIDATION
+  ======================================================= */
+
+  const validateForm = () => {
+
+    if (!formData.name.trim()) {
+      return "Full name is required.";
+    }
+
+    if (!formData.gender) {
+      return "Please select gender.";
+    }
+
+    if (!formData.phone.trim()) {
+      return "Phone number is required.";
+    }
+
+    if (
+      !/^[0-9]{10}$/.test(
+        formData.phone.trim()
+      )
+    ) {
+      return "Please enter a valid 10-digit phone number.";
+    }
+
+    if (!formData.date_of_birth) {
+      return "Please select date of birth.";
+    }
+
+    if (!formData.address.trim()) {
+      return "Please enter address.";
+    }
+
+    if (formData.email.trim()) {
+
+      const emailRegex =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (
+        !emailRegex.test(
+          formData.email.trim()
+        )
+      ) {
+        return "Please enter a valid email address.";
+      }
+    }
+
+    return "";
+  };
+
+
+  /* =======================================================
+     PATIENT ID
+  ======================================================= */
+
+  const getPatientIdFromObject = (patient) =>
+    patient?.id ??
+    patient?.patient_id ??
+    patient?.patientId ??
+    null;
+
+
+  const getPatientId = () =>
+    createdPatient?.id ??
+    createdPatient?.patient_id ??
+    createdPatient?.patientId ??
+    null;
+
+
+  const getPatientCode = () => {
 
     return (
-        <div className="patient-registration-page">
+      createdPatient?.patient_code ||
+      createdPatient?.patientCode ||
+      (
+        getPatientId()
+          ? `PAT-${getPatientId()}`
+          : "Generated after registration"
+      )
+    );
+  };
 
-            <header className="registration-topbar">
 
-                <div className="registration-brand">
+  /* =======================================================
+     SUBMIT
+  ======================================================= */
 
-                    <div className="brand-icon">
-                        <FaHospital />
-                    </div>
+  const handleSubmit = async (event) => {
 
-                    <div>
+    event.preventDefault();
 
-                        <div className="brand-name">
-                            {settingsLoading
-                                ? "HMS Hospital"
-                                : hospitalName}
-                        </div>
+    setError("");
+    setSuccess(false);
 
-                        <div className="brand-subtitle">
-                            Hospital Management System
-                        </div>
 
-                    </div>
+    const validationError =
+      validateForm();
 
-                </div>
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
 
-                <button
-                    type="button"
-                    className="top-back-button"
-                    onClick={() =>
-                        navigate("/")
-                    }
-                >
-                    <FaArrowLeft />
 
-                    <span>
-                        Back to Home
-                    </span>
-                </button>
+    try {
 
-            </header>
+      setSaving(true);
 
-            <main className="registration-main">
 
-                <div className="registration-header">
+      if (
+        !patientHospitalId ||
+        !Number.isInteger(
+          Number(patientHospitalId)
+        ) ||
+        Number(patientHospitalId) <= 0
+      ) {
+        throw new Error(
+          "Hospital selection is missing. Please return and select a hospital first."
+        );
+      }
 
-                    <div className="header-icon">
-                        <FaUserPlus />
-                    </div>
 
-                    <div>
+      localStorage.setItem(
+        "hms_patient_hospital_id",
+        String(Number(patientHospitalId))
+      );
 
-                        <h1>
-                            Patient Registration
-                        </h1>
 
-                        <p>
-                            Register as a new patient
-                            to access hospital services
-                            and appointments.
-                        </p>
+      localStorage.setItem(
+        "hms_patient_hospital_name",
+        patientHospitalName
+      );
 
-                    </div>
 
-                </div>
+      const response =
+        await fetch(
+          `${API_URL}/patients/register`,
+          {
+            method: "POST",
 
-                {error && (
-                    <div className="registration-error">
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
 
-                        <span>!</span>
+            body: JSON.stringify({
+              name:
+                formData.name.trim(),
 
-                        <p>
-                            {error}
-                        </p>
+              gender:
+                formData.gender,
 
-                    </div>
-                )}
-
-                <form
-                    className="patient-registration-form"
-                    onSubmit={handleSubmit}
-                    noValidate
-                >
+              date_of_birth:
+                formData.date_of_birth ||
+                null,
 
-                    <section className="form-section">
+              phone:
+                formData.phone.trim(),
 
-                        <div className="section-heading">
+              email:
+                formData.email.trim() ||
+                null,
 
-                            <div className="section-number">
-                                01
-                            </div>
+              blood_group:
+                formData.blood_group ||
+                null,
 
-                            <div>
-
-                                <h2>
-                                    Personal Information
-                                </h2>
-
-                                <p>
-                                    Enter patient's basic
-                                    information.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        <div className="form-grid">
-
-                            <div className="form-group full-width">
-
-                                <label htmlFor="name">
-                                    Full Name
-                                    <span>*</span>
-                                </label>
-
-                                <input
-                                    id="name"
-                                    name="name"
-                                    type="text"
-                                    value={
-                                        form.name
-                                    }
-                                    onChange={
-                                        handleChange
-                                    }
-                                    placeholder="Enter patient's full name"
-                                    autoComplete="name"
-                                    disabled={loading}
-                                />
-
-                            </div>
-
-                            <div className="form-group">
-
-                                <label htmlFor="phone">
-                                    Mobile Number
-                                    <span>*</span>
-                                </label>
-
-                                <input
-                                    id="phone"
-                                    name="phone"
-                                    type="tel"
-                                    value={
-                                        form.phone
-                                    }
-                                    onChange={
-                                        handleChange
-                                    }
-                                    placeholder="10-digit mobile number"
-                                    maxLength={10}
-                                    inputMode="numeric"
-                                    autoComplete="tel"
-                                    disabled={loading}
-                                />
-
-                            </div>
-
-                            <div className="form-group">
-
-                                <label htmlFor="email">
-                                    Email Address
-                                </label>
-
-                                <input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    value={
-                                        form.email
-                                    }
-                                    onChange={
-                                        handleChange
-                                    }
-                                    placeholder="Enter email address"
-                                    autoComplete="email"
-                                    disabled={loading}
-                                />
-
-                            </div>
-
-                            <div className="form-group">
-
-                                <label htmlFor="gender">
-                                    Gender
-                                    <span>*</span>
-                                </label>
-
-                                <select
-                                    id="gender"
-                                    name="gender"
-                                    value={
-                                        form.gender
-                                    }
-                                    onChange={
-                                        handleChange
-                                    }
-                                    disabled={loading}
-                                >
-                                    <option value="">
-                                        Select gender
-                                    </option>
-
-                                    <option value="male">
-                                        Male
-                                    </option>
-
-                                    <option value="female">
-                                        Female
-                                    </option>
-
-                                    <option value="other">
-                                        Other
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-                            <div className="form-group">
-
-                                <label htmlFor="date_of_birth">
-                                    Date of Birth
-                                    <span>*</span>
-                                </label>
-
-                                <input
-                                    id="date_of_birth"
-                                    name="date_of_birth"
-                                    type="date"
-                                    value={
-                                        form.date_of_birth
-                                    }
-                                    onChange={
-                                        handleChange
-                                    }
-                                    disabled={loading}
-                                />
-
-                            </div>
-
-                            <div className="form-group">
-
-                                <label htmlFor="blood_group">
-                                    Blood Group
-                                </label>
-
-                                <select
-                                    id="blood_group"
-                                    name="blood_group"
-                                    value={
-                                        form.blood_group
-                                    }
-                                    onChange={
-                                        handleChange
-                                    }
-                                    disabled={loading}
-                                >
-
-                                    <option value="">
-                                        Select blood group
-                                    </option>
-
-                                    <option value="A+">
-                                        A+
-                                    </option>
-
-                                    <option value="A-">
-                                        A-
-                                    </option>
-
-                                    <option value="B+">
-                                        B+
-                                    </option>
-
-                                    <option value="B-">
-                                        B-
-                                    </option>
-
-                                    <option value="AB+">
-                                        AB+
-                                    </option>
-
-                                    <option value="AB-">
-                                        AB-
-                                    </option>
-
-                                    <option value="O+">
-                                        O+
-                                    </option>
-
-                                    <option value="O-">
-                                        O-
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-                    <section className="form-section">
-
-                        <div className="section-heading">
-
-                            <div className="section-number">
-                                02
-                            </div>
-
-                            <div>
-
-                                <h2>
-                                    Address Information
-                                </h2>
-
-                                <p>
-                                    Provide patient's
-                                    current address.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        <div className="form-grid">
-
-                            <div className="form-group full-width">
-
-                                <label htmlFor="address">
-                                    Address
-                                    <span>*</span>
-                                </label>
-
-                                <textarea
-                                    id="address"
-                                    name="address"
-                                    value={
-                                        form.address
-                                    }
-                                    onChange={
-                                        handleChange
-                                    }
-                                    placeholder="Enter complete address"
-                                    rows={4}
-                                    disabled={loading}
-                                />
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-                    <div className="action-information">
-
-                        <div className="information-icon">
-                            i
-                        </div>
-
-                        <div>
-
-                            <strong>
-                                Important Information
-                            </strong>
-
-                            <p>
-                                Please make sure all
-                                information is correct
-                                before registering the
-                                patient.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <div className="registration-actions">
-
-                        <button
-                            type="button"
-                            className="cancel-button"
-                            onClick={() =>
-                                navigate("/")
-                            }
-                            disabled={loading}
-                        >
-                            Cancel
-                        </button>
-
-                        <button
-                            type="submit"
-                            className="register-button patient-register-submit-btn"
-                            disabled={loading}
-                            style={{
-                                minWidth:
-                                    "158px",
-                                width:
-                                    "auto",
-                                height:
-                                    "42px",
-                                minHeight:
-                                    "42px",
-                                display:
-                                    "inline-flex",
-                                alignItems:
-                                    "center",
-                                justifyContent:
-                                    "center",
-                                gap:
-                                    "8px",
-                                margin:
-                                    "0",
-                                padding:
-                                    "0 18px",
-                                border:
-                                    "1px solid rgba(74, 222, 128, 0.45)",
-                                borderRadius:
-                                    "8px",
-                                outline:
-                                    "none",
-                                background:
-                                    loading
-                                        ? "#15803d"
-                                        : "#22c55e",
-                                color:
-                                    "#04120a",
-                                fontFamily:
-                                    "Inter, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
-                                fontSize:
-                                    "12px",
-                                fontWeight:
-                                    "700",
-                                lineHeight:
-                                    "1",
-                                textAlign:
-                                    "center",
-                                cursor:
-                                    loading
-                                        ? "not-allowed"
-                                        : "pointer",
-                                appearance:
-                                    "none",
-                                WebkitAppearance:
-                                    "none",
-                                boxShadow:
-                                    "0 7px 22px rgba(34, 197, 94, 0.20)",
-                                opacity:
-                                    loading
-                                        ? 0.75
-                                        : 1,
-                                transition:
-                                    "all 0.2s ease",
-                            }}
-                        >
-
-                            {loading ? (
-                                <>
-                                    <span
-                                        className="loading-spinner"
-                                        style={{
-                                            width:
-                                                "14px",
-                                            height:
-                                                "14px",
-                                            border:
-                                                "2px solid rgba(4, 18, 10, 0.30)",
-                                            borderTopColor:
-                                                "#04120a",
-                                            borderRadius:
-                                                "50%",
-                                            display:
-                                                "inline-block",
-                                            animation:
-                                                "patientRegisterSpin 0.7s linear infinite",
-                                        }}
-                                    />
-
-                                    <span>
-                                        Registering...
-                                    </span>
-                                </>
-                            ) : (
-                                <>
-                                    <FaCheckCircle />
-
-                                    <span>
-                                        Register Patient
-                                    </span>
-                                </>
-                            )}
-
-                        </button>
-
-                    </div>
-
-                </form>
-
-            </main>
-
-            <footer className="registration-footer">
-
-                ©{" "}
-                {new Date().getFullYear()}{" "}
-                {hospitalName}. All rights reserved.
-
-            </footer>
-
-            <style>
-                {`
-                    @keyframes patientRegisterSpin {
-                        from {
-                            transform: rotate(0deg);
-                        }
-
-                        to {
-                            transform: rotate(360deg);
-                        }
-                    }
-
-                    .patient-register-submit-btn:hover:not(:disabled) {
-                        background: #16a34a !important;
-                        border-color: rgba(74, 222, 128, 0.75) !important;
-                        color: #ffffff !important;
-                        transform: translateY(-1px);
-                        box-shadow: 0 10px 28px rgba(34, 197, 94, 0.28) !important;
-                    }
-
-                    .patient-register-submit-btn:active:not(:disabled) {
-                        transform: translateY(0);
-                    }
-
-                    .patient-register-submit-btn:disabled {
-                        cursor: not-allowed !important;
-                    }
-                `}
-            </style>
+              address:
+                formData.address.trim() ||
+                null,
+
+              hospital_id:
+                Number(patientHospitalId),
+            }),
+          }
+        );
+
+
+      let result = {};
+
+      try {
+        result = await response.json();
+      } catch {
+        result = {};
+      }
+
+
+      if (!response.ok) {
+        throw new Error(
+          result.message ||
+          "Unable to register patient."
+        );
+      }
+
+
+      if (result.success === false) {
+        throw new Error(
+          result.message ||
+          "Unable to register patient."
+        );
+      }
+
+
+      const patient =
+        result.patient ||
+        result.data?.patient ||
+        result.data ||
+        null;
+
+
+      if (!patient) {
+        throw new Error(
+          "Patient was registered, but patient details were not returned by the server."
+        );
+      }
+
+
+      const finalPatient = {
+        ...patient,
+
+        hospital_id:
+          patient?.hospital_id ??
+          Number(patientHospitalId),
+      };
+
+
+      setCreatedPatient(
+        finalPatient
+      );
+
+
+      try {
+
+        sessionStorage.setItem(
+          "newlyRegisteredPatient",
+          JSON.stringify(finalPatient)
+        );
+
+
+        const patientId =
+          getPatientIdFromObject(
+            finalPatient
+          );
+
+
+        if (patientId !== null) {
+
+          sessionStorage.setItem(
+            "newlyRegisteredPatientId",
+            String(patientId)
+          );
+        }
+
+      } catch (storageError) {
+
+        console.warn(
+          "Session storage error:",
+          storageError
+        );
+      }
+
+
+      setSuccess(true);
+
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+
+    } catch (err) {
+
+      console.error(
+        "Patient Registration Error:",
+        err
+      );
+
+      setError(
+        err.message ||
+        "Unable to connect to HMS server."
+      );
+
+    } finally {
+
+      setSaving(false);
+    }
+  };
+
+
+  /* =======================================================
+     COPY CODE
+  ======================================================= */
+
+  const handleCopyCode = async () => {
+
+    try {
+
+      await navigator.clipboard.writeText(
+        String(getPatientCode())
+      );
+
+      setCopied(true);
+
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+
+    } catch {
+
+      setCopied(false);
+    }
+  };
+
+
+  /* =======================================================
+     CONTINUE
+  ======================================================= */
+
+  const handleContinue = () => {
+
+    const patientId =
+      getPatientId();
+
+
+    if (!patientId) {
+
+      setError(
+        "Patient ID is missing. Please contact HMS support."
+      );
+
+      return;
+    }
+
+
+    navigate(
+      `/new-patient-appointment?patient_id=${encodeURIComponent(
+        patientId
+      )}`,
+      {
+        state: {
+
+          hospital_id:
+            Number(patientHospitalId),
+
+          hospital:
+            routeHospital || {
+              id:
+                Number(patientHospitalId),
+
+              hospital_id:
+                Number(patientHospitalId),
+
+              name:
+                patientHospitalName,
+            },
+
+          patient:
+            createdPatient,
+        },
+      }
+    );
+  };
+
+
+  /* =======================================================
+     REGISTER ANOTHER
+  ======================================================= */
+
+  const handleRegisterAnother = () => {
+
+    setFormData({
+      ...EMPTY_FORM,
+    });
+
+    setCreatedPatient(null);
+    setSuccess(false);
+    setError("");
+    setCopied(false);
+
+
+    try {
+
+      sessionStorage.removeItem(
+        "newlyRegisteredPatient"
+      );
+
+      sessionStorage.removeItem(
+        "newlyRegisteredPatientId"
+      );
+
+    } catch (storageError) {
+
+      console.warn(
+        "Session storage error:",
+        storageError
+      );
+    }
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+
+  /* =======================================================
+     BACK
+  ======================================================= */
+
+  const handleBackHome = () => {
+
+    if (saving) {
+      return;
+    }
+
+    /* Patients page se aaye the to wahin wapas, warna main page */
+    navigate(location.state?.from || "/");
+  };
+
+
+  /* =======================================================
+     RENDER
+  ======================================================= */
+
+  return (
+
+    <main className="patient-registration-page">
+
+      {/* =================================================
+          HEADER
+      ================================================= */}
+
+      <header className="patient-registration-header">
+
+        <button
+          type="button"
+          className="patient-registration-back"
+          onClick={handleBackHome}
+          disabled={saving}
+        >
+          <FaArrowLeft />
+
+          <span>
+            Back to Home
+          </span>
+        </button>
+
+
+        {/* ONLY HOSPITAL NAME — NO LOGO */}
+
+        <div className="patient-registration-brand">
+
+          <h2>
+            {patientHospitalName}
+          </h2>
+
+          <span>
+            {patientHospitalAddress ||
+              "Hospital Management System"}
+          </span>
 
         </div>
-    );
-};
+
+      </header>
+
+
+      {/* =================================================
+          CONTAINER
+      ================================================= */}
+
+      <section className="patient-registration-container">
+
+
+        {/* PAGE TITLE */}
+
+        <div className="patient-registration-title">
+
+          <div className="patient-registration-title-icon">
+            <FaUserInjured />
+          </div>
+
+          <div>
+
+            <h1>
+              Patient Registration
+            </h1>
+
+            <p>
+              Create a new patient record by entering the patient's basic information below.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        {/* HOSPITAL CONTEXT */}
+
+        <div className="patient-registration-hospital-context">
+
+          <span>
+            Registering patient at
+          </span>
+
+          <strong>
+            {patientHospitalName}
+          </strong>
+
+        </div>
+
+
+        {/* =================================================
+            SUCCESS
+        ================================================= */}
+
+        {success && createdPatient ? (
+
+          <div className="patient-registration-success-card">
+
+            <div className="patient-registration-success-icon">
+              <FaCheckCircle />
+            </div>
+
+
+            <div className="patient-registration-success-content">
+
+              <span className="patient-registration-success-label">
+                Registration Successful
+              </span>
+
+              <h2>
+                Patient Registered Successfully
+              </h2>
+
+              <p>
+                The patient record has been created successfully.
+              </p>
+
+
+              <div className="patient-registration-id-grid">
+
+                <div className="patient-registration-id-item">
+
+                  <span>
+                    Patient Name
+                  </span>
+
+                  <strong>
+                    {createdPatient?.name ||
+                      formData.name}
+                  </strong>
+
+                </div>
+
+
+                <div className="patient-registration-id-item">
+
+                  <span>
+                    Patient ID
+                  </span>
+
+                  <strong>
+                    #{getPatientId()}
+                  </strong>
+
+                </div>
+
+
+                <div className="patient-registration-id-item patient-registration-id-highlight">
+
+                  <span>
+                    Registration Number
+                  </span>
+
+                  <strong>
+                    {getPatientCode()}
+                  </strong>
+
+
+                  <button
+                    type="button"
+                    className="patient-registration-copy-button"
+                    onClick={
+                      handleCopyCode
+                    }
+                  >
+                    {copied
+                      ? "Copied!"
+                      : "Copy"}
+                  </button>
+
+                </div>
+
+              </div>
+
+
+              <div className="patient-registration-next-info">
+
+                <FaArrowRight />
+
+                <div>
+
+                  <strong>
+                    Next Step
+                  </strong>
+
+                  <span>
+                    Book the appointment now. You can also book it later using the Registration Number or phone number.
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <PrintableReceipt
+                variant="registration"
+                hospital={routeHospital}
+                data={{
+                  hospital:
+                    patientHospitalName,
+
+                  hospitalAddress:
+                    patientHospitalAddress,
+
+                  registrationNo:
+                    String(
+                      getPatientCode()
+                    ),
+
+                  patient:
+                    createdPatient?.name ||
+                    formData.name,
+
+                  fee: 0,
+                }}
+              />
+
+
+              <div className="patient-registration-success-actions">
+
+                <button
+                  type="button"
+                  className="patient-registration-continue-button"
+                  onClick={
+                    handleContinue
+                  }
+                >
+
+                  <FaCalendarAlt />
+
+                  <span>
+                    Book Appointment Now
+                  </span>
+
+                  <FaArrowRight />
+
+                </button>
+
+
+                <button
+                  type="button"
+                  className="patient-registration-secondary-button"
+                  onClick={
+                    handleRegisterAnother
+                  }
+                >
+
+                  <FaUserInjured />
+
+                  <span>
+                    Register Another Patient
+                  </span>
+
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        ) : (
+
+          <>
+
+            {/* ERROR */}
+
+            {error && (
+
+              <div className="patient-registration-error">
+
+                <FaExclamationTriangle />
+
+                <span>
+                  {error}
+                </span>
+
+              </div>
+
+            )}
+
+
+            {/* =================================================
+                FORM
+            ================================================= */}
+
+            <form
+              className="patient-registration-card"
+              onSubmit={
+                handleSubmit
+              }
+            >
+
+              <div className="patient-registration-section-header">
+
+                <div className="patient-registration-section-icon">
+                  <FaUserInjured />
+                </div>
+
+                <div>
+
+                  <h2>
+                    Patient Information
+                  </h2>
+
+                  <p>
+                    Enter the patient's personal details
+                  </p>
+
+                </div>
+
+              </div>
+
+
+              <div className="patient-registration-form-grid">
+
+
+                {/* NAME */}
+
+                <div className="patient-registration-form-group full-width">
+
+                  <label htmlFor="name">
+                    Full Name
+                    <span>*</span>
+                  </label>
+
+                  <div className="patient-registration-input">
+
+                    <FaUser />
+
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      value={
+                        formData.name
+                      }
+                      onChange={
+                        handleChange
+                      }
+                      placeholder="Enter patient's full name"
+                      disabled={saving}
+                      autoComplete="name"
+                      required
+                    />
+
+                  </div>
+
+                </div>
+
+
+                {/* GENDER */}
+
+                <div className="patient-registration-form-group">
+
+                  <label htmlFor="gender">
+                    Gender
+                    <span>*</span>
+                  </label>
+
+                  <div className="patient-registration-input">
+
+                    <FaVenusMars />
+
+                    <select
+                      id="gender"
+                      name="gender"
+                      value={
+                        formData.gender
+                      }
+                      onChange={
+                        handleChange
+                      }
+                      disabled={saving}
+                      required
+                    >
+
+                      <option value="">
+                        Select Gender
+                      </option>
+
+                      <option value="male">
+                        Male
+                      </option>
+
+                      <option value="female">
+                        Female
+                      </option>
+
+                      <option value="other">
+                        Other
+                      </option>
+
+                    </select>
+
+                  </div>
+
+                </div>
+
+
+                {/* DOB */}
+
+                <div className="patient-registration-form-group">
+
+                  <label htmlFor="date_of_birth">
+                    Date of Birth
+                    <span>*</span>
+                  </label>
+
+                  <div className="patient-registration-input">
+
+                    <FaCalendarAlt />
+
+                    <input
+                      id="date_of_birth"
+                      name="date_of_birth"
+                      type="date"
+                      value={
+                        formData.date_of_birth
+                      }
+                      onChange={
+                        handleChange
+                      }
+                      disabled={saving}
+                      required
+                    />
+
+                  </div>
+
+                </div>
+
+
+                {/* PHONE */}
+
+                <div className="patient-registration-form-group">
+
+                  <label htmlFor="phone">
+                    Phone
+                    <span>*</span>
+                  </label>
+
+                  <div className="patient-registration-input">
+
+                    <FaPhone />
+
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      value={
+                        formData.phone
+                      }
+                      onChange={
+                        handleChange
+                      }
+                      placeholder="10-digit phone number"
+                      maxLength="10"
+                      inputMode="numeric"
+                      disabled={saving}
+                      autoComplete="tel"
+                      required
+                    />
+
+                  </div>
+
+                </div>
+
+
+                {/* EMAIL */}
+
+                <div className="patient-registration-form-group">
+
+                  <label htmlFor="email">
+                    Email
+                  </label>
+
+                  <div className="patient-registration-input">
+
+                    <FaEnvelope />
+
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={
+                        formData.email
+                      }
+                      onChange={
+                        handleChange
+                      }
+                      placeholder="patient@example.com"
+                      disabled={saving}
+                      autoComplete="email"
+                    />
+
+                  </div>
+
+                </div>
+
+
+                {/* BLOOD GROUP */}
+
+                <div className="patient-registration-form-group">
+
+                  <label htmlFor="blood_group">
+                    Blood Group
+                  </label>
+
+                  <div className="patient-registration-input">
+
+                    <FaTint />
+
+                    <select
+                      id="blood_group"
+                      name="blood_group"
+                      value={
+                        formData.blood_group
+                      }
+                      onChange={
+                        handleChange
+                      }
+                      disabled={saving}
+                    >
+
+                      <option value="">
+                        Select Blood Group
+                      </option>
+
+                      <option value="A+">
+                        A+
+                      </option>
+
+                      <option value="A-">
+                        A-
+                      </option>
+
+                      <option value="B+">
+                        B+
+                      </option>
+
+                      <option value="B-">
+                        B-
+                      </option>
+
+                      <option value="AB+">
+                        AB+
+                      </option>
+
+                      <option value="AB-">
+                        AB-
+                      </option>
+
+                      <option value="O+">
+                        O+
+                      </option>
+
+                      <option value="O-">
+                        O-
+                      </option>
+
+                    </select>
+
+                  </div>
+
+                </div>
+
+
+                {/* ADDRESS */}
+
+                <div className="patient-registration-form-group full-width">
+
+                  <label htmlFor="address">
+                    Address
+                    <span>*</span>
+                  </label>
+
+                  <div className="patient-registration-textarea">
+
+                    <FaMapMarkerAlt />
+
+                    <textarea
+                      id="address"
+                      name="address"
+                      value={
+                        formData.address
+                      }
+                      onChange={
+                        handleChange
+                      }
+                      placeholder="Enter patient's address"
+                      rows="4"
+                      disabled={saving}
+                      required
+                    />
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div className="patient-registration-required-note">
+
+                <span>*</span>
+
+                <span>
+                  Required fields
+                </span>
+
+              </div>
+
+
+              <div className="patient-registration-form-footer">
+
+                <button
+                  type="button"
+                  className="patient-registration-cancel-button"
+                  onClick={
+                    handleBackHome
+                  }
+                  disabled={saving}
+                >
+
+                  <FaArrowLeft />
+
+                  <span>
+                    Cancel
+                  </span>
+
+                </button>
+
+
+                <button
+                  type="submit"
+                  className="patient-registration-submit-button"
+                  disabled={saving}
+                >
+
+                  {saving ? (
+
+                    <>
+                      <FaSyncAlt className="patient-registration-spin" />
+
+                      <span>
+                        Registering Patient...
+                      </span>
+                    </>
+
+                  ) : (
+
+                    <>
+                      <FaCheckCircle />
+
+                      <span>
+                        Register Patient
+                      </span>
+                    </>
+
+                  )}
+
+                </button>
+
+              </div>
+
+            </form>
+
+
+            {/* NEXT CARD */}
+
+            <div className="patient-registration-next-card">
+
+              <div className="patient-registration-next-icon">
+                <FaIdCard />
+              </div>
+
+              <div>
+
+                <h3>
+                  What happens next?
+                </h3>
+
+                <p>
+                  After registration, the patient receives a unique Patient ID and Registration Number. You can then continue to the appointment page.
+                </p>
+
+              </div>
+
+            </div>
+
+          </>
+
+        )}
+
+      </section>
+
+
+      {/* FOOTER */}
+
+      <footer className="patient-registration-footer">
+
+        <span>
+          © {new Date().getFullYear()} HMS
+        </span>
+
+        <span>
+          Hospital Management System
+        </span>
+
+      </footer>
+
+    </main>
+  );
+}
+
 
 export default PatientRegistration;

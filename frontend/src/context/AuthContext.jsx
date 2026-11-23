@@ -1,27 +1,24 @@
-import {
+import React, {
     createContext,
     useContext,
+    useEffect,
     useMemo,
     useState,
 } from "react";
 
-import { loginUser } from "../services/auth.service";
+import {
+    loginUser,
+    logoutUser,
+    getAuthToken,
+    getStoredUser,
+} from "../services/auth.service";
 
 
-// =====================================================
-// AUTH CONTEXT
-// =====================================================
+/* =========================================================
+   HMS ROLES
+========================================================= */
 
-const AuthContext = createContext(null);
-
-
-// =====================================================
-// 9 HMS ROLES
-// IMPORTANT:
-// These values MUST match backend user.role exactly.
-// =====================================================
-
-export const HMS_ROLES = {
+export const ROLES = {
     SUPER_ADMIN: "super_admin",
     HOSPITAL_ADMIN: "hospital_admin",
     RECEPTIONIST: "receptionist",
@@ -34,379 +31,400 @@ export const HMS_ROLES = {
 };
 
 
-// =====================================================
-// ALL ROLES
-// =====================================================
-
-export const ALL_ROLES = [
-    HMS_ROLES.SUPER_ADMIN,
-    HMS_ROLES.HOSPITAL_ADMIN,
-    HMS_ROLES.RECEPTIONIST,
-    HMS_ROLES.DOCTOR,
-    HMS_ROLES.LAB_TECHNICIAN,
-    HMS_ROLES.PHARMACIST,
-    HMS_ROLES.ACCOUNTANT,
-    HMS_ROLES.NURSE,
-    HMS_ROLES.PATIENT,
-];
+export const ALL_ROLES = Object.values(ROLES);
 
 
-// =====================================================
-// PERMISSIONS
-//
-// Matrix:
-//
-// super_admin
-//     Dashboard      Patients       Doctors
-//     Appointments   Departments    Laboratory
-//     Pharmacy       Billing        Reports
-//     Settings       User Management
-//
-// hospital_admin
-//     Dashboard      Patients       Doctors
-//     Appointments   Departments    Laboratory
-//     Pharmacy       Billing        Reports
-//     Settings
-//
-// receptionist
-//     Dashboard      Patients       Appointments
-//
-// doctor
-//     Dashboard      Patients       Appointments
-//     Departments    Laboratory     Reports
-//
-// lab_technician
-//     Dashboard      Laboratory     Reports
-//
-// pharmacist
-//     Dashboard      Pharmacy       Billing
-//     Reports
-//
-// accountant
-//     Dashboard      Pharmacy       Billing
-//     Reports
-//
-// nurse
-//     Dashboard      Patients       Appointments
-//     Departments
-//
-// patient
-//     Dashboard      Appointments
-// =====================================================
+/* =========================================================
+   ROLE HELPERS
+========================================================= */
+
+export const normalizeRole = (role) => {
+    if (!role) {
+        return "";
+    }
+
+    return String(role)
+        .trim()
+        .toLowerCase()
+        .replace(/[\s-]+/g, "_");
+};
+
+
+export const isValidRole = (role) => {
+    const normalizedRole = normalizeRole(role);
+
+    return ALL_ROLES.includes(normalizedRole);
+};
+
+
+/* =========================================================
+   PERMISSIONS
+========================================================= */
 
 export const PERMISSIONS = {
-
     dashboard: ALL_ROLES,
 
-    patients: [
-        HMS_ROLES.SUPER_ADMIN,
-        HMS_ROLES.HOSPITAL_ADMIN,
-        HMS_ROLES.RECEPTIONIST,
-        HMS_ROLES.DOCTOR,
-        HMS_ROLES.NURSE,
+    superAdmin: [
+        ROLES.SUPER_ADMIN,
     ],
 
-    doctors: [
-        HMS_ROLES.SUPER_ADMIN,
-        HMS_ROLES.HOSPITAL_ADMIN,
+    hospitalAdmin: [
+        ROLES.SUPER_ADMIN,
+        ROLES.HOSPITAL_ADMIN,
     ],
 
-    appointments: [
-        HMS_ROLES.SUPER_ADMIN,
-        HMS_ROLES.HOSPITAL_ADMIN,
-        HMS_ROLES.RECEPTIONIST,
-        HMS_ROLES.DOCTOR,
-        HMS_ROLES.NURSE,
-        HMS_ROLES.PATIENT,
+    receptionist: [
+        ROLES.SUPER_ADMIN,
+        ROLES.HOSPITAL_ADMIN,
+        ROLES.RECEPTIONIST,
     ],
 
-    departments: [
-        HMS_ROLES.SUPER_ADMIN,
-        HMS_ROLES.HOSPITAL_ADMIN,
-        HMS_ROLES.DOCTOR,
-        HMS_ROLES.NURSE,
+    doctor: [
+        ROLES.SUPER_ADMIN,
+        ROLES.HOSPITAL_ADMIN,
+        ROLES.DOCTOR,
     ],
 
-    laboratory: [
-        HMS_ROLES.SUPER_ADMIN,
-        HMS_ROLES.HOSPITAL_ADMIN,
-        HMS_ROLES.DOCTOR,
-        HMS_ROLES.LAB_TECHNICIAN,
+    nurse: [
+        ROLES.SUPER_ADMIN,
+        ROLES.HOSPITAL_ADMIN,
+        ROLES.NURSE,
+    ],
+
+    lab: [
+        ROLES.SUPER_ADMIN,
+        ROLES.HOSPITAL_ADMIN,
+        ROLES.LAB_TECHNICIAN,
     ],
 
     pharmacy: [
-        HMS_ROLES.SUPER_ADMIN,
-        HMS_ROLES.HOSPITAL_ADMIN,
-        HMS_ROLES.PHARMACIST,
-        HMS_ROLES.ACCOUNTANT,
+        ROLES.SUPER_ADMIN,
+        ROLES.HOSPITAL_ADMIN,
+        ROLES.PHARMACIST,
     ],
 
-    billing: [
-        HMS_ROLES.SUPER_ADMIN,
-        HMS_ROLES.HOSPITAL_ADMIN,
-        HMS_ROLES.PHARMACIST,
-        HMS_ROLES.ACCOUNTANT,
+    accountant: [
+        ROLES.SUPER_ADMIN,
+        ROLES.HOSPITAL_ADMIN,
+        ROLES.ACCOUNTANT,
     ],
 
-    reports: [
-        HMS_ROLES.SUPER_ADMIN,
-        HMS_ROLES.HOSPITAL_ADMIN,
-        HMS_ROLES.DOCTOR,
-        HMS_ROLES.LAB_TECHNICIAN,
-        HMS_ROLES.PHARMACIST,
-        HMS_ROLES.ACCOUNTANT,
-    ],
-
-    settings: [
-        HMS_ROLES.SUPER_ADMIN,
-        HMS_ROLES.HOSPITAL_ADMIN,
-    ],
-
-    users: [
-        HMS_ROLES.SUPER_ADMIN,
+    patient: [
+        ROLES.PATIENT,
     ],
 };
 
 
-// =====================================================
-// ROLE LABELS
-// =====================================================
+/* =========================================================
+   AUTH CONTEXT
+========================================================= */
 
-export const ROLE_LABELS = {
-
-    [HMS_ROLES.SUPER_ADMIN]:
-        "Super Admin",
-
-    [HMS_ROLES.HOSPITAL_ADMIN]:
-        "Hospital Admin",
-
-    [HMS_ROLES.RECEPTIONIST]:
-        "Receptionist",
-
-    [HMS_ROLES.DOCTOR]:
-        "Doctor",
-
-    [HMS_ROLES.LAB_TECHNICIAN]:
-        "Lab Technician",
-
-    [HMS_ROLES.PHARMACIST]:
-        "Pharmacist",
-
-    [HMS_ROLES.ACCOUNTANT]:
-        "Accountant",
-
-    [HMS_ROLES.NURSE]:
-        "Nurse",
-
-    [HMS_ROLES.PATIENT]:
-        "Patient",
-};
+const AuthContext = createContext(null);
 
 
-// =====================================================
-// ROLE FORMATTER
-// =====================================================
+/* =========================================================
+   AUTH PROVIDER
+========================================================= */
 
-export const getRoleLabel = (role) => {
+export const AuthProvider = ({ children }) => {
+    const [user, setUser] = useState(null);
 
-    if (!role) {
-        return "Unknown Role";
-    }
-
-    return (
-        ROLE_LABELS[role] ||
-        String(role)
-            .replaceAll("_", " ")
-            .replace(
-                /\b\w/g,
-                (char) => char.toUpperCase()
-            )
-    );
-};
+    const [authLoading, setAuthLoading] =
+        useState(true);
 
 
-// =====================================================
-// VALIDATE ROLE
-// =====================================================
+    /* =====================================================
+       RESTORE AUTHENTICATION
+    ===================================================== */
 
-export const isValidRole = (role) => {
-
-    return ALL_ROLES.includes(role);
-};
-
-
-// =====================================================
-// AUTH PROVIDER
-// =====================================================
-
-export const AuthProvider = ({
-    children,
-}) => {
-
-    // =================================================
-    // LOAD USER
-    // =================================================
-
-    const [user, setUser] = useState(() => {
-
+    useEffect(() => {
         try {
+            const token = getAuthToken();
 
-            const token =
-                localStorage.getItem(
-                    "hms_token"
-                );
+            const storedUser =
+                getStoredUser();
 
-            const savedUser =
-                localStorage.getItem(
-                    "hms_user"
-                );
 
             if (
-                !token ||
-                !savedUser
+                token &&
+                storedUser
             ) {
-                return null;
+                const rawRole =
+                    storedUser.role ||
+                    storedUser.user_role ||
+                    storedUser.userRole;
+
+
+                const normalizedRole =
+                    normalizeRole(rawRole);
+
+
+                const normalizedId =
+                    storedUser.id ??
+                    storedUser.user_id ??
+                    storedUser.userId;
+
+
+                if (
+                    normalizedId &&
+                    isValidRole(normalizedRole)
+                ) {
+                    const normalizedUser = {
+                        ...storedUser,
+
+                        id: normalizedId,
+
+                        role: normalizedRole,
+
+                        name:
+                            storedUser.name ||
+                            storedUser.full_name ||
+                            storedUser.fullName ||
+                            "HMS User",
+
+                        email:
+                            storedUser.email ||
+                            "",
+
+                        hospital_id:
+                            storedUser.hospital_id ??
+                            storedUser.hospitalId ??
+                            null,
+
+                        hospitalId:
+                            storedUser.hospitalId ??
+                            storedUser.hospital_id ??
+                            null,
+                    };
+
+
+                    setUser(
+                        normalizedUser
+                    );
+                } else {
+                    /*
+                     * Stored authentication is invalid.
+                     */
+                    logoutUser();
+
+                    setUser(null);
+                }
+            } else {
+                setUser(null);
             }
-
-            const parsedUser =
-                JSON.parse(savedUser);
-
-            // -----------------------------------------
-            // Invalid stored user
-            // -----------------------------------------
-
-            if (
-                !parsedUser ||
-                !parsedUser.id ||
-                !parsedUser.role ||
-                !isValidRole(parsedUser.role)
-            ) {
-
-                localStorage.removeItem(
-                    "hms_user"
-                );
-
-                localStorage.removeItem(
-                    "hms_token"
-                );
-
-                return null;
-            }
-
-            return parsedUser;
-
         } catch (error) {
-
             console.error(
-                "AUTH RESTORE ERROR:",
+                "HMS authentication restore error:",
                 error
             );
 
-            localStorage.removeItem(
-                "hms_user"
-            );
+            logoutUser();
 
-            localStorage.removeItem(
-                "hms_token"
-            );
-
-            return null;
+            setUser(null);
+        } finally {
+            setAuthLoading(false);
         }
-    });
+    }, []);
 
 
-    // =================================================
-    // LOGIN
-    // =================================================
+    /* =====================================================
+       LOGIN
+    ===================================================== */
 
     const login = async (
         email,
-        password
+        password,
+        selectedRole = null,
+        hospitalId = null
     ) => {
-
-        const data =
-            await loginUser({
-                email:
-                    String(email || "")
-                        .trim()
-                        .toLowerCase(),
-
-                password,
-            });
+        const requestedRole =
+            normalizeRole(selectedRole);
 
 
-        // ---------------------------------------------
-        // Validate response
-        // ---------------------------------------------
+        /*
+         * Send login request through auth.service.js
+         */
+        const data = await loginUser({
+            email,
+            password,
+            role:
+                requestedRole ||
+                null,
+            hospitalId,
+            hospital_id:
+                hospitalId,
+        });
+
+
+        /*
+         * Support both response formats:
+         *
+         * FORMAT 1:
+         * {
+         *   success: true,
+         *   token: "...",
+         *   user: {...}
+         * }
+         *
+         * FORMAT 2:
+         * {
+         *   success: true,
+         *   data: {
+         *      token: "...",
+         *      user: {...}
+         *   }
+         * }
+         */
+
+        const responseData =
+            data?.data ||
+            data;
+
+
+        const token =
+            responseData?.token ||
+            data?.token ||
+            responseData?.accessToken ||
+            data?.accessToken;
+
+
+        const apiUser =
+            responseData?.user ||
+            data?.user;
+
+
+        /* =================================================
+           VALIDATE TOKEN
+        ================================================= */
+
+        if (!token) {
+            throw new Error(
+                responseData?.message ||
+                data?.message ||
+                "Login successful but authentication token was not returned."
+            );
+        }
+
+
+        /* =================================================
+           VALIDATE USER
+        ================================================= */
+
+        if (!apiUser) {
+            throw new Error(
+                "Login successful but user information was not returned by the server."
+            );
+        }
+
+
+        /* =================================================
+           NORMALIZE ROLE
+        ================================================= */
+
+        const backendRole =
+            apiUser.role ||
+            apiUser.user_role ||
+            apiUser.userRole ||
+            requestedRole;
+
+
+        const normalizedRole =
+            normalizeRole(
+                backendRole
+            );
+
 
         if (
-            !data ||
-            !data.success ||
-            !data.token ||
-            !data.user
+            !isValidRole(
+                normalizedRole
+            )
         ) {
-
             throw new Error(
-                data?.message ||
-                "Login failed"
+                `Invalid user role received from server: ${
+                    backendRole ||
+                    "unknown"
+                }`
             );
         }
 
 
-        // ---------------------------------------------
-        // Validate role
-        // ---------------------------------------------
+        /* =================================================
+           NORMALIZE USER ID
+        ================================================= */
 
-        const role =
-            data.user.role;
+        const normalizedId =
+            apiUser.id ??
+            apiUser.user_id ??
+            apiUser.userId;
 
 
-        if (!isValidRole(role)) {
-
-            console.error(
-                "INVALID ROLE FROM BACKEND:",
-                role
-            );
-
+        if (!normalizedId) {
             throw new Error(
-                `Invalid user role: ${role || "missing"}`
+                "Login successful but user ID was not returned by the server."
             );
         }
 
 
-        // ---------------------------------------------
-        // Normalize user
-        // ---------------------------------------------
+        /* =================================================
+           NORMALIZE HOSPITAL
+        ================================================= */
+
+        const normalizedHospitalId =
+            apiUser.hospital_id ??
+            apiUser.hospitalId ??
+            hospitalId ??
+            null;
+
+
+        /* =================================================
+           CREATE NORMALIZED USER
+        ================================================= */
 
         const normalizedUser = {
+            ...apiUser,
 
-            ...data.user,
+            id:
+                normalizedId,
 
-            role,
+            role:
+                normalizedRole,
 
             name:
-                data.user.name ||
+                apiUser.name ||
+                apiUser.full_name ||
+                apiUser.fullName ||
                 "HMS User",
 
             email:
-                data.user.email ||
-                email,
+                apiUser.email ||
+                String(
+                    email ||
+                    ""
+                )
+                    .trim()
+                    .toLowerCase(),
+
+            hospital_id:
+                normalizedHospitalId,
+
+            hospitalId:
+                normalizedHospitalId,
         };
 
 
-        // ---------------------------------------------
-        // Save token
-        // ---------------------------------------------
+        /* =================================================
+           SAVE TOKEN
+        ================================================= */
 
         localStorage.setItem(
             "hms_token",
-            data.token
+            token
         );
 
 
-        // ---------------------------------------------
-        // Save user
-        // ---------------------------------------------
+        /* =================================================
+           SAVE USER
+        ================================================= */
 
         localStorage.setItem(
             "hms_user",
@@ -416,17 +434,81 @@ export const AuthProvider = ({
         );
 
 
-        // ---------------------------------------------
-        // Update state
-        // ---------------------------------------------
+        /* =================================================
+           COMPATIBILITY STORAGE
+        ================================================= */
+
+        localStorage.setItem(
+            "token",
+            token
+        );
+
+
+        localStorage.setItem(
+            "authToken",
+            token
+        );
+
+
+        localStorage.setItem(
+            "hms_role",
+            normalizedRole
+        );
+
+
+        localStorage.setItem(
+            "role",
+            normalizedRole
+        );
+
+
+        if (
+            normalizedHospitalId !==
+                null &&
+            normalizedHospitalId !==
+                undefined
+        ) {
+            localStorage.setItem(
+                "hms_hospital_id",
+                String(
+                    normalizedHospitalId
+                )
+            );
+        }
+
+
+        /* =================================================
+           IMPORTANT AUTH STATE UPDATE
+        ================================================= */
+
+        /*
+         * THIS IS THE MAIN FIX.
+         *
+         * Previously Home.jsx only saved localStorage.
+         *
+         * ProtectedRoute uses AuthContext.user.
+         *
+         * Therefore user was null immediately after login.
+         *
+         * Now React AuthContext is updated here.
+         */
 
         setUser(
             normalizedUser
         );
 
 
+        /* =================================================
+           RETURN LOGIN RESULT
+        ================================================= */
+
         return {
             ...data,
+
+            success:
+                data?.success !== false,
+
+            token,
 
             user:
                 normalizedUser,
@@ -434,266 +516,103 @@ export const AuthProvider = ({
     };
 
 
-    // =================================================
-    // LOGOUT
-    // =================================================
+    /* =====================================================
+       LOGOUT
+    ===================================================== */
 
     const logout = () => {
-
-        localStorage.removeItem(
-            "hms_token"
-        );
-
-        localStorage.removeItem(
-            "hms_user"
-        );
+        logoutUser();
 
         setUser(null);
     };
 
 
-    // =================================================
-    // CURRENT ROLE
-    // =================================================
+    /* =====================================================
+       CURRENT TOKEN
+    ===================================================== */
 
-    const role =
-        user?.role || null;
-
-
-    // =================================================
-    // HAS ROLE
-    // =================================================
-
-    const hasRole = (
-        requiredRole
-    ) => {
-
-        if (!role) {
-            return false;
-        }
-
-        // ---------------------------------------------
-        // Array of roles
-        // ---------------------------------------------
-
-        if (
-            Array.isArray(
-                requiredRole
-            )
-        ) {
-
-            return requiredRole.includes(
-                role
-            );
-        }
-
-        // ---------------------------------------------
-        // Single role
-        // ---------------------------------------------
-
-        return role === requiredRole;
-    };
+    const token =
+        getAuthToken();
 
 
-    // =================================================
-    // HAS ANY ROLE
-    // =================================================
-
-    const hasAnyRole = (
-        requiredRoles = []
-    ) => {
-
-        if (!role) {
-            return false;
-        }
-
-        if (
-            !Array.isArray(
-                requiredRoles
-            )
-        ) {
-
-            return false;
-        }
-
-        return requiredRoles.includes(
-            role
-        );
-    };
-
-
-    // =================================================
-    // HAS PERMISSION
-    // =================================================
-
-    const hasPermission = (
-        permission
-    ) => {
-
-        if (!role) {
-            return false;
-        }
-
-        const allowedRoles =
-            PERMISSIONS[
-            permission
-            ];
-
-        if (
-            !Array.isArray(
-                allowedRoles
-            )
-        ) {
-
-            return false;
-        }
-
-        return allowedRoles.includes(
-            role
-        );
-    };
-
-
-    // =================================================
-    // GET USER PERMISSIONS
-    // =================================================
-
-    const getUserPermissions = () => {
-
-        if (!role) {
-            return [];
-        }
-
-        return Object.keys(
-            PERMISSIONS
-        ).filter(
-            (permission) =>
-                PERMISSIONS[
-                    permission
-                ].includes(role)
-        );
-    };
-
-
-    // =================================================
-    // AUTH STATUS
-    // =================================================
+    /* =====================================================
+       AUTHENTICATION STATUS
+    ===================================================== */
 
     const isAuthenticated =
         Boolean(
             user &&
             user.id &&
             user.role &&
-            isValidRole(user.role) &&
-            localStorage.getItem(
-                "hms_token"
-            )
+            isValidRole(
+                user.role
+            ) &&
+            token
         );
 
 
-    // =================================================
-    // CONTEXT VALUE
-    // =================================================
+    /* =====================================================
+       CONTEXT VALUE
+    ===================================================== */
 
-    const contextValue =
-        useMemo(
-            () => ({
+    const value = useMemo(
+        () => ({
+            user,
 
-                // -------------------------------------
-                // User
-                // -------------------------------------
+            role:
+                user?.role ||
+                null,
 
-                user,
+            token,
 
-                setUser,
+            isAuthenticated,
 
-                // -------------------------------------
-                // Authentication
-                // -------------------------------------
+            authLoading,
 
-                login,
+            login,
 
-                logout,
+            logout,
 
-                isAuthenticated,
+            setUser,
 
-                // -------------------------------------
-                // Role
-                // -------------------------------------
+            isValidRole,
 
-                role,
+            normalizeRole,
 
-                roleLabel:
-                    getRoleLabel(role),
+            ROLES,
 
-                // -------------------------------------
-                // Role helpers
-                // -------------------------------------
+            ALL_ROLES,
 
-                hasRole,
-
-                hasAnyRole,
-
-                isValidRole,
-
-                // -------------------------------------
-                // Permission helpers
-                // -------------------------------------
-
-                hasPermission,
-
-                getUserPermissions,
-
-                // -------------------------------------
-                // Constants
-                // -------------------------------------
-
-                roles:
-                    HMS_ROLES,
-
-                allRoles:
-                    ALL_ROLES,
-
-                permissions:
-                    PERMISSIONS,
-
-                roleLabels:
-                    ROLE_LABELS,
-
-            }),
-            [
-                user,
-                role,
-                isAuthenticated,
-            ]
-        );
+            PERMISSIONS,
+        }),
+        [
+            user,
+            token,
+            isAuthenticated,
+            authLoading,
+        ]
+    );
 
 
-    // =================================================
-    // PROVIDER
-    // =================================================
+    /* =====================================================
+       PROVIDER
+    ===================================================== */
 
     return (
-
         <AuthContext.Provider
-            value={
-                contextValue
-            }
+            value={value}
         >
-
             {children}
-
         </AuthContext.Provider>
     );
 };
 
 
-// =====================================================
-// USE AUTH
-// =====================================================
+/* =========================================================
+   useAuth HOOK
+========================================================= */
 
 export const useAuth = () => {
-
     const context =
         useContext(
             AuthContext
@@ -701,9 +620,8 @@ export const useAuth = () => {
 
 
     if (!context) {
-
         throw new Error(
-            "useAuth must be used inside AuthProvider"
+            "useAuth() must be used inside an AuthProvider."
         );
     }
 
@@ -712,8 +630,8 @@ export const useAuth = () => {
 };
 
 
-// =====================================================
-// DEFAULT EXPORT
-// =====================================================
+/* =========================================================
+   DEFAULT EXPORT
+========================================================= */
 
 export default AuthContext;

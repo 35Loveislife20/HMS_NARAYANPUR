@@ -9,11 +9,9 @@ const authenticateToken = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
-/*
-=====================================================
-ALL DASHBOARD ROUTES REQUIRE LOGIN
-=====================================================
-*/
+// =====================================================
+// ALL DASHBOARD ROUTES REQUIRE LOGIN
+// =====================================================
 
 router.get(
     "/stats",

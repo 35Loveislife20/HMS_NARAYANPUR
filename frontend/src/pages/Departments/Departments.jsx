@@ -15,12 +15,23 @@ import {
     FaBone,
     FaBrain,
     FaStethoscope,
-    FaMicroscope,
     FaPills,
     FaAmbulance,
+    FaAssistiveListeningSystems,
+    FaEye,
+    FaTooth,
+    FaBaby,
+    FaFemale,
+    FaLungs,
+    FaVial,
+    FaBed,
+    FaProcedures,
+    FaWheelchair,
+    FaUserMd,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./Departments.css";
+import SuccessPopup from "../../components/common/SuccessPopup";
 
 const API_URL =
     import.meta.env.VITE_API_URL || "http://localhost:5000/api";
@@ -31,20 +42,38 @@ const emptyForm = {
     status: "active",
 };
 
+const emptySuccessPopup = {
+    open: false,
+    title: "Success",
+    message: "",
+};
+
 // =====================================================
-// DEPARTMENT VISUAL IDENTITY (icon + accent color)
+// DEPARTMENT VISUAL IDENTITY
+// Naam ke keywords ke hisaab se icon + color.
+// Upar wala match pehle milta hai.
 // =====================================================
 
-const DEPARTMENT_STYLES = {
-    cardiology: { color: "#ff4d6d", icon: FaHeartbeat },
-    radiology: { color: "#3b82f6", icon: FaXRay },
-    orthopedics: { color: "#22c55e", icon: FaBone },
-    neurology: { color: "#8b5cf6", icon: FaBrain },
-    "general medicine": { color: "#f5a623", icon: FaStethoscope },
-    laboratory: { color: "#06b6d4", icon: FaMicroscope },
-    pharmacy: { color: "#ec4899", icon: FaPills },
-    emergency: { color: "#ef4444", icon: FaAmbulance },
-};
+const DEPARTMENT_THEMES = [
+    { match: /\b(ent|ear|nose|throat|audiolog\w*|hearing)\b/, color: "#14b8a6", icon: FaAssistiveListeningSystems },
+    { match: /\b(eye|eyes|ophthalm\w*|vision)\b/, color: "#38bdf8", icon: FaEye },
+    { match: /\b(dental|dentist|tooth|teeth|oral)\b/, color: "#e2e8f0", icon: FaTooth },
+    { match: /\b(pediatric\w*|paediatric\w*|child\w*|kids?)\b/, color: "#facc15", icon: FaBaby },
+    { match: /\b(gynae\w*|gynec\w*|obstetric\w*|maternity)\b/, color: "#f472b6", icon: FaFemale },
+    { match: /\b(lung\w*|chest|pulmon\w*|respirat\w*)\b/, color: "#60a5fa", icon: FaLungs },
+    { match: /\b(cardio\w*|heart)\b/, color: "#ff4d6d", icon: FaHeartbeat },
+    { match: /\b(neuro\w*|brain)\b/, color: "#8b5cf6", icon: FaBrain },
+    { match: /\b(ortho\w*|bone|fracture)\b/, color: "#22c55e", icon: FaBone },
+    { match: /\b(radiolog\w*|x-?ray|imaging|scan)\b/, color: "#3b82f6", icon: FaXRay },
+    { match: /\b(lab|laboratory|patholog\w*)\b/, color: "#06b6d4", icon: FaVial },
+    { match: /\b(pharmac\w*)\b/, color: "#ec4899", icon: FaPills },
+    { match: /\b(emergency|trauma|casualty|ambulance)\b/, color: "#ef4444", icon: FaAmbulance },
+    { match: /\b(icu|intensive|critical care)\b/, color: "#a3e635", icon: FaBed },
+    { match: /\b(surg\w*|operation\w*|ot)\b/, color: "#fb923c", icon: FaProcedures },
+    { match: /\b(physio\w*|rehab\w*)\b/, color: "#2dd4bf", icon: FaWheelchair },
+    { match: /\b(skin|derma\w*)\b/, color: "#fda4af", icon: FaUserMd },
+    { match: /\b(general|medicine|medical)\b/, color: "#f5a623", icon: FaStethoscope },
+];
 
 const FALLBACK_PALETTE = [
     "#00ff22",
@@ -60,16 +89,103 @@ const FALLBACK_PALETTE = [
 const getDepartmentStyle = (name, index) => {
     const key = (name || "").trim().toLowerCase();
 
-    if (DEPARTMENT_STYLES[key]) return DEPARTMENT_STYLES[key];
+    const theme = DEPARTMENT_THEMES.find((t) => t.match.test(key));
+
+    const color = theme
+        ? theme.color
+        : FALLBACK_PALETTE[index % FALLBACK_PALETTE.length];
 
     return {
-        color: FALLBACK_PALETTE[index % FALLBACK_PALETTE.length],
-        icon: FaHospital,
+        color,
+        // Halka color upar se, gehra neeche (card/icon ke liye)
+        bg: `linear-gradient(135deg, ${color}33, ${color}0d)`,
+        icon: theme ? theme.icon : FaHospital,
     };
+};
+
+const toValidHospitalId = (value) => {
+    if (value === null || value === undefined || value === "") {
+        return null;
+    }
+
+    const number = Number(value);
+
+    return Number.isInteger(number) && number > 0 ? number : null;
 };
 
 const Departments = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    /*
+     * Department har hospital ke hisab se alag hota hai.
+     * - Super admin: Dashboard me chuna hua hospital
+     * - Baaki staff: login user ka apna hospital (hms_user)
+     * - Purana key hms_hospital_id fallback
+     */
+    const getUserInfo = () => {
+        try {
+            const saved = localStorage.getItem("hms_user");
+
+            const user = saved ? JSON.parse(saved) || {} : {};
+
+            return {
+                role: String(user?.role || "").toLowerCase(),
+                ownHospital: toValidHospitalId(
+                    user?.hospital_id ??
+                        user?.hospitalId ??
+                        (typeof user?.hospital === "object"
+                            ? user?.hospital?.id
+                            : user?.hospital)
+                ),
+            };
+        } catch {
+            return { role: "", ownHospital: null };
+        }
+    };
+
+    const getHospitalId = () => {
+        const { role, ownHospital } = getUserInfo();
+
+        let selectedHospital = toValidHospitalId(
+            location.state?.hospitalId
+        );
+
+        if (!selectedHospital) {
+            try {
+                selectedHospital = toValidHospitalId(
+                    sessionStorage.getItem("hms_selected_hospital")
+                );
+            } catch {
+                selectedHospital = null;
+            }
+        }
+
+        const storedHospital = toValidHospitalId(
+            localStorage.getItem("hms_hospital_id")
+        );
+
+        if (role === "super_admin") {
+            return (
+                selectedHospital || storedHospital || ownHospital || null
+            );
+        }
+
+        return ownHospital || storedHospital || selectedHospital || null;
+    };
+
+    const needsHospitalSelection = () =>
+        getUserInfo().role === "super_admin" && !getHospitalId();
+
+    const withHospital = (url) => {
+        const hospitalId = getHospitalId();
+
+        if (!hospitalId) return url;
+
+        return `${url}${
+            url.includes("?") ? "&" : "?"
+        }hospital_id=${hospitalId}`;
+    };
 
     const [departments, setDepartments] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -82,6 +198,8 @@ const Departments = () => {
     const [formData, setFormData] = useState(emptyForm);
     const [saving, setSaving] = useState(false);
 
+    const [successPopup, setSuccessPopup] = useState(emptySuccessPopup);
+
     // =====================================================
     // FETCH DEPARTMENTS
     // =====================================================
@@ -91,9 +209,15 @@ const Departments = () => {
             setLoading(true);
             setError("");
 
+            if (needsHospitalSelection()) {
+                throw new Error(
+                    "Hospital selection is missing. Please select a hospital first."
+                );
+            }
+
             const token = localStorage.getItem("hms_token");
 
-            const response = await fetch(`${API_URL}/departments`, {
+            const response = await fetch(withHospital(`${API_URL}/departments`), {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -185,6 +309,14 @@ const Departments = () => {
     };
 
     // =====================================================
+    // SUCCESS POPUP CLOSE
+    // =====================================================
+
+    const closeSuccessPopup = () => {
+        setSuccessPopup(emptySuccessPopup);
+    };
+
+    // =====================================================
     // ADD / UPDATE DEPARTMENT
     // =====================================================
 
@@ -198,14 +330,25 @@ const Departments = () => {
 
         const isEditing = editingId !== null;
 
+        if (needsHospitalSelection()) {
+            alert(
+                "Hospital selection is missing. Please select a hospital first."
+            );
+            return;
+        }
+
         try {
             setSaving(true);
 
             const token = localStorage.getItem("hms_token");
 
-            const url = isEditing
-                ? `${API_URL}/departments/${editingId}`
-                : `${API_URL}/departments`;
+            const hospitalId = getHospitalId();
+
+            const url = withHospital(
+                isEditing
+                    ? `${API_URL}/departments/${editingId}`
+                    : `${API_URL}/departments`
+            );
 
             const response = await fetch(url, {
                 method: isEditing ? "PUT" : "POST",
@@ -214,6 +357,7 @@ const Departments = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
+                    ...(hospitalId ? { hospital_id: hospitalId } : {}),
                     name: formData.name.trim(),
                     description: formData.description.trim(),
                     status: formData.status,
@@ -231,11 +375,13 @@ const Departments = () => {
                 );
             }
 
-            alert(
-                isEditing
+            setSuccessPopup({
+                open: true,
+                title: "Success",
+                message: isEditing
                     ? "Department updated successfully"
-                    : "Department created successfully"
-            );
+                    : "Department created successfully",
+            });
 
             setShowModal(false);
             setEditingId(null);
@@ -272,11 +418,18 @@ const Departments = () => {
 
         if (!confirmed) return;
 
+        if (needsHospitalSelection()) {
+            alert(
+                "Hospital selection is missing. Please select a hospital first."
+            );
+            return;
+        }
+
         try {
             const token = localStorage.getItem("hms_token");
 
             const response = await fetch(
-                `${API_URL}/departments/${department.id}`,
+                withHospital(`${API_URL}/departments/${department.id}`),
                 {
                     method: "DELETE",
                     headers: {
@@ -294,7 +447,11 @@ const Departments = () => {
                 );
             }
 
-            alert("Department deleted successfully");
+            setSuccessPopup({
+                open: true,
+                title: "Deleted",
+                message: "Department deleted successfully",
+            });
 
             await fetchDepartments();
         } catch (err) {
@@ -509,7 +666,7 @@ const Departments = () => {
                             <tbody>
                                 {filteredDepartments.length > 0 ? (
                                     filteredDepartments.map((department, index) => {
-                                        const { color, icon: Icon } =
+                                        const { color, bg, icon: Icon } =
                                             getDepartmentStyle(department.name, index);
                                         const doctorCount =
                                             department.doctor_count ??
@@ -525,6 +682,7 @@ const Departments = () => {
                                                             className="department-table-icon"
                                                             style={{
                                                                 "--dept-color": color,
+                                                                "--dept-bg": bg,
                                                             }}
                                                         >
                                                             <Icon />
@@ -604,7 +762,7 @@ const Departments = () => {
 
                         filteredDepartments.map((department, index) => {
 
-                            const { color, icon: Icon } =
+                            const { color, bg, icon: Icon } =
                                 getDepartmentStyle(department.name, index);
 
                             const doctorCount =
@@ -618,7 +776,10 @@ const Departments = () => {
                                 <div
                                     key={department.id}
                                     className="department-card"
-                                    style={{ "--dept-color": color }}
+                                    style={{
+                                        "--dept-color": color,
+                                        "--dept-bg": bg,
+                                    }}
                                 >
 
                                     <div className="department-card-top">
@@ -859,6 +1020,17 @@ const Departments = () => {
                 </div>
 
             )}
+
+            {/* =================================================
+                SUCCESS POPUP
+            ================================================= */}
+
+            <SuccessPopup
+                open={successPopup.open}
+                title={successPopup.title}
+                message={successPopup.message}
+                onClose={closeSuccessPopup}
+            />
 
         </div>
     );

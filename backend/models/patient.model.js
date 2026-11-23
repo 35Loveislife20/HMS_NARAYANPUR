@@ -1,17 +1,53 @@
 const { pool } = require("../config/db");
 
+// =====================================================
+// HELPERS
+// =====================================================
 
-/*
-=====================================================
-GET ALL PATIENTS
-=====================================================
-*/
+const normalizeHospitalId = (hospitalId) => {
+    if (
+        hospitalId === null ||
+        hospitalId === undefined ||
+        hospitalId === ""
+    ) {
+        return null;
+    }
 
-const getAllPatients = async () => {
+    const value = Number(hospitalId);
 
-    const [rows] = await pool.query(`
+    if (!Number.isInteger(value) || value <= 0) {
+        throw new Error("Invalid hospital ID");
+    }
+
+    return value;
+};
+
+const normalizePatientId = (id) => {
+    const value = Number(id);
+
+    if (!Number.isInteger(value) || value <= 0) {
+        throw new Error("Invalid patient ID");
+    }
+
+    return value;
+};
+
+// =====================================================
+// GET ALL PATIENTS
+// =====================================================
+// super_admin  -> ALL HOSPITALS
+// other users  -> THEIR HOSPITAL ONLY
+// =====================================================
+
+const getAllPatients = async (hospitalId = null) => {
+    const normalizedHospitalId =
+        normalizeHospitalId(hospitalId);
+
+    let query = `
         SELECT
             id,
+            hospital_id,
+            user_id,
             patient_code,
             name,
             gender,
@@ -20,94 +56,204 @@ const getAllPatients = async () => {
             email,
             address,
             blood_group,
+            emergency_contact,
             created_at,
             updated_at
         FROM patients
+    `;
+
+    const params = [];
+
+    if (normalizedHospitalId !== null) {
+        query += `
+            WHERE hospital_id = ?
+        `;
+
+        params.push(normalizedHospitalId);
+    }
+
+    query += `
         ORDER BY id DESC
-    `);
+    `;
+
+    const [rows] = await pool.query(
+        query,
+        params
+    );
 
     return rows;
 };
 
+// =====================================================
+// SEARCH PATIENTS
+// =====================================================
+// Used by authenticated system and public patient portal.
+//
+// Public search should NOT expose:
+// - address
+// - blood_group
+// - emergency_contact
+//
+// It returns only minimum information needed
+// to identify a patient.
+// =====================================================
 
-/*
-=====================================================
-PUBLIC SEARCH PATIENTS
-=====================================================
-
-Used by:
-Old Patient Appointment
-
-Search by:
-- Patient ID
-- Patient Code
-- Name
-- Phone
-- Email
-
-NO LOGIN REQUIRED
-=====================================================
-*/
-
-const searchPatientsModel = async (search) => {
-
-    const searchValue = String(search || "").trim();
+const searchPatientsModel = async (
+    search,
+    hospitalId = null
+) => {
+    const searchValue =
+        String(search || "").trim();
 
     if (!searchValue) {
         return [];
     }
 
-    const likeValue = `%${searchValue}%`;
+    const normalizedHospitalId =
+        normalizeHospitalId(hospitalId);
 
-    const [rows] = await pool.query(
-        `
+    const likeValue =
+        `%${searchValue}%`;
+
+    let query = `
         SELECT
             id,
+            hospital_id,
             patient_code,
             name,
             gender,
             date_of_birth,
             phone,
             email,
-            address,
-            blood_group,
-            created_at,
-            updated_at
+            created_at
         FROM patients
         WHERE
-            CAST(id AS CHAR) LIKE ?
-            OR patient_code LIKE ?
-            OR name LIKE ?
-            OR phone LIKE ?
-            OR email LIKE ?
+            (
+                CAST(id AS CHAR) LIKE ?
+                OR patient_code LIKE ?
+                OR name LIKE ?
+                OR phone LIKE ?
+                OR email LIKE ?
+            )
+    `;
+
+    const params = [
+        likeValue,
+        likeValue,
+        likeValue,
+        likeValue,
+        likeValue,
+    ];
+
+    if (normalizedHospitalId !== null) {
+        query += `
+            AND hospital_id = ?
+        `;
+
+        params.push(normalizedHospitalId);
+    }
+
+    query += `
         ORDER BY id DESC
         LIMIT 20
-        `,
-        [
-            likeValue,
-            likeValue,
-            likeValue,
-            likeValue,
-            likeValue,
-        ]
+    `;
+
+    const [rows] = await pool.query(
+        query,
+        params
     );
 
     return rows;
 };
 
+// =====================================================
+// PUBLIC PATIENT LOOKUP (no login)
+// =====================================================
+// - hospital_id is REQUIRED
+// - EXACT match on patient_code or phone only (no LIKE,
+//   so the patient list cannot be enumerated)
+// - returns the minimum needed to book an appointment
+//   (phone is masked, no email / DOB / address)
+// =====================================================
 
-/*
-=====================================================
-GET PATIENT BY ID
-=====================================================
-*/
+const maskPhoneNumber = (phone) => {
+    const digits = String(phone || "").replace(/\D/g, "");
 
-const getPatientByIdModel = async (id) => {
+    if (digits.length < 4) {
+        return null;
+    }
+
+    return `${"*".repeat(Math.max(digits.length - 4, 0))}${digits.slice(-4)}`;
+};
+
+const findPatientForPublicLookup = async (
+    search,
+    hospitalId
+) => {
+    const searchValue =
+        String(search || "").trim();
+
+    const normalizedHospitalId =
+        normalizeHospitalId(hospitalId);
+
+    if (!searchValue || normalizedHospitalId === null) {
+        return [];
+    }
 
     const [rows] = await pool.query(
         `
         SELECT
             id,
+            hospital_id,
+            patient_code,
+            name,
+            gender,
+            phone
+        FROM patients
+        WHERE hospital_id = ?
+        AND (
+            patient_code = ?
+            OR phone = ?
+        )
+        ORDER BY id DESC
+        LIMIT 5
+        `,
+        [
+            normalizedHospitalId,
+            searchValue,
+            searchValue,
+        ]
+    );
+
+    return rows.map((row) => ({
+        id: row.id,
+        hospital_id: row.hospital_id,
+        patient_code: row.patient_code,
+        name: row.name,
+        gender: row.gender,
+        phone: maskPhoneNumber(row.phone),
+    }));
+};
+
+// =====================================================
+// GET PATIENT BY ID
+// =====================================================
+
+const getPatientByIdModel = async (
+    id,
+    hospitalId = null
+) => {
+    const patientId =
+        normalizePatientId(id);
+
+    const normalizedHospitalId =
+        normalizeHospitalId(hospitalId);
+
+    let query = `
+        SELECT
+            id,
+            hospital_id,
+            user_id,
             patient_code,
             name,
             gender,
@@ -116,28 +262,45 @@ const getPatientByIdModel = async (id) => {
             email,
             address,
             blood_group,
+            emergency_contact,
             created_at,
             updated_at
         FROM patients
         WHERE id = ?
+    `;
+
+    const params = [patientId];
+
+    if (normalizedHospitalId !== null) {
+        query += `
+            AND hospital_id = ?
+        `;
+
+        params.push(normalizedHospitalId);
+    }
+
+    query += `
         LIMIT 1
-        `,
-        [id]
+    `;
+
+    const [rows] = await pool.query(
+        query,
+        params
     );
 
     return rows[0] || null;
 };
 
+// =====================================================
+// CREATE PATIENT
+// =====================================================
 
-/*
-=====================================================
-CREATE PATIENT
-=====================================================
-*/
-
-const createPatientModel = async (patient) => {
-
+const createPatientModel = async (
+    patient,
+    hospitalId = null
+) => {
     const {
+        user_id,
         patient_code,
         name,
         gender,
@@ -146,23 +309,47 @@ const createPatientModel = async (patient) => {
         email,
         address,
         blood_group,
-    } = patient;
+        emergency_contact,
+        hospital_id,
+    } = patient || {};
 
+    const finalHospitalId =
+        hospitalId !== null &&
+        hospitalId !== undefined
+            ? normalizeHospitalId(hospitalId)
+            : normalizeHospitalId(hospital_id);
 
-    /*
-    If frontend does not provide patient code,
-    generate one automatically.
-    */
+    if (finalHospitalId === null) {
+        throw new Error(
+            "Hospital ID is required to create patient"
+        );
+    }
 
     const finalPatientCode =
-        patient_code ||
+        String(patient_code || "").trim() ||
         `P-${Date.now()}`;
 
+    const finalUserId =
+        user_id === null ||
+        user_id === undefined ||
+        user_id === ""
+            ? null
+            : Number(user_id);
+
+    if (
+        finalUserId !== null &&
+        (!Number.isInteger(finalUserId) ||
+            finalUserId <= 0)
+    ) {
+        throw new Error("Invalid user ID");
+    }
 
     const [result] = await pool.query(
         `
         INSERT INTO patients
         (
+            hospital_id,
+            user_id,
             patient_code,
             name,
             gender,
@@ -170,11 +357,14 @@ const createPatientModel = async (patient) => {
             phone,
             email,
             address,
-            blood_group
+            blood_group,
+            emergency_contact
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
+            finalHospitalId,
+            finalUserId,
             finalPatientCode,
             name,
             gender,
@@ -183,24 +373,27 @@ const createPatientModel = async (patient) => {
             email || null,
             address || null,
             blood_group || null,
+            emergency_contact || null,
         ]
     );
-
 
     return result;
 };
 
-
-/*
-=====================================================
-UPDATE PATIENT
-=====================================================
-*/
+// =====================================================
+// UPDATE PATIENT
+// =====================================================
 
 const updatePatientModel = async (
     id,
-    patient
+    patient,
+    hospitalId = null
 ) => {
+    const patientId =
+        normalizePatientId(id);
+
+    const normalizedHospitalId =
+        normalizeHospitalId(hospitalId);
 
     const {
         patient_code,
@@ -211,11 +404,10 @@ const updatePatientModel = async (
         email,
         address,
         blood_group,
-    } = patient;
+        emergency_contact,
+    } = patient || {};
 
-
-    const [result] = await pool.query(
-        `
+    let query = `
         UPDATE patients
         SET
             patient_code = ?,
@@ -225,57 +417,85 @@ const updatePatientModel = async (
             phone = ?,
             email = ?,
             address = ?,
-            blood_group = ?
+            blood_group = ?,
+            emergency_contact = ?
         WHERE id = ?
-        `,
-        [
-            patient_code,
-            name,
-            gender,
-            date_of_birth || null,
-            phone || null,
-            email || null,
-            address || null,
-            blood_group || null,
-            id,
-        ]
-    );
+    `;
 
+    const params = [
+        patient_code,
+        name,
+        gender,
+        date_of_birth || null,
+        phone || null,
+        email || null,
+        address || null,
+        blood_group || null,
+        emergency_contact || null,
+        patientId,
+    ];
 
-    return result;
-};
+    if (normalizedHospitalId !== null) {
+        query += `
+            AND hospital_id = ?
+        `;
 
-
-/*
-=====================================================
-DELETE PATIENT
-=====================================================
-*/
-
-const deletePatientModel = async (id) => {
+        params.push(normalizedHospitalId);
+    }
 
     const [result] = await pool.query(
-        `
-        DELETE FROM patients
-        WHERE id = ?
-        `,
-        [id]
+        query,
+        params
     );
-
 
     return result;
 };
 
+// =====================================================
+// DELETE PATIENT
+// =====================================================
 
-/*
-=====================================================
-EXPORT
-=====================================================
-*/
+const deletePatientModel = async (
+    id,
+    hospitalId = null
+) => {
+    const patientId =
+        normalizePatientId(id);
+
+    const normalizedHospitalId =
+        normalizeHospitalId(hospitalId);
+
+    let query = `
+        DELETE FROM patients
+        WHERE id = ?
+    `;
+
+    const params = [patientId];
+
+    if (normalizedHospitalId !== null) {
+        query += `
+            AND hospital_id = ?
+        `;
+
+        params.push(normalizedHospitalId);
+    }
+
+    const [result] = await pool.query(
+        query,
+        params
+    );
+
+    return result;
+};
+
+// =====================================================
+// EXPORT
+// =====================================================
 
 module.exports = {
     getAllPatients,
     searchPatientsModel,
+    findPatientForPublicLookup,
     getPatientByIdModel,
     createPatientModel,
     updatePatientModel,

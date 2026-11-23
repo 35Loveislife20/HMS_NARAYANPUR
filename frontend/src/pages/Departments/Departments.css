@@ -1688,3 +1688,14 @@
         width: 100%;
     }
 }
+.department-table-icon,
+.department-card-icon {
+    background: var(--dept-bg);
+    border: 1px solid var(--dept-color);
+    color: var(--dept-color);
+}
+
+.department-card {
+    background: var(--dept-bg), #0b1410;
+    border-top: 3px solid var(--dept-color);
+}

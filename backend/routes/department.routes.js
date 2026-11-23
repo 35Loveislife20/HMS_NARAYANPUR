@@ -1,28 +1,89 @@
 const express = require("express");
 
-const router = express.Router();
-
 const {
     getDepartments,
     getDepartment,
     createDepartment,
     updateDepartment,
-    deleteDepartment
+    deleteDepartment,
 } = require("../controllers/department.controller");
 
-// GET all departments
-router.get("/", getDepartments);
+const authMiddleware = require("../middleware/auth.middleware");
+const {
+    requirePermission,
+} = require("../middleware/role.middleware");
 
-// GET single department
-router.get("/:id", getDepartment);
+const router = express.Router();
 
-// CREATE department
-router.post("/", createDepartment);
+/* =========================================================
+   AUTHENTICATION
+========================================================= */
 
-// UPDATE department
-router.put("/:id", updateDepartment);
+router.use(authMiddleware);
 
-// DELETE department
-router.delete("/:id", deleteDepartment);
+/* =========================================================
+   DEPARTMENT PERMISSION
+========================================================= */
+
+router.use(requirePermission("departments"));
+
+/* =========================================================
+   GET ALL DEPARTMENTS
+   GET /api/departments
+========================================================= */
+
+router.get(
+    "/",
+    getDepartments
+);
+
+
+/* =========================================================
+   GET DEPARTMENT BY ID
+   GET /api/departments/:id
+========================================================= */
+
+router.get(
+    "/:id",
+    getDepartment
+);
+
+
+/* =========================================================
+   CREATE DEPARTMENT
+   POST /api/departments
+========================================================= */
+
+router.post(
+    "/",
+    createDepartment
+);
+
+
+/* =========================================================
+   UPDATE DEPARTMENT
+   PUT /api/departments/:id
+========================================================= */
+
+router.put(
+    "/:id",
+    updateDepartment
+);
+
+
+/* =========================================================
+   DELETE / DEACTIVATE DEPARTMENT
+   DELETE /api/departments/:id
+========================================================= */
+
+router.delete(
+    "/:id",
+    deleteDepartment
+);
+
+
+/* =========================================================
+   EXPORT
+========================================================= */
 
 module.exports = router;

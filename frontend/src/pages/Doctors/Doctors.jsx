@@ -32,6 +32,7 @@ import {
 } from "react-icons/fa";
 
 import "./Doctors.css";
+import SuccessPopup from "./SuccessPopup";
 
 /* =========================================================
    API
@@ -51,6 +52,7 @@ const EMPTY_FORM = {
     doctor_code: "",
     name: "",
     specialization: "",
+    department_id: "",
     qualification: "",
     phone: "",
     email: "",
@@ -225,6 +227,13 @@ const Doctors = () => {
     const [photoPreview, setPhotoPreview] =
         useState("");
 
+    const [successPopup, setSuccessPopup] =
+        useState({
+            open: false,
+            title: "",
+            message: "",
+        });
+
     /* =====================================================
        AUTH HEADERS
     ===================================================== */
@@ -323,30 +332,27 @@ const Doctors = () => {
                 }
             );
 
+            let data = {};
+
+            try {
+                data = await response.json();
+            } catch {
+                data = {};
+            }
+
+            console.log("DEPARTMENTS status:", response.status, data);
+
             if (!response.ok) {
                 return;
             }
 
-            const data =
-                await response.json();
+            const raw = Array.isArray(data)
+                ? data
+                : data.departments ?? data.data ?? data.results ?? [];
 
-            if (!data.success) {
-                return;
-            }
-
-            const list =
-                Array.isArray(
-                    data.departments
-                )
-                    ? data.departments
-                    : [];
-
-            setDepartments(list);
+            setDepartments(Array.isArray(raw) ? raw : []);
         } catch (err) {
-            console.warn(
-                "Department fetch skipped:",
-                err
-            );
+            console.warn("Department fetch skipped:", err);
         }
     };
 
@@ -605,6 +611,11 @@ const Doctors = () => {
             specialization:
                 doctor.specialization || "",
 
+            department_id:
+                doctor.department_id
+                    ? String(doctor.department_id)
+                    : "",
+
             qualification:
                 doctor.qualification || "",
 
@@ -751,11 +762,19 @@ const Doctors = () => {
 
             await fetchDoctors();
 
-            alert(
-                isEditing
-                    ? "Doctor updated successfully."
-                    : "Doctor added successfully."
-            );
+            setSuccessPopup({
+                open: true,
+                title: isEditing
+                    ? "Doctor Updated"
+                    : "Doctor Added",
+                message: isEditing
+                    ? "Doctor details successfully update ho gayi hain."
+                    : !data.loginCreated
+                    ? "Doctor add ho gaya, par login account nahi ban saka."
+                    : data.mailSent
+                    ? "Doctor add ho gaya. Login credentials email par PDF ke saath bhej diye gaye hain."
+                    : "Doctor add ho gaya, par email nahi ja saka. Forgot Password se login set karwa sakte hain.",
+            });
         } catch (err) {
             console.error(
                 isEditing
@@ -830,6 +849,12 @@ const Doctors = () => {
             }
 
             await fetchDoctors();
+
+            setSuccessPopup({
+                open: true,
+                title: "Doctor Deleted",
+                message: "Doctor record delete ho gaya hai.",
+            });
         } catch (err) {
             console.error(
                 "Delete doctor error:",
@@ -1960,20 +1985,39 @@ const Doctors = () => {
 
                                 <div className="doctor-form-group">
                                     <label>
-                                        Specialization
+                                        Department
                                     </label>
 
-                                    <input
-                                        type="text"
-                                        name="specialization"
-                                        value={
-                                            form.specialization
-                                        }
-                                        onChange={
-                                            handleChange
-                                        }
-                                        placeholder="e.g. Cardiology"
-                                    />
+                                    <select
+                                        name="department_id"
+                                        value={form.department_id}
+                                        onChange={(e) => {
+                                            const dep = departments.find(
+                                                (d) => String(d.id) === e.target.value
+                                            );
+                                            setForm((prev) => ({
+                                                ...prev,
+                                                department_id: e.target.value,
+                                                specialization: dep ? dep.name : "",
+                                            }));
+                                        }}
+                                        required
+                                    >
+                                        <option value="">
+                                            Select department
+                                        </option>
+                                        {departments
+                                            .filter(
+                                                (d) =>
+                                                    d.status === "active" ||
+                                                    String(d.id) === String(form.department_id)
+                                            )
+                                            .map((d) => (
+                                                <option key={d.id} value={d.id}>
+                                                    {d.name}
+                                                </option>
+                                            ))}
+                                    </select>
                                 </div>
 
                                 <div className="doctor-form-group">
@@ -2027,6 +2071,7 @@ const Doctors = () => {
                                             handleChange
                                         }
                                         placeholder="Enter email"
+                                        required={!editingDoctor}
                                     />
                                 </div>
 
@@ -2405,6 +2450,18 @@ const Doctors = () => {
 
                     </div>
                 )}
+
+            <SuccessPopup
+                open={successPopup.open}
+                title={successPopup.title}
+                message={successPopup.message}
+                onClose={() =>
+                    setSuccessPopup((previous) => ({
+                        ...previous,
+                        open: false,
+                    }))
+                }
+            />
 
         </div>
     );

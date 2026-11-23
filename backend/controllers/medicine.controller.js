@@ -2,6 +2,138 @@ const medicineModel = require("../models/medicine.model");
 
 /*
 =====================================================
+HELPERS
+=====================================================
+*/
+
+const isSuperAdmin = (req) => {
+    return (
+        String(req.user?.role || "").toLowerCase() ===
+        "super_admin"
+    );
+};
+
+const getHospitalScope = (req) => {
+    if (isSuperAdmin(req)) {
+        return null;
+    }
+
+    const hospitalId = Number(req.user?.hospital_id);
+
+    if (!Number.isInteger(hospitalId) || hospitalId <= 0) {
+        return null;
+    }
+
+    return hospitalId;
+};
+
+const requireHospitalScope = (req, res) => {
+    if (isSuperAdmin(req)) {
+        return null;
+    }
+
+    const hospitalId = getHospitalScope(req);
+
+    if (!hospitalId) {
+        res.status(403).json({
+            success: false,
+            message: "No valid hospital is assigned to this account.",
+        });
+
+        return undefined;
+    }
+
+    return hospitalId;
+};
+
+const isValidId = (value) => {
+    const id = Number(value);
+
+    return Number.isInteger(id) && id > 0;
+};
+
+const isValidDate = (value) => {
+    if (
+        value === undefined ||
+        value === null ||
+        value === ""
+    ) {
+        return true;
+    }
+
+    if (
+        typeof value !== "string" ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(value)
+    ) {
+        return false;
+    }
+
+    const [year, month, day] = value.split("-").map(Number);
+
+    const date = new Date(`${value}T00:00:00Z`);
+
+    return (
+        !Number.isNaN(date.getTime()) &&
+        date.getUTCFullYear() === year &&
+        date.getUTCMonth() + 1 === month &&
+        date.getUTCDate() === day
+    );
+};
+
+const isValidStatus = (status) => {
+    if (
+        status === undefined ||
+        status === null ||
+        status === ""
+    ) {
+        return true;
+    }
+
+    return ["active", "inactive"].includes(
+        String(status).trim().toLowerCase()
+    );
+};
+
+const normalizeOptionalText = (value) => {
+    if (
+        value === undefined ||
+        value === null ||
+        value === ""
+    ) {
+        return null;
+    }
+
+    return typeof value === "string"
+        ? value.trim()
+        : String(value).trim();
+};
+
+const normalizeQuantity = (value) => {
+    if (
+        value === undefined ||
+        value === null ||
+        value === ""
+    ) {
+        return 0;
+    }
+
+    return Number(value);
+};
+
+const normalizePrice = (value) => {
+    if (
+        value === undefined ||
+        value === null ||
+        value === ""
+    ) {
+        return 0;
+    }
+
+    return Number(value);
+};
+
+/*
+=====================================================
 CREATE MEDICINE
 =====================================================
 */
@@ -18,16 +150,10 @@ const createMedicine = async (req, res) => {
             expiry_date,
             description,
             status,
-        } = req.body;
-
-        /*
-        ---------------------------------------------
-        VALIDATION
-        ---------------------------------------------
-        */
+            hospital_id,
+        } = req.body || {};
 
         if (
-            !medicine_name ||
             typeof medicine_name !== "string" ||
             !medicine_name.trim()
         ) {
@@ -37,57 +163,100 @@ const createMedicine = async (req, res) => {
             });
         }
 
-        /*
-        ---------------------------------------------
-        CREATE
-        ---------------------------------------------
-        */
+        const medicineName = medicine_name.trim();
 
-        const medicineId =
-            await medicineModel.createMedicine({
-                medicine_name:
-                    medicine_name.trim(),
-
-                category:
-                    category?.trim() || null,
-
-                manufacturer:
-                    manufacturer?.trim() || null,
-
-                batch_number:
-                    batch_number?.trim() || null,
-
-                quantity:
-                    Number(quantity) >= 0
-                        ? Number(quantity)
-                        : 0,
-
-                unit_price:
-                    Number(unit_price) >= 0
-                        ? Number(unit_price)
-                        : 0,
-
-                expiry_date:
-                    expiry_date || null,
-
-                description:
-                    description?.trim() || null,
-
-                status:
-                    status === "inactive"
-                        ? "inactive"
-                        : "active",
+        if (medicineName.length > 150) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Medicine name must not exceed 150 characters.",
             });
+        }
 
-        /*
-        ---------------------------------------------
-        GET CREATED MEDICINE
-        ---------------------------------------------
-        */
+        const numericQuantity = normalizeQuantity(quantity);
+
+        if (
+            !Number.isFinite(numericQuantity) ||
+            numericQuantity < 0 ||
+            !Number.isInteger(numericQuantity)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Quantity must be a valid non-negative integer.",
+            });
+        }
+
+        const numericPrice = normalizePrice(unit_price);
+
+        if (
+            !Number.isFinite(numericPrice) ||
+            numericPrice < 0
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Unit price must be a valid non-negative number.",
+            });
+        }
+
+        if (!isValidDate(expiry_date)) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Expiry date must be a valid YYYY-MM-DD date.",
+            });
+        }
+
+        if (!isValidStatus(status)) {
+            return res.status(400).json({
+                success: false,
+                message: "Status must be active or inactive.",
+            });
+        }
+
+        let hospitalId;
+
+        if (isSuperAdmin(req)) {
+            if (!isValidId(hospital_id)) {
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        "hospital_id is required for Super Admin.",
+                });
+            }
+
+            hospitalId = Number(hospital_id);
+        } else {
+            hospitalId = requireHospitalScope(req, res);
+
+            if (hospitalId === undefined) {
+                return;
+            }
+        }
+
+        const medicineId = await medicineModel.createMedicine(
+            {
+                medicine_name: medicineName,
+                category: normalizeOptionalText(category),
+                manufacturer: normalizeOptionalText(manufacturer),
+                batch_number: normalizeOptionalText(batch_number),
+                quantity: numericQuantity,
+                unit_price: numericPrice,
+                expiry_date: expiry_date || null,
+                description: normalizeOptionalText(description),
+                status:
+                    String(status || "active")
+                        .trim()
+                        .toLowerCase(),
+            },
+            hospitalId
+        );
 
         const medicine =
             await medicineModel.getMedicineById(
-                medicineId
+                medicineId,
+                hospitalId
             );
 
         return res.status(201).json({
@@ -95,20 +264,10 @@ const createMedicine = async (req, res) => {
             message: "Medicine created successfully.",
             medicine,
         });
-
     } catch (error) {
-        console.error(
-            "Create Medicine Error:",
-            error
-        );
+        console.error("Create Medicine Error:", error);
 
-        /*
-        Duplicate medicine code / database error
-        */
-
-        if (
-            error.code === "ER_DUP_ENTRY"
-        ) {
+        if (error.code === "ER_DUP_ENTRY") {
             return res.status(409).json({
                 success: false,
                 message:
@@ -116,14 +275,23 @@ const createMedicine = async (req, res) => {
             });
         }
 
+        if (
+            error.code === "ER_NO_REFERENCED_ROW_2" ||
+            error.code === "ER_ROW_IS_REFERENCED_2"
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Invalid hospital or related record.",
+            });
+        }
+
         return res.status(500).json({
             success: false,
-            message:
-                "Unable to create medicine.",
+            message: "Unable to create medicine.",
         });
     }
 };
-
 
 /*
 =====================================================
@@ -133,28 +301,31 @@ GET ALL MEDICINES
 
 const getMedicines = async (req, res) => {
     try {
+        const hospitalId = requireHospitalScope(req, res);
+
+        if (
+            hospitalId === undefined &&
+            !isSuperAdmin(req)
+        ) {
+            return;
+        }
+
         const medicines =
-            await medicineModel.getAllMedicines();
+            await medicineModel.getAllMedicines(hospitalId);
 
         return res.status(200).json({
             success: true,
             medicines,
         });
-
     } catch (error) {
-        console.error(
-            "Get Medicines Error:",
-            error
-        );
+        console.error("Get Medicines Error:", error);
 
         return res.status(500).json({
             success: false,
-            message:
-                "Unable to load medicines.",
+            message: "Unable to load medicines.",
         });
     }
 };
-
 
 /*
 =====================================================
@@ -166,23 +337,32 @@ const getMedicine = async (req, res) => {
     try {
         const { id } = req.params;
 
-        if (!id) {
+        if (!isValidId(id)) {
             return res.status(400).json({
                 success: false,
-                message: "Medicine ID is required.",
+                message: "Invalid medicine ID.",
             });
+        }
+
+        const hospitalId = requireHospitalScope(req, res);
+
+        if (
+            hospitalId === undefined &&
+            !isSuperAdmin(req)
+        ) {
+            return;
         }
 
         const medicine =
             await medicineModel.getMedicineById(
-                id
+                Number(id),
+                hospitalId
             );
 
         if (!medicine) {
             return res.status(404).json({
                 success: false,
-                message:
-                    "Medicine not found.",
+                message: "Medicine not found.",
             });
         }
 
@@ -190,21 +370,15 @@ const getMedicine = async (req, res) => {
             success: true,
             medicine,
         });
-
     } catch (error) {
-        console.error(
-            "Get Medicine Error:",
-            error
-        );
+        console.error("Get Medicine Error:", error);
 
         return res.status(500).json({
             success: false,
-            message:
-                "Unable to load medicine.",
+            message: "Unable to load medicine.",
         });
     }
 };
-
 
 /*
 =====================================================
@@ -216,6 +390,13 @@ const updateMedicine = async (req, res) => {
     try {
         const { id } = req.params;
 
+        if (!isValidId(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid medicine ID.",
+            });
+        }
+
         const {
             medicine_name,
             category,
@@ -226,93 +407,137 @@ const updateMedicine = async (req, res) => {
             expiry_date,
             description,
             status,
-        } = req.body;
+        } = req.body || {};
 
         if (
-            !medicine_name ||
             typeof medicine_name !== "string" ||
             !medicine_name.trim()
         ) {
             return res.status(400).json({
                 success: false,
-                message:
-                    "Medicine name is required.",
+                message: "Medicine name is required.",
             });
+        }
+
+        const medicineName = medicine_name.trim();
+
+        if (medicineName.length > 150) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Medicine name must not exceed 150 characters.",
+            });
+        }
+
+        const numericQuantity = normalizeQuantity(quantity);
+
+        if (
+            !Number.isFinite(numericQuantity) ||
+            numericQuantity < 0 ||
+            !Number.isInteger(numericQuantity)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Quantity must be a valid non-negative integer.",
+            });
+        }
+
+        const numericPrice = normalizePrice(unit_price);
+
+        if (
+            !Number.isFinite(numericPrice) ||
+            numericPrice < 0
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Unit price must be a valid non-negative number.",
+            });
+        }
+
+        if (!isValidDate(expiry_date)) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Expiry date must be a valid YYYY-MM-DD date.",
+            });
+        }
+
+        if (!isValidStatus(status)) {
+            return res.status(400).json({
+                success: false,
+                message: "Status must be active or inactive.",
+            });
+        }
+
+        const hospitalId = requireHospitalScope(req, res);
+
+        if (
+            hospitalId === undefined &&
+            !isSuperAdmin(req)
+        ) {
+            return;
         }
 
         const affectedRows =
             await medicineModel.updateMedicine(
-                id,
+                Number(id),
                 {
-                    medicine_name:
-                        medicine_name.trim(),
-
-                    category:
-                        category?.trim() || null,
-
+                    medicine_name: medicineName,
+                    category: normalizeOptionalText(category),
                     manufacturer:
-                        manufacturer?.trim() || null,
-
+                        normalizeOptionalText(manufacturer),
                     batch_number:
-                        batch_number?.trim() || null,
-
-                    quantity:
-                        Number(quantity) >= 0
-                            ? Number(quantity)
-                            : 0,
-
-                    unit_price:
-                        Number(unit_price) >= 0
-                            ? Number(unit_price)
-                            : 0,
-
-                    expiry_date:
-                        expiry_date || null,
-
+                        normalizeOptionalText(batch_number),
+                    quantity: numericQuantity,
+                    unit_price: numericPrice,
+                    expiry_date: expiry_date || null,
                     description:
-                        description?.trim() || null,
-
+                        normalizeOptionalText(description),
                     status:
-                        status === "inactive"
-                            ? "inactive"
-                            : "active",
-                }
+                        String(status || "active")
+                            .trim()
+                            .toLowerCase(),
+                },
+                hospitalId
             );
 
-        if (affectedRows === 0) {
+        if (!affectedRows) {
             return res.status(404).json({
                 success: false,
-                message:
-                    "Medicine not found.",
+                message: "Medicine not found.",
             });
         }
 
         const medicine =
             await medicineModel.getMedicineById(
-                id
+                Number(id),
+                hospitalId
             );
 
         return res.status(200).json({
             success: true,
-            message:
-                "Medicine updated successfully.",
+            message: "Medicine updated successfully.",
             medicine,
         });
-
     } catch (error) {
-        console.error(
-            "Update Medicine Error:",
-            error
-        );
+        console.error("Update Medicine Error:", error);
+
+        if (error.code === "ER_DUP_ENTRY") {
+            return res.status(409).json({
+                success: false,
+                message:
+                    "Medicine code or batch number already exists.",
+            });
+        }
 
         return res.status(500).json({
             success: false,
-            message:
-                "Unable to update medicine.",
+            message: "Unable to update medicine.",
         });
     }
 };
-
 
 /*
 =====================================================
@@ -324,47 +549,48 @@ const deleteMedicine = async (req, res) => {
     try {
         const { id } = req.params;
 
-        if (!id) {
+        if (!isValidId(id)) {
             return res.status(400).json({
                 success: false,
-                message:
-                    "Medicine ID is required.",
+                message: "Invalid medicine ID.",
             });
+        }
+
+        const hospitalId = requireHospitalScope(req, res);
+
+        if (
+            hospitalId === undefined &&
+            !isSuperAdmin(req)
+        ) {
+            return;
         }
 
         const affectedRows =
             await medicineModel.deleteMedicine(
-                id
+                Number(id),
+                hospitalId
             );
 
-        if (affectedRows === 0) {
+        if (!affectedRows) {
             return res.status(404).json({
                 success: false,
-                message:
-                    "Medicine not found.",
+                message: "Medicine not found.",
             });
         }
 
         return res.status(200).json({
             success: true,
-            message:
-                "Medicine deleted successfully.",
+            message: "Medicine deleted successfully.",
         });
-
     } catch (error) {
-        console.error(
-            "Delete Medicine Error:",
-            error
-        );
+        console.error("Delete Medicine Error:", error);
 
         return res.status(500).json({
             success: false,
-            message:
-                "Unable to delete medicine.",
+            message: "Unable to delete medicine.",
         });
     }
 };
-
 
 /*
 =====================================================
@@ -374,28 +600,33 @@ MEDICINE STATISTICS
 
 const getMedicineStats = async (req, res) => {
     try {
+        const hospitalId = requireHospitalScope(req, res);
+
+        if (
+            hospitalId === undefined &&
+            !isSuperAdmin(req)
+        ) {
+            return;
+        }
+
         const stats =
-            await medicineModel.getMedicineStats();
+            await medicineModel.getMedicineStats(
+                hospitalId
+            );
 
         return res.status(200).json({
             success: true,
             stats,
         });
-
     } catch (error) {
-        console.error(
-            "Medicine Stats Error:",
-            error
-        );
+        console.error("Medicine Stats Error:", error);
 
         return res.status(500).json({
             success: false,
-            message:
-                "Unable to load medicine statistics.",
+            message: "Unable to load medicine statistics.",
         });
     }
 };
-
 
 /*
 =====================================================

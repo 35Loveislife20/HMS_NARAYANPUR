@@ -1,7 +1,5 @@
 const express = require("express");
 
-const router = express.Router();
-
 const {
     createMedicine,
     getMedicines,
@@ -10,6 +8,33 @@ const {
     deleteMedicine,
     getMedicineStats,
 } = require("../controllers/medicine.controller");
+
+const authMiddleware = require("../middleware/auth.middleware");
+const { requirePermission } = require("../middleware/role.middleware");
+
+const router = express.Router();
+
+/*
+=====================================================
+AUTHENTICATION
+All medicine routes require login
+=====================================================
+*/
+
+router.use(authMiddleware);
+
+/*
+=====================================================
+MEDICINE PERMISSION
+Allowed roles:
+- super_admin
+- hospital_admin
+- pharmacist
+- accountant
+=====================================================
+*/
+
+router.use(requirePermission("pharmacy"));
 
 /*
 =====================================================

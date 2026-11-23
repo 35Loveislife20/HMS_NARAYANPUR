@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import SuccessPopup from "../../components/common/SuccessPopup";
 
 import {
     FaArrowLeft,
@@ -19,9 +20,13 @@ import {
     FaLock,
 } from "react-icons/fa";
 
-import { useNavigate } from "react-router-dom";
+import {
+    useLocation,
+    useNavigate,
+} from "react-router-dom";
 
 import "./OldPatientAppointment.css";
+import { PaymentSection, PrintableReceipt, getDoctorFee } from "./Appointmentpayment";
 
 // =====================================================
 // API
@@ -49,6 +54,33 @@ const EMPTY_FORM = {
     appointment_date: "",
     appointment_time: "",
     reason: "",
+};
+
+// =====================================================
+// SEARCH INPUT HELPERS (dropdown ke hisab se)
+// =====================================================
+
+const ID_PREFIX = "P-";
+
+const sanitizeSearchInput = (value, type) => {
+    const text = String(value ?? "");
+
+    if (type === "id") {
+        return text.replace(/\D/g, "");
+    }
+
+    if (type === "phone") {
+        return text.replace(/\D/g, "").slice(0, 10);
+    }
+
+    return text;
+};
+
+const getSearchPlaceholder = (type) => {
+    if (type === "id") return "Enter digits only";
+    if (type === "phone") return "Enter 10 digit mobile number";
+    if (type === "name") return "Enter patient name";
+    return "Enter Patient ID, Patient Code, Name or Phone";
 };
 
 // =====================================================
@@ -110,6 +142,10 @@ const normalizeArray = (data) => {
         return data.patients;
     }
 
+    if (Array.isArray(data?.hospitals)) {
+        return data.hospitals;
+    }
+
     if (Array.isArray(data?.doctors)) {
         return data.doctors;
     }
@@ -131,6 +167,54 @@ const normalizeArray = (data) => {
     }
 
     return [];
+};
+
+// =====================================================
+// HOSPITAL HELPERS
+// =====================================================
+
+// http://host:5000/api  ->  http://host:5000  (logo/uploads ke liye)
+const API_ORIGIN = API_URL.replace(/\/api\/?$/, "");
+
+const resolveAssetUrl = (path) => {
+    const value = String(path || "").trim();
+
+    if (!value) return "";
+
+    if (/^(https?:)?\/\//i.test(value) || value.startsWith("data:")) {
+        return value;
+    }
+
+    return `${API_ORIGIN}${value.startsWith("/") ? "" : "/"}${value}`;
+};
+
+const getHospitalName = (hospital) =>
+    String(
+        hospital?.name ??
+            hospital?.hospital_name ??
+            hospital?.hospitalName ??
+            hospital?.title ??
+            ""
+    ).trim();
+
+const getHospitalLogo = (hospital) =>
+    resolveAssetUrl(
+        hospital?.logo ??
+            hospital?.logo_url ??
+            hospital?.logoUrl ??
+            hospital?.hospital_logo ??
+            hospital?.hospitalLogo ??
+            hospital?.image ??
+            hospital?.photo ??
+            ""
+    );
+
+const getHospitalSubtitle = (hospital) => {
+    const place = [hospital?.city, hospital?.state]
+        .filter(Boolean)
+        .join(", ");
+
+    return String(place || hospital?.address || "").trim();
 };
 
 // =====================================================
@@ -546,12 +630,60 @@ const getSlotPeriod = (
 };
 
 // =====================================================
+// HOSPITAL LOGO (image, na mile to icon)
+// =====================================================
+
+function HospitalLogo({
+    logo,
+    failed,
+    onError,
+    className,
+}) {
+    return (
+        <div className={`${className} old-logo-box`}>
+            {logo && !failed ? (
+                <img
+                    src={logo}
+                    alt="Hospital logo"
+                    onError={onError}
+                />
+            ) : (
+                <FaHospital />
+            )}
+        </div>
+    );
+}
+
+// =====================================================
 // COMPONENT
 // =====================================================
 
 function OldPatientAppointment() {
     const navigate =
         useNavigate();
+
+    const location = useLocation();
+
+    // Hospital context comes from the Patient Portal selection.
+    const getHospitalId = (hospital) =>
+        hospital?.id ??
+        hospital?.hospital_id ??
+        hospital?.hospitalId ??
+        null;
+
+    const routeHospital = location.state?.hospital || null;
+
+    const patientHospitalId =
+        location.state?.hospital_id ??
+        getHospitalId(routeHospital) ??
+        localStorage.getItem("hms_patient_hospital_id") ??
+        null;
+
+    const validHospitalId =
+        Number.isInteger(Number(patientHospitalId)) &&
+        Number(patientHospitalId) > 0
+            ? Number(patientHospitalId)
+            : null;
 
     // ===================================================
     // STATE
@@ -561,8 +693,35 @@ function OldPatientAppointment() {
         hospitalName,
         setHospitalName,
     ] = useState(
-        "HMS Hospital"
+        getHospitalName(routeHospital) ||
+            localStorage.getItem(
+                "hms_patient_hospital_name"
+            ) ||
+            "HMS Hospital"
     );
+
+    const [
+        hospitalLogo,
+        setHospitalLogo,
+    ] = useState(
+        getHospitalLogo(routeHospital) ||
+            localStorage.getItem(
+                "hms_patient_hospital_logo"
+            ) ||
+            ""
+    );
+
+    const [
+        hospitalSubtitle,
+        setHospitalSubtitle,
+    ] = useState(
+        getHospitalSubtitle(routeHospital)
+    );
+
+    const [
+        logoFailed,
+        setLogoFailed,
+    ] = useState(false);
 
     const [
         patients,
@@ -630,6 +789,15 @@ function OldPatientAppointment() {
     ] = useState(false);
 
     const [
+        availabilityError,
+        setAvailabilityError,
+    ] = useState("");
+
+    // Purani availability request naye state ko na badle
+    const availabilityRequestRef =
+        useRef(0);
+
+    const [
         error,
         setError,
     ] = useState("");
@@ -638,6 +806,15 @@ function OldPatientAppointment() {
         success,
         setSuccess,
     ] = useState(null);
+
+    const [
+        successPopupOpen,
+        setSuccessPopupOpen,
+    ] = useState(false);
+
+    useEffect(() => {
+        setSuccessPopupOpen(Boolean(success));
+    }, [success]);
 
     const [
         locallyBookedSlots,
@@ -664,18 +841,26 @@ function OldPatientAppointment() {
         url,
         options = {}
     ) => {
-        const response =
-            await fetch(url, {
-                ...options,
-                headers: {
-                    Accept:
-                        "application/json",
-                    "Content-Type":
-                        "application/json",
-                    ...(options.headers ||
-                        {}),
-                },
-            });
+        let response;
+
+        try {
+            response =
+                await fetch(url, {
+                    ...options,
+                    headers: {
+                        Accept:
+                            "application/json",
+                        "Content-Type":
+                            "application/json",
+                        ...(options.headers ||
+                            {}),
+                    },
+                });
+        } catch {
+            throw new Error(
+                `Cannot reach the server (${API_URL}). Please check that the backend is running and VITE_API_URL is correct.`
+            );
+        }
 
         let data = {};
 
@@ -710,46 +895,125 @@ function OldPatientAppointment() {
     };
 
     // ===================================================
-    // SETTINGS
+    // HOSPITAL PROFILE (name + logo)
+    // Order: route state -> /hospitals -> /settings/public
     // ===================================================
+
+    useEffect(() => {
+        if (validHospitalId) {
+            try {
+                localStorage.setItem(
+                    "hms_patient_hospital_id",
+                    String(validHospitalId)
+                );
+            } catch {
+                /* storage blocked */
+            }
+        }
+    }, [validHospitalId]);
 
     useEffect(() => {
         let mounted = true;
 
-        const loadSettings =
+        const applyHospital = (hospital) => {
+            const name = getHospitalName(hospital);
+            const logo = getHospitalLogo(hospital);
+            const subtitle = getHospitalSubtitle(hospital);
+
+            if (name) {
+                setHospitalName(name);
+
+                try {
+                    localStorage.setItem(
+                        "hms_patient_hospital_name",
+                        name
+                    );
+                } catch {
+                    /* storage blocked */
+                }
+            }
+
+            if (logo) {
+                setHospitalLogo(logo);
+                setLogoFailed(false);
+
+                try {
+                    localStorage.setItem(
+                        "hms_patient_hospital_logo",
+                        logo
+                    );
+                } catch {
+                    /* storage blocked */
+                }
+            }
+
+            if (subtitle) {
+                setHospitalSubtitle(subtitle);
+            }
+
+            return Boolean(name);
+        };
+
+        const loadHospital =
             async () => {
                 try {
                     setLoadingSettings(
                         true
                     );
 
+                    // 1. Public hospital list (same source as Patient Portal)
+                    if (validHospitalId) {
+                        try {
+                            const data =
+                                await fetchJSON(
+                                    `${API_URL}/hospitals`
+                                );
+
+                            const match =
+                                normalizeArray(
+                                    data
+                                ).find(
+                                    (hospital) =>
+                                        Number(
+                                            getHospitalId(
+                                                hospital
+                                            )
+                                        ) ===
+                                        validHospitalId
+                                );
+
+                            if (
+                                mounted &&
+                                match &&
+                                applyHospital(
+                                    match
+                                )
+                            ) {
+                                return;
+                            }
+                        } catch {
+                            /* fall through to settings */
+                        }
+                    }
+
+                    // 2. Public settings (fallback)
                     const data =
                         await fetchJSON(
-                            `${API_URL}/settings`
+                            `${API_URL}/settings/public`
                         );
-
-                    const settings =
-                        data?.data ||
-                        data?.settings ||
-                        data ||
-                        {};
 
                     if (!mounted) {
                         return;
                     }
 
-                    setHospitalName(
-                        settings.hospitalName ||
-                            settings.hospital_name ||
-                            settings.name ||
-                            "HMS Hospital"
+                    applyHospital(
+                        data?.data ||
+                            data?.settings ||
+                            data ||
+                            {}
                     );
                 } catch {
-                    if (mounted) {
-                        setHospitalName(
-                            "HMS Hospital"
-                        );
-                    }
+                    /* keep route/localStorage values */
                 } finally {
                     if (mounted) {
                         setLoadingSettings(
@@ -759,12 +1023,12 @@ function OldPatientAppointment() {
                 }
             };
 
-        loadSettings();
+        loadHospital();
 
         return () => {
             mounted = false;
         };
-    }, []);
+    }, [validHospitalId]);
 
     // ===================================================
     // DOCTORS
@@ -772,20 +1036,86 @@ function OldPatientAppointment() {
 
     const fetchDoctors =
         async () => {
+            if (!validHospitalId) {
+                setDoctors([]);
+                setLoadingDoctors(false);
+                setError("Hospital selection is missing. Please return to Patient Portal and select a hospital first.");
+                return [];
+            }
+
             try {
                 setLoadingDoctors(
                     true
                 );
 
-                const data =
-                    await fetchJSON(
-                        `${API_URL}/doctors`
+                const query = `hospital_id=${encodeURIComponent(
+                    validHospitalId
+                )}`;
+
+                // Patient page par login nahi hota, isliye public endpoint pehle
+                const endpoints = [
+                    `/public/doctors?${query}`,
+                    `/doctors?${query}`,
+                ];
+
+                let doctorList = [];
+                const failures = [];
+
+                for (const endpoint of endpoints) {
+                    try {
+                        const data =
+                            await fetchJSON(
+                                `${API_URL}${endpoint}`
+                            );
+
+                        const list =
+                            normalizeArray(
+                                data
+                            ).filter(
+                                (doctor) =>
+                                    doctor?.hospital_id ===
+                                        undefined ||
+                                    doctor?.hospital_id ===
+                                        null ||
+                                    Number(
+                                        doctor.hospital_id
+                                    ) ===
+                                        validHospitalId
+                            );
+
+                        if (list.length > 0) {
+                            doctorList = list;
+                            break;
+                        }
+
+                        failures.push(
+                            `${endpoint.split("?")[0]}: 0 doctors`
+                        );
+                    } catch (endpointError) {
+                        failures.push(
+                            `${endpoint.split("?")[0]}: ${
+                                endpointError?.status ||
+                                ""
+                            } ${
+                                endpointError?.message ||
+                                "failed"
+                            }`.replace(/\s+/g, " ")
+                        );
+                    }
+                }
+
+                if (doctorList.length === 0) {
+                    console.error(
+                        "Doctors load failed:",
+                        failures
                     );
 
-                const doctorList =
-                    normalizeArray(
-                        data
+                    throw new Error(
+                        `Doctors could not be loaded for this hospital (${failures.join(
+                            " | "
+                        )})`
                     );
+                }
 
                 setDoctors(
                     doctorList
@@ -810,20 +1140,35 @@ function OldPatientAppointment() {
 
     useEffect(() => {
         fetchDoctors();
-    }, []);
+    }, [validHospitalId]);
 
     // ===================================================
     // PATIENT SEARCH
     // ===================================================
 
+    // Purani (late aayi) search ka result naye result ko na badle
+    const searchRequestRef = useRef(0);
+
     const searchPatients =
         async (
             value = searchValue
         ) => {
+            const requestId =
+                ++searchRequestRef.current;
+
+            setLoadingPatients(false);
+
             const search =
                 String(
                     value || ""
                 ).trim();
+
+            // Patient ID mode me user sirf digits likhta hai,
+            // backend ko full code (P-123...) bheja jaata hai
+            const queryText =
+                searchType === "id" && search
+                    ? `${ID_PREFIX}${search}`
+                    : search;
 
             if (!search) {
                 setPatients([]);
@@ -848,10 +1193,17 @@ function OldPatientAppointment() {
 
                 setError("");
 
+                if (!validHospitalId) {
+                    throw new Error(
+                        "Hospital selection is missing. Please return to Patient Portal and select a hospital first."
+                    );
+                }
+
                 const query =
                     new URLSearchParams({
-                        query: search,
+                        query: queryText,
                         type: searchType,
+                        hospital_id: String(validHospitalId),
                     });
 
                 const data =
@@ -859,13 +1211,20 @@ function OldPatientAppointment() {
                         `${API_URL}/patients/public/search?${query.toString()}`
                     );
 
+                if (
+                    requestId !==
+                    searchRequestRef.current
+                ) {
+                    return [];
+                }
+
                 let patientList =
                     normalizeArray(
                         data
                     );
 
                 const normalizedSearch =
-                    search.toLowerCase();
+                    queryText.toLowerCase();
 
                 patientList =
                     patientList
@@ -966,6 +1325,13 @@ function OldPatientAppointment() {
             } catch (
                 requestError
             ) {
+                if (
+                    requestId !==
+                    searchRequestRef.current
+                ) {
+                    return [];
+                }
+
                 setPatients([]);
 
                 setShowPatientResults(
@@ -979,9 +1345,14 @@ function OldPatientAppointment() {
 
                 return [];
             } finally {
-                setLoadingPatients(
-                    false
-                );
+                if (
+                    requestId ===
+                    searchRequestRef.current
+                ) {
+                    setLoadingPatients(
+                        false
+                    );
+                }
             }
         };
 
@@ -991,6 +1362,7 @@ function OldPatientAppointment() {
 
     useEffect(() => {
         if (
+            !selectedPatient &&
             searchValue.trim()
                 .length >= 2
         ) {
@@ -1007,6 +1379,25 @@ function OldPatientAppointment() {
     useEffect(() => {
         const value =
             searchValue.trim();
+
+        // Patient select hone par search box me uska naam aa jaata hai.
+        // Us naam ko dobara search karne se list wapas khul jaati thi
+        // ya "No patient found" dikhta tha -- isliye skip.
+        if (
+            selectedPatient &&
+            value ===
+                String(
+                    getPatientName(
+                        selectedPatient
+                    ) || ""
+                ).trim()
+        ) {
+            setShowPatientResults(
+                false
+            );
+
+            return undefined;
+        }
 
         if (!value) {
             setPatients([]);
@@ -1228,16 +1619,21 @@ function OldPatientAppointment() {
             appointmentDate =
                 form.appointment_date
         ) => {
+            const requestId =
+                ++availabilityRequestRef.current;
+
             if (
                 !doctorId ||
                 !appointmentDate
             ) {
                 setAppointments([]);
-
                 setAvailabilityLoaded(
                     false
                 );
-
+                setAvailabilityError("");
+                setLoadingAvailability(
+                    false
+                );
                 return [];
             }
 
@@ -1250,6 +1646,17 @@ function OldPatientAppointment() {
                     false
                 );
 
+                setAvailabilityError("");
+
+                if (!validHospitalId) {
+                    setAppointments([]);
+                    setAvailabilityLoaded(false);
+                    setAvailabilityError(
+                        "Hospital selection is missing. Please select a hospital again from Patient Portal."
+                    );
+                    return [];
+                }
+
                 const query =
                     new URLSearchParams({
                         doctor_id:
@@ -1259,6 +1666,9 @@ function OldPatientAppointment() {
 
                         appointment_date:
                             appointmentDate,
+
+                        hospital_id:
+                            String(validHospitalId),
                     });
 
                 const data =
@@ -1307,34 +1717,51 @@ function OldPatientAppointment() {
                         }
                     );
 
-                setAppointments(
-                    filtered
-                );
-
-                setAvailabilityLoaded(
-                    true
-                );
+                if (
+                    requestId ===
+                    availabilityRequestRef.current
+                ) {
+                    setAppointments(
+                        filtered
+                    );
+                    setAvailabilityLoaded(
+                        true
+                    );
+                }
 
                 return filtered;
             } catch (
                 requestError
             ) {
-                setAppointments([]);
+                if (
+                    requestId ===
+                    availabilityRequestRef.current
+                ) {
+                    setAppointments([]);
+                    setAvailabilityLoaded(
+                        false
+                    );
 
-                setAvailabilityLoaded(
-                    false
-                );
+                    const message =
+                        requestError?.message ||
+                        "Unable to load appointment availability.";
 
-                setError(
-                    requestError?.message ||
-                        "Unable to load appointment availability."
-                );
+                    setAvailabilityError(
+                        message
+                    );
+                    setError(message);
+                }
 
                 return [];
             } finally {
-                setLoadingAvailability(
-                    false
-                );
+                if (
+                    requestId ===
+                    availabilityRequestRef.current
+                ) {
+                    setLoadingAvailability(
+                        false
+                    );
+                }
             }
         };
 
@@ -1606,6 +2033,10 @@ function OldPatientAppointment() {
 
     const validateForm =
         () => {
+            if (!validHospitalId) {
+                return "Hospital selection is missing. Please return to Patient Portal and select a hospital first.";
+            }
+
             if (
                 !selectedPatient
             ) {
@@ -1767,6 +2198,20 @@ function OldPatientAppointment() {
 
                                     status:
                                         "pending",
+
+                                    hospital_id:
+                                        validHospitalId,
+
+                                    fee: getDoctorFee(
+                                        doctors.find(
+                                            (d) =>
+                                                String(getDoctorId(d)) ===
+                                                String(form.doctor_id)
+                                        )
+                                    ),
+
+                                    payment_mode:
+                                        paymentMode,
                                 }
                             ),
                         }
@@ -1851,6 +2296,15 @@ function OldPatientAppointment() {
 
                     reason:
                         form.reason.trim(),
+
+                    fee: getDoctorFee(selectedDoctor),
+
+                    paymentMode,
+
+                    receiptNo:
+                        appointment?.receipt_no ??
+                        appointment?.receiptNo ??
+                        appointmentId,
                 });
 
                 setSelectedTimeSlot(
@@ -1997,6 +2451,8 @@ function OldPatientAppointment() {
             }
         };
 
+    const [paymentMode, setPaymentMode] = useState("Cash");
+
     // ===================================================
     // SELECTED DOCTOR
     // ===================================================
@@ -2026,6 +2482,14 @@ function OldPatientAppointment() {
     if (success) {
         return (
             <div className="old-appointment-page">
+
+                <SuccessPopup
+                    open={successPopupOpen}
+                    title="Appointment Booked"
+                    message="Your appointment has been booked successfully."
+                    buttonLabel="View Receipt"
+                    onClose={() => setSuccessPopupOpen(false)}
+                />
 
                 <div className="old-appointment-bg-glow glow-one" />
 
@@ -2178,6 +2642,24 @@ function OldPatientAppointment() {
 
                         </div>
 
+                        <PrintableReceipt
+                            variant="old"
+                            data={{
+                                hospital: hospitalName,
+                                receiptNo: success.receiptNo,
+                                registrationNo:
+                                    success.patient?.patient_code ??
+                                    success.patient?.patientCode ??
+                                    "",
+                                patient: getPatientName(success.patient),
+                                doctor: success.doctorName,
+                                date: success.date,
+                                time: success.time,
+                                fee: success.fee,
+                                paymentMode: success.paymentMode,
+                            }}
+                        />
+
                         <div className="old-success-actions">
 
                             <button
@@ -2259,19 +2741,23 @@ function OldPatientAppointment() {
 
                         <div className="old-header-brand">
 
-                            <div className="old-brand-icon">
-                                <FaHospital />
-                            </div>
+                            <HospitalLogo
+                                logo={hospitalLogo}
+                                failed={logoFailed}
+                                onError={() =>
+                                    setLogoFailed(true)
+                                }
+                                className="old-brand-icon"
+                            />
 
                             <div>
                                 <strong>
-                                    {loadingSettings
-                                        ? "HMS Hospital"
-                                        : hospitalName}
+                                    {hospitalName}
                                 </strong>
 
                                 <span>
-                                    Hospital Management System
+                                    {hospitalSubtitle ||
+                                        "Patient Services"}
                                 </span>
                             </div>
 
@@ -2296,6 +2782,11 @@ function OldPatientAppointment() {
                     <div>
                         <span className="old-heading-eyebrow">
                             PATIENT SERVICES
+                        </span>
+
+                        <span className="old-heading-hospital">
+                            <FaHospital />
+                            {hospitalName}
                         </span>
 
                         <h1>
@@ -2383,8 +2874,27 @@ function OldPatientAppointment() {
 
                                     <FaSearch />
 
+                                    {searchType === "id" &&
+                                        !selectedPatient && (
+                                            <span className="old-search-prefix">
+                                                {ID_PREFIX}
+                                            </span>
+                                        )}
+
                                     <input
                                         type="text"
+                                        inputMode={
+                                            searchType === "id" ||
+                                            searchType === "phone"
+                                                ? "numeric"
+                                                : "text"
+                                        }
+                                        className={
+                                            searchType === "id" &&
+                                            !selectedPatient
+                                                ? "has-prefix"
+                                                : ""
+                                        }
                                         value={
                                             searchValue
                                         }
@@ -2392,7 +2902,10 @@ function OldPatientAppointment() {
                                             event
                                         ) => {
                                             const value =
-                                                event.target.value;
+                                                sanitizeSearchInput(
+                                                    event.target.value,
+                                                    searchType
+                                                );
 
                                             setSearchValue(
                                                 value
@@ -2453,7 +2966,9 @@ function OldPatientAppointment() {
                                                 );
                                             }
                                         }}
-                                        placeholder="Enter Patient ID, Patient Code, Name or Phone"
+                                        placeholder={getSearchPlaceholder(
+                                            searchType
+                                        )}
                                         autoComplete="off"
                                     />
 
@@ -2477,11 +2992,24 @@ function OldPatientAppointment() {
                                     }
                                     onChange={(
                                         event
-                                    ) =>
+                                    ) => {
+                                        const nextType =
+                                            event.target.value;
+
                                         setSearchType(
-                                            event.target.value
-                                        )
-                                    }
+                                            nextType
+                                        );
+
+                                        // Type badalne par purani value clear
+                                        // (har type ka format alag hota hai)
+                                        if (!selectedPatient) {
+                                            setSearchValue("");
+                                            setPatients([]);
+                                            setShowPatientResults(
+                                                false
+                                            );
+                                        }
+                                    }}
                                     className="old-search-type"
                                 >
                                     <option value="all">
@@ -2919,13 +3447,30 @@ function OldPatientAppointment() {
                                 ) : !availabilityLoaded &&
                                   loadingAvailability ? (
                                     <div className="old-slot-loading">
-
                                         <div className="old-loader" />
 
                                         <span>
                                             Loading available time slots...
                                         </span>
+                                    </div>
+                                ) : !availabilityLoaded ? (
+                                    <div className="old-slot-message">
+                                        <FaCalendarAlt />
 
+                                        <span>
+                                            {availabilityError ||
+                                                "Time slots could not be loaded."}
+                                        </span>
+
+                                        <button
+                                            type="button"
+                                            className="old-btn old-btn-secondary"
+                                            onClick={() =>
+                                                fetchAvailability()
+                                            }
+                                        >
+                                            Retry
+                                        </button>
                                     </div>
                                 ) : (
                                     <div className="old-dynamic-slots-wrapper">
@@ -3141,6 +3686,9 @@ function OldPatientAppointment() {
                                                                                     ? "Booked"
                                                                                     : isSelected
                                                                                     ? "Selected"
+                                                                                    : status ===
+                                                                                      "disabled"
+                                                                                    ? "Unavailable"
                                                                                     : "Available"}
                                                                             </span>
 
@@ -3232,6 +3780,13 @@ function OldPatientAppointment() {
                                 </div>
 
                             </div>
+
+                            <PaymentSection
+                                variant="old"
+                                doctor={selectedDoctor}
+                                mode={paymentMode}
+                                onMode={setPaymentMode}
+                            />
 
                             {/* SUBMIT */}
 
@@ -3357,14 +3912,19 @@ function OldPatientAppointment() {
 
                         <div className="old-hospital-card">
 
-                            <div className="old-hospital-card-icon">
-                                <FaHospital />
-                            </div>
+                            <HospitalLogo
+                                logo={hospitalLogo}
+                                failed={logoFailed}
+                                onError={() =>
+                                    setLogoFailed(true)
+                                }
+                                className="old-hospital-card-icon"
+                            />
 
                             <div>
 
                                 <span>
-                                    Hospital
+                                    Your Hospital
                                 </span>
 
                                 <strong>
@@ -3372,7 +3932,8 @@ function OldPatientAppointment() {
                                 </strong>
 
                                 <small>
-                                    Hospital Management System
+                                    {hospitalSubtitle ||
+                                        "Patient Services"}
                                 </small>
 
                             </div>

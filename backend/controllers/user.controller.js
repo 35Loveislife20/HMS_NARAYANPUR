@@ -1,19 +1,21 @@
 const bcrypt = require("bcryptjs");
 
 const {
+    generatePassword,
+    issueCredentials,
+} = require("../utils/credentialMailer");
+
+const {
     createUser,
     findUserByEmail,
     findUserById,
     findAllUsers,
     updateUser,
-    updateUserPassword,
-    deleteUserById,
+    updateUserRole,
+    updateUserStatus,
+    updateUserProfileImage,
+    deleteUserById
 } = require("../models/user.model");
-
-
-// =====================================================
-// VALID ROLES
-// =====================================================
 
 const VALID_ROLES = [
     "patient",
@@ -24,190 +26,151 @@ const VALID_ROLES = [
     "lab_technician",
     "pharmacist",
     "accountant",
-    "nurse",
+    "nurse"
 ];
 
+const HOSPITAL_ROLES = [
+    "hospital_admin",
+    "receptionist",
+    "doctor",
+    "lab_technician",
+    "pharmacist",
+    "accountant",
+    "nurse",
+    "patient"
+];
 
-// =====================================================
-// ADMIN CHECK
-// =====================================================
+/*
+|--------------------------------------------------------------------------
+| Permission Helpers
+|--------------------------------------------------------------------------
+*/
+
+const isSuperAdmin = (req) => {
+    return req.user?.role === "super_admin";
+};
+
+const isHospitalAdmin = (req) => {
+    return req.user?.role === "hospital_admin";
+};
 
 const isAdmin = (req) => {
-
-    return [
-        "admin",
-        "super_admin",
-        "hospital_admin",
-    ].includes(req.user?.role);
-
+    return isSuperAdmin(req) || isHospitalAdmin(req);
 };
 
+/*
+|--------------------------------------------------------------------------
+| Hospital Scope
+|--------------------------------------------------------------------------
+*/
 
-// =====================================================
-// GET ALL USERS
-// GET /api/users
-// =====================================================
+const getHospitalScope = (req) => {
+    if (isSuperAdmin(req)) {
+        return null;
+    }
 
-const getUsers = async (req, res) => {
+    return req.user?.hospital_id || null;
+};
 
+const canAccessUser = (req, targetUser) => {
+    if (!req.user || !targetUser) {
+        return false;
+    }
+
+    // Super admin can access every user
+    if (isSuperAdmin(req)) {
+        return true;
+    }
+
+    // Hospital users can only access users from their hospital
+    return (
+        targetUser.hospital_id !== null &&
+        Number(targetUser.hospital_id) === Number(req.user.hospital_id)
+    );
+};
+
+/*
+|--------------------------------------------------------------------------
+| GET ALL USERS
+|--------------------------------------------------------------------------
+*/
+
+const getAllUsers = async (req, res) => {
     try {
+        const hospitalId = getHospitalScope(req);
 
-        if (!isAdmin(req)) {
-
-            return res.status(403).json({
-                success: false,
-                message:
-                    "You are not authorized to view users",
-            });
-
-        }
-
-
-        const users =
-            await findAllUsers();
-
+        const users = await findAllUsers(hospitalId);
 
         return res.status(200).json({
-
             success: true,
-
-            count: users.length,
-
-            users,
-
+            users
         });
 
     } catch (error) {
-
-        console.error(
-            "GET USERS ERROR:",
-            error
-        );
+        console.error("Get all users error:", error);
 
         return res.status(500).json({
-
             success: false,
-
-            message:
-                "Unable to fetch users",
-
-            error:
-                error.message,
-
+            message: "Failed to fetch users"
         });
-
     }
-
 };
 
+/*
+|--------------------------------------------------------------------------
+| GET USER BY ID
+|--------------------------------------------------------------------------
+*/
 
-// =====================================================
-// GET USER BY ID
-// GET /api/users/:id
-// =====================================================
-
-const getUserById = async (
-    req,
-    res
-) => {
-
+const getUserById = async (req, res) => {
     try {
+        const { id } = req.params;
 
-        if (!isAdmin(req)) {
-
-            return res.status(403).json({
-                success: false,
-                message:
-                    "You are not authorized",
-            });
-
-        }
-
-
-        const id =
-            Number(req.params.id);
-
-
-        if (!id) {
-
-            return res.status(400).json({
-                success: false,
-                message:
-                    "Invalid user ID",
-            });
-
-        }
-
-
-        const user =
-            await findUserById(id);
-
+        const user = await findUserById(id);
 
         if (!user) {
-
             return res.status(404).json({
                 success: false,
-                message:
-                    "User not found",
+                message: "User not found"
             });
-
         }
 
+        if (!canAccessUser(req, user)) {
+            return res.status(403).json({
+                success: false,
+                message: "Access denied"
+            });
+        }
 
         return res.status(200).json({
-
             success: true,
-
-            user,
-
+            user
         });
 
     } catch (error) {
-
-        console.error(
-            "GET USER ERROR:",
-            error
-        );
+        console.error("Get user error:", error);
 
         return res.status(500).json({
-
             success: false,
-
-            message:
-                "Unable to fetch user",
-
-            error:
-                error.message,
-
+            message: "Failed to fetch user"
         });
-
     }
-
 };
 
+/*
+|--------------------------------------------------------------------------
+| ADD USER
+|--------------------------------------------------------------------------
+*/
 
-// =====================================================
-// CREATE USER
-// POST /api/users
-// =====================================================
-
-const addUser = async (
-    req,
-    res
-) => {
-
+const addUser = async (req, res) => {
     try {
-
         if (!isAdmin(req)) {
-
             return res.status(403).json({
                 success: false,
-                message:
-                    "You are not authorized to create users",
+                message: "Only administrators can create users"
             });
-
         }
-
 
         const {
             name,
@@ -215,701 +178,576 @@ const addUser = async (
             password,
             phone,
             role,
+            profile_image
         } = req.body;
 
-
-        // -------------------------------------------------
-        // REQUIRED FIELDS
-        // -------------------------------------------------
-
-        if (
-            !name ||
-            !email ||
-            !password ||
-            !role
-        ) {
-
-            return res.status(400).json({
-
-                success: false,
-
-                message:
-                    "Name, email, password and role are required",
-
-            });
-
-        }
-
-
-        // -------------------------------------------------
-        // VALIDATE ROLE
-        // -------------------------------------------------
-
-        if (
-            !VALID_ROLES.includes(role)
-        ) {
-
-            return res.status(400).json({
-
-                success: false,
-
-                message:
-                    "Invalid role",
-
-                allowed_roles:
-                    VALID_ROLES,
-
-            });
-
-        }
-
-
-        // -------------------------------------------------
-        // NORMALIZE EMAIL
-        // -------------------------------------------------
-
-        const normalizedEmail =
-            email
-                .trim()
-                .toLowerCase();
-
-
-        // -------------------------------------------------
-        // CHECK EMAIL
-        // -------------------------------------------------
-
-        const existingUser =
-            await findUserByEmail(
-                normalizedEmail
-            );
-
-
-        if (existingUser) {
-
-            return res.status(409).json({
-
-                success: false,
-
-                message:
-                    "Email already registered",
-
-            });
-
-        }
-
-
-        // -------------------------------------------------
-        // HASH PASSWORD
-        // -------------------------------------------------
-
-        const hashedPassword =
-            await bcrypt.hash(
-                password,
-                10
-            );
-
-
-        // -------------------------------------------------
-        // CREATE USER
-        // -------------------------------------------------
-
-        const result =
-            await createUser(
-
-                name.trim(),
-
-                normalizedEmail,
-
-                hashedPassword,
-
-                phone,
-
-                role
-
-            );
-
-
-        const userId =
-            result.insertId;
-
-
-        // -------------------------------------------------
-        // GET CREATED USER
-        // -------------------------------------------------
-
-        const user =
-            await findUserById(
-                userId
-            );
-
-
-        return res.status(201).json({
-
-            success: true,
-
-            message:
-                "User created successfully",
-
-            user,
-
-        });
-
-    } catch (error) {
-
-        console.error(
-            "CREATE USER ERROR:",
-            error
-        );
-
-        return res.status(500).json({
-
-            success: false,
-
-            message:
-                "Unable to create user",
-
-            error:
-                error.message,
-
-        });
-
-    }
-
-};
-
-
-// =====================================================
-// UPDATE USER
-// PUT /api/users/:id
-// =====================================================
-
-const editUser = async (
-    req,
-    res
-) => {
-
-    try {
-
-        if (!isAdmin(req)) {
-
-            return res.status(403).json({
-                success: false,
-                message:
-                    "You are not authorized to update users",
-            });
-
-        }
-
-
-        const id =
-            Number(req.params.id);
-
-
-        if (!id) {
-
+        // Password optional: khali ho to auto-generate hoga aur mail me jayega
+        if (!name || !email || !role) {
             return res.status(400).json({
                 success: false,
-                message:
-                    "Invalid user ID",
+                message: "Name, email and role are required"
             });
-
         }
 
-
-        const {
-            name,
-            email,
-            phone,
-            role,
-            password,
-        } = req.body;
-
-
-        // -------------------------------------------------
-        // REQUIRED
-        // -------------------------------------------------
-
-        if (
-            !name ||
-            !email ||
-            !role
-        ) {
-
+        if (!VALID_ROLES.includes(role)) {
             return res.status(400).json({
-
                 success: false,
-
-                message:
-                    "Name, email and role are required",
-
+                message: "Invalid user role"
             });
-
         }
-
-
-        // -------------------------------------------------
-        // VALID ROLE
-        // -------------------------------------------------
-
-        if (
-            !VALID_ROLES.includes(role)
-        ) {
-
-            return res.status(400).json({
-
-                success: false,
-
-                message:
-                    "Invalid role",
-
-                allowed_roles:
-                    VALID_ROLES,
-
-            });
-
-        }
-
-
-        // -------------------------------------------------
-        // CHECK USER
-        // -------------------------------------------------
-
-        const existingUser =
-            await findUserById(id);
-
-
-        if (!existingUser) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message:
-                    "User not found",
-
-            });
-
-        }
-
-
-        // -------------------------------------------------
-        // NORMALIZE EMAIL
-        // -------------------------------------------------
-
-        const normalizedEmail =
-            email
-                .trim()
-                .toLowerCase();
-
-
-        // -------------------------------------------------
-        // CHECK EMAIL DUPLICATE
-        // -------------------------------------------------
-
-        const emailUser =
-            await findUserByEmail(
-                normalizedEmail
-            );
-
-
-        if (
-            emailUser &&
-            Number(emailUser.id) !== id
-        ) {
-
-            return res.status(409).json({
-
-                success: false,
-
-                message:
-                    "Email already registered by another user",
-
-            });
-
-        }
-
-
-        // -------------------------------------------------
-        // UPDATE BASIC INFORMATION
-        // -------------------------------------------------
-
-        await updateUser(
-
-            id,
-
-            name.trim(),
-
-            normalizedEmail,
-
-            phone,
-
-            role
-
-        );
-
-
-        // -------------------------------------------------
-        // UPDATE PASSWORD IF PROVIDED
-        // -------------------------------------------------
 
         if (
             password &&
-            password.trim()
+            String(password).trim() &&
+            String(password).trim().length < 6
         ) {
-
-            const hashedPassword =
-                await bcrypt.hash(
-                    password,
-                    10
-                );
-
-
-            await updateUserPassword(
-
-                id,
-
-                hashedPassword
-
-            );
-
+            return res.status(400).json({
+                success: false,
+                message: "Password must be at least 6 characters"
+            });
         }
 
+        const normalizedEmail = String(email).trim().toLowerCase();
 
-        // -------------------------------------------------
-        // GET UPDATED USER
-        // -------------------------------------------------
+        /*
+         * Hospital Admin:
+         * - Can only create hospital-level users
+         * - Cannot create super_admin
+         * - New user automatically belongs to same hospital
+         */
+        if (isHospitalAdmin(req)) {
+            if (!HOSPITAL_ROLES.includes(role)) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Hospital Admin cannot create this role"
+                });
+            }
+        }
 
-        const updatedUser =
-            await findUserById(id);
+        const existingUser = await findUserByEmail(normalizedEmail);
 
+        if (existingUser) {
+            return res.status(409).json({
+                success: false,
+                message: "Email already registered"
+            });
+        }
 
-        return res.status(200).json({
+        const plainPassword =
+            password && String(password).trim()
+                ? String(password).trim()
+                : generatePassword();
 
+        const hashedPassword = await bcrypt.hash(plainPassword, 10);
+
+        /*
+         * IMPORTANT:
+         * hospital_id is NEVER taken from req.body.
+         *
+         * Super Admin:
+         *    hospital_id = null
+         *
+         * Hospital Admin:
+         *    hospital_id = logged-in admin's hospital
+         */
+        const hospitalId = isSuperAdmin(req)
+            ? null
+            : req.user.hospital_id;
+
+        if (!isSuperAdmin(req) && !hospitalId) {
+            return res.status(400).json({
+                success: false,
+                message: "Hospital association is required"
+            });
+        }
+
+        const user = await createUser(
+            String(name).trim(),
+            normalizedEmail,
+            hashedPassword,
+            phone || null,
+            role,
+            profile_image || null,
+            hospitalId
+        );
+
+        // Credentials PDF + email (fail hone par user create fail nahi hota)
+        const mailSent = await issueCredentials({
+            userId: user?.insertId ?? user?.id,
+            name: String(name).trim(),
+            email: normalizedEmail,
+            role,
+            password: plainPassword,
+            hospitalId
+        });
+
+        return res.status(201).json({
             success: true,
-
-            message:
-                "User updated successfully",
-
-            user:
-                updatedUser,
-
+            message: "User created successfully",
+            mailSent,
+            user
         });
 
     } catch (error) {
-
-        console.error(
-            "UPDATE USER ERROR:",
-            error
-        );
+        console.error("Add user error:", error);
 
         return res.status(500).json({
-
             success: false,
-
-            message:
-                "Unable to update user",
-
-            error:
-                error.message,
-
+            message: "Failed to create user"
         });
-
     }
-
 };
 
+/*
+|--------------------------------------------------------------------------
+| EDIT USER
+|--------------------------------------------------------------------------
+*/
 
-// =====================================================
-// DELETE USER
-// DELETE /api/users/:id
-// =====================================================
-
-const deleteUser = async (
-    req,
-    res
-) => {
-
+const editUser = async (req, res) => {
     try {
-
         if (!isAdmin(req)) {
-
             return res.status(403).json({
-
                 success: false,
-
-                message:
-                    "You are not authorized to delete users",
-
+                message: "Only administrators can edit users"
             });
-
         }
 
+        const { id } = req.params;
 
-        const id =
-            Number(req.params.id);
+        const existingUser = await findUserById(id);
 
+        if (!existingUser) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
 
-        if (!id) {
+        if (!canAccessUser(req, existingUser)) {
+            return res.status(403).json({
+                success: false,
+                message: "Access denied"
+            });
+        }
 
+        /*
+         * Hospital Admin cannot modify Super Admin.
+         */
+        if (isHospitalAdmin(req) && existingUser.role === "super_admin") {
+            return res.status(403).json({
+                success: false,
+                message: "Hospital Admin cannot modify Super Admin"
+            });
+        }
+
+        const {
+            name,
+            email,
+            phone,
+            role,
+            password,
+            profile_image
+        } = req.body;
+
+        if (role && !VALID_ROLES.includes(role)) {
             return res.status(400).json({
-
                 success: false,
-
-                message:
-                    "Invalid user ID",
-
+                message: "Invalid user role"
             });
-
         }
 
+        /*
+         * Hospital Admin cannot assign global super_admin role.
+         */
+        if (isHospitalAdmin(req) && role === "super_admin") {
+            return res.status(403).json({
+                success: false,
+                message: "Hospital Admin cannot assign super_admin role"
+            });
+        }
 
-        // -------------------------------------------------
-        // PREVENT SELF DELETE
-        // -------------------------------------------------
+        /*
+         * Prevent changing another user's email to an existing email.
+         */
+        if (email && email !== existingUser.email) {
+            const emailUser = await findUserByEmail(email);
+
+            if (emailUser && Number(emailUser.id) !== Number(id)) {
+                return res.status(409).json({
+                    success: false,
+                    message: "Email already registered"
+                });
+            }
+        }
+
+        let hashedPassword = null;
+
+        if (password && password.trim()) {
+            hashedPassword = await bcrypt.hash(password, 10);
+        }
+
+        /*
+         * Hospital ID is controlled by backend.
+         *
+         * Super Admin:
+         *   - Can keep/change hospital assignment
+         *
+         * Hospital Admin:
+         *   - User stays in admin's hospital
+         */
+        const hospitalId = isSuperAdmin(req)
+            ? (
+                req.body.hospital_id !== undefined
+                    ? req.body.hospital_id
+                    : existingUser.hospital_id
+            )
+            : req.user.hospital_id;
 
         if (
-            Number(req.user?.id) === id
+            role === "super_admin" &&
+            hospitalId !== null &&
+            hospitalId !== undefined &&
+            hospitalId !== ""
         ) {
-
             return res.status(400).json({
-
                 success: false,
-
-                message:
-                    "You cannot delete your own account",
-
+                message: "Super Admin cannot belong to a hospital"
             });
-
         }
 
+        await updateUser(
+            id,
+            name ?? existingUser.name,
+            email ?? existingUser.email,
+            phone ?? existingUser.phone,
+            role ?? existingUser.role,
+            hashedPassword,
+            profile_image ?? existingUser.profile_image,
+            hospitalId
+        );
 
-        // -------------------------------------------------
-        // CHECK USER
-        // -------------------------------------------------
+        const updatedUser = await findUserById(id);
 
-        const user =
-            await findUserById(id);
+        return res.status(200).json({
+            success: true,
+            message: "User updated successfully",
+            user: updatedUser
+        });
 
+    } catch (error) {
+        console.error("Edit user error:", error);
 
-        if (!user) {
+        return res.status(500).json({
+            success: false,
+            message: "Failed to update user"
+        });
+    }
+};
 
+/*
+|--------------------------------------------------------------------------
+| UPDATE USER ROLE
+|--------------------------------------------------------------------------
+*/
+
+const changeUserRole = async (req, res) => {
+    try {
+        if (!isAdmin(req)) {
+            return res.status(403).json({
+                success: false,
+                message: "Only administrators can change roles"
+            });
+        }
+
+        const { id } = req.params;
+        const { role } = req.body;
+
+        if (!VALID_ROLES.includes(role)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid user role"
+            });
+        }
+
+        const targetUser = await findUserById(id);
+
+        if (!targetUser) {
             return res.status(404).json({
-
                 success: false,
-
-                message:
-                    "User not found",
-
+                message: "User not found"
             });
-
         }
 
+        if (!canAccessUser(req, targetUser)) {
+            return res.status(403).json({
+                success: false,
+                message: "Access denied"
+            });
+        }
 
-        // -------------------------------------------------
-        // DELETE
-        // -------------------------------------------------
+        if (isHospitalAdmin(req)) {
+            if (
+                targetUser.role === "super_admin" ||
+                role === "super_admin"
+            ) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Hospital Admin cannot manage super_admin"
+                });
+            }
+        }
+
+        await updateUserRole(id, role);
+
+        return res.status(200).json({
+            success: true,
+            message: "User role updated successfully"
+        });
+
+    } catch (error) {
+        console.error("Change user role error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to update user role"
+        });
+    }
+};
+
+/*
+|--------------------------------------------------------------------------
+| UPDATE USER STATUS
+|--------------------------------------------------------------------------
+*/
+
+const changeUserStatus = async (req, res) => {
+    try {
+        if (!isAdmin(req)) {
+            return res.status(403).json({
+                success: false,
+                message: "Only administrators can change user status"
+            });
+        }
+
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!["active", "inactive", "suspended"].includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid user status"
+            });
+        }
+
+        const targetUser = await findUserById(id);
+
+        if (!targetUser) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        if (!canAccessUser(req, targetUser)) {
+            return res.status(403).json({
+                success: false,
+                message: "Access denied"
+            });
+        }
+
+        if (
+            isHospitalAdmin(req) &&
+            targetUser.role === "super_admin"
+        ) {
+            return res.status(403).json({
+                success: false,
+                message: "Hospital Admin cannot modify Super Admin"
+            });
+        }
+
+        /*
+         * Do not allow an administrator to deactivate themselves.
+         */
+        if (Number(targetUser.id) === Number(req.user.id)) {
+            return res.status(400).json({
+                success: false,
+                message: "You cannot change your own status"
+            });
+        }
+
+        await updateUserStatus(id, status);
+
+        return res.status(200).json({
+            success: true,
+            message: "User status updated successfully"
+        });
+
+    } catch (error) {
+        console.error("Change user status error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to update user status"
+        });
+    }
+};
+
+/*
+|--------------------------------------------------------------------------
+| DELETE USER
+|--------------------------------------------------------------------------
+*/
+
+const deleteUser = async (req, res) => {
+    try {
+        if (!isAdmin(req)) {
+            return res.status(403).json({
+                success: false,
+                message: "Only administrators can delete users"
+            });
+        }
+
+        const { id } = req.params;
+
+        if (Number(id) === Number(req.user.id)) {
+            return res.status(400).json({
+                success: false,
+                message: "You cannot delete your own account"
+            });
+        }
+
+        const targetUser = await findUserById(id);
+
+        if (!targetUser) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        if (!canAccessUser(req, targetUser)) {
+            return res.status(403).json({
+                success: false,
+                message: "Access denied"
+            });
+        }
+
+        if (
+            isHospitalAdmin(req) &&
+            targetUser.role === "super_admin"
+        ) {
+            return res.status(403).json({
+                success: false,
+                message: "Hospital Admin cannot delete Super Admin"
+            });
+        }
+
+        /*
+         * Prevent accidental deletion of the only hospital admin.
+         */
+        if (
+            isHospitalAdmin(req) &&
+            targetUser.role === "hospital_admin"
+        ) {
+            const users = await findAllUsers(req.user.hospital_id);
+
+            const hospitalAdmins = users.filter(
+                user => user.role === "hospital_admin"
+            );
+
+            if (hospitalAdmins.length <= 1) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Cannot delete the only Hospital Admin"
+                });
+            }
+        }
 
         await deleteUserById(id);
 
-
         return res.status(200).json({
-
             success: true,
-
-            message:
-                "User deleted successfully",
-
+            message: "User deleted successfully"
         });
 
     } catch (error) {
-
-        console.error(
-            "DELETE USER ERROR:",
-            error
-        );
+        console.error("Delete user error:", error);
 
         return res.status(500).json({
-
             success: false,
-
-            message:
-                "Unable to delete user",
-
-            error:
-                error.message,
-
+            message: "Failed to delete user"
         });
-
     }
-
 };
 
+/*
+|--------------------------------------------------------------------------
+| UPDATE PROFILE IMAGE
+|--------------------------------------------------------------------------
+*/
 
-// =====================================================
-// UPDATE USER STATUS
-// PATCH /api/users/:id/status
-// =====================================================
-//
-// IMPORTANT:
-// Ye function tabhi use hoga jab users table me
-// `status` column available ho.
-// =====================================================
-
-const updateUserStatus = async (
-    req,
-    res
-) => {
-
+const changeProfileImage = async (req, res) => {
     try {
+        const { id } = req.params;
 
-        if (!isAdmin(req)) {
+        const targetUser = await findUserById(id);
 
-            return res.status(403).json({
-
-                success: false,
-
-                message:
-                    "You are not authorized",
-
-            });
-
-        }
-
-
-        const id =
-            Number(req.params.id);
-
-
-        const {
-            status,
-        } = req.body;
-
-
-        if (!id) {
-
-            return res.status(400).json({
-
-                success: false,
-
-                message:
-                    "Invalid user ID",
-
-            });
-
-        }
-
-
-        if (
-            !["active", "inactive"].includes(
-                status
-            )
-        ) {
-
-            return res.status(400).json({
-
-                success: false,
-
-                message:
-                    "Status must be active or inactive",
-
-            });
-
-        }
-
-
-        const { pool } =
-            require("../config/db");
-
-
-        const [result] =
-            await pool.query(
-
-                `
-                UPDATE users
-                SET status = ?
-                WHERE id = ?
-                `,
-
-                [
-                    status,
-                    id,
-                ]
-
-            );
-
-
-        if (
-            result.affectedRows === 0
-        ) {
-
+        if (!targetUser) {
             return res.status(404).json({
-
                 success: false,
-
-                message:
-                    "User not found",
-
+                message: "User not found"
             });
-
         }
 
+        /*
+         * User can update own image.
+         * Admin can update users within their scope.
+         */
+        const isOwnProfile =
+            Number(req.user.id) === Number(id);
 
-        const updatedUser =
-            await findUserById(id);
+        if (!isOwnProfile && !canAccessUser(req, targetUser)) {
+            return res.status(403).json({
+                success: false,
+                message: "Access denied"
+            });
+        }
 
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: "Profile image is required"
+            });
+        }
+
+        const imagePath = `/uploads/profiles/${req.file.filename}`;
+
+        await updateUserProfileImage(id, imagePath);
 
         return res.status(200).json({
-
             success: true,
-
-            message:
-                "User status updated successfully",
-
-            user:
-                updatedUser,
-
+            message: "Profile image updated successfully",
+            profile_image: imagePath
         });
 
     } catch (error) {
-
-        console.error(
-            "UPDATE USER STATUS ERROR:",
-            error
-        );
+        console.error("Profile image update error:", error);
 
         return res.status(500).json({
-
             success: false,
-
-            message:
-                "Unable to update user status",
-
-            error:
-                error.message,
-
+            message: "Failed to update profile image"
         });
-
     }
-
 };
-
-
-// =====================================================
-// EXPORT
-// =====================================================
 
 module.exports = {
-
-    getUsers,
-
+    getAllUsers,
     getUserById,
-
     addUser,
-
     editUser,
-
+    changeUserRole,
+    changeUserStatus,
     deleteUser,
-
-    updateUserStatus,
-
+    changeProfileImage
 };

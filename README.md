@@ -1,28 +1,40 @@
 # 🏥 HMS Hospital Narayanpur
 
-A modern and responsive **Hospital Management System (HMS)** designed to manage hospital operations digitally from a single platform.
+A modern, responsive, and full-stack **Hospital Management System (HMS)** designed to digitally manage hospital operations from a single platform.
 
-The system provides modules for patient management, doctors, appointments, departments, laboratory, pharmacy, billing, reports, settings, and user management.
+The system provides modules for:
+
+* Patient Management
+* Doctor Management
+* Appointment Management
+* Department Management
+* Laboratory Management
+* Pharmacy Management
+* Billing
+* Reports
+* Settings
+* User Management
+* Authentication & Authorization
 
 ---
 
 ## 📌 Project Overview
 
-**HMS Hospital Narayanpur** is a full-stack web-based Hospital Management System built to simplify hospital administration, reduce manual work, improve data management, and provide a centralized platform for hospital staff.
+**HMS Hospital Narayanpur** is a full-stack web-based Hospital Management System developed to simplify hospital administration, reduce manual work, improve data management, and provide a centralized platform for hospital staff.
 
-### Main Objectives
+### 🎯 Main Objectives
 
 * Manage patients digitally
 * Manage doctors and departments
 * Schedule and manage appointments
 * Manage laboratory tests
 * Manage pharmacy and medicines
-* Generate and manage bills
+* Create and manage patient bills
 * Generate hospital reports
 * Manage hospital settings
 * Manage system users and roles
 * Provide secure authentication
-* Provide responsive and user-friendly UI
+* Provide a responsive and user-friendly interface
 
 ---
 
@@ -36,7 +48,7 @@ The system provides modules for patient management, doctors, appointments, depar
 * Search patients
 * Update patient information
 * Manage patient records
-* Patient registration workflow
+* Complete patient registration workflow
 
 ## 🩺 Doctor Management
 
@@ -46,25 +58,25 @@ The system provides modules for patient management, doctors, appointments, depar
 * Assign doctors to departments
 * Search doctors
 * Update doctor details
-* Doctor availability management
+* Manage doctor availability
 
 ## 📅 Appointment Management
 
 * Create appointments
 * Select patients and doctors
 * Select appointment date and time
-* Appointment status management
+* Manage appointment status
 * Prevent duplicate doctor bookings
 * New patient appointment workflow
 * Existing patient appointment workflow
 * Search appointments
-* Appointment statistics
+* View appointment statistics
 
 ## 🏢 Department Management
 
 Hospital departments can be managed from a centralized interface.
 
-Examples:
+### Example Departments
 
 * General Medicine
 * Cardiology
@@ -82,34 +94,34 @@ Examples:
 * Add laboratory tests
 * View test records
 * Manage test status
-* Patient laboratory records
-* Laboratory reporting
+* Maintain patient laboratory records
+* Generate laboratory reports
 
 ## 💊 Pharmacy Management
 
 * Manage medicines
 * Add medicines
 * Update medicine information
-* Manage stock
-* Medicine availability
-* Pharmacy records
+* Manage medicine stock
+* Check medicine availability
+* Maintain pharmacy records
 
 ## 💰 Billing Management
 
 * Create patient bills
 * Manage billing records
-* Calculate total amount
-* Track paid amount
+* Calculate total amounts
+* Track paid amounts
 * Track pending bills
-* Payment status
+* Manage payment status
 * Print invoices
-* Dynamic hospital information on invoices
+* Display dynamic hospital information on invoices
 
 ## 📊 Reports
 
 The Reports module provides an overview of hospital activities.
 
-Reports include:
+### Available Reports
 
 * Total patients
 * Total doctors
@@ -126,7 +138,7 @@ Reports include:
 
 Hospital settings can be managed from the Settings module.
 
-Settings include:
+### Available Settings
 
 * Hospital name
 * Hospital subtitle
@@ -168,7 +180,7 @@ The system uses authentication and authorization mechanisms to protect applicati
 * Environment variables
 * Secure API communication
 
-Authentication tokens are stored on the frontend and sent with API requests when required.
+Authentication tokens are stored on the frontend and included in API requests when required.
 
 ---
 
@@ -183,7 +195,7 @@ Authentication tokens are stored on the frontend and sent with API requests when
 | `lab_technician` | Laboratory management                 |
 | `pharmacist`     | Pharmacy and medicine management      |
 | `accountant`     | Billing and financial operations      |
-| `nurse`          | Patient care related operations       |
+| `nurse`          | Patient-care-related operations       |
 | `patient`        | Patient-specific access               |
 
 ---
@@ -245,7 +257,7 @@ Authentication tokens are stored on the frontend and sent with API requests when
 # 📁 Project Structure
 
 ```text
-HMS/
+HMS_NARAYANPUR/
 │
 ├── backend/
 │   ├── certs/
@@ -301,7 +313,7 @@ npm install
 
 ## 3. Configure Backend Environment
 
-Create a `.env` file inside the `backend` folder and configure the required database and authentication variables.
+Create a `.env` file inside the `backend` directory and configure the required database, authentication, and other environment variables.
 
 ## 4. Start Backend
 
@@ -338,7 +350,7 @@ The frontend will be available through the Vite development server.
 
 **HMS Hospital Narayanpur**
 
-https://hms-narayanpur.vercel.app/
+https://hms-narayanpur-frontend.vercel.app/
 
 ---
 
@@ -386,7 +398,7 @@ This project was developed with a focus on clean UI, responsive design, database
 
 ---
 
-## 📄 License
+# 📄 License
 
 This project is developed for educational and portfolio purposes.
 

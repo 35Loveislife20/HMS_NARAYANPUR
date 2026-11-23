@@ -10,36 +10,38 @@ const {
     removeDoctor,
 } = require("../controllers/doctors.controller");
 
-const authMiddleware =
-    require("../middleware/auth.middleware");
+const authMiddleware = require("../middleware/auth.middleware");
+
+const {
+    requirePermission,
+} = require("../middleware/role.middleware");
 
 const router = express.Router();
 
-/* =========================================================
-   MULTER MEMORY STORAGE
-   =========================================================
 
-   IMPORTANT:
-
-   Vercel serverless environment me permanent local
-   filesystem available nahi hota.
-
-   Isliye photo ko disk par save nahi karenge.
-
-   Photo memory buffer me jayegi aur controller usse
-   Cloudinary par upload karega.
-========================================================= */
+/*
+=========================================================
+MULTER CONFIGURATION
+=========================================================
+*/
 
 const storage = multer.memoryStorage();
 
 
-/* =========================================================
-   FILE FILTER
-   JPG / JPEG / PNG / WEBP ONLY
-========================================================= */
+/*
+=========================================================
+DOCTOR PHOTO FILE FILTER
+=========================================================
+
+Allowed:
+- JPG
+- JPEG
+- PNG
+- WEBP
+=========================================================
+*/
 
 const fileFilter = (req, file, cb) => {
-
     const allowedTypes = [
         "image/jpeg",
         "image/jpg",
@@ -48,43 +50,74 @@ const fileFilter = (req, file, cb) => {
     ];
 
     if (allowedTypes.includes(file.mimetype)) {
-
-        cb(null, true);
-
-    } else {
-
-        cb(
-            new Error(
-                "Only JPG, JPEG, PNG and WEBP images are allowed."
-            ),
-            false
-        );
+        return cb(null, true);
     }
+
+    return cb(
+        new Error(
+            "Only JPG, JPEG, PNG and WEBP images are allowed."
+        ),
+        false
+    );
 };
 
 
-/* =========================================================
-   MULTER
-   MAX SIZE = 5 MB
-========================================================= */
+/*
+=========================================================
+DOCTOR PHOTO UPLOAD
+=========================================================
+
+Maximum file size:
+5 MB
+=========================================================
+*/
 
 const uploadDoctorPhoto = multer({
-
     storage,
-
     fileFilter,
-
     limits: {
         fileSize: 5 * 1024 * 1024,
     },
-
 });
 
 
-/* =========================================================
-   GET ALL DOCTORS
-   PUBLIC
-========================================================= */
+/*
+=========================================================
+AUTHENTICATION + AUTHORIZATION
+=========================================================
+
+All doctor management APIs require:
+
+1. Valid JWT
+2. "doctors" permission
+
+Current permission matrix:
+- Super Admin
+- Hospital Admin
+=========================================================
+*/
+
+router.use(authMiddleware);
+
+router.use(
+    requirePermission("doctors")
+);
+
+
+/*
+=========================================================
+GET ALL DOCTORS
+=========================================================
+
+GET /api/doctors
+
+Super Admin:
+    -> all hospitals
+
+Hospital Admin:
+    -> controller must restrict to own hospital
+=========================================================
+*/
 
 router.get(
     "/",
@@ -92,138 +125,187 @@ router.get(
 );
 
 
-/* =========================================================
-   GET NEXT DOCTOR CODE
-   PROTECTED
-========================================================= */
+/*
+=========================================================
+GET NEXT DOCTOR CODE
+=========================================================
+
+GET /api/doctors/next-code
+=========================================================
+*/
 
 router.get(
     "/next-code",
-    authMiddleware,
     getNextDoctorCode
 );
 
 
-/* =========================================================
-   GET SINGLE DOCTOR
-   PROTECTED
-========================================================= */
+/*
+=========================================================
+GET SINGLE DOCTOR
+=========================================================
+
+GET /api/doctors/:id
+
+Hospital scope must be enforced by controller/model.
+=========================================================
+*/
 
 router.get(
     "/:id",
-    authMiddleware,
     getDoctor
 );
 
 
-/* =========================================================
-   ADD DOCTOR
-   PHOTO FIELD = photo
-   PROTECTED
-========================================================= */
+/*
+=========================================================
+ADD DOCTOR
+=========================================================
+
+POST /api/doctors
+
+PHOTO FIELD:
+    photo
+
+Multipart/form-data
+=========================================================
+*/
 
 router.post(
     "/",
-    authMiddleware,
     uploadDoctorPhoto.single("photo"),
     addDoctor
 );
 
 
-/* =========================================================
-   UPDATE DOCTOR
-   PHOTO FIELD = photo
-   PROTECTED
-========================================================= */
+/*
+=========================================================
+UPDATE DOCTOR
+=========================================================
+
+PUT /api/doctors/:id
+
+PHOTO FIELD:
+    photo
+
+Multipart/form-data
+=========================================================
+*/
 
 router.put(
     "/:id",
-    authMiddleware,
     uploadDoctorPhoto.single("photo"),
     editDoctor
 );
 
 
-/* =========================================================
-   DELETE DOCTOR
-   PROTECTED
-========================================================= */
+/*
+=========================================================
+DELETE DOCTOR
+=========================================================
+
+DELETE /api/doctors/:id
+=========================================================
+*/
 
 router.delete(
     "/:id",
-    authMiddleware,
     removeDoctor
 );
 
 
-/* =========================================================
-   MULTER ERROR HANDLER
-========================================================= */
+/*
+=========================================================
+MULTER ERROR HANDLER
+=========================================================
 
-router.use((error, req, res, next) => {
+Only upload-related errors are handled here.
 
-    console.error(
-        "Doctor route error:",
-        error
-    );
+Other application errors are passed to the
+global Express error handler.
+=========================================================
+*/
+
+router.use(
+    (error, req, res, next) => {
+        console.error(
+            "DOCTOR ROUTE ERROR:",
+            error
+        );
+
+        /*
+        -------------------------------------------------
+        FILE SIZE ERROR
+        -------------------------------------------------
+        */
+
+        if (
+            error instanceof multer.MulterError &&
+            error.code === "LIMIT_FILE_SIZE"
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Doctor photo must be 5 MB or smaller.",
+            });
+        }
 
 
-    /* -----------------------------------------------------
-       FILE SIZE ERROR
-    ----------------------------------------------------- */
+        /*
+        -------------------------------------------------
+        OTHER MULTER ERRORS
+        -------------------------------------------------
+        */
 
-    if (
-        error instanceof multer.MulterError &&
-        error.code === "LIMIT_FILE_SIZE"
-    ) {
+        if (
+            error instanceof multer.MulterError
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Doctor photo upload failed.",
+            });
+        }
 
-        return res.status(400).json({
 
-            success: false,
+        /*
+        -------------------------------------------------
+        FILE TYPE VALIDATION ERROR
+        -------------------------------------------------
+        */
 
-            message:
-                "Doctor photo must be 5 MB or smaller.",
+        if (
+            error &&
+            error.message ===
+                "Only JPG, JPEG, PNG and WEBP images are allowed."
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Only JPG, JPEG, PNG and WEBP images are allowed.",
+            });
+        }
 
-        });
+
+        /*
+        -------------------------------------------------
+        OTHER ERRORS
+        -------------------------------------------------
+
+        Do not expose internal error.message here.
+        Let app.js/global error middleware handle it.
+        -------------------------------------------------
+        */
+
+        return next(error);
     }
+);
 
 
-    /* -----------------------------------------------------
-       OTHER MULTER ERRORS
-    ----------------------------------------------------- */
-
-    if (error instanceof multer.MulterError) {
-
-        return res.status(400).json({
-
-            success: false,
-
-            message: error.message,
-
-        });
-    }
-
-
-    /* -----------------------------------------------------
-       CUSTOM FILE VALIDATION ERROR
-    ----------------------------------------------------- */
-
-    if (error) {
-
-        return res.status(400).json({
-
-            success: false,
-
-            message:
-                error.message ||
-                "Doctor photo upload failed.",
-
-        });
-    }
-
-
-    next();
-});
-
+/*
+=========================================================
+EXPORT
+=========================================================
+*/
 
 module.exports = router;

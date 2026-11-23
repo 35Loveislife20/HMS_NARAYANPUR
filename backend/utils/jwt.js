@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 const generateToken = (user) => {
-
     if (!process.env.JWT_SECRET) {
         throw new Error(
             "JWT_SECRET is not configured in .env"
@@ -13,6 +12,11 @@ const generateToken = (user) => {
             id: user.id,
             email: user.email,
             role: user.role,
+            hospital_id:
+                user.hospital_id !== undefined &&
+                user.hospital_id !== null
+                    ? Number(user.hospital_id)
+                    : null,
         },
         process.env.JWT_SECRET,
         {

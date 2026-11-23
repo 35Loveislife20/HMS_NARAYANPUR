@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import SuccessPopup from "../../components/common/SuccessPopup";
 import {
     FaArrowLeft,
     FaCalendarAlt,
@@ -15,6 +16,7 @@ import {
 } from "react-icons/fa";
 
 import "./NewPatientAppointment.css";
+import { PaymentSection, PrintableReceipt, getDoctorFee } from "./Appointmentpayment";
 
 const API_URL =
     import.meta.env.VITE_API_URL ||
@@ -181,8 +183,41 @@ const NewPatientAppointment = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    // Hospital context comes from the Patient Portal selection.
+    const routeHospital = location.state?.hospital || null;
+
+    const getHospitalId = (hospital) =>
+        hospital?.id ??
+        hospital?.hospital_id ??
+        hospital?.hospitalId ??
+        null;
+
+    const patientHospitalId =
+        location.state?.hospital_id ??
+        getHospitalId(routeHospital) ??
+        localStorage.getItem("hms_patient_hospital_id") ??
+        null;
+
+    const patientHospitalName =
+        routeHospital?.name ||
+        routeHospital?.hospital_name ||
+        localStorage.getItem("hms_patient_hospital_name") ||
+        "Selected Hospital";
+
+    const validHospitalId =
+        Number.isInteger(Number(patientHospitalId)) &&
+        Number(patientHospitalId) > 0
+            ? Number(patientHospitalId)
+            : null;
+
+    const knownHospitalName =
+        routeHospital?.name ||
+        routeHospital?.hospital_name ||
+        localStorage.getItem("hms_patient_hospital_name") ||
+        "";
+
     const [hospitalName, setHospitalName] =
-        useState("HMS Hospital");
+        useState(knownHospitalName || "HMS Hospital");
 
     const [hospitalSubtitle, setHospitalSubtitle] =
         useState("Hospital Management System");
@@ -215,7 +250,14 @@ const NewPatientAppointment = () => {
         useState(false);
 
     const [error, setError] = useState("");
+    const [paymentMode, setPaymentMode] = useState("Cash");
     const [success, setSuccess] = useState(null);
+    const [successPopupOpen, setSuccessPopupOpen] = useState(false);
+
+    useEffect(() => {
+        setSuccessPopupOpen(Boolean(success));
+    }, [success]);
+
     const [refreshing, setRefreshing] = useState(false);
 
     /* =====================================================
@@ -230,7 +272,7 @@ const NewPatientAppointment = () => {
 
             try {
                 const response = await fetch(
-                    `${API_URL}/settings`
+                    `${API_URL}/settings/public`
                 );
 
                 let data = {};
@@ -254,7 +296,8 @@ const NewPatientAppointment = () => {
                 if (cancelled) return;
 
                 setHospitalName(
-                    settings.hospitalName ||
+                    knownHospitalName ||
+                        settings.hospitalName ||
                         settings.hospital_name ||
                         "HMS Hospital"
                 );
@@ -293,39 +336,94 @@ const NewPatientAppointment = () => {
         let cancelled = false;
 
         const loadDoctors = async () => {
+            if (!validHospitalId) {
+                setDoctors([]);
+                setDoctorsLoading(false);
+                setError("Hospital selection is missing. Please return to Patient Portal and select a hospital first.");
+                return;
+            }
+
             setDoctorsLoading(true);
 
             try {
-                const response = await fetch(
-                    `${API_URL}/doctors`
-                );
+                const query = `hospital_id=${encodeURIComponent(
+                    validHospitalId
+                )}`;
 
-                let data = {};
+                // Patient page par login nahi hota, isliye public endpoint pehle
+                const endpoints = [
+                    `/public/doctors?${query}`,
+                    `/doctors?${query}`,
+                ];
 
-                try {
-                    data = await response.json();
-                } catch {
-                    data = {};
+                let doctorList = [];
+                const failures = [];
+
+                for (const endpoint of endpoints) {
+                    const name = endpoint.split("?")[0];
+
+                    try {
+                        const response = await fetch(
+                            `${API_URL}${endpoint}`
+                        );
+
+                        let data = {};
+
+                        try {
+                            data = await response.json();
+                        } catch {
+                            data = {};
+                        }
+
+                        if (!response.ok) {
+                            failures.push(
+                                `${name}: ${response.status} ${
+                                    data?.message || ""
+                                }`.trim()
+                            );
+                            continue;
+                        }
+
+                        const list = extractArray(data, [
+                            "doctors",
+                            "data",
+                            "results",
+                        ])
+                            .filter(
+                                (raw) =>
+                                    raw?.hospital_id ==
+                                        null ||
+                                    Number(
+                                        raw.hospital_id
+                                    ) === validHospitalId
+                            )
+                            .map(normalizeDoctor)
+                            .filter(
+                                (doctor) =>
+                                    doctor?.id !== "" &&
+                                    doctor?.id != null
+                            );
+
+                        if (list.length > 0) {
+                            doctorList = list;
+                            break;
+                        }
+
+                        failures.push(`${name}: 0 doctors`);
+                    } catch {
+                        failures.push(
+                            `${name}: server not reachable`
+                        );
+                    }
                 }
 
-                if (!response.ok) {
+                if (doctorList.length === 0) {
                     throw new Error(
-                        data?.message ||
-                            "Unable to load doctors."
+                        `Doctors could not be loaded for this hospital (${failures.join(
+                            " | "
+                        )})`
                     );
                 }
-
-                const doctorList = extractArray(data, [
-                    "doctors",
-                    "data",
-                    "results",
-                ])
-                    .map(normalizeDoctor)
-                    .filter(
-                        (doctor) =>
-                            doctor?.id !== "" &&
-                            doctor?.id != null
-                    );
 
                 if (cancelled) return;
 
@@ -369,7 +467,7 @@ const NewPatientAppointment = () => {
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [validHospitalId]);
 
     /* =====================================================
        LOAD PATIENT
@@ -532,12 +630,21 @@ const NewPatientAppointment = () => {
                    4. PUBLIC PATIENT SEARCH
                 ----------------------------------------- */
 
+                if (!validHospitalId) {
+                    throw new Error(
+                        "Hospital selection is missing. Please return to Patient Portal and select a hospital first."
+                    );
+                }
+
                 const searchUrl =
                     `${API_URL}/patients/public/search` +
                     `?query=${encodeURIComponent(
                         patientId
                     )}` +
-                    `&type=id`;
+                    `&type=id` +
+                    `&hospital_id=${encodeURIComponent(
+                        validHospitalId
+                    )}`;
 
                 const response =
                     await fetch(searchUrl);
@@ -657,6 +764,7 @@ const NewPatientAppointment = () => {
     }, [
         location.search,
         location.state,
+        validHospitalId,
     ]);
 
     /* =====================================================
@@ -672,6 +780,7 @@ const NewPatientAppointment = () => {
             setAvailabilityLoaded(false);
 
             if (
+                !validHospitalId ||
                 !form.doctor_id ||
                 !form.appointment_date
             ) {
@@ -688,6 +797,9 @@ const NewPatientAppointment = () => {
                     )}` +
                     `&appointment_date=${encodeURIComponent(
                         form.appointment_date
+                    )}` +
+                    `&hospital_id=${encodeURIComponent(
+                        validHospitalId
                     )}`;
 
                 const response = await fetch(url);
@@ -750,6 +862,7 @@ const NewPatientAppointment = () => {
     }, [
         form.doctor_id,
         form.appointment_date,
+        validHospitalId,
     ]);
 
     /* =====================================================
@@ -865,6 +978,9 @@ const NewPatientAppointment = () => {
                 )}` +
                 `&appointment_date=${encodeURIComponent(
                     form.appointment_date
+                )}` +
+                `&hospital_id=${encodeURIComponent(
+                    validHospitalId
                 )}`;
 
             const response = await fetch(url);
@@ -937,6 +1053,10 @@ const NewPatientAppointment = () => {
     ===================================================== */
 
     const validateForm = () => {
+        if (!validHospitalId) {
+            return "Hospital selection is missing. Please return to Patient Portal and select a hospital first.";
+        }
+
         if (!patient?.id) {
             return "Patient information is missing. Please register the patient first.";
         }
@@ -988,7 +1108,14 @@ const NewPatientAppointment = () => {
             form.appointment_time;
 
         try {
+            const feeDoctor = doctors.find(
+                (doctor) => String(doctor.id) === String(form.doctor_id)
+            );
+            const appointmentFee = getDoctorFee(feeDoctor);
+
             const payload = {
+                fee: appointmentFee,
+                payment_mode: paymentMode,
                 patient_id: Number(
                     patient.id
                 ),
@@ -1002,6 +1129,10 @@ const NewPatientAppointment = () => {
                 reason:
                     form.reason.trim() ||
                     null,
+
+                patient_type: "new",
+
+                hospital_id: validHospitalId,
             };
 
             const response = await fetch(
@@ -1104,9 +1235,16 @@ const NewPatientAppointment = () => {
                 status:
                     createdAppointment?.status ||
                     "pending",
+                fee: appointmentFee,
+                payment_mode: paymentMode,
+                receipt_no:
+                    createdAppointment?.receipt_no ||
+                    createdAppointment?.receiptNo ||
+                    appointmentId,
                 reason:
                     form.reason.trim() ||
                     "",
+                patient_type: "new",
             });
 
             setLocallyBookedSlots(
@@ -1203,13 +1341,19 @@ const NewPatientAppointment = () => {
     if (success) {
         return (
             <div className="new-appointment-page">
+                <SuccessPopup
+                    open={successPopupOpen}
+                    title="Appointment Booked"
+                    message="Your appointment has been booked successfully."
+                    buttonLabel="View Receipt"
+                    onClose={() => setSuccessPopupOpen(false)}
+                />
+
                 <header className="new-appointment-header">
                     <button
                         type="button"
                         className="new-back-btn"
-                        onClick={
-                            handleBackHome
-                        }
+                        onClick={handleBackHome}
                     >
                         <FaArrowLeft />
                         <span>
@@ -1262,9 +1406,7 @@ const NewPatientAppointment = () => {
                                 </span>
 
                                 <strong>
-                                    {
-                                        success.patient_name
-                                    }
+                                    {success.patient_name}
                                 </strong>
                             </div>
 
@@ -1274,9 +1416,7 @@ const NewPatientAppointment = () => {
                                 </span>
 
                                 <strong>
-                                    {
-                                        success.patient_id
-                                    }
+                                    {success.patient_id}
                                 </strong>
                             </div>
 
@@ -1287,9 +1427,7 @@ const NewPatientAppointment = () => {
                                     </span>
 
                                     <strong>
-                                        {
-                                            success.patient_code
-                                        }
+                                        {success.patient_code}
                                     </strong>
                                 </div>
                             )}
@@ -1301,9 +1439,7 @@ const NewPatientAppointment = () => {
 
                                 <strong>
                                     Dr.{" "}
-                                    {
-                                        success.doctor_name
-                                    }
+                                    {success.doctor_name}
                                 </strong>
                             </div>
 
@@ -1314,9 +1450,7 @@ const NewPatientAppointment = () => {
                                     </span>
 
                                     <strong>
-                                        {
-                                            success.specialization
-                                        }
+                                        {success.specialization}
                                     </strong>
                                 </div>
                             )}
@@ -1356,13 +1490,29 @@ const NewPatientAppointment = () => {
                             </div>
                         </div>
 
+                        <PrintableReceipt
+                            variant="new"
+                            badge="New Patient"
+                            title="New Patient Appointment Receipt"
+                            data={{
+                                hospital: hospitalName || patientHospitalName,
+                                receiptNo: success.receipt_no,
+                                registrationNo: success.patient_code,
+                                patient: success.patient_name,
+                                doctor: success.doctor_name,
+                                doctorId: success.doctor_id,
+                                date: success.appointment_date,
+                                time: success.appointment_time,
+                                fee: success.fee,
+                                paymentMode: success.payment_mode,
+                            }}
+                        />
+
                         <div className="new-success-actions">
                             <button
                                 type="button"
                                 className="new-primary-btn"
-                                onClick={
-                                    handleBookAnother
-                                }
+                                onClick={handleBookAnother}
                             >
                                 <FaCalendarAlt />
                                 Book Another
@@ -1372,9 +1522,7 @@ const NewPatientAppointment = () => {
                             <button
                                 type="button"
                                 className="new-secondary-btn"
-                                onClick={
-                                    handleBackHome
-                                }
+                                onClick={handleBackHome}
                             >
                                 <FaArrowLeft />
                                 Back to Home
@@ -1501,9 +1649,7 @@ const NewPatientAppointment = () => {
                         <button
                             type="button"
                             className="new-primary-btn"
-                            onClick={
-                                handleRegisterPatient
-                            }
+                            onClick={handleRegisterPatient}
                         >
                             <FaUser />
                             Register Patient
@@ -1512,9 +1658,7 @@ const NewPatientAppointment = () => {
                 ) : (
                     <form
                         className="new-appointment-layout"
-                        onSubmit={
-                            handleSubmit
-                        }
+                        onSubmit={handleSubmit}
                     >
                         {/* PATIENT */}
 
@@ -1545,9 +1689,7 @@ const NewPatientAppointment = () => {
                                     </span>
 
                                     <strong>
-                                        {
-                                            patient.name
-                                        }
+                                        {patient.name}
                                     </strong>
                                 </div>
 
@@ -1557,9 +1699,7 @@ const NewPatientAppointment = () => {
                                     </span>
 
                                     <strong>
-                                        {
-                                            patient.id
-                                        }
+                                        {patient.id}
                                     </strong>
                                 </div>
 
@@ -1571,9 +1711,7 @@ const NewPatientAppointment = () => {
                                         </span>
 
                                         <strong>
-                                            {
-                                                patient.patient_code
-                                            }
+                                            {patient.patient_code}
                                         </strong>
                                     </div>
                                 )}
@@ -1637,39 +1775,27 @@ const NewPatientAppointment = () => {
                                 <select
                                     id="doctor_id"
                                     name="doctor_id"
-                                    value={
-                                        form.doctor_id
-                                    }
-                                    onChange={
-                                        handleChange
-                                    }
+                                    value={form.doctor_id}
+                                    onChange={handleChange}
                                     disabled={
                                         doctorsLoading ||
-                                        doctors.length ===
-                                            0
+                                        doctors.length === 0
                                     }
                                     required
                                 >
                                     <option value="">
                                         {doctorsLoading
                                             ? "Loading doctors..."
-                                            : doctors.length ===
-                                                0
+                                            : doctors.length === 0
                                             ? "No doctors available"
                                             : "Select Doctor"}
                                     </option>
 
                                     {doctors.map(
-                                        (
-                                            doctor
-                                        ) => (
+                                        (doctor) => (
                                             <option
-                                                key={
-                                                    doctor.id
-                                                }
-                                                value={
-                                                    doctor.id
-                                                }
+                                                key={doctor.id}
+                                                value={doctor.id}
                                             >
                                                 {doctor.name}
                                                 {doctor.specialization
@@ -1689,15 +1815,11 @@ const NewPatientAppointment = () => {
 
                                     <div>
                                         <strong>
-                                            {
-                                                selectedDoctor.name
-                                            }
+                                            {selectedDoctor.name}
                                         </strong>
 
                                         <span>
-                                            {
-                                                selectedDoctor.specialization
-                                            }
+                                            {selectedDoctor.specialization}
                                         </span>
                                     </div>
                                 </div>
@@ -1739,13 +1861,9 @@ const NewPatientAppointment = () => {
                                     id="appointment_date"
                                     type="date"
                                     name="appointment_date"
-                                    value={
-                                        form.appointment_date
-                                    }
+                                    value={form.appointment_date}
                                     min={getToday()}
-                                    onChange={
-                                        handleChange
-                                    }
+                                    onChange={handleChange}
                                     required
                                 />
                             </div>
@@ -1777,9 +1895,7 @@ const NewPatientAppointment = () => {
                                     <button
                                         type="button"
                                         className="new-refresh-btn"
-                                        onClick={
-                                            handleRefresh
-                                        }
+                                        onClick={handleRefresh}
                                         disabled={
                                             availabilityLoading ||
                                             refreshing ||
@@ -1831,57 +1947,45 @@ const NewPatientAppointment = () => {
                             </div>
 
                             <div className="new-time-slots">
-                                {TIME_SLOTS.map(
-                                    (time) => {
-                                        const isBooked =
-                                            bookedSlots.has(
-                                                time
-                                            );
+                                {TIME_SLOTS.map((time) => {
+                                    const isBooked =
+                                        bookedSlots.has(time);
 
-                                        const isSelected =
-                                            form.appointment_time ===
-                                            time;
+                                    const isSelected =
+                                        form.appointment_time ===
+                                        time;
 
-                                        return (
-                                            <button
-                                                key={time}
-                                                type="button"
-                                                className={`new-time-slot ${
-                                                    isSelected
-                                                        ? "selected"
-                                                        : isBooked
-                                                        ? "booked"
-                                                        : "available"
-                                                }`}
-                                                disabled={
-                                                    isBooked
-                                                }
-                                                aria-pressed={
-                                                    isSelected
-                                                }
-                                                onClick={() =>
-                                                    handleTimeSelect(
-                                                        time
-                                                    )
-                                                }
-                                            >
-                                                <span>
-                                                    {formatTime(
-                                                        time
-                                                    )}
-                                                </span>
+                                    return (
+                                        <button
+                                            key={time}
+                                            type="button"
+                                            className={`new-time-slot ${
+                                                isSelected
+                                                    ? "selected"
+                                                    : isBooked
+                                                    ? "booked"
+                                                    : "available"
+                                            }`}
+                                            disabled={isBooked}
+                                            aria-pressed={isSelected}
+                                            onClick={() =>
+                                                handleTimeSelect(time)
+                                            }
+                                        >
+                                            <span>
+                                                {formatTime(time)}
+                                            </span>
 
-                                                <small>
-                                                    {isBooked
-                                                        ? "Booked"
-                                                        : isSelected
-                                                        ? "Selected"
-                                                        : "Available"}
-                                                </small>
-                                            </button>
-                                        );
-                                    }
-                                )}
+                                            <small>
+                                                {isBooked
+                                                    ? "Booked"
+                                                    : isSelected
+                                                    ? "Selected"
+                                                    : "Available"}
+                                            </small>
+                                        </button>
+                                    );
+                                })}
                             </div>
 
                             {form.appointment_time && (
@@ -1932,22 +2036,15 @@ const NewPatientAppointment = () => {
                                 <textarea
                                     id="reason"
                                     name="reason"
-                                    value={
-                                        form.reason
-                                    }
-                                    onChange={
-                                        handleChange
-                                    }
+                                    value={form.reason}
+                                    onChange={handleChange}
                                     placeholder="Enter reason for appointment..."
                                     rows="4"
                                     maxLength="500"
                                 />
 
                                 <div className="new-character-count">
-                                    {
-                                        form.reason
-                                            .length
-                                    }{" "}
+                                    {form.reason.length}{" "}
                                     / 500
                                 </div>
                             </div>
@@ -1982,9 +2079,7 @@ const NewPatientAppointment = () => {
                                     </span>
 
                                     <strong>
-                                        {
-                                            patient.name
-                                        }
+                                        {patient.name}
                                     </strong>
                                 </div>
 
@@ -1994,8 +2089,7 @@ const NewPatientAppointment = () => {
                                     </span>
 
                                     <strong>
-                                        {selectedDoctor
-                                            ?.name ||
+                                        {selectedDoctor?.name ||
                                             "—"}
                                     </strong>
                                 </div>
@@ -2026,6 +2120,13 @@ const NewPatientAppointment = () => {
                                     </strong>
                                 </div>
                             </div>
+
+                            <PaymentSection
+                                variant="new"
+                                doctor={selectedDoctor}
+                                mode={paymentMode}
+                                onMode={setPaymentMode}
+                            />
 
                             <button
                                 type="submit"

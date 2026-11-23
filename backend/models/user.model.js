@@ -9,9 +9,10 @@ const createUser = async (
     email,
     hashedPassword,
     phone,
-    role
+    role,
+    profileImage = null,
+    hospitalId = null
 ) => {
-
     const [result] = await pool.query(
         `
         INSERT INTO users
@@ -21,9 +22,11 @@ const createUser = async (
             password,
             phone,
             role,
-            status
+            hospital_id,
+            status,
+            profile_image
         )
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
             name,
@@ -31,7 +34,9 @@ const createUser = async (
             hashedPassword,
             phone || null,
             role,
+            hospitalId || null,
             "active",
+            profileImage || null,
         ]
     );
 
@@ -44,7 +49,6 @@ const createUser = async (
 // =====================================================
 
 const findUserByEmail = async (email) => {
-
     const [rows] = await pool.query(
         `
         SELECT
@@ -54,6 +58,7 @@ const findUserByEmail = async (email) => {
             password,
             phone,
             role,
+            hospital_id,
             status,
             profile_image,
             created_at,
@@ -75,7 +80,6 @@ const findUserByEmail = async (email) => {
 // =====================================================
 
 const findUserById = async (id) => {
-
     const [rows] = await pool.query(
         `
         SELECT
@@ -84,6 +88,7 @@ const findUserById = async (id) => {
             email,
             phone,
             role,
+            hospital_id,
             status,
             profile_image,
             created_at
@@ -99,11 +104,68 @@ const findUserById = async (id) => {
 
 
 // =====================================================
+// FIND HOSPITAL ADMIN BY HOSPITAL ID
+// =====================================================
+
+const findHospitalAdminByHospitalId = async (hospitalId) => {
+    const [rows] = await pool.query(
+        `
+        SELECT
+            id,
+            name,
+            email,
+            phone,
+            role,
+            hospital_id,
+            status,
+            profile_image,
+            created_at
+        FROM users
+        WHERE hospital_id = ?
+        AND role = 'hospital_admin'
+        ORDER BY id ASC
+        LIMIT 1
+        `,
+        [hospitalId]
+    );
+
+    return rows[0] || null;
+};
+
+
+// =====================================================
+// FIND USER BY HOSPITAL ID
+// =====================================================
+
+const findUsersByHospitalId = async (hospitalId) => {
+    const [rows] = await pool.query(
+        `
+        SELECT
+            id,
+            name,
+            email,
+            phone,
+            role,
+            hospital_id,
+            status,
+            profile_image,
+            created_at
+        FROM users
+        WHERE hospital_id = ?
+        ORDER BY id ASC
+        `,
+        [hospitalId]
+    );
+
+    return rows;
+};
+
+
+// =====================================================
 // FIND USER BY RESET TOKEN
 // =====================================================
 
 const findUserByResetToken = async (token) => {
-
     const [rows] = await pool.query(
         `
         SELECT
@@ -113,6 +175,7 @@ const findUserByResetToken = async (token) => {
             password,
             phone,
             role,
+            hospital_id,
             status,
             profile_image,
             created_at,
@@ -139,7 +202,6 @@ const saveResetToken = async (
     resetToken,
     expiresAt
 ) => {
-
     const [result] = await pool.query(
         `
         UPDATE users
@@ -164,7 +226,6 @@ const saveResetToken = async (
 // =====================================================
 
 const clearResetToken = async (userId) => {
-
     const [result] = await pool.query(
         `
         UPDATE users
@@ -184,23 +245,36 @@ const clearResetToken = async (userId) => {
 // GET ALL USERS
 // =====================================================
 
-const findAllUsers = async () => {
-
-    const [rows] = await pool.query(
-        `
+const findAllUsers = async (hospitalId = null) => {
+    let query = `
         SELECT
             id,
             name,
             email,
             phone,
             role,
+            hospital_id,
             status,
             profile_image,
             created_at
         FROM users
+    `;
+
+    const params = [];
+
+    if (hospitalId !== null && hospitalId !== undefined) {
+        query += `
+            WHERE hospital_id = ?
+        `;
+
+        params.push(hospitalId);
+    }
+
+    query += `
         ORDER BY id DESC
-        `
-    );
+    `;
+
+    const [rows] = await pool.query(query, params);
 
     return rows;
 };
@@ -215,24 +289,70 @@ const updateUser = async (
     name,
     email,
     phone,
-    role
+    role,
+    hashedPassword = null,
+    profileImage = null,
+    hospitalId = null
 ) => {
+    // Optional columns are only touched when a value is given,
+    // so editing a user can never wipe the password / image.
+    const fields = [
+        "name = ?",
+        "email = ?",
+        "phone = ?",
+        "role = ?",
+        "hospital_id = ?",
+    ];
+
+    const params = [
+        name,
+        email,
+        phone || null,
+        role,
+        hospitalId || null,
+    ];
+
+    if (hashedPassword) {
+        fields.push("password = ?");
+        params.push(hashedPassword);
+    }
+
+    if (profileImage) {
+        fields.push("profile_image = ?");
+        params.push(profileImage);
+    }
+
+    params.push(id);
 
     const [result] = await pool.query(
         `
         UPDATE users
-        SET
-            name = ?,
-            email = ?,
-            phone = ?,
-            role = ?
+        SET ${fields.join(", ")}
+        WHERE id = ?
+        `,
+        params
+    );
+
+    return result;
+};
+
+
+// =====================================================
+// UPDATE USER PROFILE IMAGE
+// =====================================================
+
+const updateUserProfileImage = async (
+    id,
+    profileImage
+) => {
+    const [result] = await pool.query(
+        `
+        UPDATE users
+        SET profile_image = ?
         WHERE id = ?
         `,
         [
-            name,
-            email,
-            phone || null,
-            role,
+            profileImage || null,
             id,
         ]
     );
@@ -249,11 +369,13 @@ const updateUserPassword = async (
     id,
     hashedPassword
 ) => {
-
     const [result] = await pool.query(
         `
         UPDATE users
-        SET password = ?
+        SET
+            password = ?,
+            reset_token = NULL,
+            reset_token_expires_at = NULL
         WHERE id = ?
         `,
         [
@@ -274,7 +396,6 @@ const updateUserStatus = async (
     id,
     status
 ) => {
-
     const [result] = await pool.query(
         `
         UPDATE users
@@ -296,7 +417,6 @@ const updateUserStatus = async (
 // =====================================================
 
 const deleteUserById = async (id) => {
-
     const [result] = await pool.query(
         `
         DELETE FROM users
@@ -317,7 +437,6 @@ const updateUserRole = async (
     id,
     role
 ) => {
-
     const [result] = await pool.query(
         `
         UPDATE users
@@ -339,12 +458,15 @@ const updateUserRole = async (
 // =====================================================
 
 module.exports = {
-
     createUser,
 
     findUserByEmail,
 
     findUserById,
+
+    findHospitalAdminByHospitalId,
+
+    findUsersByHospitalId,
 
     findUserByResetToken,
 
@@ -358,10 +480,11 @@ module.exports = {
 
     updateUserPassword,
 
+    updateUserProfileImage,
+
     updateUserStatus,
 
     deleteUserById,
 
     updateUserRole,
-
 };

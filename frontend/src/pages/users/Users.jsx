@@ -1,5 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, {
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
     FaArrowLeft,
     FaSyncAlt,
@@ -44,59 +50,49 @@ const API_BASE =
 
 
 // =====================================================
-// ROLE LIST
+// ROLES
 // =====================================================
 
 const ROLES = [
     {
         value: "super_admin",
         label: "Super Admin",
-        shortLabel: "Super Admin",
     },
     {
         value: "hospital_admin",
         label: "Hospital Admin",
-        shortLabel: "Hospital Admin",
     },
     {
         value: "admin",
         label: "Admin",
-        shortLabel: "Admin",
     },
     {
         value: "doctor",
         label: "Doctor",
-        shortLabel: "Doctor",
     },
     {
         value: "nurse",
         label: "Nurse",
-        shortLabel: "Nurse",
     },
     {
         value: "receptionist",
         label: "Receptionist",
-        shortLabel: "Receptionist",
     },
     {
         value: "pharmacist",
         label: "Pharmacist",
-        shortLabel: "Pharmacist",
     },
     {
         value: "lab_technician",
         label: "Lab Technician",
-        shortLabel: "Lab Technician",
     },
     {
         value: "accountant",
         label: "Accountant",
-        shortLabel: "Accountant",
     },
     {
         value: "patient",
         label: "Patient",
-        shortLabel: "Patient",
     },
 ];
 
@@ -111,11 +107,14 @@ const EMPTY_FORM = {
     phone: "",
     role: "receptionist",
     password: "",
+    profilePhoto: null,
+    profilePhotoPreview: "",
+    removeProfilePhoto: false,
 };
 
 
 // =====================================================
-// TOKEN HELPERS
+// AUTH HELPERS
 // =====================================================
 
 const getAuthToken = () => {
@@ -141,6 +140,7 @@ const getAuthHeaders = () => {
     const token = getAuthToken();
 
     return {
+        Accept: "application/json",
         "Content-Type": "application/json",
 
         ...(token
@@ -152,19 +152,49 @@ const getAuthHeaders = () => {
 };
 
 
+const getAuthHeadersMultipart = () => {
+    const token = getAuthToken();
+
+    return {
+        Accept: "application/json",
+
+        ...(token
+            ? {
+                  Authorization: `Bearer ${token}`,
+              }
+            : {}),
+    };
+};
+
+
 // =====================================================
-// API ERROR HELPER
+// API ERROR
 // =====================================================
 
-const getApiErrorMessage = async (response) => {
+const getApiErrorMessage = async (
+    response
+) => {
     try {
-        const data = await response.json();
+        const text =
+            await response.text();
 
-        return (
-            data?.message ||
-            data?.error ||
-            `Request failed with status ${response.status}`
-        );
+        if (!text) {
+            return `Request failed with status ${response.status}`;
+        }
+
+        try {
+            const data =
+                JSON.parse(text);
+
+            return (
+                data?.message ||
+                data?.error ||
+                data?.detail ||
+                `Request failed with status ${response.status}`
+            );
+        } catch {
+            return text;
+        }
     } catch {
         return `Request failed with status ${response.status}`;
     }
@@ -172,30 +202,84 @@ const getApiErrorMessage = async (response) => {
 
 
 // =====================================================
-// ROLE HELPERS
+// NORMALIZE ROLE
+// =====================================================
+
+const normalizeRole = (role) => {
+    if (!role) {
+        return "patient";
+    }
+
+    const value =
+        String(role)
+            .trim()
+            .toLowerCase();
+
+    const aliases = {
+        superadmin: "super_admin",
+        "super-admin": "super_admin",
+
+        hospitaladmin:
+            "hospital_admin",
+        "hospital-admin":
+            "hospital_admin",
+
+        labtechnician:
+            "lab_technician",
+        "lab-technician":
+            "lab_technician",
+
+        pharmacy: "pharmacist",
+
+        staff: "receptionist",
+    };
+
+    return (
+        aliases[value] ||
+        value
+    );
+};
+
+
+// =====================================================
+// ROLE LABEL
 // =====================================================
 
 const getRoleLabel = (role) => {
-    const found = ROLES.find(
-        (item) => item.value === role
-    );
+    const normalized =
+        normalizeRole(role);
+
+    const found =
+        ROLES.find(
+            (item) =>
+                item.value ===
+                normalized
+        );
 
     if (found) {
         return found.label;
     }
 
-    return role
-        ? String(role)
+    return normalized
+        ? normalized
               .replace(/_/g, " ")
-              .replace(/\b\w/g, (char) =>
-                  char.toUpperCase()
+              .replace(
+                  /\b\w/g,
+                  (char) =>
+                      char.toUpperCase()
               )
         : "Unknown";
 };
 
 
+// =====================================================
+// ROLE ICON
+// =====================================================
+
 const getRoleIcon = (role) => {
-    switch (role) {
+    switch (
+        normalizeRole(role)
+    ) {
         case "super_admin":
             return FaUserShield;
 
@@ -222,8 +306,6 @@ const getRoleIcon = (role) => {
             return FaCalculator;
 
         case "patient":
-            return FaUser;
-
         default:
             return FaUser;
     }
@@ -231,7 +313,7 @@ const getRoleIcon = (role) => {
 
 
 // =====================================================
-// NAME INITIALS
+// INITIALS
 // =====================================================
 
 const getInitials = (name) => {
@@ -239,10 +321,11 @@ const getInitials = (name) => {
         return "U";
     }
 
-    const parts = String(name)
-        .trim()
-        .split(/\s+/)
-        .filter(Boolean);
+    const parts =
+        String(name)
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean);
 
     if (parts.length === 1) {
         return parts[0]
@@ -252,13 +335,15 @@ const getInitials = (name) => {
 
     return (
         parts[0].charAt(0) +
-        parts[parts.length - 1].charAt(0)
+        parts[
+            parts.length - 1
+        ].charAt(0)
     ).toUpperCase();
 };
 
 
 // =====================================================
-// DATE FORMAT
+// DATE
 // =====================================================
 
 const formatDate = (value) => {
@@ -266,17 +351,25 @@ const formatDate = (value) => {
         return "—";
     }
 
-    const date = new Date(value);
+    const date =
+        new Date(value);
 
-    if (Number.isNaN(date.getTime())) {
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
         return String(value);
     }
 
-    return new Intl.DateTimeFormat("en-IN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-    }).format(date);
+    return new Intl.DateTimeFormat(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+        }
+    ).format(date);
 };
 
 
@@ -293,29 +386,99 @@ const normalizeUser = (user) => {
         ...user,
 
         id:
-            user.id !== undefined &&
-            user.id !== null
-                ? user.id
-                : null,
+            user.id ??
+            user.user_id ??
+            user.userId ??
+            null,
 
-        name: user.name || "",
+        name:
+            user.name ||
+            user.full_name ||
+            user.fullName ||
+            "",
 
-        email: user.email || "",
+        email:
+            user.email || "",
 
-        phone: user.phone || "",
+        phone:
+            user.phone ||
+            user.mobile ||
+            user.phone_number ||
+            "",
 
-        role: user.role || "patient",
+        role: normalizeRole(
+            user.role ||
+                user.user_role ||
+                "patient"
+        ),
 
         status:
-            user.status === "inactive"
+            String(
+                user.status ||
+                    "active"
+            ).toLowerCase() ===
+            "inactive"
                 ? "inactive"
                 : "active",
 
         created_at:
             user.created_at ||
             user.createdAt ||
+            user.created ||
             null,
+
+        profile_image:
+            user.profile_image ||
+            user.profileImage ||
+            user.profile_photo ||
+            user.profilePhoto ||
+            "",
     };
+};
+
+
+// =====================================================
+// EXTRACT USERS
+// =====================================================
+
+const extractUsers = (data) => {
+    if (Array.isArray(data)) {
+        return data;
+    }
+
+    if (
+        Array.isArray(
+            data?.users
+        )
+    ) {
+        return data.users;
+    }
+
+    if (
+        Array.isArray(
+            data?.data
+        )
+    ) {
+        return data.data;
+    }
+
+    if (
+        Array.isArray(
+            data?.data?.users
+        )
+    ) {
+        return data.data.users;
+    }
+
+    if (
+        Array.isArray(
+            data?.results
+        )
+    ) {
+        return data.results;
+    }
+
+    return [];
 };
 
 
@@ -324,19 +487,25 @@ const normalizeUser = (user) => {
 // =====================================================
 
 const Users = () => {
-    const navigate = useNavigate();
+    const navigate =
+        useNavigate();
 
-    // -------------------------------------------------
+    const photoInputRef =
+        useRef(null);
+
+    // =================================================
     // DATA
-    // -------------------------------------------------
+    // =================================================
 
-    const [users, setUsers] = useState([]);
+    const [users, setUsers] =
+        useState([]);
 
-    // -------------------------------------------------
-    // UI STATES
-    // -------------------------------------------------
+    // =================================================
+    // UI
+    // =================================================
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] =
+        useState(true);
 
     const [refreshing, setRefreshing] =
         useState(false);
@@ -347,51 +516,66 @@ const Users = () => {
     const [deletingId, setDeletingId] =
         useState(null);
 
-    const [statusUpdatingId, setStatusUpdatingId] =
-        useState(null);
+    const [
+        statusUpdatingId,
+        setStatusUpdatingId,
+    ] = useState(null);
 
-    // -------------------------------------------------
+    // =================================================
     // MESSAGES
-    // -------------------------------------------------
+    // =================================================
 
-    const [error, setError] = useState("");
+    const [error, setError] =
+        useState("");
 
-    const [success, setSuccess] = useState("");
+    const [success, setSuccess] =
+        useState("");
 
-    // -------------------------------------------------
+    // =================================================
     // FILTERS
-    // -------------------------------------------------
+    // =================================================
 
-    const [search, setSearch] = useState("");
+    const [search, setSearch] =
+        useState("");
 
     const [roleFilter, setRoleFilter] =
         useState("");
 
-    const [statusFilter, setStatusFilter] =
-        useState("");
+    const [
+        statusFilter,
+        setStatusFilter,
+    ] = useState("");
 
-    // -------------------------------------------------
+    // =================================================
     // MODALS
-    // -------------------------------------------------
+    // =================================================
 
     const [showModal, setShowModal] =
         useState(false);
 
-    const [showViewModal, setShowViewModal] =
-        useState(false);
+    const [
+        showViewModal,
+        setShowViewModal,
+    ] = useState(false);
 
-    const [editingUser, setEditingUser] =
-        useState(null);
+    const [
+        editingUser,
+        setEditingUser,
+    ] = useState(null);
 
-    const [viewingUser, setViewingUser] =
-        useState(null);
+    const [
+        viewingUser,
+        setViewingUser,
+    ] = useState(null);
 
-    // -------------------------------------------------
+    // =================================================
     // FORM
-    // -------------------------------------------------
+    // =================================================
 
     const [form, setForm] =
-        useState(EMPTY_FORM);
+        useState({
+            ...EMPTY_FORM,
+        });
 
 
     // =================================================
@@ -399,7 +583,8 @@ const Users = () => {
     // =================================================
 
     const requireToken = () => {
-        const token = getAuthToken();
+        const token =
+            getAuthToken();
 
         if (!token) {
             setError(
@@ -435,16 +620,19 @@ const Users = () => {
         setError("");
 
         try {
-            const response = await fetch(
-                `${API_BASE}/users`,
-                {
-                    method: "GET",
-                    headers: getAuthHeaders(),
-                }
-            );
+            const response =
+                await fetch(
+                    `${API_BASE}/users`,
+                    {
+                        method: "GET",
+                        headers:
+                            getAuthHeaders(),
+                    }
+                );
 
             if (
-                response.status === 401
+                response.status ===
+                401
             ) {
                 throw new Error(
                     "Authentication failed. Please login again."
@@ -452,7 +640,8 @@ const Users = () => {
             }
 
             if (
-                response.status === 403
+                response.status ===
+                403
             ) {
                 throw new Error(
                     "You are not authorized to manage users."
@@ -460,29 +649,24 @@ const Users = () => {
             }
 
             if (!response.ok) {
-                const message =
+                throw new Error(
                     await getApiErrorMessage(
                         response
-                    );
-
-                throw new Error(message);
+                    )
+                );
             }
 
             const data =
                 await response.json();
 
             const receivedUsers =
-                Array.isArray(data)
-                    ? data
-                    : Array.isArray(data?.users)
-                    ? data.users
-                    : Array.isArray(data?.data)
-                    ? data.data
-                    : [];
+                extractUsers(data);
 
             setUsers(
                 receivedUsers
-                    .map(normalizeUser)
+                    .map(
+                        normalizeUser
+                    )
                     .filter(Boolean)
             );
         } catch (err) {
@@ -495,7 +679,7 @@ const Users = () => {
 
             setError(
                 err?.message ||
-                    "Unable to fetch users"
+                    "Unable to fetch users."
             );
         } finally {
             setLoading(false);
@@ -514,12 +698,12 @@ const Users = () => {
 
 
     // =================================================
-    // AUTO CLEAR SUCCESS
+    // SUCCESS AUTO CLEAR
     // =================================================
 
     useEffect(() => {
         if (!success) {
-            return;
+            return undefined;
         }
 
         const timer =
@@ -545,112 +729,134 @@ const Users = () => {
     // FILTERED USERS
     // =================================================
 
-    const filteredUsers = useMemo(() => {
-        const query =
-            search
-                .trim()
-                .toLowerCase();
-
-        return [...users]
-            .filter((user) => {
-                if (!query) {
-                    return true;
-                }
-
-                const searchable = [
-                    user.name,
-                    user.email,
-                    user.phone,
-                    user.role,
-                    getRoleLabel(user.role),
-                    String(user.id),
-                ]
-                    .filter(Boolean)
-                    .join(" ")
+    const filteredUsers =
+        useMemo(() => {
+            const query =
+                search
+                    .trim()
                     .toLowerCase();
 
-                return searchable.includes(
-                    query
-                );
-            })
-            .filter((user) => {
-                if (!roleFilter) {
-                    return true;
-                }
+            return [...users]
+                .filter((user) => {
+                    if (!query) {
+                        return true;
+                    }
 
-                return (
-                    user.role ===
-                    roleFilter
-                );
-            })
-            .filter((user) => {
-                if (!statusFilter) {
-                    return true;
-                }
+                    const searchable =
+                        [
+                            user.name,
+                            user.email,
+                            user.phone,
+                            user.role,
+                            getRoleLabel(
+                                user.role
+                            ),
+                            String(
+                                user.id
+                            ),
+                        ]
+                            .filter(Boolean)
+                            .join(" ")
+                            .toLowerCase();
 
-                return (
-                    user.status ===
-                    statusFilter
+                    return searchable.includes(
+                        query
+                    );
+                })
+                .filter((user) => {
+                    if (!roleFilter) {
+                        return true;
+                    }
+
+                    return (
+                        normalizeRole(
+                            user.role
+                        ) ===
+                        normalizeRole(
+                            roleFilter
+                        )
+                    );
+                })
+                .filter((user) => {
+                    if (!statusFilter) {
+                        return true;
+                    }
+
+                    return (
+                        user.status ===
+                        statusFilter
+                    );
+                })
+                .sort((a, b) =>
+                    String(
+                        a.name
+                    ).localeCompare(
+                        String(
+                            b.name
+                        )
+                    )
                 );
-            })
-            .sort((a, b) =>
-                String(a.name).localeCompare(
-                    String(b.name)
-                )
-            );
-    }, [
-        users,
-        search,
-        roleFilter,
-        statusFilter,
-    ]);
+        }, [
+            users,
+            search,
+            roleFilter,
+            statusFilter,
+        ]);
 
 
     // =================================================
     // STATISTICS
     // =================================================
 
-    const stats = useMemo(() => {
-        const totalUsers =
-            users.length;
+    const stats =
+        useMemo(() => {
+            const totalUsers =
+                users.length;
 
-        const activeUsers =
-            users.filter(
-                (user) =>
-                    user.status ===
-                    "active"
-            ).length;
+            const activeUsers =
+                users.filter(
+                    (user) =>
+                        user.status ===
+                        "active"
+                ).length;
 
-        const inactiveUsers =
-            users.filter(
-                (user) =>
-                    user.status ===
-                    "inactive"
-            ).length;
+            const inactiveUsers =
+                users.filter(
+                    (user) =>
+                        user.status ===
+                        "inactive"
+                ).length;
 
-        const administrators =
-            users.filter((user) =>
-                [
-                    "admin",
-                    "super_admin",
-                    "hospital_admin",
-                ].includes(user.role)
-            ).length;
+            const administrators =
+                users.filter(
+                    (user) =>
+                        [
+                            "admin",
+                            "super_admin",
+                            "hospital_admin",
+                        ].includes(
+                            normalizeRole(
+                                user.role
+                            )
+                        )
+                ).length;
 
-        return {
-            totalUsers,
-            activeUsers,
-            inactiveUsers,
-            administrators,
-        };
-    }, [users]);
+            return {
+                totalUsers,
+                activeUsers,
+                inactiveUsers,
+                administrators,
+            };
+        }, [users]);
 
 
     // =================================================
-    // FORM HANDLERS
+    // FORM CHANGE
     // =================================================
 
-    const handleChange = (event) => {
+    const handleChange = (
+        event
+    ) => {
         const {
             name,
             value,
@@ -664,15 +870,127 @@ const Users = () => {
 
 
     // =================================================
-    // OPEN ADD MODAL
+    // PHOTO CHANGE
+    // =================================================
+
+    const handlePhotoChange = (
+        event
+    ) => {
+        const file =
+            event.target.files?.[0];
+
+        if (!file) {
+            return;
+        }
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/webp",
+        ];
+
+        if (
+            !allowedTypes.includes(
+                file.type
+            )
+        ) {
+            setError(
+                "Only JPG, JPEG, PNG and WEBP images are allowed."
+            );
+
+            if (
+                photoInputRef.current
+            ) {
+                photoInputRef.current.value =
+                    "";
+            }
+
+            return;
+        }
+
+        if (
+            file.size >
+            5 * 1024 * 1024
+        ) {
+            setError(
+                "Profile photo must be smaller than 5 MB."
+            );
+
+            if (
+                photoInputRef.current
+            ) {
+                photoInputRef.current.value =
+                    "";
+            }
+
+            return;
+        }
+
+        setError("");
+
+        const previewUrl =
+            URL.createObjectURL(
+                file
+            );
+
+        setForm((previous) => ({
+            ...previous,
+            profilePhoto: file,
+            profilePhotoPreview:
+                previewUrl,
+            removeProfilePhoto: false,
+        }));
+    };
+
+
+    // =================================================
+    // REMOVE PHOTO
+    // =================================================
+
+    const handleRemovePhoto = () => {
+        setForm((previous) => ({
+            ...previous,
+            profilePhoto: null,
+            profilePhotoPreview: "",
+            removeProfilePhoto: true,
+        }));
+
+        if (
+            photoInputRef.current
+        ) {
+            photoInputRef.current.value =
+                "";
+        }
+    };
+
+
+    // =================================================
+    // RESET FORM
+    // =================================================
+
+    const resetForm = () => {
+        setForm({
+            ...EMPTY_FORM,
+        });
+
+        if (
+            photoInputRef.current
+        ) {
+            photoInputRef.current.value =
+                "";
+        }
+    };
+
+
+    // =================================================
+    // ADD MODAL
     // =================================================
 
     const openAddModal = () => {
         setEditingUser(null);
 
-        setForm({
-            ...EMPTY_FORM,
-        });
+        resetForm();
 
         setError("");
 
@@ -681,19 +999,38 @@ const Users = () => {
 
 
     // =================================================
-    // OPEN EDIT MODAL
+    // EDIT MODAL
     // =================================================
 
-    const openEditModal = (user) => {
+    const openEditModal = (
+        user
+    ) => {
         setEditingUser(user);
 
         setForm({
             name: user.name || "",
-            email: user.email || "",
-            phone: user.phone || "",
-            role: user.role || "receptionist",
+            email:
+                user.email || "",
+            phone:
+                user.phone || "",
+            role:
+                normalizeRole(
+                    user.role
+                ),
             password: "",
+            profilePhoto: null,
+            profilePhotoPreview:
+                user.profile_image ||
+                "",
+            removeProfilePhoto: false,
         });
+
+        if (
+            photoInputRef.current
+        ) {
+            photoInputRef.current.value =
+                "";
+        }
 
         setError("");
 
@@ -714,9 +1051,7 @@ const Users = () => {
 
         setEditingUser(null);
 
-        setForm({
-            ...EMPTY_FORM,
-        });
+        resetForm();
 
         setError("");
     };
@@ -726,7 +1061,9 @@ const Users = () => {
     // VIEW USER
     // =================================================
 
-    const openViewModal = (user) => {
+    const openViewModal = (
+        user
+    ) => {
         setViewingUser(user);
 
         setShowViewModal(true);
@@ -734,11 +1071,12 @@ const Users = () => {
 
 
     // =================================================
-    // CLOSE VIEW MODAL
+    // CLOSE VIEW
     // =================================================
 
     const closeViewModal = () => {
         setShowViewModal(false);
+
         setViewingUser(null);
     };
 
@@ -763,13 +1101,20 @@ const Users = () => {
             form.name.trim();
 
         const email =
-            form.email.trim().toLowerCase();
+            form.email
+                .trim()
+                .toLowerCase();
 
         const phone =
             form.phone.trim();
 
         const password =
             form.password.trim();
+
+        const selectedRole =
+            normalizeRole(
+                form.role
+            );
 
         // -------------------------------------------------
         // VALIDATION
@@ -779,7 +1124,6 @@ const Users = () => {
             setError(
                 "Name is required."
             );
-
             return;
         }
 
@@ -787,84 +1131,141 @@ const Users = () => {
             setError(
                 "Email is required."
             );
-
             return;
         }
 
-        if (!roleFilter && !form.role) {
+        // FIX:
+        // roleFilter was incorrectly used here.
+        if (!selectedRole) {
             setError(
                 "Role is required."
             );
-
-            return;
-        }
-
-        if (!editingUser && !password) {
-            setError(
-                "Password is required for a new user."
-            );
-
             return;
         }
 
         if (
-            !editingUser &&
-            password.length < 6
-        ) {
-            setError(
-                "Password must be at least 6 characters."
-            );
-
-            return;
-        }
-
-        if (
-            editingUser &&
             password &&
             password.length < 6
         ) {
             setError(
                 "Password must be at least 6 characters."
             );
-
             return;
         }
 
         setSaving(true);
 
         try {
-            const payload = {
-                name,
-                email,
-                phone: phone || null,
-                role: form.role,
-            };
+            const hasPhoto =
+                Boolean(
+                    form.profilePhoto
+                );
 
-            if (password) {
-                payload.password =
-                    password;
+            let body;
+            let headers;
+
+            if (hasPhoto) {
+                const formData =
+                    new FormData();
+
+                formData.append(
+                    "name",
+                    name
+                );
+
+                formData.append(
+                    "email",
+                    email
+                );
+
+                formData.append(
+                    "phone",
+                    phone || ""
+                );
+
+                formData.append(
+                    "role",
+                    selectedRole
+                );
+
+                if (password) {
+                    formData.append(
+                        "password",
+                        password
+                    );
+                }
+
+                formData.append(
+                    "profilePhoto",
+                    form.profilePhoto
+                );
+
+                if (
+                    editingUser &&
+                    form.removeProfilePhoto
+                ) {
+                    formData.append(
+                        "profile_image",
+                        ""
+                    );
+                }
+
+                body = formData;
+
+                headers =
+                    getAuthHeadersMultipart();
+            } else {
+                const payload = {
+                    name,
+                    email,
+                    phone:
+                        phone || null,
+                    role:
+                        selectedRole,
+                };
+
+                if (password) {
+                    payload.password =
+                        password;
+                }
+
+                if (
+                    editingUser &&
+                    form.removeProfilePhoto
+                ) {
+                    payload.profile_image =
+                        "";
+                }
+
+                body =
+                    JSON.stringify(
+                        payload
+                    );
+
+                headers =
+                    getAuthHeaders();
             }
 
-            const url = editingUser
-                ? `${API_BASE}/users/${editingUser.id}`
-                : `${API_BASE}/users`;
+            const url =
+                editingUser
+                    ? `${API_BASE}/users/${editingUser.id}`
+                    : `${API_BASE}/users`;
 
-            const method = editingUser
-                ? "PUT"
-                : "POST";
+            const method =
+                editingUser
+                    ? "PUT"
+                    : "POST";
 
             const response =
                 await fetch(url, {
                     method,
-                    headers:
-                        getAuthHeaders(),
-                    body: JSON.stringify(
-                        payload
-                    ),
+                    headers,
+                    body,
                 });
 
             if (
-                response.status === 401
+                response.status ===
+                401
             ) {
                 throw new Error(
                     "Authentication failed. Please login again."
@@ -872,7 +1273,8 @@ const Users = () => {
             }
 
             if (
-                response.status === 403
+                response.status ===
+                403
             ) {
                 throw new Error(
                     "You are not authorized to perform this action."
@@ -880,12 +1282,11 @@ const Users = () => {
             }
 
             if (!response.ok) {
-                const message =
+                throw new Error(
                     await getApiErrorMessage(
                         response
-                    );
-
-                throw new Error(message);
+                    )
+                );
             }
 
             const data =
@@ -893,20 +1294,24 @@ const Users = () => {
 
             const returnedUser =
                 normalizeUser(
-                    data?.user
+                    data?.user ||
+                        data?.data?.user ||
+                        data?.data
                 );
 
             if (editingUser) {
-                if (returnedUser) {
+                if (
+                    returnedUser
+                ) {
                     setUsers(
                         (previous) =>
                             previous.map(
                                 (user) =>
-                                    Number(
+                                    String(
                                         user.id
                                     ) ===
-                                    Number(
-                                        returnedUser.id
+                                    String(
+                                        editingUser.id
                                     )
                                         ? returnedUser
                                         : user
@@ -920,7 +1325,9 @@ const Users = () => {
                     "User updated successfully."
                 );
             } else {
-                if (returnedUser) {
+                if (
+                    returnedUser
+                ) {
                     setUsers(
                         (previous) => [
                             ...previous,
@@ -932,7 +1339,9 @@ const Users = () => {
                 }
 
                 setSuccess(
-                    "User created successfully."
+                    data?.mailSent
+                        ? "User created. Login credentials email par PDF ke saath bhej diye gaye hain."
+                        : "User created, par credentials email nahi ja saka."
                 );
             }
 
@@ -940,9 +1349,7 @@ const Users = () => {
 
             setEditingUser(null);
 
-            setForm({
-                ...EMPTY_FORM,
-            });
+            resetForm();
         } catch (err) {
             console.error(
                 "SAVE USER ERROR:",
@@ -951,7 +1358,7 @@ const Users = () => {
 
             setError(
                 err?.message ||
-                    "Unable to save user"
+                    "Unable to save user."
             );
         } finally {
             setSaving(false);
@@ -996,7 +1403,8 @@ const Users = () => {
                 );
 
             if (
-                response.status === 401
+                response.status ===
+                401
             ) {
                 throw new Error(
                     "Authentication failed. Please login again."
@@ -1004,7 +1412,8 @@ const Users = () => {
             }
 
             if (
-                response.status === 403
+                response.status ===
+                403
             ) {
                 throw new Error(
                     "You are not authorized to delete users."
@@ -1012,22 +1421,21 @@ const Users = () => {
             }
 
             if (!response.ok) {
-                const message =
+                throw new Error(
                     await getApiErrorMessage(
                         response
-                    );
-
-                throw new Error(message);
+                    )
+                );
             }
 
             setUsers(
                 (previous) =>
                     previous.filter(
                         (item) =>
-                            Number(
+                            String(
                                 item.id
                             ) !==
-                            Number(
+                            String(
                                 user.id
                             )
                     )
@@ -1044,7 +1452,7 @@ const Users = () => {
 
             setError(
                 err?.message ||
-                    "Unable to delete user"
+                    "Unable to delete user."
             );
         } finally {
             setDeletingId(null);
@@ -1056,131 +1464,138 @@ const Users = () => {
     // TOGGLE STATUS
     // =================================================
 
-    const handleToggleStatus = async (
-        user
-    ) => {
-        if (!requireToken()) {
-            return;
-        }
-
-        const newStatus =
-            user.status ===
-            "active"
-                ? "inactive"
-                : "active";
-
-        setStatusUpdatingId(
-            user.id
-        );
-
-        setError("");
-        setSuccess("");
-
-        try {
-            const response =
-                await fetch(
-                    `${API_BASE}/users/${user.id}/status`,
-                    {
-                        method: "PATCH",
-                        headers:
-                            getAuthHeaders(),
-                        body: JSON.stringify(
-                            {
-                                status:
-                                    newStatus,
-                            }
-                        ),
-                    }
-                );
-
+    const handleToggleStatus =
+        async (user) => {
             if (
-                response.status === 401
+                !requireToken()
             ) {
-                throw new Error(
-                    "Authentication failed. Please login again."
-                );
+                return;
             }
 
-            if (
-                response.status === 403
-            ) {
-                throw new Error(
-                    "You are not authorized to change user status."
-                );
-            }
+            const newStatus =
+                user.status ===
+                "active"
+                    ? "inactive"
+                    : "active";
 
-            if (!response.ok) {
-                const message =
-                    await getApiErrorMessage(
-                        response
+            setStatusUpdatingId(
+                user.id
+            );
+
+            setError("");
+            setSuccess("");
+
+            try {
+                const response =
+                    await fetch(
+                        `${API_BASE}/users/${user.id}/status`,
+                        {
+                            method:
+                                "PATCH",
+                            headers:
+                                getAuthHeaders(),
+                            body: JSON.stringify(
+                                {
+                                    status:
+                                        newStatus,
+                                }
+                            ),
+                        }
                     );
 
-                throw new Error(message);
-            }
+                if (
+                    response.status ===
+                    401
+                ) {
+                    throw new Error(
+                        "Authentication failed. Please login again."
+                    );
+                }
 
-            const data =
-                await response.json();
+                if (
+                    response.status ===
+                    403
+                ) {
+                    throw new Error(
+                        "You are not authorized to change user status."
+                    );
+                }
 
-            const updatedUser =
-                normalizeUser(
-                    data?.user
-                );
-
-            if (updatedUser) {
-                setUsers(
-                    (previous) =>
-                        previous.map(
-                            (item) =>
-                                Number(
-                                    item.id
-                                ) ===
-                                Number(
-                                    updatedUser.id
-                                )
-                                    ? updatedUser
-                                    : item
+                if (!response.ok) {
+                    throw new Error(
+                        await getApiErrorMessage(
+                            response
                         )
+                    );
+                }
+
+                const data =
+                    await response.json();
+
+                const updatedUser =
+                    normalizeUser(
+                        data?.user ||
+                            data?.data?.user ||
+                            data?.data
+                    );
+
+                if (
+                    updatedUser
+                ) {
+                    setUsers(
+                        (previous) =>
+                            previous.map(
+                                (item) =>
+                                    String(
+                                        item.id
+                                    ) ===
+                                    String(
+                                        user.id
+                                    )
+                                        ? updatedUser
+                                        : item
+                            )
+                    );
+                } else {
+                    setUsers(
+                        (previous) =>
+                            previous.map(
+                                (item) =>
+                                    String(
+                                        item.id
+                                    ) ===
+                                    String(
+                                        user.id
+                                    )
+                                        ? {
+                                              ...item,
+                                              status:
+                                                  newStatus,
+                                          }
+                                        : item
+                            )
+                    );
+                }
+
+                setSuccess(
+                    `User marked as ${newStatus}.`
                 );
-            } else {
-                setUsers(
-                    (previous) =>
-                        previous.map(
-                            (item) =>
-                                Number(
-                                    item.id
-                                ) ===
-                                Number(
-                                    user.id
-                                )
-                                    ? {
-                                          ...item,
-                                          status:
-                                              newStatus,
-                                      }
-                                    : item
-                        )
+            } catch (err) {
+                console.error(
+                    "UPDATE USER STATUS ERROR:",
+                    err
+                );
+
+                setError(
+                    err?.message ||
+                        "Unable to update user status."
+                );
+            } finally {
+                setStatusUpdatingId(
+                    null
                 );
             }
-
-            setSuccess(
-                `User marked as ${newStatus}.`
-            );
-        } catch (err) {
-            console.error(
-                "UPDATE USER STATUS ERROR:",
-                err
-            );
-
-            setError(
-                err?.message ||
-                    "Unable to update user status"
-            );
-        } finally {
-            setStatusUpdatingId(
-                null
-            );
-        }
-    };
+        };
 
 
     // =================================================
@@ -1299,11 +1714,13 @@ const Users = () => {
 
             {success && (
                 <div className="users-success">
+
                     <FaCheckCircle />
 
                     <span>
                         {success}
                     </span>
+
                 </div>
             )}
 
@@ -1333,7 +1750,9 @@ const Users = () => {
                     <button
                         type="button"
                         onClick={() =>
-                            setError("")
+                            setError(
+                                ""
+                            )
                         }
                         style={{
                             marginLeft:
@@ -1350,6 +1769,7 @@ const Users = () => {
                     >
                         <FaTimes />
                     </button>
+
                 </div>
             )}
 
@@ -1461,7 +1881,9 @@ const Users = () => {
                         value={
                             search
                         }
-                        onChange={(event) =>
+                        onChange={(
+                            event
+                        ) =>
                             setSearch(
                                 event.target
                                     .value
@@ -1481,13 +1903,16 @@ const Users = () => {
                         value={
                             roleFilter
                         }
-                        onChange={(event) =>
+                        onChange={(
+                            event
+                        ) =>
                             setRoleFilter(
                                 event.target
                                     .value
                             )
                         }
                     >
+
                         <option value="">
                             All Roles
                         </option>
@@ -1508,6 +1933,7 @@ const Users = () => {
                                 </option>
                             )
                         )}
+
                     </select>
 
                     <FaChevronDown
@@ -1528,13 +1954,16 @@ const Users = () => {
                         value={
                             statusFilter
                         }
-                        onChange={(event) =>
+                        onChange={(
+                            event
+                        ) =>
                             setStatusFilter(
                                 event.target
                                     .value
                             )
                         }
                     >
+
                         <option value="">
                             All Status
                         </option>
@@ -1546,6 +1975,7 @@ const Users = () => {
                         <option value="inactive">
                             Inactive
                         </option>
+
                     </select>
 
                     <FaChevronDown
@@ -1584,6 +2014,7 @@ const Users = () => {
                 <div className="users-card-header">
 
                     <div>
+
                         <h2>
                             System Users
                         </h2>
@@ -1593,6 +2024,7 @@ const Users = () => {
                                 ? "Loading users..."
                                 : `${filteredUsers.length} users found`}
                         </p>
+
                     </div>
 
                     <FaUsers />
@@ -1608,12 +2040,14 @@ const Users = () => {
                     <div className="users-empty">
 
                         <div className="empty-icon">
+
                             <FaSyncAlt
                                 style={{
                                     animation:
                                         "users-refresh-spin .8s linear infinite",
                                 }}
                             />
+
                         </div>
 
                         <h3>
@@ -1629,9 +2063,9 @@ const Users = () => {
                     </div>
                 ) : filteredUsers.length ===
                   0 ? (
-                    /* =============================================
+                    /* =================================================
                        EMPTY
-                    ============================================= */
+                    ================================================= */
 
                     <div className="users-empty">
 
@@ -1664,21 +2098,24 @@ const Users = () => {
                                             "6px",
                                     }}
                                 />
+
                                 Add First User
+
                             </button>
                         )}
 
                     </div>
                 ) : (
-                    /* =============================================
+                    /* =================================================
                        TABLE
-                    ============================================= */
+                    ================================================= */
 
                     <div className="users-table-wrapper">
 
                         <table className="users-table">
 
                             <thead>
+
                                 <tr>
 
                                     <th>
@@ -1706,13 +2143,16 @@ const Users = () => {
                                     </th>
 
                                 </tr>
+
                             </thead>
 
 
                             <tbody>
 
                                 {filteredUsers.map(
-                                    (user) => {
+                                    (
+                                        user
+                                    ) => {
                                         const RoleIcon =
                                             getRoleIcon(
                                                 user.role
@@ -1732,13 +2172,15 @@ const Users = () => {
                                                     <div className="user-cell">
 
                                                         <div className="user-avatar">
+
                                                             {user.profile_image ? (
                                                                 <img
                                                                     src={
                                                                         user.profile_image
                                                                     }
                                                                     alt={
-                                                                        user.name
+                                                                        user.name ||
+                                                                        "User"
                                                                     }
                                                                     style={{
                                                                         width:
@@ -1756,12 +2198,15 @@ const Users = () => {
                                                                         event.currentTarget.style.display =
                                                                             "none";
 
-                                                                        if (
+                                                                        const fallback =
                                                                             event.currentTarget
-                                                                                .nextSibling
+                                                                                .nextElementSibling;
+
+                                                                        if (
+                                                                            fallback
                                                                         ) {
-                                                                            event.currentTarget.nextSibling.style.display =
-                                                                                "flex";
+                                                                            fallback.style.display =
+                                                                                "block";
                                                                         }
                                                                     }}
                                                                 />
@@ -1779,6 +2224,7 @@ const Users = () => {
                                                                     user.name
                                                                 )}
                                                             </span>
+
                                                         </div>
 
 
@@ -1786,14 +2232,16 @@ const Users = () => {
 
                                                             <strong>
                                                                 {
-                                                                    user.name
+                                                                    user.name ||
+                                                                    "Unnamed User"
                                                                 }
                                                             </strong>
 
                                                             <span>
                                                                 ID:{" "}
                                                                 {
-                                                                    user.id
+                                                                    user.id ??
+                                                                    "—"
                                                                 }
                                                             </span>
 
@@ -1811,20 +2259,25 @@ const Users = () => {
                                                     <div className="contact-cell">
 
                                                         <span>
+
                                                             <FaEnvelope />
 
                                                             {
-                                                                user.email
+                                                                user.email ||
+                                                                "No email"
                                                             }
+
                                                         </span>
 
                                                         <span>
+
                                                             <FaPhone />
 
                                                             {
                                                                 user.phone ||
-                                                                    "No phone"
+                                                                "No phone"
                                                             }
+
                                                         </span>
 
                                                     </div>
@@ -1874,7 +2327,12 @@ const Users = () => {
                                                             statusUpdatingId ===
                                                             user.id
                                                         }
-                                                        title={`Click to mark ${user.status === "active" ? "inactive" : "active"}`}
+                                                        title={`Click to mark ${
+                                                            user.status ===
+                                                            "active"
+                                                                ? "inactive"
+                                                                : "active"
+                                                        }`}
                                                     >
 
                                                         {statusUpdatingId ===
@@ -1974,6 +2432,7 @@ const Users = () => {
                                                             }
                                                             title="Delete User"
                                                         >
+
                                                             {deletingId ===
                                                             user.id ? (
                                                                 <FaSyncAlt
@@ -1985,6 +2444,7 @@ const Users = () => {
                                                             ) : (
                                                                 <FaTrash />
                                                             )}
+
                                                         </button>
 
                                                     </div>
@@ -2074,6 +2534,140 @@ const Users = () => {
                         >
 
                             <div className="user-form-grid">
+
+                                {/* PROFILE PHOTO */}
+
+                                <div
+                                    className="user-form-field"
+                                    style={{
+                                        gridColumn:
+                                            "1 / -1",
+                                    }}
+                                >
+
+                                    <label>
+                                        Profile Photo
+                                    </label>
+
+                                    <div
+                                        style={{
+                                            display:
+                                                "flex",
+                                            alignItems:
+                                                "center",
+                                            gap: "14px",
+                                            flexWrap:
+                                                "wrap",
+                                        }}
+                                    >
+
+                                        <div
+                                            className="user-avatar"
+                                            style={{
+                                                width:
+                                                    "64px",
+                                                height:
+                                                    "64px",
+                                                minWidth:
+                                                    "64px",
+                                                flex:
+                                                    "0 0 64px",
+                                                overflow:
+                                                    "hidden",
+                                            }}
+                                        >
+
+                                            {form.profilePhotoPreview ? (
+                                                <img
+                                                    src={
+                                                        form.profilePhotoPreview
+                                                    }
+                                                    alt={
+                                                        form.name ||
+                                                        "Profile"
+                                                    }
+                                                    style={{
+                                                        width:
+                                                            "100%",
+                                                        height:
+                                                            "100%",
+                                                        objectFit:
+                                                            "cover",
+                                                        borderRadius:
+                                                            "inherit",
+                                                    }}
+                                                />
+                                            ) : (
+                                                <span>
+                                                    {getInitials(
+                                                        form.name
+                                                    )}
+                                                </span>
+                                            )}
+
+                                        </div>
+
+
+                                        <div
+                                            style={{
+                                                display:
+                                                    "flex",
+                                                gap: "8px",
+                                                flexWrap:
+                                                    "wrap",
+                                            }}
+                                        >
+
+                                            <input
+                                                ref={
+                                                    photoInputRef
+                                                }
+                                                type="file"
+                                                accept="image/jpeg,image/jpg,image/png,image/webp"
+                                                onChange={
+                                                    handlePhotoChange
+                                                }
+                                                style={{
+                                                    display:
+                                                        "none",
+                                                }}
+                                            />
+
+                                            <button
+                                                type="button"
+                                                className="cancel-user-btn"
+                                                onClick={() =>
+                                                    photoInputRef.current?.click()
+                                                }
+                                                disabled={
+                                                    saving
+                                                }
+                                            >
+                                                Choose Photo
+                                            </button>
+
+
+                                            {form.profilePhotoPreview && (
+                                                <button
+                                                    type="button"
+                                                    className="cancel-user-btn"
+                                                    onClick={
+                                                        handleRemovePhoto
+                                                    }
+                                                    disabled={
+                                                        saving
+                                                    }
+                                                >
+                                                    Remove
+                                                </button>
+                                            )}
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
 
                                 {/* NAME */}
 
@@ -2237,12 +2831,9 @@ const Users = () => {
                                 >
 
                                     <label>
+
                                         Password
-                                        {!editingUser && (
-                                            <span>
-                                                *
-                                            </span>
-                                        )}
+
                                     </label>
 
                                     <div className="user-input">
@@ -2261,16 +2852,9 @@ const Users = () => {
                                             placeholder={
                                                 editingUser
                                                     ? "Leave blank to keep current password"
-                                                    : "Enter password"
+                                                    : "Leave blank to auto-generate and email"
                                             }
-                                            autoComplete={
-                                                editingUser
-                                                    ? "new-password"
-                                                    : "new-password"
-                                            }
-                                            required={
-                                                !editingUser
-                                            }
+                                            autoComplete="new-password"
                                         />
 
                                     </div>
@@ -2283,16 +2867,13 @@ const Users = () => {
                             {error && (
                                 <div className="user-form-error">
 
-                                    <FaExclamationTriangle
-                                        style={{
-                                            marginRight:
-                                                "7px",
-                                        }}
-                                    />
+                                    <FaExclamationTriangle />
 
-                                    {
-                                        error
-                                    }
+                                    <span>
+                                        {
+                                            error
+                                        }
+                                    </span>
 
                                 </div>
                             )}
@@ -2311,7 +2892,6 @@ const Users = () => {
                                     }
                                 >
                                     <FaTimes />
-
                                     Cancel
                                 </button>
 
@@ -2421,7 +3001,8 @@ const Users = () => {
                                                 viewingUser.profile_image
                                             }
                                             alt={
-                                                viewingUser.name
+                                                viewingUser.name ||
+                                                "User"
                                             }
                                             style={{
                                                 width:
@@ -2432,6 +3013,12 @@ const Users = () => {
                                                     "cover",
                                                 borderRadius:
                                                     "inherit",
+                                            }}
+                                            onError={(
+                                                event
+                                            ) => {
+                                                event.currentTarget.style.display =
+                                                    "none";
                                             }}
                                         />
                                     ) : (
@@ -2445,7 +3032,8 @@ const Users = () => {
 
                                 <h3>
                                     {
-                                        viewingUser.name
+                                        viewingUser.name ||
+                                        "Unnamed User"
                                     }
                                 </h3>
 
@@ -2469,13 +3057,13 @@ const Users = () => {
 
                                     <span>
                                         <FaIdBadge />
-
                                         User ID
                                     </span>
 
                                     <strong>
                                         {
-                                            viewingUser.id
+                                            viewingUser.id ??
+                                            "—"
                                         }
                                     </strong>
 
@@ -2486,14 +3074,13 @@ const Users = () => {
 
                                     <span>
                                         <FaEnvelope />
-
                                         Email
                                     </span>
 
                                     <strong>
                                         {
                                             viewingUser.email ||
-                                                "—"
+                                            "—"
                                         }
                                     </strong>
 
@@ -2504,14 +3091,13 @@ const Users = () => {
 
                                     <span>
                                         <FaPhone />
-
                                         Phone
                                     </span>
 
                                     <strong>
                                         {
                                             viewingUser.phone ||
-                                                "Not provided"
+                                            "Not provided"
                                         }
                                     </strong>
 
@@ -2522,7 +3108,6 @@ const Users = () => {
 
                                     <span>
                                         <FaUserShield />
-
                                         Role
                                     </span>
 
@@ -2541,7 +3126,6 @@ const Users = () => {
 
                                     <span>
                                         <FaCheckCircle />
-
                                         Status
                                     </span>
 
@@ -2568,7 +3152,6 @@ const Users = () => {
 
                                     <span>
                                         <FaHospital />
-
                                         Created
                                     </span>
 
@@ -2595,7 +3178,6 @@ const Users = () => {
                                     }
                                 >
                                     <FaTimes />
-
                                     Close
                                 </button>
 
@@ -2604,15 +3186,17 @@ const Users = () => {
                                     type="button"
                                     className="save-user-btn"
                                     onClick={() => {
+                                        const user =
+                                            viewingUser;
+
                                         closeViewModal();
 
                                         openEditModal(
-                                            viewingUser
+                                            user
                                         );
                                     }}
                                 >
                                     <FaEdit />
-
                                     Edit User
                                 </button>
 

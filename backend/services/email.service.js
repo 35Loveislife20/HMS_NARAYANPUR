@@ -91,23 +91,83 @@ const verifyEmailConnection = async () => {
 };
 
 // =====================================================
+// HELPERS
+// =====================================================
+
+const escapeHtml = (value) =>
+    String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+// "Address, City, State - Pincode"
+const formatHospitalAddress = (hospital) => {
+    if (!hospital) {
+        return "";
+    }
+
+    const parts = [
+        hospital.address,
+        hospital.city,
+        hospital.state,
+    ]
+        .map((part) => String(part ?? "").trim())
+        .filter(Boolean);
+
+    const pincode = String(hospital.pincode ?? "").trim();
+
+    let line = parts.join(", ");
+
+    if (pincode) {
+        line = line ? `${line} - ${pincode}` : pincode;
+    }
+
+    return line;
+};
+
+// =====================================================
 // SEND PASSWORD RESET EMAIL
+// hospital (optional): { name, address, city, state, pincode }
 // =====================================================
 
 const sendPasswordResetEmail = async (
     email,
     resetToken,
-    userName
+    userName,
+    hospital = null
 ) => {
 
     try {
+
+        const hospitalName =
+            String(hospital?.name ?? "").trim() ||
+            "HMS Hospital";
+
+        const hospitalAddress =
+            formatHospitalAddress(hospital);
+
+        const headerSubtitle =
+            hospitalAddress ||
+            "Secure Password Recovery";
 
         const frontendUrl =
             process.env.FRONTEND_URL ||
             "http://localhost:5173";
 
+        // Reset popup lives on the login page (Home.jsx),
+        // which opens it automatically when ?token= is present.
+        // Page where Home.jsx (login) is served. Change it in .env
+        // with RESET_PASSWORD_PATH if your login page is not /login.
+        const rawPath =
+            process.env.RESET_PASSWORD_PATH || "/login";
+
+        const resetPath = rawPath.startsWith("/")
+            ? rawPath
+            : `/${rawPath}`;
+
         const resetUrl =
-            `${frontendUrl}/reset-password?token=${encodeURIComponent(
+            `${frontendUrl.replace(/\/+$/, "")}${resetPath}?token=${encodeURIComponent(
                 resetToken
             )}`;
 
@@ -120,13 +180,13 @@ const sendPasswordResetEmail = async (
                 email,
 
             subject:
-                "HMS Hospital - Password Reset Request",
+                `${hospitalName} - Password Reset Request`,
 
             text:
                 `
 Hello ${userName || "User"},
 
-We received a request to reset your HMS Hospital account password.
+We received a request to reset your ${hospitalName} account password.
 
 Please use the following link to reset your password:
 
@@ -137,7 +197,8 @@ This password reset link will expire in 15 minutes.
 If you did not request a password reset, you can safely ignore this email.
 
 Regards,
-HMS Hospital
+${hospitalName}
+${hospitalAddress}
                 `.trim(),
 
             html:
@@ -191,17 +252,18 @@ HMS Hospital
                     font-size:26px;
                 "
             >
-                HMS Hospital
+                ${escapeHtml(hospitalName)}
             </h1>
 
             <p
                 style="
                     margin:8px 0 0;
                     font-size:14px;
+                    line-height:1.5;
                     opacity:0.9;
                 "
             >
-                Secure Password Recovery
+                ${escapeHtml(headerSubtitle)}
             </p>
 
         </div>
@@ -224,12 +286,12 @@ HMS Hospital
             </h2>
 
             <p>
-                Hello ${userName || "User"},
+                Hello ${escapeHtml(userName || "User")},
             </p>
 
             <p>
                 We received a request to reset your
-                HMS Hospital account password.
+                ${escapeHtml(hospitalName)} account password.
             </p>
 
             <p>
@@ -298,7 +360,7 @@ HMS Hospital
         >
 
             © ${new Date().getFullYear()}
-            HMS Hospital.
+            ${escapeHtml(hospitalName)}.
             All rights reserved.
 
         </div>

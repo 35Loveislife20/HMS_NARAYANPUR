@@ -1,0 +1,113 @@
+﻿.success-popup-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: successPopupFade 0.2s ease;
+}
+
+.success-popup {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    padding: 32px 26px 26px;
+    text-align: center;
+    color: #ffffff;
+    border: 1px solid rgba(0, 255, 140, 0.35);
+    border-radius: 18px;
+    background: linear-gradient(145deg, #10251f, #071512);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 255, 140, 0.12);
+    animation: successPopupPop 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.success-popup-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.07);
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.success-popup-close:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.success-popup-icon {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00ff88, #00a878);
+    color: #03110c;
+    font-size: 36px;
+    box-shadow: 0 0 24px rgba(0, 255, 140, 0.4);
+}
+
+.success-popup h3 {
+    margin: 0 0 8px;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.success-popup p {
+    margin: 0 0 24px;
+    color: #9bbdb1;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.success-popup-ok {
+    min-width: 130px;
+    padding: 11px 22px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #00c896, #00a878);
+    color: #03110c;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.success-popup-ok:hover {
+    filter: brightness(1.08);
+}
+
+@keyframes successPopupFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes successPopupPop {
+    from {
+        opacity: 0;
+        transform: scale(0.85) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .success-popup-overlay,
+    .success-popup {
+        animation: none;
+    }
+}

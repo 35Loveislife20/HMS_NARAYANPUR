@@ -1,94 +1,52 @@
 const express = require("express");
-
-const {
-    getUsers,
-    getUserById,
-    addUser,
-    editUser,
-    deleteUser,
-    updateUserStatus,
-} = require("../controllers/user.controller");
-
-const authMiddleware =
-    require("../middleware/auth.middleware");
-
-
 const router = express.Router();
 
+const userController = require("../controllers/user.controller");
+const authMiddleware = require("../middleware/auth.middleware");
+const { requireRole } = require("../middleware/role.middleware");
+const { tenantScope } = require("../middleware/tenant.middleware");
 
-// =====================================================
-// ALL USER ROUTES REQUIRE LOGIN
-// =====================================================
+// Authentication required for every user-management endpoint
+router.use(authMiddleware);
 
-router.use(
-    authMiddleware
-);
-
-
-// =====================================================
-// GET ALL USERS
-// GET /api/users
-// =====================================================
-
-router.get(
-    "/",
-    getUsers
-);
-
-
-// =====================================================
-// GET SINGLE USER
-// GET /api/users/:id
-// =====================================================
-
-router.get(
-    "/:id",
-    getUserById
-);
-
-
-// =====================================================
-// CREATE USER
-// POST /api/users
-// =====================================================
-
-router.post(
-    "/",
-    addUser
-);
-
-
-// =====================================================
-// UPDATE USER
-// PUT /api/users/:id
-// =====================================================
-
-router.put(
-    "/:id",
-    editUser
-);
-
-
-// =====================================================
-// UPDATE USER STATUS
-// PATCH /api/users/:id/status
-// =====================================================
-
+// -----------------------------------------------------
+// SELF-SERVICE (any logged-in user)
+// user.controller.changeProfileImage MUST check that
+// req.params.id === req.user.id (unless super_admin).
+// -----------------------------------------------------
 router.patch(
-    "/:id/status",
-    updateUserStatus
+    "/:id/profile-image",
+    userController.changeProfileImage
 );
 
+// -----------------------------------------------------
+// EVERYTHING BELOW: super_admin + hospital_admin only.
+// Hospital users are limited to their own hospital
+// (req.hospitalScope) - controller must enforce it.
+// -----------------------------------------------------
+router.use(requireRole("super_admin", "hospital_admin"));
+router.use(tenantScope);
 
-// =====================================================
-// DELETE USER
-// DELETE /api/users/:id
-// =====================================================
+// Get all users within user's hospital scope
+router.get("/", userController.getAllUsers);
 
-router.delete(
-    "/:id",
-    deleteUser
-);
+// Get a specific user
+router.get("/:id", userController.getUserById);
 
+// Create user
+router.post("/", userController.addUser);
+
+// Update user
+router.put("/:id", userController.editUser);
+
+// Update user role
+// (controller blocks any super_admin promotion/modification by hospital_admin)
+router.patch("/:id/role", userController.changeUserRole);
+
+// Update user status
+router.patch("/:id/status", userController.changeUserStatus);
+
+// Delete user
+router.delete("/:id", userController.deleteUser);
 
 module.exports = router;

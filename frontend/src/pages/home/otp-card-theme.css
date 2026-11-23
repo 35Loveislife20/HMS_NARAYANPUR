@@ -1,0 +1,2298 @@
+/* =========================================================
+   OTP CARD THEME (minimal, overrides Home.css)
+   Import AFTER Home.css in Home.jsx:
+     import "./Home.css";
+     import "./otp-card-theme.css";
+   This file changes only colors, shadows and corner radius.
+   It does NOT touch width, height, padding, display or position,
+   because Home.css builds the inner layout on those.
+========================================================= */
+
+/* ---------- card: rounded panel instead of full circle ---------- */
+
+.home-page .admin-card.otp-card {
+  border-radius: 40px;
+  background: #f1f8f4;
+  color: #0d3a27;
+  border: 2px solid rgba(47, 210, 122, 0.3);
+  box-shadow:
+    0 0 0 8px rgba(15, 90, 60, 0.35),
+    0 30px 80px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------- logo ring ---------- */
+
+.home-page .admin-card.otp-card .admin-logo-circle {
+  border: 4px solid #2fd27a;
+  background: #0b3324;
+  box-shadow:
+    0 0 22px rgba(47, 210, 122, 0.6),
+    0 0 0 8px #f1f8f4;
+}
+
+/* ---------- title ---------- */
+
+.home-page .admin-card.otp-card .admin-card-title h3 {
+  color: #0d3a27;
+}
+
+.home-page .admin-card.otp-card .title-line {
+  background: #1c7a50;
+}
+
+/* ---------- method buttons (Email / Mobile) ---------- */
+
+.home-page .admin-card.otp-card .otp-method-button {
+  border: 2px solid #b9d4c6;
+  background: #ffffff;
+  color: #3d6353;
+}
+
+.home-page .admin-card.otp-card .otp-method-button.active {
+  background: linear-gradient(90deg, #0f5a3c, #1c7a50);
+  border-color: #1c7a50;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(15, 90, 60, 0.35);
+}
+
+/* ---------- destination box ---------- */
+
+.home-page .admin-card.otp-card .otp-destination {
+  background: #e6f2ea;
+  border: 2px solid #b9d4c6;
+}
+
+/* ---------- OTP input ---------- */
+
+.home-page .admin-card.otp-card .otp-input-box {
+  border: 2px solid #b9d4c6;
+  background: #ffffff;
+}
+
+.home-page .admin-card.otp-card .otp-input-box:focus-within {
+  border-color: #1c7a50;
+  box-shadow: 0 0 0 4px rgba(47, 210, 122, 0.18);
+}
+
+.home-page .admin-card.otp-card .otp-input-box input {
+  color: #0d3a27;
+}
+
+/* ---------- primary buttons ---------- */
+
+.home-page .admin-card.otp-card .otp-send-button,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+  background: linear-gradient(90deg, #0f5a3c, #1c7a50);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(15, 90, 60, 0.35);
+}
+
+/* ---------- secondary buttons ---------- */
+
+.home-page .admin-card.otp-card .otp-resend-button {
+  color: #0f5a3c;
+}
+
+.home-page .admin-card.otp-card .otp-back-button {
+  border: 2px solid #b9d4c6;
+  background: #ffffff;
+  color: #0f5a3c;
+}
+
+/* ---------- close button ---------- */
+
+.home-page .admin-card.otp-card .card-close-button {
+  background: #0f5a3c;
+  border: 3px solid #ffffff;
+  color: #ffffff;
+}
+
+/* =========================================================
+   OTP VERIFICATION — REFERENCE MATCH + RESPONSIVE LAYOUT
+   Loaded last in Home.jsx through otp-card-theme.css.
+========================================================= */
+.home-page .otp-card-overlay-enter {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99990 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 112px 24px 24px !important;
+  overflow-y: auto !important;
+  background: rgba(0, 18, 13, 0.16);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.home-page .admin-card.otp-card {
+  position: relative !important;
+  width: min(1010px, calc(100vw - 64px)) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-height: calc(100dvh - 136px) !important;
+  height: auto !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 18px !important;
+  margin: 0 auto !important;
+  padding: 132px 142px 42px !important;
+  overflow: visible !important;
+  border: 2px solid rgba(47, 210, 122, 0.34) !important;
+  border-radius: 60px !important;
+  background: linear-gradient(145deg, #fbfdfc 0%, #edf5f1 100%) !important;
+  color: #0b3528 !important;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.65), 0 24px 70px rgba(0,0,0,.45), 0 0 38px rgba(0,255,145,.16) !important;
+  animation: hmsOtpCardIn .42s cubic-bezier(.22,1,.36,1) both !important;
+}
+
+.home-page .admin-card.otp-card::before { display: none !important; }
+.home-page .admin-card.otp-card .admin-logo-circle {
+  top: -98px !important; left: 50% !important;
+  width: 220px !important; height: 220px !important;
+  border: 8px solid #f7fffb !important;
+  background: radial-gradient(circle at 35% 25%, #07543a, #00251a 75%) !important;
+  box-shadow: 0 0 0 2px rgba(47,210,122,.36), 0 14px 34px rgba(0,70,45,.28), 0 0 28px rgba(47,210,122,.3) !important;
+  overflow: hidden !important;
+}
+.home-page .admin-card.otp-card .admin-logo-circle img { width: 100% !important; height: 100% !important; object-fit: contain !important; padding: 12px !important; }
+.home-page .admin-card.otp-card .card-close-button {
+  top: 32px !important; right: 34px !important;
+  width: 72px !important; height: 72px !important;
+  border: 0 !important; border-radius: 50% !important;
+  background: linear-gradient(145deg,#07563b,#003321) !important;
+  color: #fff !important; font-size: 42px !important; line-height: 1 !important;
+  box-shadow: 0 10px 22px rgba(0,60,40,.25) !important;
+}
+.home-page .admin-card.otp-card .admin-card-title {
+  position: relative !important; inset: auto !important;
+  width: 100% !important; height: auto !important;
+  margin: 0 0 8px !important; padding: 0 !important;
+  overflow: visible !important; clip: auto !important;
+  text-align: center !important;
+}
+.home-page .admin-card.otp-card .admin-card-title .title-small,
+.home-page .admin-card.otp-card .admin-card-title .title-line,
+.home-page .admin-card.otp-card .otp-description { display: none !important; }
+.home-page .admin-card.otp-card .admin-card-title h3 {
+  margin: 0 !important; color: #063b2c !important;
+  font-size: clamp(38px, 4.2vw, 62px) !important;
+  line-height: 1.12 !important; font-weight: 800 !important;
+  letter-spacing: -1.4px !important; text-align: center !important;
+  white-space: normal !important;
+}
+.home-page .admin-card.otp-card .otp-subtitle {
+  margin: 8px 0 0 !important; color: #6b9184 !important;
+  font-size: clamp(16px, 2vw, 29px) !important;
+  line-height: 1.35 !important; font-weight: 500 !important;
+  text-align: center !important;
+}
+.home-page .admin-card.otp-card .otp-method-section {
+  display: flex !important; width: 100% !important;
+  flex-direction: column !important; gap: 0 !important;
+}
+.home-page .admin-card.otp-card .otp-method-section > label { display: none !important; }
+.home-page .admin-card.otp-card .otp-method-options {
+  display: grid !important; width: 100% !important;
+  grid-template-columns: 1fr 1fr !important; gap: 0 !important;
+  padding: 0 !important; border: 2px solid #c7d9d4 !important;
+  border-radius: 40px !important; background: #e9f1ee !important; overflow: hidden !important;
+}
+.home-page .admin-card.otp-card .otp-method-button {
+  min-width: 0 !important; height: 90px !important;
+  display: flex !important; flex-direction: row !important;
+  align-items: center !important; justify-content: center !important;
+  gap: 22px !important; padding: 0 18px !important;
+  border: 2px solid transparent !important; border-radius: 40px !important;
+  background: transparent !important; color: #5f8176 !important;
+  font: 700 clamp(19px, 2vw, 29px)/1.1 Inter, "Segoe UI", Arial, sans-serif !important;
+  box-shadow: none !important; transition: background .2s ease, color .2s ease, box-shadow .2s ease !important;
+}
+.home-page .admin-card.otp-card .otp-method-button.active {
+  border-color: #00d889 !important;
+  background: linear-gradient(110deg,#00633f,#005238) !important;
+  color: #fff !important; box-shadow: 0 8px 20px rgba(0,100,65,.2) !important;
+}
+.home-page .admin-card.otp-card .otp-method-icon { display: inline-flex !important; align-items: center !important; justify-content: center !important; font-size: 30px !important; }
+.home-page .admin-card.otp-card .otp-method-icon svg { width: 34px !important; height: 34px !important; }
+.home-page .admin-card.otp-card .otp-destination {
+  display: flex !important; width: 100% !important; min-height: 116px !important;
+  flex-direction: column !important; align-items: center !important; justify-content: center !important;
+  gap: 4px !important; margin: 0 !important; padding: 18px 24px !important;
+  border: 2px solid #c4d8d1 !important; border-radius: 32px !important;
+  background: #e6f0ec !important; text-align: center !important;
+}
+.home-page .admin-card.otp-card .otp-destination span { color: #62877b !important; font-size: clamp(16px,1.7vw,25px) !important; line-height: 1.3 !important; }
+.home-page .admin-card.otp-card .otp-destination strong { color: #062f24 !important; font-size: clamp(17px,1.8vw,27px) !important; font-weight: 800 !important; overflow-wrap: anywhere !important; }
+.home-page .admin-card.otp-card .otp-send-button,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+  width: 100% !important; min-height: 100px !important; height: auto !important;
+  display: flex !important; align-items: center !important; justify-content: center !important; gap: 18px !important;
+  margin: 0 !important; padding: 20px 30px !important;
+  border: 1px solid rgba(0,255,160,.65) !important; border-radius: 42px !important;
+  background: linear-gradient(110deg,#008e53 0%,#007548 52%,#00583a 100%) !important;
+  color: #fff !important; font: 800 clamp(24px,2.6vw,40px)/1.15 Inter, "Segoe UI", Arial, sans-serif !important;
+  box-shadow: 0 12px 24px rgba(0,100,65,.25), inset 0 1px 0 rgba(255,255,255,.2) !important;
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease !important;
+}
+.home-page .admin-card.otp-card .otp-send-button:hover:not(:disabled),
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button:hover:not(:disabled) { transform: translateY(-2px) !important; filter: brightness(1.05) !important; }
+.home-page .admin-card.otp-card .otp-send-button:disabled,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button:disabled { opacity: .72 !important; cursor: wait !important; }
+.home-page .admin-card.otp-card .otp-send-button .submit-arrow svg { width: 38px !important; height: 38px !important; }
+.home-page .admin-card.otp-card .otp-back-button {
+  position: relative !important; align-self: center !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  width: min(100%, 640px) !important; min-height: 44px !important;
+  margin: 4px auto 0 !important; padding: 4px 24px !important;
+  border: 0 !important; border-radius: 0 !important;
+  background: transparent !important; color: #07533a !important;
+  font: 700 clamp(17px,1.8vw,28px)/1.25 Inter, "Segoe UI", Arial, sans-serif !important;
+  box-shadow: none !important; white-space: normal !important;
+}
+.home-page .admin-card.otp-card .otp-back-button::before,
+.home-page .admin-card.otp-card .otp-back-button::after { content: ""; display: block; flex: 1 1 80px; height: 2px; background: #c6d8d2; }
+.home-page .admin-card.otp-card .otp-back-button::before { margin-right: 24px; }
+.home-page .admin-card.otp-card .otp-back-button::after { margin-left: 24px; }
+.home-page .admin-card.otp-card .otp-form {
+  display: flex !important; width: 100% !important; flex-direction: column !important;
+  gap: 14px !important; margin: 0 !important;
+}
+.home-page .admin-card.otp-card .otp-form .field-group { display: flex !important; width: 100% !important; gap: 8px !important; }
+.home-page .admin-card.otp-card .otp-form .field-group > label {
+  position: static !important; width: auto !important; height: auto !important;
+  margin: 0 !important; padding: 0 0 0 8px !important; overflow: visible !important;
+  clip: auto !important; color: #426f5d !important; font-size: 17px !important;
+}
+.home-page .admin-card.otp-card .otp-input-box {
+  display: flex !important; width: 100% !important; height: 76px !important;
+  align-items: center !important; padding: 0 22px !important;
+  border: 2px solid #bfd7cd !important; border-radius: 22px !important; background: #fff !important;
+}
+.home-page .admin-card.otp-card .otp-input-box .field-icon { color: #37795d !important; }
+.home-page .admin-card.otp-card .otp-input-box input { width: 100% !important; color: #0b3528 !important; font-size: 24px !important; letter-spacing: 5px !important; }
+.home-page .admin-card.otp-card .otp-countdown { color: #648578 !important; text-align: center !important; font-size: 16px !important; }
+.home-page .admin-card.otp-card .otp-countdown strong { color: #0a6946 !important; }
+.home-page .admin-card.otp-card .otp-message { color: #8b2d2d !important; text-align: center !important; }
+.home-page .admin-card.otp-card .otp-resend-button { align-self: center !important; padding: 8px 14px !important; color: #0b6845 !important; font-size: 16px !important; font-weight: 700 !important; }
+
+/* Green success check: ring pulse + SVG stroke draws itself on successful OTP. */
+.login-success-check { animation: hmsSuccessBounce .62s cubic-bezier(.2,1.5,.45,1) both; }
+.login-success-check::before { animation: hmsSuccessGlow 1.3s ease-out .15s both; }
+.login-success-check svg { overflow: visible; }
+.login-success-check path { stroke-dasharray: 60; stroke-dashoffset: 60; animation: successDraw .55s cubic-bezier(.2,.8,.2,1) .32s forwards; }
+@keyframes hmsSuccessBounce { 0% { opacity: 0; transform: scale(.35) rotate(-18deg); } 65% { opacity: 1; transform: scale(1.12) rotate(4deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
+@keyframes hmsSuccessGlow { 0% { box-shadow: 0 0 0 0 rgba(0,220,110,.45), 0 6px 12px rgba(0,60,30,.4); } 70% { box-shadow: 0 0 0 18px rgba(0,220,110,0), 0 6px 12px rgba(0,60,30,.4); } 100% { box-shadow: 0 0 0 0 rgba(0,220,110,0), 0 6px 12px rgba(0,60,30,.4); } }
+
+@media (max-width: 760px) {
+  .home-page .otp-card-overlay-enter { align-items: flex-start !important; padding: 94px 14px 18px !important; }
+  .home-page .admin-card.otp-card { width: min(100%, 560px) !important; max-height: calc(100dvh - 112px) !important; padding: 94px 22px 24px !important; gap: 14px !important; border-radius: 30px !important; overflow-y: auto !important; }
+  .home-page .admin-card.otp-card .admin-logo-circle { top: -66px !important; width: 142px !important; height: 142px !important; border-width: 6px !important; }
+  .home-page .admin-card.otp-card .admin-logo-circle img { padding: 8px !important; }
+  .home-page .admin-card.otp-card .card-close-button { top: 14px !important; right: 14px !important; width: 46px !important; height: 46px !important; font-size: 30px !important; }
+  .home-page .admin-card.otp-card .admin-card-title { margin-bottom: 2px !important; }
+  .home-page .admin-card.otp-card .admin-card-title h3 { font-size: clamp(31px, 8vw, 44px) !important; letter-spacing: -0.7px !important; }
+  .home-page .admin-card.otp-card .otp-subtitle { font-size: clamp(15px, 4vw, 19px) !important; }
+  .home-page .admin-card.otp-card .otp-method-button { height: 66px !important; gap: 8px !important; padding: 0 8px !important; font-size: clamp(16px, 4vw, 20px) !important; }
+  .home-page .admin-card.otp-card .otp-method-icon svg { width: 24px !important; height: 24px !important; }
+  .home-page .admin-card.otp-card .otp-destination { min-height: 88px !important; padding: 12px !important; border-radius: 22px !important; }
+  .home-page .admin-card.otp-card .otp-destination span { font-size: 15px !important; }
+  .home-page .admin-card.otp-card .otp-destination strong { font-size: 16px !important; }
+  .home-page .admin-card.otp-card .otp-send-button,
+  .home-page .admin-card.otp-card .login-submit-button.otp-verify-button { min-height: 68px !important; padding: 15px !important; border-radius: 26px !important; font-size: 24px !important; }
+  .home-page .admin-card.otp-card .otp-send-button .submit-arrow svg { width: 28px !important; height: 28px !important; }
+  .home-page .admin-card.otp-card .otp-back-button { font-size: 17px !important; padding: 4px 0 !important; }
+  .home-page .admin-card.otp-card .otp-back-button::before { margin-right: 10px; }
+  .home-page .admin-card.otp-card .otp-back-button::after { margin-left: 10px; }
+}
+
+@media (max-width: 390px) {
+  .home-page .admin-card.otp-card { padding-left: 15px !important; padding-right: 15px !important; }
+  .home-page .admin-card.otp-card .otp-method-button { gap: 5px !important; font-size: 15px !important; }
+  .home-page .admin-card.otp-card .otp-method-icon svg { width: 20px !important; height: 20px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-page .admin-card.otp-card, .login-success-check, .login-success-check::before, .login-success-check path { animation: none !important; }
+  .login-success-check path { stroke-dashoffset: 0 !important; }
+}
+
+
+
+/* =========================================================
+   FINAL REFERENCE MATCH — OTP MODAL
+   Overrides are intentionally scoped to the OTP modal only.
+========================================================= */
+.home-page .otp-card-overlay-enter {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99990 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100dvh !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 126px 24px 24px !important;
+  margin: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  background: rgba(0, 18, 13, 0.52) !important;
+  backdrop-filter: blur(7px) saturate(.9) !important;
+  -webkit-backdrop-filter: blur(7px) saturate(.9) !important;
+}
+
+.home-page .admin-card.otp-card {
+  box-sizing: border-box !important;
+  position: relative !important;
+  flex: 0 0 auto !important;
+  width: min(1010px, calc(100vw - 64px)) !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: calc(100dvh - 150px) !important;
+  margin: 0 auto !important;
+  padding: 132px clamp(32px, 9.2vw, 142px) 40px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 18px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  border: 2px solid rgba(47, 210, 122, .42) !important;
+  border-radius: 60px !important;
+  background: linear-gradient(145deg, #fbfdfc 0%, #edf5f1 100%) !important;
+  color: #0b3528 !important;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.65), 0 24px 70px rgba(0,0,0,.45), 0 0 38px rgba(0,255,145,.16) !important;
+}
+
+.home-page .admin-card.otp-card::before { display: none !important; }
+
+.home-page .admin-card.otp-card .admin-logo-circle {
+  position: absolute !important;
+  top: -98px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 220px !important;
+  height: 220px !important;
+  box-sizing: border-box !important;
+  border: 8px solid #f7fffb !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle at 35% 25%, #07543a, #00251a 75%) !important;
+  box-shadow: 0 0 0 2px rgba(47,210,122,.36), 0 14px 34px rgba(0,70,45,.28), 0 0 28px rgba(47,210,122,.3) !important;
+  overflow: hidden !important;
+}
+.home-page .admin-card.otp-card .admin-logo-circle img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  padding: 12px !important;
+  box-sizing: border-box !important;
+}
+.home-page .admin-card.otp-card .card-close-button {
+  position: absolute !important;
+  top: 32px !important;
+  right: 34px !important;
+  width: 72px !important;
+  height: 72px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: linear-gradient(145deg,#07563b,#003321) !important;
+  color: #fff !important;
+  font-size: 42px !important;
+  line-height: 1 !important;
+  box-shadow: 0 10px 22px rgba(0,60,40,.25) !important;
+}
+.home-page .admin-card.otp-card .admin-card-title {
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  height: auto !important;
+  margin: 0 0 8px !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  clip: auto !important;
+  text-align: center !important;
+}
+.home-page .admin-card.otp-card .admin-card-title .title-small,
+.home-page .admin-card.otp-card .admin-card-title .title-line { display: none !important; }
+.home-page .admin-card.otp-card .admin-card-title h3 {
+  margin: 0 !important;
+  color: #063b2c !important;
+  font-size: clamp(38px, 4.2vw, 62px) !important;
+  line-height: 1.12 !important;
+  font-weight: 800 !important;
+  letter-spacing: -1.4px !important;
+  text-align: center !important;
+  white-space: normal !important;
+}
+.home-page .admin-card.otp-card .otp-subtitle {
+  display: block !important;
+  margin: 8px 0 0 !important;
+  color: #6b9184 !important;
+  font-size: clamp(16px, 2vw, 29px) !important;
+  line-height: 1.35 !important;
+  font-weight: 500 !important;
+  text-align: center !important;
+}
+.home-page .admin-card.otp-card .otp-method-section {
+  display: flex !important;
+  width: 100% !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+}
+.home-page .admin-card.otp-card .otp-method-section > label { display: none !important; }
+.home-page .admin-card.otp-card .otp-method-options {
+  display: grid !important;
+  width: 100% !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  border: 2px solid #c7d9d4 !important;
+  border-radius: 40px !important;
+  background: #e9f1ee !important;
+  overflow: hidden !important;
+}
+.home-page .admin-card.otp-card .otp-method-button {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  height: 90px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 22px !important;
+  padding: 0 18px !important;
+  border: 2px solid transparent !important;
+  border-radius: 40px !important;
+  background: transparent !important;
+  color: #5f8176 !important;
+  font: 700 clamp(19px, 2vw, 29px)/1.1 Inter, "Segoe UI", Arial, sans-serif !important;
+  box-shadow: none !important;
+}
+.home-page .admin-card.otp-card .otp-method-button.active {
+  border-color: #00d889 !important;
+  background: linear-gradient(110deg,#00633f,#005238) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgba(0,100,65,.2) !important;
+}
+.home-page .admin-card.otp-card .otp-method-icon { display: inline-flex !important; align-items: center !important; justify-content: center !important; font-size: 30px !important; }
+.home-page .admin-card.otp-card .otp-method-icon svg { width: 34px !important; height: 34px !important; }
+.home-page .admin-card.otp-card .otp-destination {
+  box-sizing: border-box !important;
+  display: flex !important;
+  width: 100% !important;
+  min-height: 116px !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  margin: 0 !important;
+  padding: 18px 24px !important;
+  border: 2px solid #c4d8d1 !important;
+  border-radius: 32px !important;
+  background: #e6f0ec !important;
+  text-align: center !important;
+}
+.home-page .admin-card.otp-card .otp-destination span { color: #62877b !important; font-size: clamp(16px,1.7vw,25px) !important; line-height: 1.3 !important; }
+.home-page .admin-card.otp-card .otp-destination strong { color: #062f24 !important; font-size: clamp(17px,1.8vw,27px) !important; font-weight: 800 !important; overflow-wrap: anywhere !important; }
+.home-page .admin-card.otp-card .otp-send-button,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-height: 100px !important;
+  height: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 18px !important;
+  margin: 0 !important;
+  padding: 20px 30px !important;
+  border: 1px solid rgba(0,255,160,.65) !important;
+  border-radius: 42px !important;
+  background: linear-gradient(110deg,#008e53 0%,#007548 52%,#00583a 100%) !important;
+  color: #fff !important;
+  font: 800 clamp(24px,2.6vw,40px)/1.15 Inter, "Segoe UI", Arial, sans-serif !important;
+  box-shadow: 0 12px 24px rgba(0,100,65,.25), inset 0 1px 0 rgba(255,255,255,.2) !important;
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease !important;
+}
+.home-page .admin-card.otp-card .otp-send-button:hover:not(:disabled),
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button:hover:not(:disabled) { transform: translateY(-2px) !important; filter: brightness(1.05) !important; }
+.home-page .admin-card.otp-card .otp-send-button:disabled,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button:disabled { opacity: .72 !important; cursor: wait !important; }
+.home-page .admin-card.otp-card .otp-send-button .submit-arrow svg { width: 38px !important; height: 38px !important; }
+.home-page .admin-card.otp-card .otp-back-button {
+  position: relative !important;
+  align-self: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: min(100%, 640px) !important;
+  min-height: 44px !important;
+  margin: 4px auto 0 !important;
+  padding: 4px 24px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #07533a !important;
+  font: 700 clamp(17px,1.8vw,28px)/1.25 Inter, "Segoe UI", Arial, sans-serif !important;
+  box-shadow: none !important;
+  white-space: normal !important;
+}
+.home-page .admin-card.otp-card .otp-back-button::before,
+.home-page .admin-card.otp-card .otp-back-button::after { content: ""; display: block; flex: 1 1 80px; height: 2px; background: #c6d8d2; }
+.home-page .admin-card.otp-card .otp-back-button::before { margin-right: 24px; }
+.home-page .admin-card.otp-card .otp-back-button::after { margin-left: 24px; }
+.home-page .admin-card.otp-card .otp-form { display: flex !important; width: 100% !important; flex-direction: column !important; gap: 14px !important; margin: 0 !important; }
+.home-page .admin-card.otp-card .otp-form .field-group { display: flex !important; width: 100% !important; gap: 8px !important; }
+.home-page .admin-card.otp-card .otp-form .field-group > label { position: static !important; width: auto !important; height: auto !important; margin: 0 !important; padding: 0 0 0 8px !important; overflow: visible !important; clip: auto !important; color: #426f5d !important; font-size: 17px !important; }
+.home-page .admin-card.otp-card .otp-input-box { display: flex !important; width: 100% !important; height: 76px !important; align-items: center !important; padding: 0 22px !important; border: 2px solid #bfd7cd !important; border-radius: 22px !important; background: #fff !important; }
+.home-page .admin-card.otp-card .otp-input-box .field-icon { color: #37795d !important; }
+.home-page .admin-card.otp-card .otp-input-box input { width: 100% !important; color: #0b3528 !important; font-size: 24px !important; letter-spacing: 5px !important; }
+.home-page .admin-card.otp-card .otp-countdown { color: #648578 !important; text-align: center !important; font-size: 16px !important; }
+.home-page .admin-card.otp-card .otp-countdown strong { color: #0a6946 !important; }
+.home-page .admin-card.otp-card .otp-message { color: #8b2d2d !important; text-align: center !important; }
+
+/* Keep logo/card from clipping on shorter screens and narrow devices. */
+@media (max-width: 760px) {
+  .home-page .otp-card-overlay-enter { align-items: flex-start !important; padding: 94px 14px 18px !important; }
+  .home-page .admin-card.otp-card { width: min(100%, 560px) !important; max-height: calc(100dvh - 112px) !important; padding: 94px 22px 24px !important; gap: 14px !important; border-radius: 30px !important; overflow-y: auto !important; }
+  .home-page .admin-card.otp-card .admin-logo-circle { top: -66px !important; width: 142px !important; height: 142px !important; border-width: 6px !important; }
+  .home-page .admin-card.otp-card .admin-logo-circle img { padding: 8px !important; }
+  .home-page .admin-card.otp-card .card-close-button { top: 14px !important; right: 14px !important; width: 46px !important; height: 46px !important; font-size: 30px !important; }
+  .home-page .admin-card.otp-card .admin-card-title { margin-bottom: 2px !important; }
+  .home-page .admin-card.otp-card .admin-card-title h3 { font-size: clamp(31px, 8vw, 44px) !important; letter-spacing: -.7px !important; }
+  .home-page .admin-card.otp-card .otp-subtitle { font-size: clamp(15px, 4vw, 19px) !important; }
+  .home-page .admin-card.otp-card .otp-method-button { height: 66px !important; gap: 8px !important; padding: 0 8px !important; font-size: clamp(16px, 4vw, 20px) !important; }
+  .home-page .admin-card.otp-card .otp-method-icon svg { width: 24px !important; height: 24px !important; }
+  .home-page .admin-card.otp-card .otp-destination { min-height: 88px !important; padding: 12px !important; border-radius: 22px !important; }
+  .home-page .admin-card.otp-card .otp-destination span { font-size: 15px !important; }
+  .home-page .admin-card.otp-card .otp-destination strong { font-size: 16px !important; }
+  .home-page .admin-card.otp-card .otp-send-button,
+  .home-page .admin-card.otp-card .login-submit-button.otp-verify-button { min-height: 58px !important; padding: 12px !important; border-radius: 26px !important; font-size: 22px !important; }
+  .home-page .admin-card.otp-card .otp-send-button .submit-arrow svg { width: 28px !important; height: 28px !important; }
+  .home-page .admin-card.otp-card .otp-back-button { font-size: 17px !important; padding: 4px 0 !important; }
+  .home-page .admin-card.otp-card .otp-back-button::before { margin-right: 10px; }
+  .home-page .admin-card.otp-card .otp-back-button::after { margin-left: 10px; }
+}
+@media (max-width: 390px) {
+  .home-page .admin-card.otp-card { padding-left: 15px !important; padding-right: 15px !important; }
+  .home-page .admin-card.otp-card .otp-method-button { gap: 5px !important; font-size: 15px !important; }
+  .home-page .admin-card.otp-card .otp-method-icon svg { width: 20px !important; height: 20px !important; }
+}
+
+
+/* =========================================================
+   FINAL FIX — OTP modal viewport / logo / bottom button
+   Keep the entire card reachable without clipping the logo.
+========================================================= */
+.home-page .otp-card-overlay-enter {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999990 !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0 !important;
+  padding: 108px 24px 28px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  background: rgba(0, 18, 13, 0.22) !important;
+  backdrop-filter: blur(2px) !important;
+  -webkit-backdrop-filter: blur(2px) !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 80, 54, .45) transparent;
+}
+
+.home-page .admin-card.otp-card {
+  box-sizing: border-box !important;
+  position: relative !important;
+  flex: 0 0 auto !important;
+  width: min(1010px, calc(100vw - 48px)) !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 auto 8px !important;
+  padding: 72px clamp(28px, 8vw, 112px) 32px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 18px !important;
+  overflow: visible !important;
+  border: 2px solid rgba(47, 210, 122, .42) !important;
+  border-radius: 54px !important;
+  background: linear-gradient(145deg, #fbfdfc 0%, #edf5f1 100%) !important;
+  color: #0b3528 !important;
+}
+
+.home-page .admin-card.otp-card .admin-logo-circle {
+  top: -94px !important;
+  left: 50% !important;
+  width: 190px !important;
+  height: 190px !important;
+  transform: translateX(-50%) !important;
+}
+
+.home-page .admin-card.otp-card .card-close-button {
+  top: 26px !important;
+  right: 28px !important;
+  width: 64px !important;
+  height: 64px !important;
+  font-size: 38px !important;
+}
+
+.home-page .admin-card.otp-card .admin-card-title h3 {
+  font-size: clamp(36px, 4.2vw, 60px) !important;
+  line-height: 1.1 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.home-page .admin-card.otp-card .otp-method-options,
+.home-page .admin-card.otp-card .otp-destination,
+.home-page .admin-card.otp-card .otp-form,
+.home-page .admin-card.otp-card .otp-send-button,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+  max-width: 100% !important;
+}
+
+@media (max-width: 760px) {
+  .home-page .otp-card-overlay-enter {
+    padding: 88px 12px 18px !important;
+  }
+  .home-page .admin-card.otp-card {
+    width: min(100%, 560px) !important;
+    padding: 70px 20px 24px !important;
+    gap: 14px !important;
+    border-radius: 30px !important;
+  }
+  .home-page .admin-card.otp-card .admin-logo-circle {
+    top: -66px !important;
+    width: 132px !important;
+    height: 132px !important;
+    border-width: 6px !important;
+  }
+  .home-page .admin-card.otp-card .card-close-button {
+    top: 12px !important;
+    right: 12px !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 28px !important;
+  }
+  .home-page .admin-card.otp-card .admin-card-title h3 {
+    font-size: clamp(30px, 7.8vw, 44px) !important;
+    letter-spacing: -.7px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .home-page .otp-card-overlay-enter { padding-right: 8px !important; padding-left: 8px !important; }
+  .home-page .admin-card.otp-card { padding-right: 14px !important; padding-left: 14px !important; }
+  .home-page .admin-card.otp-card .otp-method-button { gap: 5px !important; font-size: 15px !important; }
+}
+
+@media (max-height: 620px) and (min-width: 761px) {
+  .home-page .otp-card-overlay-enter { padding-top: 100px !important; }
+  .home-page .admin-card.otp-card { padding-top: 58px !important; gap: 12px !important; }
+  .home-page .admin-card.otp-card .admin-logo-circle { width: 150px !important; height: 150px !important; top: -76px !important; }
+  .home-page .admin-card.otp-card .otp-method-button { height: 64px !important; }
+  .home-page .admin-card.otp-card .otp-destination { min-height: 82px !important; }
+  .home-page .admin-card.otp-card .otp-send-button,
+  .home-page .admin-card.otp-card .login-submit-button.otp-verify-button { min-height: 62px !important; }
+}
+
+/* =========================================================
+   COMPACT OTP CARD — smaller desktop layout
+   Keep this block at the VERY END of otp-card-theme.css.
+========================================================= */
+.home-page .otp-card-overlay-enter {
+  padding: 28px 18px !important;
+  align-items: center !important;
+  overflow-y: auto !important;
+}
+
+.home-page .admin-card.otp-card {
+  width: min(850px, calc(100vw - 36px)) !important;
+  max-height: calc(100dvh - 56px) !important;
+  padding: 88px clamp(28px, 6vw, 76px) 28px !important;
+  gap: 14px !important;
+  border-radius: 38px !important;
+}
+
+.home-page .admin-card.otp-card .admin-logo-circle {
+  top: -72px !important;
+  width: 152px !important;
+  height: 152px !important;
+  border-width: 6px !important;
+}
+
+.home-page .admin-card.otp-card .admin-logo-circle img {
+  padding: 8px !important;
+}
+
+.home-page .admin-card.otp-card .card-close-button {
+  top: 18px !important;
+  right: 20px !important;
+  width: 50px !important;
+  height: 50px !important;
+  font-size: 30px !important;
+}
+
+.home-page .admin-card.otp-card .admin-card-title h3 {
+  font-size: clamp(34px, 3.4vw, 48px) !important;
+  letter-spacing: -1px !important;
+}
+
+.home-page .admin-card.otp-card .otp-subtitle {
+  margin-top: 4px !important;
+  font-size: clamp(15px, 1.6vw, 22px) !important;
+}
+
+.home-page .admin-card.otp-card .otp-method-button {
+  height: 68px !important;
+  gap: 14px !important;
+  font-size: clamp(17px, 1.7vw, 23px) !important;
+}
+
+.home-page .admin-card.otp-card .otp-method-icon svg {
+  width: 27px !important;
+  height: 27px !important;
+}
+
+.home-page .admin-card.otp-card .otp-destination {
+  min-height: 86px !important;
+  padding: 12px 18px !important;
+  border-radius: 24px !important;
+}
+
+.home-page .admin-card.otp-card .otp-destination span {
+  font-size: clamp(15px, 1.4vw, 20px) !important;
+}
+
+.home-page .admin-card.otp-card .otp-destination strong {
+  font-size: clamp(16px, 1.55vw, 22px) !important;
+}
+
+.home-page .admin-card.otp-card .otp-send-button,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+  min-height: 74px !important;
+  padding: 14px 22px !important;
+  border-radius: 30px !important;
+  font-size: clamp(22px, 2.2vw, 32px) !important;
+}
+
+.home-page .admin-card.otp-card .otp-send-button .submit-arrow svg {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.home-page .admin-card.otp-card .otp-back-button {
+  min-height: 36px !important;
+  font-size: clamp(16px, 1.5vw, 22px) !important;
+  margin-top: 0 !important;
+}
+
+@media (max-width: 760px) {
+  .home-page .otp-card-overlay-enter {
+    padding: 78px 12px 16px !important;
+    align-items: flex-start !important;
+  }
+  .home-page .admin-card.otp-card {
+    width: min(100%, 520px) !important;
+    max-height: calc(100dvh - 94px) !important;
+    padding: 72px 20px 22px !important;
+    gap: 13px !important;
+    border-radius: 28px !important;
+  }
+  .home-page .admin-card.otp-card .admin-logo-circle {
+    top: -58px !important;
+    width: 116px !important;
+    height: 116px !important;
+  }
+  .home-page .admin-card.otp-card .card-close-button {
+    top: 10px !important;
+    right: 10px !important;
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 26px !important;
+  }
+  .home-page .admin-card.otp-card .admin-card-title h3 {
+    font-size: clamp(29px, 7vw, 40px) !important;
+  }
+  .home-page .admin-card.otp-card .otp-method-button {
+    height: 60px !important;
+    gap: 8px !important;
+  }
+  .home-page .admin-card.otp-card .otp-destination {
+    min-height: 76px !important;
+  }
+  .home-page .admin-card.otp-card .otp-send-button,
+  .home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+    min-height: 62px !important;
+    font-size: 22px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .home-page .admin-card.otp-card {
+    padding-right: 14px !important;
+    padding-left: 14px !important;
+  }
+}
+
+/* =========================================================
+   COMPACT OTP CARD — leaves room for the page heading above
+   Keep this block at the VERY END of otp-card-theme.css.
+========================================================= */
+.home-page .otp-card-overlay-enter {
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding: 76px 18px 24px !important;
+  box-sizing: border-box !important;
+}
+
+.home-page .admin-card.otp-card {
+  width: min(700px, calc(100vw - 36px)) !important;
+  max-height: calc(100dvh - 100px) !important;
+  padding: 88px clamp(28px, 5vw, 64px) 26px !important;
+  gap: 13px !important;
+  border-radius: 38px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.home-page .admin-card.otp-card .admin-logo-circle {
+  top: -66px !important;
+  width: 148px !important;
+  height: 148px !important;
+  border-width: 6px !important;
+}
+.home-page .admin-card.otp-card .admin-logo-circle img {
+  padding: 7px !important;
+}
+.home-page .admin-card.otp-card .card-close-button {
+  top: 18px !important;
+  right: 18px !important;
+  width: 48px !important;
+  height: 48px !important;
+  font-size: 28px !important;
+}
+.home-page .admin-card.otp-card .admin-card-title h3 {
+  font-size: clamp(34px, 3.2vw, 46px) !important;
+  letter-spacing: -0.8px !important;
+  line-height: 1.1 !important;
+}
+.home-page .admin-card.otp-card .otp-subtitle {
+  margin-top: 5px !important;
+  font-size: clamp(15px, 1.5vw, 21px) !important;
+  line-height: 1.3 !important;
+}
+.home-page .admin-card.otp-card .otp-method-button {
+  height: 62px !important;
+  gap: 12px !important;
+  font-size: clamp(17px, 1.5vw, 21px) !important;
+}
+.home-page .admin-card.otp-card .otp-method-icon svg {
+  width: 25px !important;
+  height: 25px !important;
+}
+.home-page .admin-card.otp-card .otp-destination {
+  min-height: 78px !important;
+  padding: 10px 16px !important;
+  border-radius: 22px !important;
+}
+.home-page .admin-card.otp-card .otp-destination span {
+  font-size: clamp(14px, 1.25vw, 17px) !important;
+}
+.home-page .admin-card.otp-card .otp-destination strong {
+  font-size: clamp(15px, 1.35vw, 19px) !important;
+}
+.home-page .admin-card.otp-card .otp-send-button,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+  min-height: 66px !important;
+  padding: 12px 20px !important;
+  gap: 12px !important;
+  border-radius: 28px !important;
+  font-size: clamp(21px, 2vw, 29px) !important;
+}
+.home-page .admin-card.otp-card .otp-send-button .submit-arrow svg {
+  width: 27px !important;
+  height: 27px !important;
+}
+.home-page .admin-card.otp-card .otp-back-button {
+  min-height: 34px !important;
+  margin-top: 0 !important;
+  font-size: clamp(16px, 1.5vw, 20px) !important;
+}
+.home-page .admin-card.otp-card .otp-back-button::before { margin-right: 14px !important; }
+.home-page .admin-card.otp-card .otp-back-button::after { margin-left: 14px !important; }
+.home-page .admin-card.otp-card .otp-form { gap: 10px !important; }
+.home-page .admin-card.otp-card .otp-input-box {
+  height: 58px !important;
+  border-radius: 16px !important;
+}
+.home-page .admin-card.otp-card .otp-input-box input {
+  font-size: 19px !important;
+}
+
+@media (max-width: 760px) {
+  .home-page .otp-card-overlay-enter {
+    align-items: flex-start !important;
+    padding: 82px 12px 16px !important;
+  }
+  .home-page .admin-card.otp-card {
+    width: min(100%, 520px) !important;
+    max-height: calc(100dvh - 96px) !important;
+    padding: 76px 20px 20px !important;
+    gap: 12px !important;
+    border-radius: 28px !important;
+  }
+  .home-page .admin-card.otp-card .admin-logo-circle {
+    top: -54px !important;
+    width: 116px !important;
+    height: 116px !important;
+    border-width: 5px !important;
+  }
+  .home-page .admin-card.otp-card .card-close-button {
+    top: 12px !important;
+    right: 12px !important;
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 24px !important;
+  }
+  .home-page .admin-card.otp-card .admin-card-title h3 {
+    font-size: clamp(29px, 7vw, 38px) !important;
+  }
+  .home-page .admin-card.otp-card .otp-method-button {
+    height: 54px !important;
+    gap: 7px !important;
+    font-size: clamp(15px, 4vw, 18px) !important;
+  }
+  .home-page .admin-card.otp-card .otp-destination {
+    min-height: 72px !important;
+    padding: 9px 10px !important;
+  }
+  .home-page .admin-card.otp-card .otp-send-button,
+  .home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+    min-height: 58px !important;
+    font-size: 21px !important;
+  }
+}
+
+/* =========================================================
+   EXTRA-COMPACT OTP CARD — keep the crest fully visible
+   These final overrides intentionally win over earlier rules.
+========================================================= */
+.home-page .otp-card-overlay-enter {
+  box-sizing: border-box !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 178px 16px 22px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.home-page .admin-card.otp-card {
+  box-sizing: border-box !important;
+  width: min(600px, calc(100vw - 32px)) !important;
+  max-width: 600px !important;
+  min-height: 0 !important;
+  max-height: calc(100dvh - 205px) !important;
+  height: auto !important;
+  padding: 76px 36px 24px !important;
+  gap: 12px !important;
+  overflow: visible !important;
+  border-radius: 32px !important;
+}
+
+.home-page .admin-card.otp-card .admin-logo-circle {
+  top: -58px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 120px !important;
+  height: 120px !important;
+  border-width: 5px !important;
+  z-index: 3 !important;
+}
+
+.home-page .admin-card.otp-card .admin-logo-circle img {
+  padding: 6px !important;
+  object-fit: contain !important;
+}
+
+.home-page .admin-card.otp-card .card-close-button {
+  top: 14px !important;
+  right: 14px !important;
+  width: 42px !important;
+  height: 42px !important;
+  font-size: 26px !important;
+}
+
+.home-page .admin-card.otp-card .admin-card-title {
+  margin: 0 0 2px !important;
+}
+.home-page .admin-card.otp-card .admin-card-title h3 {
+  font-size: clamp(28px, 3.1vw, 38px) !important;
+  line-height: 1.12 !important;
+  letter-spacing: -.7px !important;
+}
+.home-page .admin-card.otp-card .otp-subtitle {
+  margin-top: 5px !important;
+  font-size: clamp(14px, 1.45vw, 18px) !important;
+  line-height: 1.3 !important;
+}
+.home-page .admin-card.otp-card .otp-method-button {
+  height: 54px !important;
+  gap: 10px !important;
+  padding: 0 10px !important;
+  font-size: clamp(15px, 1.4vw, 18px) !important;
+  border-radius: 28px !important;
+}
+.home-page .admin-card.otp-card .otp-method-icon { font-size: 19px !important; }
+.home-page .admin-card.otp-card .otp-method-icon svg {
+  width: 21px !important;
+  height: 21px !important;
+}
+.home-page .admin-card.otp-card .otp-method-options { border-radius: 30px !important; }
+.home-page .admin-card.otp-card .otp-destination {
+  min-height: 70px !important;
+  padding: 10px 12px !important;
+  gap: 3px !important;
+  border-radius: 20px !important;
+}
+.home-page .admin-card.otp-card .otp-destination span {
+  font-size: 14px !important;
+  line-height: 1.25 !important;
+}
+.home-page .admin-card.otp-card .otp-destination strong {
+  font-size: clamp(14px, 1.35vw, 17px) !important;
+  line-height: 1.25 !important;
+}
+.home-page .admin-card.otp-card .otp-send-button,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+  min-height: 58px !important;
+  padding: 12px 18px !important;
+  gap: 10px !important;
+  border-radius: 28px !important;
+  font-size: clamp(19px, 1.8vw, 24px) !important;
+}
+.home-page .admin-card.otp-card .otp-send-button .submit-arrow svg {
+  width: 23px !important;
+  height: 23px !important;
+}
+.home-page .admin-card.otp-card .otp-back-button {
+  min-height: 32px !important;
+  margin-top: 0 !important;
+  padding: 2px 6px !important;
+  font-size: clamp(14px, 1.35vw, 17px) !important;
+}
+.home-page .admin-card.otp-card .otp-back-button::before { margin-right: 12px !important; }
+.home-page .admin-card.otp-card .otp-back-button::after { margin-left: 12px !important; }
+.home-page .admin-card.otp-card .otp-form { gap: 10px !important; }
+.home-page .admin-card.otp-card .otp-input-box {
+  height: 54px !important;
+  padding: 0 14px !important;
+  border-radius: 16px !important;
+}
+.home-page .admin-card.otp-card .otp-input-box input {
+  font-size: 19px !important;
+  letter-spacing: 3px !important;
+}
+
+@media (max-width: 760px) {
+  .home-page .otp-card-overlay-enter {
+    align-items: center !important;
+    padding: 140px 12px 18px !important;
+  }
+  .home-page .admin-card.otp-card {
+    width: min(100%, 460px) !important;
+    max-height: calc(100dvh - 160px) !important;
+    padding: 68px 20px 20px !important;
+    gap: 11px !important;
+    border-radius: 26px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+  .home-page .admin-card.otp-card .admin-logo-circle {
+    top: -48px !important;
+    width: 96px !important;
+    height: 96px !important;
+    border-width: 4px !important;
+  }
+  .home-page .admin-card.otp-card .admin-logo-circle img { padding: 5px !important; }
+  .home-page .admin-card.otp-card .card-close-button {
+    top: 10px !important;
+    right: 10px !important;
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 22px !important;
+  }
+  .home-page .admin-card.otp-card .admin-card-title h3 { font-size: clamp(25px, 7vw, 32px) !important; }
+  .home-page .admin-card.otp-card .otp-subtitle { font-size: clamp(13px, 3.7vw, 16px) !important; }
+  .home-page .admin-card.otp-card .otp-method-button { height: 48px !important; font-size: 15px !important; }
+  .home-page .admin-card.otp-card .otp-destination { min-height: 64px !important; }
+  .home-page .admin-card.otp-card .otp-send-button,
+  .home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+    min-height: 52px !important;
+    font-size: 19px !important;
+    padding: 10px 12px !important;
+  }
+}
+
+@media (max-height: 650px) and (min-width: 761px) {
+  .home-page .otp-card-overlay-enter { padding-top: 130px !important; }
+  .home-page .admin-card.otp-card {
+    max-height: calc(100dvh - 150px) !important;
+    padding-top: 66px !important;
+    gap: 8px !important;
+  }
+  .home-page .admin-card.otp-card .admin-logo-circle {
+    width: 100px !important;
+    height: 100px !important;
+    top: -48px !important;
+  }
+}
+
+/* =========================================================
+   FINAL FIX: keep hospital title fully visible above OTP card
+   and keep the crest from being clipped.
+========================================================= */
+.home-page .otp-card-overlay-enter {
+  box-sizing: border-box !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding: 220px 16px 28px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.home-page .admin-card.otp-card {
+  position: relative !important;
+  flex: 0 0 auto !important;
+  width: min(560px, calc(100vw - 32px)) !important;
+  max-width: 560px !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 auto 24px !important;
+  padding: 66px 28px 20px !important;
+  gap: 10px !important;
+  overflow: visible !important;
+  border-radius: 28px !important;
+}
+
+.home-page .admin-card.otp-card .admin-logo-circle {
+  position: absolute !important;
+  top: -48px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  width: 100px !important;
+  height: 100px !important;
+  min-width: 100px !important;
+  min-height: 100px !important;
+  z-index: 20 !important;
+}
+
+.home-page .admin-card.otp-card .admin-logo-circle img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  padding: 5px !important;
+}
+
+.home-page .admin-card.otp-card .card-close-button {
+  top: 10px !important;
+  right: 10px !important;
+  width: 38px !important;
+  height: 38px !important;
+  font-size: 23px !important;
+}
+
+.home-page .admin-card.otp-card .admin-card-title h3 {
+  font-size: clamp(26px, 2.7vw, 34px) !important;
+  line-height: 1.12 !important;
+  margin: 0 !important;
+}
+
+.home-page .admin-card.otp-card .otp-subtitle {
+  font-size: clamp(13px, 1.25vw, 16px) !important;
+  line-height: 1.3 !important;
+  margin-top: 4px !important;
+}
+
+.home-page .admin-card.otp-card .otp-method-button {
+  height: 48px !important;
+  min-height: 48px !important;
+  font-size: 16px !important;
+  padding: 0 10px !important;
+}
+
+.home-page .admin-card.otp-card .otp-destination {
+  min-height: 62px !important;
+  padding: 8px 10px !important;
+  gap: 2px !important;
+}
+
+.home-page .admin-card.otp-card .otp-destination span {
+  font-size: 13px !important;
+}
+
+.home-page .admin-card.otp-card .otp-destination strong {
+  font-size: clamp(13px, 1.2vw, 16px) !important;
+  overflow-wrap: anywhere !important;
+}
+
+.home-page .admin-card.otp-card .otp-send-button,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+  min-height: 50px !important;
+  padding: 9px 14px !important;
+  font-size: clamp(18px, 1.6vw, 22px) !important;
+}
+
+.home-page .admin-card.otp-card .otp-back-button {
+  min-height: 28px !important;
+  font-size: 15px !important;
+  margin-top: 0 !important;
+}
+
+.home-page .admin-card.otp-card .otp-form { gap: 8px !important; }
+
+@media (max-width: 760px) {
+  .home-page .otp-card-overlay-enter {
+    align-items: flex-start !important;
+    padding: 170px 12px 22px !important;
+  }
+  .home-page .admin-card.otp-card {
+    width: min(100%, 430px) !important;
+    padding: 60px 18px 18px !important;
+    gap: 9px !important;
+    border-radius: 24px !important;
+  }
+  .home-page .admin-card.otp-card .admin-logo-circle {
+    width: 86px !important;
+    height: 86px !important;
+    min-width: 86px !important;
+    min-height: 86px !important;
+    top: -42px !important;
+  }
+  .home-page .admin-card.otp-card .admin-card-title h3 {
+    font-size: clamp(24px, 6.5vw, 30px) !important;
+  }
+  .home-page .admin-card.otp-card .otp-subtitle {
+    font-size: clamp(12px, 3.5vw, 15px) !important;
+  }
+  .home-page .admin-card.otp-card .otp-method-button {
+    height: 44px !important;
+    min-height: 44px !important;
+    font-size: 14px !important;
+  }
+  .home-page .admin-card.otp-card .otp-destination { min-height: 58px !important; }
+  .home-page .admin-card.otp-card .otp-send-button,
+  .home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+    min-height: 46px !important;
+    font-size: 17px !important;
+  }
+}
+
+@media (max-height: 700px) and (min-width: 761px) {
+  .home-page .otp-card-overlay-enter { padding-top: 170px !important; }
+  .home-page .admin-card.otp-card { padding-top: 60px !important; }
+}
+
+/* =====================================================
+   FINAL POSITION OVERRIDE — keep OTP card below the
+   hospital name so the background heading stays visible
+===================================================== */
+.home-page .otp-card-overlay-enter {
+  box-sizing: border-box !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding: 285px 16px 32px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.home-page .admin-card.otp-card {
+  position: relative !important;
+  flex: 0 0 auto !important;
+  width: min(560px, calc(100vw - 32px)) !important;
+  max-width: 560px !important;
+  margin: 0 auto 24px !important;
+  overflow: visible !important;
+}
+
+.home-page .admin-card.otp-card .admin-logo-circle {
+  position: absolute !important;
+  top: -48px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  width: 100px !important;
+  height: 100px !important;
+  min-width: 100px !important;
+  min-height: 100px !important;
+  z-index: 20 !important;
+}
+
+@media (max-width: 760px) {
+  .home-page .otp-card-overlay-enter {
+    padding: 220px 12px 24px !important;
+  }
+
+  .home-page .admin-card.otp-card {
+    width: min(100%, 430px) !important;
+  }
+
+  .home-page .admin-card.otp-card .admin-logo-circle {
+    width: 86px !important;
+    height: 86px !important;
+    min-width: 86px !important;
+    min-height: 86px !important;
+    top: -42px !important;
+  }
+}
+
+@media (max-height: 700px) and (min-width: 761px) {
+  .home-page .otp-card-overlay-enter {
+    padding-top: 220px !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL FIX — OTP CARD ONLY
+   Card sits below the hospital heading. The card itself does
+   not get an inner scrollbar; the overlay scrolls if needed.
+   Logo is allowed to extend above the card without clipping.
+========================================================= */
+.home-page .otp-card-overlay-enter {
+  box-sizing: border-box !important;
+  position: fixed !important;
+  inset: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0 !important;
+  /* Keep the hospital name visible above the card */
+  padding: 166px 16px 28px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+}
+
+.home-page .admin-card.otp-card {
+  box-sizing: border-box !important;
+  position: relative !important;
+  top: 0 !important;
+  transform: none !important;
+  flex: 0 0 auto !important;
+  width: min(600px, calc(100vw - 32px)) !important;
+  max-width: 600px !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 auto 24px !important;
+  padding: 66px 30px 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  overflow: visible !important;
+  border-radius: 30px !important;
+}
+
+.home-page .admin-card.otp-card .admin-logo-circle {
+  position: absolute !important;
+  top: -50px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  width: 100px !important;
+  height: 100px !important;
+  min-width: 100px !important;
+  min-height: 100px !important;
+  z-index: 30 !important;
+  overflow: hidden !important;
+}
+
+.home-page .admin-card.otp-card .admin-logo-circle img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  padding: 5px !important;
+}
+
+.home-page .admin-card.otp-card .card-close-button {
+  top: 12px !important;
+  right: 12px !important;
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 24px !important;
+}
+
+.home-page .admin-card.otp-card .admin-card-title h3 {
+  font-size: clamp(27px, 3vw, 38px) !important;
+  line-height: 1.12 !important;
+  letter-spacing: -.6px !important;
+}
+
+.home-page .admin-card.otp-card .otp-subtitle {
+  margin-top: 4px !important;
+  font-size: clamp(13px, 1.35vw, 17px) !important;
+  line-height: 1.3 !important;
+}
+
+.home-page .admin-card.otp-card .otp-method-button {
+  height: 50px !important;
+  min-height: 50px !important;
+  font-size: clamp(15px, 1.45vw, 18px) !important;
+  gap: 9px !important;
+}
+
+.home-page .admin-card.otp-card .otp-destination {
+  min-height: 64px !important;
+  padding: 8px 12px !important;
+  gap: 3px !important;
+}
+
+.home-page .admin-card.otp-card .otp-destination span {
+  font-size: 13px !important;
+}
+
+.home-page .admin-card.otp-card .otp-destination strong {
+  font-size: clamp(13px, 1.3vw, 16px) !important;
+  overflow-wrap: anywhere !important;
+}
+
+.home-page .admin-card.otp-card .otp-form {
+  gap: 8px !important;
+}
+
+.home-page .admin-card.otp-card .otp-input-box {
+  height: 54px !important;
+  min-height: 54px !important;
+  padding: 0 14px !important;
+}
+
+.home-page .admin-card.otp-card .otp-input-box input {
+  font-size: 18px !important;
+  letter-spacing: 3px !important;
+}
+
+.home-page .admin-card.otp-card .otp-send-button,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+  min-height: 52px !important;
+  height: auto !important;
+  padding: 10px 16px !important;
+  font-size: clamp(18px, 1.8vw, 23px) !important;
+}
+
+.home-page .admin-card.otp-card .otp-back-button {
+  min-height: 30px !important;
+  margin-top: 0 !important;
+  font-size: 15px !important;
+}
+
+@media (max-width: 760px) {
+  .home-page .otp-card-overlay-enter {
+    padding: 145px 12px 20px !important;
+  }
+  .home-page .admin-card.otp-card {
+    width: min(100%, 460px) !important;
+    padding: 60px 18px 18px !important;
+    gap: 9px !important;
+    border-radius: 24px !important;
+  }
+  .home-page .admin-card.otp-card .admin-logo-circle {
+    top: -42px !important;
+    width: 84px !important;
+    height: 84px !important;
+    min-width: 84px !important;
+    min-height: 84px !important;
+  }
+  .home-page .admin-card.otp-card .admin-card-title h3 {
+    font-size: clamp(24px, 6.5vw, 31px) !important;
+  }
+  .home-page .admin-card.otp-card .otp-subtitle {
+    font-size: clamp(12px, 3.5vw, 15px) !important;
+  }
+  .home-page .admin-card.otp-card .otp-method-button {
+    height: 44px !important;
+    min-height: 44px !important;
+    font-size: 14px !important;
+  }
+  .home-page .admin-card.otp-card .otp-destination {
+    min-height: 56px !important;
+  }
+  .home-page .admin-card.otp-card .otp-send-button,
+  .home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+    min-height: 46px !important;
+    font-size: 17px !important;
+  }
+}
+
+@media (max-height: 720px) and (min-width: 761px) {
+  .home-page .otp-card-overlay-enter {
+    padding-top: 145px !important;
+  }
+}
+
+
+/* =========================================================
+   DEFINITIVE OVERRIDE — OTP CARD ONLY
+   Avoid relying on .home-page ancestor (it may not exist).
+   Keep the page heading and hospital name clear above the card.
+========================================================= */
+.otp-card-overlay-enter {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1000 !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 190px 16px 28px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card {
+  position: relative !important;
+  inset: auto !important;
+  top: 0 !important;
+  transform: none !important;
+  flex: 0 0 auto !important;
+  width: min(600px, calc(100vw - 32px)) !important;
+  max-width: 600px !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 auto 24px !important;
+  padding: 62px 28px 22px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  overflow: visible !important;
+  border-radius: 28px !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card .admin-logo-circle {
+  position: absolute !important;
+  top: -46px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  width: 92px !important;
+  height: 92px !important;
+  min-width: 92px !important;
+  min-height: 92px !important;
+  z-index: 30 !important;
+  overflow: hidden !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card .admin-logo-circle img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  padding: 4px !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card .admin-card-title h3 {
+  font-size: clamp(27px, 2.6vw, 36px) !important;
+  line-height: 1.1 !important;
+  margin: 0 !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card .otp-subtitle {
+  margin-top: 2px !important;
+  line-height: 1.25 !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card .otp-method-button {
+  height: 46px !important;
+  min-height: 46px !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card .otp-destination {
+  min-height: 58px !important;
+  padding: 7px 12px !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card .otp-form {
+  gap: 7px !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card .otp-input-box {
+  height: 50px !important;
+  min-height: 50px !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card .otp-send-button,
+.otp-card-overlay-enter .admin-card.otp-card .login-submit-button.otp-verify-button {
+  min-height: 46px !important;
+  padding: 8px 14px !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card .otp-back-button {
+  min-height: 28px !important;
+  margin-top: 0 !important;
+}
+
+@media (max-width: 760px) {
+  .otp-card-overlay-enter {
+    padding: 155px 12px 20px !important;
+  }
+  .otp-card-overlay-enter .admin-card.otp-card {
+    width: min(100%, 460px) !important;
+    padding: 58px 16px 18px !important;
+    gap: 8px !important;
+  }
+  .otp-card-overlay-enter .admin-card.otp-card .admin-logo-circle {
+    top: -40px !important;
+    width: 80px !important;
+    height: 80px !important;
+    min-width: 80px !important;
+    min-height: 80px !important;
+  }
+  .otp-card-overlay-enter .admin-card.otp-card .admin-card-title h3 {
+    font-size: clamp(24px, 6vw, 31px) !important;
+  }
+}
+
+@media (max-height: 720px) and (min-width: 761px) {
+  .otp-card-overlay-enter {
+    padding-top: 155px !important;
+  }
+}
+
+/* =====================================================
+   FINAL OVERRIDE — lower OTP card + responsive auto-fit
+   Keeps the change limited to the OTP overlay/card.
+===================================================== */
+.otp-card-overlay-enter {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding: 195px 16px 36px !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card {
+  position: relative !important;
+  top: 0 !important;
+  transform: none !important;
+  flex: 0 0 auto !important;
+  width: min(680px, calc(100vw - 32px)) !important;
+  max-width: 680px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 auto 24px !important;
+  box-sizing: border-box !important;
+  padding: 70px 30px 28px !important;
+  overflow: visible !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card .admin-logo-circle {
+  top: -52px !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 30 !important;
+}
+
+/* Compact spacing when the OTP entry/verification form is shown */
+.otp-card-overlay-enter .admin-card.otp-card .otp-form {
+  gap: 8px !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card .otp-input-box {
+  min-height: 48px !important;
+  height: 48px !important;
+}
+
+.otp-card-overlay-enter .admin-card.otp-card .otp-send-button,
+.otp-card-overlay-enter .admin-card.otp-card .login-submit-button.otp-verify-button {
+  min-height: 46px !important;
+}
+
+@media (max-width: 760px) {
+  .otp-card-overlay-enter {
+    padding: 150px 12px 24px !important;
+  }
+
+  .otp-card-overlay-enter .admin-card.otp-card {
+    width: calc(100vw - 24px) !important;
+    padding: 60px 16px 22px !important;
+    margin-bottom: 18px !important;
+  }
+
+  .otp-card-overlay-enter .admin-card.otp-card .admin-logo-circle {
+    top: -42px !important;
+    width: 82px !important;
+    height: 82px !important;
+    min-width: 82px !important;
+    min-height: 82px !important;
+  }
+}
+
+@media (max-height: 760px) and (min-width: 761px) {
+  .otp-card-overlay-enter {
+    padding-top: 155px !important;
+  }
+
+  .otp-card-overlay-enter .admin-card.otp-card {
+    padding-top: 64px !important;
+  }
+}
+
+/* =========================================================
+   FINAL OTP CARD LAYOUT (v3)
+   Uses the same selectors as Home.css's late reset so these win.
+   - overlay sits above the header (header z-index is 100000)
+   - card starts below the header bar, logo overlaps its top edge
+   - compact sizes
+========================================================= */
+.home-page .admin-card-overlay.otp-card-overlay-enter {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 100001 !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding: 150px 24px 32px !important;
+  overflow-y: auto !important;
+  background: rgba(2, 14, 10, 0.9) !important;
+  backdrop-filter: blur(14px) saturate(115%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(115%) !important;
+}
+
+.home-page .admin-card.otp-card {
+  width: min(680px, calc(100vw - 48px)) !important;
+  padding: 76px 56px 30px !important;
+  gap: 14px !important;
+  border-radius: 40px !important;
+}
+
+.home-page .admin-card.otp-card > .admin-logo-circle {
+  top: -60px !important;
+  width: 120px !important;
+  height: 120px !important;
+  border-width: 5px !important;
+}
+
+.home-page .admin-card.otp-card > .card-close-button {
+  top: 18px !important;
+  right: 18px !important;
+  width: 48px !important;
+  height: 48px !important;
+  font-size: 28px !important;
+}
+
+.home-page .admin-card.otp-card .admin-card-title h3 {
+  font-size: clamp(30px, 3.2vw, 42px) !important;
+  letter-spacing: -0.8px !important;
+}
+
+.home-page .admin-card.otp-card .otp-subtitle {
+  font-size: clamp(14px, 1.5vw, 17px) !important;
+}
+
+.home-page .admin-card.otp-card .otp-method-button {
+  height: 56px !important;
+  font-size: clamp(16px, 1.5vw, 18px) !important;
+}
+
+.home-page .admin-card.otp-card .otp-destination {
+  min-height: 72px !important;
+  padding: 10px 16px !important;
+}
+.home-page .admin-card.otp-card .otp-destination span { font-size: 14px !important; }
+.home-page .admin-card.otp-card .otp-destination strong { font-size: 16px !important; }
+
+.home-page .admin-card.otp-card .otp-send-button,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+  min-height: 60px !important;
+  font-size: clamp(17px, 1.9vw, 22px) !important;
+}
+
+.home-page .admin-card.otp-card .otp-input-box {
+  height: 54px !important;
+}
+.home-page .admin-card.otp-card .otp-input-box input { font-size: 18px !important; }
+
+.home-page .admin-card.otp-card .otp-back-button { font-size: 15px !important; min-height: 36px !important; }
+
+@media (max-width: 760px) {
+  .home-page .admin-card-overlay.otp-card-overlay-enter { padding: 120px 14px 18px !important; }
+  .home-page .admin-card.otp-card {
+    width: min(100%, 520px) !important;
+    padding: 66px 20px 20px !important;
+    border-radius: 30px !important;
+  }
+  .home-page .admin-card.otp-card > .admin-logo-circle {
+    top: -50px !important;
+    width: 100px !important;
+    height: 100px !important;
+  }
+}
+
+/* =========================================================
+   v4: slightly smaller card (width and height)
+========================================================= */
+.home-page .admin-card.otp-card {
+  width: min(580px, calc(100vw - 48px)) !important;
+  padding: 70px 44px 22px !important;
+  gap: 10px !important;
+}
+
+.home-page .admin-card.otp-card .admin-card-title h3 {
+  font-size: clamp(28px, 2.8vw, 36px) !important;
+}
+
+.home-page .admin-card.otp-card .otp-subtitle {
+  font-size: clamp(13px, 1.3vw, 15px) !important;
+}
+
+.home-page .admin-card.otp-card .otp-method-button {
+  height: 50px !important;
+  font-size: clamp(15px, 1.3vw, 16px) !important;
+}
+
+.home-page .admin-card.otp-card .otp-destination {
+  min-height: 62px !important;
+  padding: 8px 14px !important;
+}
+.home-page .admin-card.otp-card .otp-destination span { font-size: 13px !important; }
+.home-page .admin-card.otp-card .otp-destination strong { font-size: 15px !important; }
+
+.home-page .admin-card.otp-card .otp-send-button,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+  min-height: 52px !important;
+  font-size: clamp(16px, 1.6vw, 19px) !important;
+}
+
+.home-page .admin-card.otp-card .otp-input-box {
+  height: 48px !important;
+}
+.home-page .admin-card.otp-card .otp-input-box input { font-size: 17px !important; }
+
+.home-page .admin-card.otp-card .otp-back-button { min-height: 30px !important; font-size: 14px !important; }
+.home-page .admin-card.otp-card .otp-countdown { font-size: 13px !important; }
+
+/* =========================================================
+   v5: OTP-sent state (input form visible)
+   - shield icon no longer a big circle on top of the input
+   - card a bit shorter so it fits the screen
+   - logo clear of the header bar
+========================================================= */
+.home-page .admin-card-overlay.otp-card-overlay-enter {
+  padding-top: 132px !important;
+}
+
+.home-page .admin-card.otp-card {
+  padding: 66px 40px 18px !important;
+  gap: 8px !important;
+}
+
+.home-page .admin-card.otp-card > .admin-logo-circle {
+  top: -55px !important;
+  width: 110px !important;
+  height: 110px !important;
+}
+
+.home-page .admin-card.otp-card .otp-form {
+  gap: 8px !important;
+}
+
+.home-page .admin-card.otp-card .otp-form .field-group {
+  gap: 4px !important;
+}
+
+.home-page .admin-card.otp-card .otp-input-box {
+  height: 46px !important;
+  padding: 0 16px !important;
+  gap: 10px !important;
+}
+
+.home-page .admin-card.otp-card .otp-input-box .field-icon {
+  position: static !important;
+  width: 26px !important;
+  height: 26px !important;
+  min-width: 26px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+}
+
+.home-page .admin-card.otp-card .otp-input-box .field-icon svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.home-page .admin-card.otp-card .otp-input-box input {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  padding: 0 !important;
+  font-size: 17px !important;
+  text-align: center !important;
+  background: transparent !important;
+}
+
+.home-page .admin-card.otp-card .otp-countdown,
+.home-page .admin-card.otp-card .otp-message {
+  padding: 4px 10px !important;
+  margin: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+}
+
+.home-page .admin-card.otp-card .otp-resend-button {
+  padding: 2px 10px !important;
+  font-size: 15px !important;
+  line-height: 1.2 !important;
+}
+
+.home-page .admin-card.otp-card .otp-back-button {
+  min-height: 28px !important;
+  font-size: 14px !important;
+}
+
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+  min-height: 52px !important;
+}
+
+/* =========================================================
+   v6: logo fully below the header title, card still fits screen
+========================================================= */
+.home-page .admin-card-overlay.otp-card-overlay-enter {
+  padding-top: 152px !important;
+}
+
+.home-page .admin-card.otp-card {
+  padding: 66px 40px 10px !important;
+}
+
+.home-page .admin-card.otp-card .otp-method-button {
+  height: 46px !important;
+}
+
+.home-page .admin-card.otp-card .otp-resend-button {
+  padding: 0 10px !important;
+  margin-top: 0 !important;
+}
+
+.home-page .admin-card.otp-card .otp-back-button {
+  margin-top: 0 !important;
+}
+
+/* =========================================================
+   v7: OTP card 20% smaller on desktop (width, height, text, logo)
+========================================================= */
+.home-page .admin-card.otp-card {
+  zoom: 0.8;
+}
+
+@media (max-width: 760px) {
+  .home-page .admin-card.otp-card {
+    zoom: 1;
+  }
+}
+
+/* =========================================================
+   v8: keep the page heading visible behind the card, but blurred
+========================================================= */
+.home-page .admin-card-overlay.otp-card-overlay-enter {
+  background: rgba(2, 14, 10, 0.5) !important;
+  backdrop-filter: blur(6px) saturate(110%) !important;
+  -webkit-backdrop-filter: blur(6px) saturate(110%) !important;
+}
+
+/* =========================================================
+   v9: lighter blur on the background behind the card
+========================================================= */
+.home-page .admin-card-overlay.otp-card-overlay-enter {
+  backdrop-filter: blur(2px) saturate(110%) !important;
+  -webkit-backdrop-filter: blur(2px) saturate(110%) !important;
+}
+
+/* =========================================================
+   LOGIN SUCCESS POPUP: sirf title, koi button ya message nahi
+   (works even if the shared SuccessPopup still renders them)
+========================================================= */
+.login-success-only-title .hms-success-button,
+.login-success-only-title .hms-success-popup > p {
+  display: none !important;
+}
+
+
+/* =========================================================
+   SUCCESS POPUP (merged from SuccessPopup.css)
+========================================================= */
+/* =========================================================
+   SHARED SUCCESS POPUP - EMBOSS DESIGN (SuccessPopup.jsx)
+========================================================= */
+.hms-success-backdrop {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(0, 12, 8, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+
+  z-index: 100000;
+
+  animation: hmsSuccessFade 0.25s ease-out both;
+}
+
+/* ---------- raised plate ---------- */
+
+.hms-success-popup {
+  position: relative;
+
+  width: min(340px, 100%);
+
+  padding: 34px 24px 26px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 30px;
+
+  background: linear-gradient(180deg, #ffffff 0%, #e9f6ee 45%, #c9e3d4 100%);
+  color: #25483a;
+
+  text-align: center;
+
+  box-shadow:
+    0 28px 55px rgba(0, 0, 0, 0.55),
+    0 0 36px rgba(57, 255, 120, 0.16),
+    inset 0 3px 4px rgba(255, 255, 255, 0.95),
+    inset 0 -6px 12px rgba(0, 70, 40, 0.2);
+
+  animation: hmsSuccessPop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* andar ki patli engraved line */
+.hms-success-popup::before {
+  content: "";
+
+  position: absolute;
+  inset: 8px;
+
+  border: 1px solid rgba(0, 90, 50, 0.14);
+  border-radius: 23px;
+
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  pointer-events: none;
+}
+
+/* ---------- checkmark: dabi hui ring + ubhra hua gol badge ---------- */
+
+.hms-success-check {
+  position: relative;
+
+  width: 96px;
+  height: 96px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 8px;
+
+  border-radius: 50%;
+
+  /* recessed (andar dabi) socket */
+  background: linear-gradient(145deg, #bcd8c8, #f3fbf6);
+
+  box-shadow:
+    inset 5px 5px 10px rgba(0, 70, 40, 0.28),
+    inset -5px -5px 10px rgba(255, 255, 255, 0.95),
+    0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.hms-success-check::before {
+  content: "";
+
+  position: absolute;
+  inset: 12px;
+
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+
+  /* ubhra hua green badge */
+  background: linear-gradient(145deg, #5dff98 0%, #1ee87b 55%, #00b85f 100%);
+
+  box-shadow:
+    0 6px 12px rgba(0, 60, 30, 0.4),
+    inset 0 2px 3px rgba(255, 255, 255, 0.6),
+    inset 0 -4px 6px rgba(0, 90, 45, 0.35);
+}
+
+.hms-success-check svg {
+  position: relative;
+
+  width: 40px;
+  height: 40px;
+
+  color: #ffffff;
+
+  filter: drop-shadow(0 2px 1px rgba(0, 70, 35, 0.55));
+}
+
+.hms-success-check path {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+
+  animation: hmsSuccessDraw 0.5s ease-out 0.25s forwards;
+}
+
+/* ---------- letterpress text ---------- */
+
+.hms-success-popup h3 {
+  position: relative;
+
+  margin: 0;
+
+  color: #25483a;
+
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95),
+    0 -1px 0 rgba(0, 60, 30, 0.18);
+}
+
+.hms-success-popup p {
+  position: relative;
+
+  margin: 0 0 12px;
+
+  color: #5a7a6b;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* ---------- embossed pill button ---------- */
+
+.hms-success-button {
+  position: relative;
+
+  height: 44px;
+  padding: 0 34px;
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+
+  background: linear-gradient(180deg, #17744f 0%, #0b3d2a 55%, #062a1c 100%);
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 1px rgba(0, 25, 15, 0.6);
+
+  cursor: pointer;
+
+  box-shadow:
+    0 9px 18px rgba(0, 50, 30, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.hms-success-button:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 13px 24px rgba(0, 50, 30, 0.45),
+    0 0 18px rgba(25, 196, 122, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.hms-success-button:active {
+  transform: translateY(1px);
+
+  box-shadow:
+    0 3px 7px rgba(0, 50, 30, 0.35),
+    inset 0 3px 7px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes hmsSuccessFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes hmsSuccessPop {
+  from { opacity: 0; transform: scale(0.85) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes hmsSuccessDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hms-success-backdrop,
+  .hms-success-popup,
+  .hms-success-check path {
+    animation: none !important;
+    stroke-dashoffset: 0;
+  }
+}

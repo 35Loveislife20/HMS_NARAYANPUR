@@ -6,3 +6,10 @@ dist/
 build/
 .vercel/
 *.log
+*.bak
+*.bak-*
+.git_disabled/
+*.xlsx
+backend/test-tidb.js
+backend/_check_users.js
+f1ce4ebd-65a5-436c-83c4-53b585a27beb.png

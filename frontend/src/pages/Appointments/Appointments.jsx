@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import {
     FaCalendarAlt,
@@ -18,10 +18,89 @@ import {
     FaCheckCircle,
 } from "react-icons/fa";
 
+import SuccessPopup from "../../components/common/SuccessPopup";
 import "./Appointments.css";
 
 function Appointments() {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    /*
+     * Hospital id ke sources (Dashboard.jsx ke hisaab se):
+     * - Super admin: Dashboard me chuna hua hospital
+     *   (navigate state / sessionStorage hms_selected_hospital)
+     * - Baaki staff: login user ka apna hospital (hms_user)
+     * - Purana key hms_hospital_id bhi fallback me chalega
+     */
+    const toValidHospitalId = (value) => {
+        if (value === null || value === undefined || value === "") {
+            return null;
+        }
+
+        const number = Number(value);
+
+        return Number.isInteger(number) && number > 0
+            ? number
+            : null;
+    };
+
+    const resolveHospitalId = () => {
+        let user = {};
+
+        try {
+            const saved = localStorage.getItem("hms_user");
+
+            user = saved ? JSON.parse(saved) || {} : {};
+        } catch {
+            user = {};
+        }
+
+        const role = String(user?.role || "").toLowerCase();
+
+        const ownHospital = toValidHospitalId(
+            user?.hospital_id ??
+                user?.hospitalId ??
+                (typeof user?.hospital === "object"
+                    ? user?.hospital?.id
+                    : user?.hospital)
+        );
+
+        let selectedHospital = toValidHospitalId(
+            location.state?.hospitalId
+        );
+
+        if (!selectedHospital) {
+            try {
+                selectedHospital = toValidHospitalId(
+                    sessionStorage.getItem("hms_selected_hospital")
+                );
+            } catch {
+                selectedHospital = null;
+            }
+        }
+
+        const storedHospital = toValidHospitalId(
+            localStorage.getItem("hms_hospital_id")
+        );
+
+        if (role === "super_admin") {
+            return (
+                selectedHospital ||
+                storedHospital ||
+                ownHospital ||
+                null
+            );
+        }
+
+        return (
+            ownHospital ||
+            storedHospital ||
+            selectedHospital ||
+            null
+        );
+    };
+
+    const validHospitalId = resolveHospitalId();
 
     const API_URL =
         import.meta.env.VITE_API_URL ||
@@ -55,6 +134,7 @@ function Appointments() {
     const [deletingId, setDeletingId] = useState(null);
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [successPopup, setSuccessPopup] = useState(null);
     const [appointmentToDelete, setAppointmentToDelete] =
         useState(null);
 
@@ -345,6 +425,13 @@ function Appointments() {
     const fetchAppointments = async (
         isRefresh = false
     ) => {
+        if (!validHospitalId) {
+            setAppointments([]);
+            setError("Hospital selection is missing. Please select a hospital first.");
+            setLoading(false);
+            return;
+        }
+
         try {
             if (isRefresh) {
                 setRefreshing(true);
@@ -356,7 +443,9 @@ function Appointments() {
 
             const response =
                 await fetch(
-                    `${API_URL}/appointments`,
+                    `${API_URL}/appointments?hospital_id=${encodeURIComponent(
+                        validHospitalId
+                    )}`,
                     {
                         method: "GET",
                         headers: getHeaders(),
@@ -409,12 +498,21 @@ function Appointments() {
     // =====================================================
 
     const fetchPatients = async () => {
+        if (!validHospitalId) {
+            setPatients([]);
+            setError("Hospital selection is missing. Please select a hospital first.");
+            setLoadingPatients(false);
+            return;
+        }
+
         try {
             setLoadingPatients(true);
 
             const response =
                 await fetch(
-                    `${API_URL}/patients`,
+                    `${API_URL}/patients?hospital_id=${encodeURIComponent(
+                        validHospitalId
+                    )}`,
                     {
                         method: "GET",
                         headers: getHeaders(),
@@ -461,12 +559,21 @@ function Appointments() {
     // =====================================================
 
     const fetchDoctors = async () => {
+        if (!validHospitalId) {
+            setDoctors([]);
+            setError("Hospital selection is missing. Please select a hospital first.");
+            setLoadingDoctors(false);
+            return;
+        }
+
         try {
             setLoadingDoctors(true);
 
             const response =
                 await fetch(
-                    `${API_URL}/doctors`,
+                    `${API_URL}/doctors?hospital_id=${encodeURIComponent(
+                        validHospitalId
+                    )}`,
                     {
                         method: "GET",
                         headers: getHeaders(),
@@ -730,6 +837,11 @@ function Appointments() {
             return;
         }
 
+        if (!validHospitalId) {
+            setError("Hospital selection is missing. Please select a hospital first.");
+            return;
+        }
+
         try {
             setSaving(true);
             setError("");
@@ -776,6 +888,8 @@ function Appointments() {
                 status:
                     formData.status ||
                     "pending",
+
+                hospital_id: validHospitalId,
             };
 
             const response =
@@ -820,6 +934,15 @@ function Appointments() {
 
             setFormData({
                 ...emptyForm,
+            });
+
+            setSuccessPopup({
+                title: isEdit
+                    ? "Appointment Updated"
+                    : "Appointment Added",
+                message: isEdit
+                    ? "Appointment has been updated successfully."
+                    : "New appointment has been added successfully.",
             });
         } catch (err) {
             console.error(
@@ -884,7 +1007,9 @@ function Appointments() {
 
             const response =
                 await fetch(
-                    `${API_URL}/appointments/${id}`,
+                    `${API_URL}/appointments/${id}?hospital_id=${encodeURIComponent(
+                        validHospitalId
+                    )}`,
                     {
                         method: "DELETE",
                         headers: getHeaders(),
@@ -915,6 +1040,11 @@ function Appointments() {
             setAppointmentToDelete(
                 null
             );
+
+            setSuccessPopup({
+                title: "Appointment Deleted",
+                message: "Appointment has been deleted successfully.",
+            });
         } catch (err) {
             console.error(
                 "Delete Appointment Error:",
@@ -1220,6 +1350,15 @@ function Appointments() {
 
     return (
         <main className="appointments-page">
+
+            <SuccessPopup
+                open={Boolean(successPopup)}
+                title={successPopup?.title}
+                message={successPopup?.message}
+                buttonLabel="OK"
+                autoCloseMs={2500}
+                onClose={() => setSuccessPopup(null)}
+            />
 
             {/* =================================================
                 HEADER

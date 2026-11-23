@@ -1,1917 +1,7277 @@
 /* =========================================================
    HMS HOME PAGE
-   COMPLETE REPLACEMENT CSS
+   PREMIUM GREEN / CYAN MEDICAL THEME
+   COMPLETE CSS
+========================================================= */
 
-   LAYOUT
-   ---------------------------------------------------------
-   LEFT   : HMS BRAND / DESCRIPTION / LOGIN
-   RIGHT  : PATIENT SERVICES - COMPACT
-   BOTTOM : FULL WIDTH DOCTORS MARQUEE
-   ========================================================= */
+:root {
+  --hms-bg: #00120d;
+  --hms-bg-2: #001a13;
 
-* {
-    box-sizing: border-box;
+  --hms-card: rgba(0, 35, 24, 0.72);
+
+  --hms-green: #39ff78;
+  --hms-green-2: #00e878;
+  --hms-green-light: #8dffad;
+
+  --hms-cyan: #19ffd0;
+
+  --hms-text: #f4fff8;
+  --hms-muted: #a8c7b8;
+
+  --hms-border: rgba(42, 255, 126, 0.35);
+  --hms-border-soft: rgba(42, 255, 126, 0.18);
 }
 
+
 /* =========================================================
-   ROOT PAGE
-   ========================================================= */
+   GLOBAL
+========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  overflow-x: hidden;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  overflow-x: hidden;
+  overflow-y: hidden;
+
+  font-family:
+    Inter,
+    "Segoe UI",
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  background: var(--hms-bg);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   MAIN HOME PAGE
+========================================================= */
 
 .home-page {
-    width: 100%;
-    min-height: 100vh;
+  position: relative;
 
-    position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
 
-    display: flex;
-    flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
 
-    overflow-x: hidden;
-    overflow-y: auto;
+  max-height: 100vh;
+  max-height: 100dvh;
 
-    color: #ffffff;
+  display: flex;
+  flex-direction: column;
 
-    font-family:
-        "Segoe UI",
-        Arial,
-        sans-serif;
+  overflow: hidden;
 
-    background:
-        radial-gradient(
-            circle at 8% 38%,
-            rgba(0, 255, 55, 0.12),
-            transparent 32%
-        ),
-        radial-gradient(
-            circle at 92% 35%,
-            rgba(0, 255, 55, 0.09),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 50% 100%,
-            rgba(0, 255, 55, 0.05),
-            transparent 35%
-        ),
-        linear-gradient(
-            135deg,
-            #020806 0%,
-            #06150d 48%,
-            #020806 100%
-        );
+  color: var(--hms-text);
+
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      rgba(57, 255, 120, 0.105),
+      transparent 29%
+    ),
+    radial-gradient(
+      circle at 8% 18%,
+      rgba(25, 255, 208, 0.055),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 94% 80%,
+      rgba(57, 255, 120, 0.065),
+      transparent 28%
+    ),
+    linear-gradient(
+      135deg,
+      var(--hms-bg) 0%,
+      var(--hms-bg-2) 48%,
+      var(--hms-bg) 100%
+    );
+
+  isolation: isolate;
+
+  --hms-surface: #002318;
 }
+
 
 /* =========================================================
-   BACKGROUND GRID
-   ========================================================= */
+   PREMIUM MEDICAL GRID
+========================================================= */
+
+.home-page::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  opacity: 0.22;
+
+  background-image:
+    linear-gradient(
+      rgba(57, 255, 120, 0.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(57, 255, 120, 0.025) 1px,
+      transparent 1px
+    );
+
+  background-size: 48px 48px;
+
+  mask-image:
+    radial-gradient(
+      ellipse at center,
+      black 0%,
+      transparent 78%
+    );
+
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse at center,
+      black 0%,
+      transparent 78%
+    );
+
+  z-index: -3;
+}
+
+
+/* =========================================================
+   HMS WATERMARK
+========================================================= */
+
+.hms-watermark {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  width: min(720px, 72vw);
+  height: min(720px, 72vw);
+
+  transform: translate(-50%, -50%);
+
+  background-image: url("/hms-logo.png");
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  opacity: 0.045;
+
+  filter:
+    grayscale(1)
+    brightness(1.8);
+
+  pointer-events: none;
+
+  z-index: -2;
+}
+
+
+/* =========================================================
+   PAGE OVERLAY
+========================================================= */
 
 .home-page::before {
-    content: "";
+  content: "";
 
-    position: fixed;
-    inset: 0;
+  position: absolute;
+  inset: 0;
 
-    background-image:
-        linear-gradient(
-            rgba(0, 255, 80, 0.035) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(0, 255, 80, 0.035) 1px,
-            transparent 1px
-        );
+  pointer-events: none;
 
-    background-size: 65px 65px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(141, 255, 173, 0.025),
+      transparent 30%,
+      rgba(0, 0, 0, 0.18)
+    );
 
-    pointer-events: none;
-
-    z-index: 0;
+  z-index: -1;
 }
+
+
+/* =========================================================
+   BACKGROUND GLOW
+========================================================= */
+
+.background-glow {
+  position: absolute;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  filter: blur(70px);
+
+  opacity: 0.5;
+}
+
+.background-glow-one {
+  width: 320px;
+  height: 320px;
+
+  left: -120px;
+  top: 18%;
+
+  background:
+    rgba(57, 255, 120, 0.09);
+
+  animation:
+    glowFloat
+    8s
+    ease-in-out
+    infinite;
+}
+
+.background-glow-two {
+  width: 380px;
+  height: 380px;
+
+  right: -150px;
+  bottom: -120px;
+
+  background:
+    rgba(25, 255, 208, 0.07);
+
+  animation:
+    glowFloat
+    8s
+    ease-in-out
+    infinite;
+
+  animation-delay: -4s;
+}
+
+@keyframes glowFloat {
+
+  0%,
+  100% {
+    transform:
+      translate3d(0, 0, 0)
+      scale(1);
+  }
+
+  50% {
+    transform:
+      translate3d(0, -15px, 0)
+      scale(1.04);
+  }
+}
+
+
+/* =========================================================
+   MEDICAL CROSS
+========================================================= */
+
+.medical-cross {
+  position: absolute;
+
+  color:
+    rgba(57, 255, 120, 0.035);
+
+  font-size: 150px;
+  font-weight: 900;
+  line-height: 1;
+
+  pointer-events: none;
+  user-select: none;
+
+  text-shadow:
+    0 0 35px rgba(57, 255, 120, 0.06);
+
+  animation:
+    medicalFloat
+    7s
+    ease-in-out
+    infinite;
+}
+
+.medical-cross-one {
+  left: 5%;
+  top: 26%;
+
+  font-size: 135px;
+}
+
+.medical-cross-two {
+  right: 5%;
+  bottom: 18%;
+
+  font-size: 110px;
+
+  animation-delay: -3s;
+}
+
+@keyframes medicalFloat {
+
+  0%,
+  100% {
+    transform:
+      translateY(0)
+      rotate(0deg);
+  }
+
+  50% {
+    transform:
+      translateY(-10px)
+      rotate(2deg);
+  }
+}
+
+
+/* =========================================================
+   HEARTBEAT
+========================================================= */
+
+.heartbeat-line {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  top: 56%;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(57, 255, 120, 0.02) 15%,
+      rgba(57, 255, 120, 0.14) 50%,
+      rgba(25, 255, 208, 0.05) 70%,
+      transparent 100%
+    );
+
+  pointer-events: none;
+
+  opacity: 0.55;
+}
+
+.heartbeat-line span {
+  display: block;
+
+  width: 100%;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(57, 255, 120, 0.14),
+      transparent
+    );
+}
+
+.heartbeat-line::before {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  top: -1px;
+
+  width: 260px;
+  height: 3px;
+
+  transform: translateX(-50%);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      var(--hms-green),
+      var(--hms-cyan),
+      transparent
+    );
+
+  filter: blur(2px);
+
+  opacity: 0.22;
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.home-navigation-layer {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 90px;
+
+  z-index: 99999;
+
+  pointer-events: none;
+}
+
+.main-page-arrow-button {
+  position: absolute;
+
+  top: 20px;
+  left: 24px;
+
+  width: 54px;
+  height: 54px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  margin: 0;
+
+  border:
+    1px solid
+    var(--hms-border);
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      145deg,
+      #003524,
+      #001810
+    );
+
+  color: var(--hms-green);
+
+  font-size: 30px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  pointer-events: auto;
+
+  box-shadow:
+    8px 9px 20px rgba(0, 0, 0, 0.44),
+    0 0 18px rgba(57, 255, 120, 0.08),
+    inset 1px 1px 2px rgba(141, 255, 173, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.3);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.main-page-arrow-button:hover {
+  transform:
+    translateY(-2px)
+    translateX(-2px);
+
+  box-shadow:
+    10px 12px 24px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(57, 255, 120, 0.12),
+    inset 1px 1px 2px rgba(141, 255, 173, 0.08),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.main-page-arrow-button:active {
+  transform: scale(0.95);
+}
+
+button:focus,
+button:focus-visible,
+input:focus,
+input:focus-visible,
+select:focus,
+select:focus-visible {
+  outline: none;
+}
+
 
 /* =========================================================
    HEADER
-   ========================================================= */
+========================================================= */
 
 .home-header {
-    display: none !important;
+  position: relative;
+
+  width: 100%;
+
+  flex: 0 0 auto;
+
+  padding:
+    22px
+    80px
+    0
+    90px;
+
+  z-index: 20;
 }
+
+.home-header::before {
+  content: "";
+
+  position: absolute;
+
+  top: -160px;
+  left: 50%;
+
+  width: 600px;
+  height: 300px;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(57, 255, 120, 0.075),
+      transparent 70%
+    );
+
+  filter: blur(25px);
+
+  pointer-events: none;
+}
+
+.home-header::after {
+  content: "";
+
+  position: absolute;
+
+  top: 18px;
+  right: 28px;
+
+  width: 75px;
+  height: 75px;
+
+  border-top:
+    1px solid
+    rgba(57, 255, 120, 0.13);
+
+  border-right:
+    1px solid
+    rgba(25, 255, 208, 0.13);
+
+  border-radius:
+    0 18px 0 0;
+
+  pointer-events: none;
+
+  opacity: 0.8;
+}
+
+
+/* =========================================================
+   HEADING
+========================================================= */
+
+.heading-row {
+  position: relative;
+
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 22px;
+}
+
+.heading-row::before {
+  content: "";
+
+  position: absolute;
+
+  width: 240px;
+  height: 42px;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(57, 255, 120, 0.08),
+      transparent 72%
+    );
+
+  filter: blur(12px);
+
+  pointer-events: none;
+
+  z-index: -1;
+}
+
+.heading-row h2 {
+  margin: 0;
+
+  color: var(--hms-text);
+
+  font-size:
+    clamp(22px, 2.2vw, 32px);
+
+  font-weight: 700;
+
+  letter-spacing: 1px;
+
+  line-height: 1.2;
+
+  text-align: center;
+
+  white-space: nowrap;
+
+  text-shadow:
+    0 0 8px rgba(57, 255, 120, 0.08),
+    0 0 24px rgba(57, 255, 120, 0.07),
+    2px 2px 5px rgba(0, 0, 0, 0.55);
+}
+
+.heading-line {
+  flex: 1;
+
+  max-width: 300px;
+
+  height: 2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(57, 255, 120, 0.4),
+      rgba(25, 255, 208, 0.22),
+      transparent
+    );
+}
+
 
 /* =========================================================
    MAIN CONTENT
-
-   TOP
-   LEFT  = BRAND
-   RIGHT = PATIENT SERVICES
-
-   BOTTOM
-   FULL WIDTH DOCTORS
-   ========================================================= */
+========================================================= */
 
 .home-content {
-    width: 100%;
-    max-width: 1800px;
+  position: relative;
 
-    margin: 0 auto;
+  z-index: 10;
 
-    padding:
-        30px 45px 22px;
+  width: 100%;
 
-    position: relative;
+  flex: 1 1 auto;
 
-    z-index: 2;
+  min-height: 0;
 
-    display: grid;
+  display: flex;
 
-    grid-template-columns:
-        minmax(0, 1fr)
-        minmax(400px, 500px);
+  flex-direction: column;
 
-    column-gap: 30px;
+  align-items: center;
 
-    row-gap: 28px;
+  overflow: hidden;
 
-    align-items: center;
+  padding:
+    14px
+    24px
+    15px;
 }
 
-/* =========================================================
-   LEFT HERO
-   ========================================================= */
+.home-content::before {
+  content: "";
 
-.home-left {
-    width: 100%;
-    min-width: 0;
+  position: absolute;
 
-    min-height: 290px;
+  top: 15%;
+  left: 7%;
 
-    display: flex;
+  width: 5px;
+  height: 5px;
 
-    flex-direction: column;
+  border-radius: 50%;
 
-    justify-content: center;
+  background:
+    var(--hms-green);
 
-    align-items: flex-start;
+  box-shadow:
+    0 0 12px rgba(57, 255, 120, 0.7),
+    130px 75px 0 rgba(25, 255, 208, 0.25),
+    -35px 180px 0 rgba(57, 255, 120, 0.25),
+    70vw 120px 0 rgba(25, 255, 208, 0.18),
+    82vw 270px 0 rgba(57, 255, 120, 0.22);
+
+  opacity: 0.65;
+
+  pointer-events: none;
 }
 
-/* =========================================================
-   SMART HEALTHCARE BADGE
-   ========================================================= */
+.home-content::after {
+  content: "";
 
-.home-badge {
-    width: fit-content;
-    max-width: 100%;
+  position: absolute;
 
-    display: flex;
+  left: 0;
+  right: 0;
+  bottom: 0;
 
-    align-items: center;
+  height: 130px;
 
-    gap: 9px;
+  background:
+    linear-gradient(
+      to top,
+      rgba(0, 18, 13, 0.5),
+      transparent
+    );
 
-    margin-bottom: 15px;
+  pointer-events: none;
 
-    padding:
-        8px 15px;
-
-    border:
-        1px solid rgba(0, 255, 55, 0.38);
-
-    border-radius: 30px;
-
-    background:
-        rgba(0, 255, 55, 0.055);
-
-    color: #00ff37;
-
-    font-size: 10px;
-
-    font-weight: 800;
-
-    letter-spacing: 1.2px;
-
-    line-height: 1.2;
-
-    box-shadow:
-        0 0 25px rgba(0, 255, 55, 0.04);
+  z-index: -1;
 }
 
-.home-badge svg {
-    flex-shrink: 0;
-
-    color: #00ff37;
-
-    font-size: 14px;
-}
-
-/* =========================================================
-   BRAND
-   ========================================================= */
-
-.home-brand {
-    width: 100%;
-
-    min-width: 0;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 23px;
-
-    margin-bottom: 15px;
-}
-
-/* =========================================================
-   BRAND LOGO
-   ========================================================= */
-
-.home-brand-icon {
-    width: 135px;
-
-    height: 135px;
-
-    min-width: 135px;
-
-    flex-shrink: 0;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background: transparent !important;
-
-    border: none !important;
-
-    border-radius: 0 !important;
-
-    box-shadow: none !important;
-
-    overflow: visible;
-}
-
-.home-brand-icon img {
-    width: 100%;
-
-    height: 100%;
-
-    display: block;
-
-    object-fit: contain;
-
-    object-position: center;
-
-    background: transparent !important;
-
-    border: none !important;
-
-    border-radius: 0 !important;
-
-    box-shadow: none !important;
-}
-
-/* =========================================================
-   BRAND TEXT
-   ========================================================= */
-
-.home-brand-text {
-    min-width: 0;
-
-    flex: 1;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: center;
-}
-
-.home-brand-text h1 {
-    width: 100%;
-
-    margin: 0;
-
-    padding: 0;
-
-    color: #ffffff;
-
-    font-size:
-        clamp(
-            40px,
-            4vw,
-            66px
-        );
-
-    font-weight: 800;
-
-    line-height: 1.04;
-
-    letter-spacing: -1.7px;
-
-    overflow-wrap: anywhere;
-
-    text-shadow:
-        0 0 30px rgba(0, 255, 55, 0.10);
-}
-
-.home-brand-text span {
-    display: block;
-
-    margin-top: 7px;
-
-    color: #00ff37;
-
-    font-size: 14px;
-
-    font-weight: 600;
-
-    letter-spacing: 1.4px;
-
-    line-height: 1.4;
-}
-
-/* =========================================================
-   DESCRIPTION
-   ========================================================= */
-
-.home-description {
-    width: 100%;
-
-    max-width: 740px;
-
-    margin: 0;
-
-    color: #9eafa6;
-
-    font-size: 14px;
-
-    font-weight: 400;
-
-    line-height: 1.6;
-}
-
-/* =========================================================
-   LOGIN
-   ========================================================= */
-
-.home-login-wrapper {
-    width: 100%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: flex-start;
-}
-
-.home-login-button {
-    width: 205px;
-
-    height: 48px;
-
-    margin-top: 17px;
-
-    padding:
-        0 20px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 9px;
-
-    border: none;
-
-    border-radius: 10px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #00ff55,
-            #00d948
-        );
-
-    color: #001207;
-
-    font-size: 14px;
-
-    font-weight: 800;
-
-    cursor: pointer;
-
-    box-shadow:
-        0 5px 0 #008d31,
-        0 10px 25px rgba(0, 255, 55, 0.20);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
-}
-
-.home-login-button:hover {
-    transform: translateY(-3px);
-
-    background:
-        linear-gradient(
-            180deg,
-            #16ff61,
-            #00df4c
-        );
-
-    box-shadow:
-        0 7px 0 #008d31,
-        0 15px 35px rgba(0, 255, 55, 0.30);
-}
-
-.home-login-button:active {
-    transform: translateY(2px);
-
-    box-shadow:
-        0 2px 0 #008d31,
-        0 5px 15px rgba(0, 255, 55, 0.18);
-}
-
-.home-login-button svg {
-    flex-shrink: 0;
-
-    font-size: 15px;
-}
-
-/* =========================================================
-   RIGHT SIDE
-   ========================================================= */
-
-.home-right {
-    width: 100%;
-
-    min-width: 0;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-}
-
-/* =========================================================
-   PATIENT SERVICES CARD
-   COMPACT VERSION
-   ========================================================= */
-
-.hospital-card {
-    width: 70%;
-
-    max-width: 500px;
-
-    padding:
-        10px 18px 17px;
-
-    text-align: center;
-
-    border:
-        1px solid rgba(0, 255, 55, 0.34);
-
-    border-radius: 18px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(8, 31, 19, 0.98),
-            rgba(2, 13, 8, 0.99)
-        );
-
-    box-shadow:
-        0 18px 48px rgba(0, 0, 0, 0.42),
-        0 0 30px rgba(0, 255, 55, 0.07);
-
-    backdrop-filter: blur(15px);
-
-    transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease,
-        border-color 0.3s ease;
-}
-
-.hospital-card:hover {
-    transform: translateY(-3px);
-
-    border-color:
-        rgba(0, 255, 55, 0.45);
-
-    box-shadow:
-        0 22px 55px rgba(0, 0, 0, 0.50),
-        0 0 38px rgba(0, 255, 55, 0.10);
-}
-
-/* =========================================================
-   HOSPITAL CARD LOGO
-   ========================================================= */
-
-.hospital-card-icon {
-    width: 64px;
-
-    height: 64px;
-
-    margin:
-        0 auto 8px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background: transparent !important;
-
-    border: none !important;
-
-    border-radius: 0 !important;
-
-    box-shadow: none !important;
-
-    overflow: visible;
-}
-
-.hospital-card-icon img {
-    width: 100%;
-
-    height: 100%;
-
-    display: block;
-
-    object-fit: contain;
-
-    object-position: center;
-
-    background: transparent !important;
-
-    border: none !important;
-
-    border-radius: 0 !important;
-
-    box-shadow: none !important;
-}
 
 /* =========================================================
    HOSPITAL NAME
-   ========================================================= */
+========================================================= */
 
-.hospital-card h3 {
-    margin: 0;
+.hospital-name {
+  position: relative;
 
-    color: #ffffff;
+  width: 100%;
 
-    font-size: 18px;
+  margin: 0;
 
-    font-weight: 800;
+  padding:
+    0
+    10px;
 
-    line-height: 1.25;
+  flex: 0 0 auto;
 
-    overflow-wrap: anywhere;
+  color: var(--hms-text);
+
+  font-size:
+    clamp(30px, 5vw, 62px);
+
+  font-weight: 800;
+
+  line-height: 1.08;
+
+  letter-spacing: 1.2px;
+
+  text-align: center;
+
+  overflow-wrap: anywhere;
+
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.65),
+    0 0 14px rgba(57, 255, 120, 0.10),
+    0 0 38px rgba(57, 255, 120, 0.045);
 }
+
+.hospital-name::after {
+  content: "";
+
+  display: block;
+
+  width: min(260px, 48vw);
+
+  height: 2px;
+
+  margin:
+    10px
+    auto
+    0;
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(57, 255, 120, 0.65),
+      rgba(25, 255, 208, 0.5),
+      transparent
+    );
+
+  box-shadow:
+    0 0 12px
+    rgba(57, 255, 120, 0.14);
+}
+
+.hospital-api-warning {
+  margin-top: 6px;
+
+  padding:
+    4px
+    12px;
+
+  border:
+    1px solid
+    var(--hms-border-soft);
+
+  border-radius: 20px;
+
+  background:
+    rgba(57, 255, 120, 0.06);
+
+  color:
+    var(--hms-muted);
+
+  font-size: 10px;
+
+  text-align: center;
+}
+
 
 /* =========================================================
-   HOSPITAL DESCRIPTION
-   ========================================================= */
+   STEP ONE
+========================================================= */
 
-.hospital-card > p {
-    width: 100%;
+.step-one-content {
+  width: 100%;
 
-    max-width: 430px;
+  flex: 1 1 auto;
 
-    margin:
-        6px auto 13px;
+  min-height: 0;
 
-    color: #8fa39a;
+  display: flex;
 
-    font-size: 10px;
+  align-items: center;
+  justify-content: center;
 
-    line-height: 1.5;
+  padding:
+    20px;
 }
+
 
 /* =========================================================
-   PATIENT SERVICES
-   ========================================================= */
+   STEP TWO
+========================================================= */
 
-.hospital-management-list {
-    width: 100%;
+.step-two-content {
+  width: 100%;
 
-    padding-top: 12px;
+  flex: 1 1 auto;
 
-    border-top:
-        1px solid rgba(255, 255, 255, 0.07);
+  min-height: 0;
 
-    display: flex;
+  display: flex;
 
-    flex-direction: column;
+  flex-direction: column;
 
-    gap: 7px;
+  align-items: center;
 
-    text-align: left;
+  justify-content: flex-start;
+
+  padding:
+    70px
+    0
+    10px;
+
+  margin: 0;
+
+  overflow: hidden;
 }
 
-.hospital-management-list h4 {
-    margin:
-        0 0 3px;
-
-    color: #00ff37;
-
-    font-size: 11px;
-
-    font-weight: 800;
-
-    letter-spacing: 0.8px;
-
-    text-transform: uppercase;
-}
 
 /* =========================================================
-   PATIENT SERVICE ITEM
-   ========================================================= */
+   MAIN HMS LOGIN BUTTON
+========================================================= */
 
-.management-item {
-    width: 100%;
+.step-one-button {
+  position: relative;
 
-    min-height: 52px;
+  width:
+    min(
+      310px,
+      calc(100vw - 50px)
+    );
 
-    display: grid;
+  height: 60px;
 
-    grid-template-columns:
-        36px
-        minmax(0, 1fr)
-        auto;
+  flex: 0 0 auto;
 
-    align-items: center;
+  display: flex;
 
-    gap: 10px;
+  align-items: center;
+  justify-content: center;
 
-    padding:
-        7px 10px;
+  gap: 35px;
 
-    border:
-        1px solid rgba(0, 255, 55, 0.11);
+  padding:
+    0
+    28px;
 
-    border-radius: 10px;
+  margin: 0 auto;
 
-    background:
-        linear-gradient(
-            90deg,
-            rgba(0, 255, 55, 0.045),
-            rgba(0, 255, 55, 0.018)
-        );
+  border:
+    1px solid
+    var(--hms-border);
 
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--hms-green),
+      var(--hms-green-2) 55%,
+      #00b85f
+    );
+
+  color: #00120d;
+
+  font-family: inherit;
+
+  font-size: 19px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.3px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.38),
+    0 0 0 1px rgba(57, 255, 120, 0.05),
+    0 0 28px rgba(57, 255, 120, 0.11),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.22),
+    inset -3px -3px 6px rgba(0, 50, 30, 0.3);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
-.management-item:hover {
-    background:
-        rgba(0, 255, 55, 0.07);
+.step-one-button::before {
+  content: "";
 
-    border-color:
-        rgba(0, 255, 55, 0.28);
+  position: absolute;
 
-    transform: translateX(2px);
+  inset: 2px;
 
-    box-shadow:
-        0 5px 18px rgba(0, 0, 0, 0.20);
+  border-radius: 15px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  pointer-events: none;
 }
+
+.step-one-button::after {
+  content: "";
+
+  position: absolute;
+
+  left: 15%;
+  right: 15%;
+  top: -18px;
+
+  height: 18px;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(57, 255, 120, 0.13),
+      transparent 70%
+    );
+
+  filter: blur(8px);
+
+  pointer-events: none;
+}
+
+.step-one-button:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    12px 15px 28px rgba(0, 0, 0, 0.45),
+    0 0 32px rgba(57, 255, 120, 0.15),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -3px -3px 6px rgba(0, 50, 30, 0.3);
+}
+
+.step-one-button:active {
+  transform: translateY(1px);
+}
+
+.button-arrow {
+  font-size: 27px;
+  line-height: 1;
+
+  transition:
+    transform 0.2s ease;
+}
+
+.step-one-button:hover .button-arrow {
+  transform: translateX(5px);
+}
+
 
 /* =========================================================
-   SERVICE ICON
-   ========================================================= */
+   CARD OVERLAY
+========================================================= */
 
-.management-item > svg {
-    width: 34px;
+.admin-card-overlay {
+  position: relative;
 
-    height: 34px;
+  width: 100%;
 
-    padding: 8px;
+  flex: 0 0 auto;
 
-    border-radius: 8px;
+  height: auto;
 
-    background:
-        rgba(0, 255, 55, 0.08);
+  min-height: 0;
 
-    color: #00ff37;
+  display: flex;
 
-    font-size: 14px;
+  align-items: flex-start;
+  justify-content: center;
+
+  padding:
+    0
+    10px
+    8px;
+
+  margin: 0;
+
+  overflow: visible;
+
+  z-index: 500;
 }
+
+.admin-card-overlay::before {
+  content: "";
+
+  position: absolute;
+
+  top: -80px;
+  left: 50%;
+
+  width: 440px;
+  height: 280px;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(57, 255, 120, 0.075),
+      transparent 68%
+    );
+
+  filter: blur(25px);
+
+  pointer-events: none;
+
+  z-index: -1;
+}
+
 
 /* =========================================================
-   SERVICE TEXT
-   ========================================================= */
+   ADMIN CARD
+========================================================= */
 
-.management-item > span {
-    min-width: 0;
+.admin-card {
+  position: relative;
 
-    color: #ffffff;
+  width:
+    min(
+      370px,
+      calc(100vw - 34px)
+    );
 
-    font-size: 10px;
+  height: auto;
 
-    font-weight: 700;
+  min-height: 0;
 
-    line-height: 1.25;
+  max-height: none;
 
-    white-space: nowrap;
+  flex: 0 0 auto;
 
-    overflow: hidden;
+  padding:
+    39px
+    18px
+    10px;
 
-    text-overflow: ellipsis;
+  border:
+    1px solid
+    rgba(57, 255, 120, 0.38);
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0, 45, 30, 0.96),
+      rgba(0, 30, 21, 0.96)
+    );
+
+  color: var(--hms-text);
+
+  box-shadow:
+    0 24px 55px rgba(0, 0, 0, 0.48),
+    0 0 30px rgba(57, 255, 120, 0.06),
+    0 0 0 1px rgba(25, 255, 208, 0.025),
+    inset 1px 1px 5px rgba(141, 255, 173, 0.065);
+
+  overflow: visible;
+
+  z-index: 501;
 }
+
+.admin-card::before {
+  content: "";
+
+  position: absolute;
+
+  left: 12%;
+  right: 12%;
+  top: 0;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(57, 255, 120, 0.7),
+      rgba(25, 255, 208, 0.5),
+      transparent
+    );
+
+  box-shadow:
+    0 0 12px
+    rgba(57, 255, 120, 0.2);
+
+  pointer-events: none;
+}
+
 
 /* =========================================================
-   SERVICE ACTION
-   ========================================================= */
+   LOGO
+========================================================= */
 
-.management-item small {
-    flex-shrink: 0;
+.admin-logo-circle {
+  position: absolute;
 
-    min-width: 55px;
+  top: -44px;
 
-    padding:
-        5px 7px;
+  left: 50%;
 
-    text-align: center;
+  transform:
+    translateX(-50%);
 
-    border-radius: 5px;
+  width: 88px;
+  height: 88px;
 
-    background:
-        rgba(0, 255, 55, 0.08);
+  display: flex;
 
-    color: #00ff37;
+  align-items: center;
+  justify-content: center;
 
-    font-size: 7px;
+  border:
+    4px solid
+    var(--hms-green);
 
-    font-weight: 800;
+  border-radius: 50%;
 
-    letter-spacing: 0.3px;
+  background:
+    linear-gradient(
+      145deg,
+      #003b28,
+      #001c14
+    );
 
-    text-transform: uppercase;
+  overflow: hidden;
+
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.42),
+    0 0 25px rgba(57, 255, 120, 0.14),
+    0 0 55px rgba(57, 255, 120, 0.04);
+
+  z-index: 20;
 }
+
+.admin-logo-circle img {
+  width: 70px;
+  height: 70px;
+
+  object-fit: contain;
+
+  display: block;
+}
+
+.logo-fallback-text {
+  display: none;
+
+  color: var(--hms-green-light);
+
+  font-size: 22px;
+
+  font-weight: 900;
+}
+
+.admin-logo-circle.logo-fallback
+  .logo-fallback-text {
+  display: block;
+}
+
 
 /* =========================================================
-   SECURITY
-   ========================================================= */
+   CLOSE BUTTON
+========================================================= */
 
-.hospital-security {
-    margin-top: 11px;
+.card-close-button {
+  position: absolute;
 
-    padding-top: 9px;
+  top: 8px;
+  right: 8px;
 
-    display: flex;
+  width: 34px;
+  height: 34px;
 
-    align-items: center;
+  display: flex;
 
-    justify-content: center;
+  align-items: center;
+  justify-content: center;
 
-    gap: 5px;
+  padding: 0;
 
-    border-top:
-        1px solid rgba(255, 255, 255, 0.06);
+  border:
+    1px solid
+    var(--hms-border-soft);
 
-    color: #687d72;
+  border-radius: 50%;
 
-    font-size: 8px;
+  background:
+    linear-gradient(
+      145deg,
+      #003b28,
+      #001c14
+    );
 
-    font-weight: 600;
+  color: var(--hms-green);
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  box-shadow:
+    4px 5px 9px
+      rgba(0, 0, 0, 0.3),
+    0 0 12px
+      rgba(57, 255, 120, 0.05);
+
+  z-index: 30;
 }
 
-.hospital-security svg {
-    flex-shrink: 0;
+.card-close-button:hover {
+  transform: translateY(-1px);
 
-    color: #00ff37;
-
-    font-size: 10px;
+  color: var(--hms-green-light);
 }
+
 
 /* =========================================================
-   DOCTORS SECTION
-   FULL WIDTH
-   ========================================================= */
+   CARD TITLE
+========================================================= */
 
-.doctors-section {
-    grid-column: 1 / -1;
+.admin-card-title {
+  width: 100%;
 
-    width: 100%;
+  display: flex;
 
-    max-width: none;
+  flex-direction: column;
 
-    min-width: 0;
+  align-items: center;
+  justify-content: center;
 
-    margin-top: 0;
-
-    overflow: hidden;
+  margin-bottom: 7px;
 }
+
+.title-small {
+  margin-bottom: 1px;
+
+  color: var(--hms-green-light);
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.8px;
+}
+
+.admin-card-title h3 {
+  margin: 0;
+
+  color: var(--hms-green-light);
+
+  font-size: 20px;
+
+  font-weight: 850;
+
+  line-height: 1.15;
+
+  text-align: center;
+}
+
+.title-line {
+  width: 45px;
+
+  height: 3px;
+
+  margin-top: 4px;
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--hms-green),
+      var(--hms-cyan)
+    );
+}
+
 
 /* =========================================================
-   DOCTORS MARQUEE
-   ========================================================= */
+   FORM
+========================================================= */
 
-.doctors-marquee {
-    width: 100%;
+.login-form,
+.otp-form {
+  width: 100%;
 
-    max-width: none;
+  display: flex;
 
-    position: relative;
+  flex-direction: column;
 
-    overflow: hidden;
-
-    padding:
-        4px 0 13px;
+  gap: 6px;
 }
+
+.field-group {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.field-group label,
+.otp-method-section > label {
+  padding-left: 3px;
+
+  color: var(--hms-green-light);
+
+  font-size: 11px;
+
+  font-weight: 750;
+}
+
 
 /* =========================================================
-   MARQUEE EDGE FADE
-   ========================================================= */
+   FIELD
+========================================================= */
 
-.doctors-marquee::before,
-.doctors-marquee::after {
-    content: "";
+.field-box {
+  width: 100%;
 
-    position: absolute;
+  height: 39px;
+  min-height: 39px;
 
-    top: 0;
+  display: flex;
 
-    bottom: 0;
+  align-items: center;
 
-    width: 75px;
+  padding:
+    0
+    10px;
 
-    z-index: 5;
+  border:
+    1px solid
+    var(--hms-border-soft);
 
-    pointer-events: none;
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0, 55, 38, 0.9),
+      rgba(0, 30, 21, 0.95)
+    );
+
+  overflow: hidden;
+
+  box-shadow:
+    inset 3px 3px 7px
+      rgba(0, 0, 0, 0.25),
+    inset -3px -3px 7px
+      rgba(57, 255, 120, 0.035),
+    4px 5px 8px
+      rgba(0, 0, 0, 0.12);
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
 }
 
-.doctors-marquee::before {
-    left: 0;
+.field-box:focus-within {
+  border-color:
+    rgba(57, 255, 120, 0.48);
 
-    background:
-        linear-gradient(
-            to right,
-            #06150d,
-            transparent
-        );
+  box-shadow:
+    inset 3px 3px 7px rgba(0, 0, 0, 0.25),
+    0 0 0 2px rgba(57, 255, 120, 0.035),
+    0 0 14px rgba(57, 255, 120, 0.045);
 }
 
-.doctors-marquee::after {
-    right: 0;
+.field-icon {
+  width: 23px;
 
-    background:
-        linear-gradient(
-            to left,
-            #06150d,
-            transparent
-        );
+  flex-shrink: 0;
+
+  color: var(--hms-green);
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  text-align: center;
 }
+
+.field-box input,
+.field-box select {
+  width: 100%;
+
+  min-width: 0;
+
+  height: 39px;
+
+  padding:
+    0
+    6px;
+
+  border: 0;
+
+  outline: 0;
+
+  background: transparent;
+
+  color: var(--hms-text);
+
+  font-family: inherit;
+
+  font-size: 12px;
+}
+
+.field-box input::placeholder {
+  color: var(--hms-muted);
+}
+
+.field-box select {
+  cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  padding-right: 28px;
+
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      var(--hms-green) 50%
+    ),
+    linear-gradient(
+      135deg,
+      var(--hms-green) 50%,
+      transparent 50%
+    );
+
+  background-position:
+    calc(100% - 12px) 16px,
+    calc(100% - 7px) 16px;
+
+  background-size:
+    5px 5px,
+    5px 5px;
+
+  background-repeat: no-repeat;
+}
+
+.field-box select option {
+  color: #00120d;
+
+  background: #dfffea;
+}
+
 
 /* =========================================================
-   MARQUEE TRACK
-   LEFT -> RIGHT
-   ========================================================= */
+   PASSWORD
+========================================================= */
 
-.doctors-marquee-track {
-    width: max-content;
+.password-toggle {
+  width: 30px;
+  height: 30px;
 
-    display: flex;
+  flex-shrink: 0;
 
-    align-items: stretch;
+  display: flex;
 
-    gap: 18px;
+  align-items: center;
+  justify-content: center;
 
-    animation:
-        doctorsMarqueeRight 32s linear infinite;
+  padding: 0;
 
-    will-change: transform;
+  border: 0;
+
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: var(--hms-green);
+
+  cursor: pointer;
 }
 
-.doctors-marquee:hover
-.doctors-marquee-track {
-    animation-play-state: paused;
-}
 
 /* =========================================================
-   LEFT TO RIGHT ANIMATION
-   ========================================================= */
+   CAPTCHA
+========================================================= */
 
-@keyframes doctorsMarqueeRight {
+.captcha-row {
+  width: 100%;
 
-    0% {
-        transform: translateX(-50%);
-    }
+  display: grid;
 
-    100% {
-        transform: translateX(0);
-    }
+  grid-template-columns:
+    minmax(80px, 1fr)
+    38px
+    minmax(105px, 1.35fr);
+
+  gap: 6px;
 }
+
+.captcha-code {
+  min-height: 39px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background:
+    repeating-linear-gradient(
+      120deg,
+      #003c2a 0,
+      #003c2a 3px,
+      #00513a 3px,
+      #00513a 6px
+    );
+
+  color: var(--hms-green-light);
+
+  font-size: 15px;
+
+  font-weight: 900;
+
+  letter-spacing: 2.5px;
+
+  user-select: none;
+
+  text-decoration:
+    line-through;
+}
+
+.captcha-refresh-button {
+  min-height: 39px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border:
+    1px solid
+    var(--hms-border-soft);
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #003c29,
+      #001f16
+    );
+
+  color: var(--hms-green);
+
+  font-size: 21px;
+
+  cursor: pointer;
+}
+
+.captcha-input-box {
+  min-width: 0;
+
+  min-height: 39px;
+
+  display: flex;
+
+  align-items: center;
+
+  padding:
+    0
+    9px;
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0, 55, 38, 0.9),
+      rgba(0, 30, 21, 0.95)
+    );
+
+  box-shadow:
+    inset 3px 3px 7px
+      rgba(0, 0, 0, 0.2),
+    inset -3px -3px 7px
+      rgba(57, 255, 120, 0.035);
+}
+
+.captcha-input-box input {
+  width: 100%;
+
+  min-width: 0;
+
+  border: 0;
+
+  outline: 0;
+
+  background: transparent;
+
+  color: var(--hms-text);
+
+  font-size: 11px;
+}
+
 
 /* =========================================================
-   DOCTOR CARD
-   ========================================================= */
+   MESSAGE
+========================================================= */
 
-.doctor-card {
-    width: 330px;
+.login-message {
+  width: 100%;
 
-    min-width: 330px;
+  padding:
+    5px
+    9px;
 
-    height: 150px;
+  border:
+    1px solid
+    var(--hms-border-soft);
 
-    position: relative;
+  border-radius: 8px;
 
-    display: flex;
+  background:
+    rgba(57, 255, 120, 0.055);
 
-    align-items: center;
+  color: var(--hms-green-light);
 
-    gap: 13px;
+  font-size: 10px;
 
-    padding: 10px;
+  font-weight: 650;
 
-    overflow: hidden;
+  line-height: 1.35;
 
-    border:
-        1px solid rgba(0, 255, 55, 0.16);
-
-    border-radius: 14px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(9, 31, 19, 0.98),
-            rgba(2, 14, 8, 0.99)
-        );
-
-    box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.32);
-
-    transition:
-        transform 0.25s ease,
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
+  text-align: center;
 }
+
 
 /* =========================================================
-   DOCTOR TOP LINE
-   ========================================================= */
+   LOGIN SUBMIT
+========================================================= */
 
-.doctor-card::before {
-    content: "";
+.login-submit-button,
+.otp-send-button {
+  width: 100%;
 
-    position: absolute;
+  height: 40px;
+  min-height: 40px;
 
-    top: 0;
+  display: flex;
 
-    left: 0;
+  align-items: center;
+  justify-content: center;
 
-    right: 0;
+  gap: 25px;
 
-    height: 2px;
+  margin-top: 2px;
 
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            #00ff37,
-            transparent
-        );
+  padding:
+    0
+    16px;
 
-    opacity: 0.8;
+  border:
+    1px solid
+    var(--hms-border);
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      145deg,
+      var(--hms-green),
+      var(--hms-green-2) 55%,
+      #00b85f
+    );
+
+  color: #00120d;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    8px 9px 16px
+      rgba(0, 0, 0, 0.3),
+    0 0 16px
+      rgba(57, 255, 120, 0.07),
+    inset 2px 2px 3px
+      rgba(255, 255, 255, 0.2),
+    inset -3px -3px 6px
+      rgba(0, 45, 25, 0.2);
+
+  transition:
+    transform 0.16s ease,
+    opacity 0.16s ease;
 }
 
-.doctor-card:hover {
-    transform: translateY(-4px);
-
-    border-color:
-        rgba(0, 255, 55, 0.42);
-
-    box-shadow:
-        0 16px 38px rgba(0, 0, 0, 0.42),
-        0 0 25px rgba(0, 255, 55, 0.07);
+.login-submit-button:hover,
+.otp-send-button:hover {
+  transform: translateY(-2px);
 }
+
+.login-submit-button:disabled,
+.otp-send-button:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+.submit-arrow {
+  font-size: 20px;
+}
+
 
 /* =========================================================
-   DOCTOR PHOTO
-   ========================================================= */
+   OTP
+========================================================= */
 
-.doctor-card-photo {
-    width: 108px;
-
-    min-width: 108px;
-
-    height: 128px;
-
-    position: relative;
-
-    overflow: hidden;
-
-    border:
-        1px solid rgba(0, 255, 55, 0.20);
-
-    border-radius: 11px;
-
-    background:
-        rgba(0, 30, 18, 0.90);
+.otp-card {
+  padding-bottom: 12px;
 }
 
-.doctor-card-photo img {
-    width: 100%;
+.otp-description {
+  margin-bottom: 7px;
 
-    height: 100%;
-
-    display: block;
-
-    object-fit: cover;
-
-    object-position: center;
-
-    transition:
-        transform 0.4s ease;
+  text-align: center;
 }
 
-.doctor-card:hover
-.doctor-card-photo img {
-    transform: scale(1.05);
+.otp-description p {
+  margin:
+    2px
+    0;
+
+  color: var(--hms-muted);
+
+  font-size: 10px;
+
+  line-height: 1.4;
 }
+
+.otp-method-section {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.otp-method-section > label {
+  color: var(--hms-green-light);
+}
+
+.otp-method-options {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 7px;
+}
+
+.otp-method-button {
+  height: 40px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  border:
+    1px solid
+    var(--hms-border-soft);
+
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #003c29,
+      #001f16
+    );
+
+  color: var(--hms-muted);
+
+  font-family: inherit;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.otp-method-button.active {
+  border-color:
+    var(--hms-green);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(57, 255, 120, 0.12),
+      rgba(25, 255, 208, 0.06)
+    );
+
+  color: var(--hms-green-light);
+
+  box-shadow:
+    inset 2px 2px 5px
+      rgba(0, 0, 0, 0.16),
+    0 0 12px
+      rgba(57, 255, 120, 0.05);
+}
+
+.otp-method-icon {
+  font-size: 15px;
+}
+
+.otp-destination {
+  width: 100%;
+
+  margin:
+    7px
+    0;
+
+  padding:
+    7px
+    10px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 3px;
+
+  border-radius: 10px;
+
+  background:
+    rgba(57, 255, 120, 0.06);
+
+  text-align: center;
+}
+
+.otp-destination span {
+  color: var(--hms-muted);
+
+  font-size: 9px;
+}
+
+.otp-destination strong {
+  max-width: 100%;
+
+  overflow-wrap: anywhere;
+
+  color: var(--hms-green-light);
+
+  font-size: 11px;
+}
+
+.otp-input-box {
+  width: 100%;
+
+  height: 46px;
+
+  display: flex;
+
+  align-items: center;
+
+  padding:
+    0
+    12px;
+
+  border-radius: 11px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0, 55, 38, 0.9),
+      rgba(0, 30, 21, 0.95)
+    );
+
+  box-shadow:
+    inset 3px 3px 7px
+      rgba(0, 0, 0, 0.22),
+    inset -3px -3px 7px
+      rgba(57, 255, 120, 0.035);
+}
+
+.otp-input-box input {
+  width: 100%;
+
+  height: 43px;
+
+  border: 0;
+
+  outline: 0;
+
+  background: transparent;
+
+  color: var(--hms-green-light);
+
+  font-size: 19px;
+
+  font-weight: 800;
+
+  letter-spacing: 5px;
+
+  text-align: center;
+}
+
+.otp-countdown {
+  width: 100%;
+
+  padding:
+    5px;
+
+  border-radius: 7px;
+
+  background:
+    rgba(57, 255, 120, 0.06);
+
+  color: var(--hms-muted);
+
+  font-size: 10px;
+
+  text-align: center;
+}
+
+.otp-countdown strong {
+  color: var(--hms-green-light);
+
+  font-size: 11px;
+}
+
+.otp-countdown.danger {
+  background:
+    rgba(255, 130, 70, 0.08);
+
+  color: #ffad85;
+}
+
+.otp-countdown.danger strong {
+  color: #ff8d5a;
+}
+
+.otp-message {
+  margin-top: 3px;
+}
+
+.otp-verify-button {
+  margin-top: 2px;
+}
+
+.otp-resend-button {
+  width: 100%;
+
+  height: 32px;
+
+  margin-top: 2px;
+
+  border: 0;
+
+  border-radius: 9px;
+
+  background: transparent;
+
+  color: var(--hms-green);
+
+  font-family: inherit;
+
+  font-size: 11px;
+
+  font-weight: 750;
+
+  cursor: pointer;
+}
+
+.otp-resend-button:hover {
+  background:
+    rgba(57, 255, 120, 0.06);
+}
+
+.otp-resend-button:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+.otp-back-button {
+  width: 100%;
+
+  height: 33px;
+
+  margin-top: 4px;
+
+  border:
+    1px solid
+    var(--hms-border-soft);
+
+  border-radius: 9px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #003c29,
+      #001f16
+    );
+
+  color: var(--hms-green-light);
+
+  font-family: inherit;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
 
 /* =========================================================
-   DOCTOR PHOTO BADGE
-   ========================================================= */
+   CARD OPEN ANIMATION
+========================================================= */
 
-.doctor-photo-badge {
-    width: 26px;
+.login-card-overlay-enter,
+.otp-card-overlay-enter {
+  animation:
+    hmsCardOverlayIn
+    0.34s
+    ease-out
+    both;
 
-    height: 26px;
+  transform-origin: top center;
 
-    position: absolute;
-
-    right: 6px;
-
-    bottom: 6px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: #00ff37;
-
-    color: #001207;
-
-    box-shadow:
-        0 4px 12px rgba(0, 0, 0, 0.38);
+  will-change: opacity;
 }
 
-.doctor-photo-badge svg {
-    font-size: 12px;
+.login-card-enter,
+.otp-card-enter {
+  animation:
+    hmsCardOpen
+    0.42s
+    cubic-bezier(
+      0.22,
+      1,
+      0.36,
+      1
+    )
+    both;
+
+  transform-origin: 50% 0%;
+
+  will-change:
+    transform,
+    opacity,
+    filter;
+
+  backface-visibility: hidden;
 }
 
-/* =========================================================
-   DOCTOR INFO
-   ========================================================= */
+@keyframes hmsCardOverlayIn {
 
-.doctor-card-info {
-    min-width: 0;
+  from {
+    opacity: 0;
+  }
 
-    flex: 1;
-
-    padding-left: 2px;
+  to {
+    opacity: 1;
+  }
 }
 
-.doctor-card-label {
-    display: flex;
+@keyframes hmsCardOpen {
 
-    align-items: center;
+  0% {
+    opacity: 0;
 
-    gap: 5px;
+    transform:
+      translate3d(0, 28px, 0)
+      scale(0.94);
 
-    margin-bottom: 5px;
+    filter: blur(4px);
+  }
 
-    color: #00ff37;
+  65% {
+    opacity: 1;
 
-    font-size: 8px;
+    transform:
+      translate3d(0, -3px, 0)
+      scale(1.012);
 
-    font-weight: 800;
+    filter: blur(0);
+  }
 
-    letter-spacing: 0.7px;
+  100% {
+    opacity: 1;
 
-    text-transform: uppercase;
+    transform:
+      translate3d(0, 0, 0)
+      scale(1);
+
+    filter: blur(0);
+  }
 }
 
-.doctor-card-label svg {
-    flex-shrink: 0;
-
-    font-size: 8px;
-}
-
-.doctor-card-info h3 {
-    margin:
-        0 0 4px;
-
-    color: #ffffff;
-
-    font-size: 15px;
-
-    font-weight: 800;
-
-    line-height: 1.25;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-}
-
-.doctor-specialization {
-    margin: 0;
-
-    color: #9eb1a7;
-
-    font-size: 10px;
-
-    font-weight: 600;
-
-    line-height: 1.35;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-}
-
-/* =========================================================
-   DOCTOR META
-   ========================================================= */
-
-.doctor-meta {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 5px;
-
-    margin-top: 9px;
-}
-
-.doctor-meta span {
-    min-width: 0;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 6px;
-
-    color: #70857a;
-
-    font-size: 8px;
-
-    font-weight: 600;
-
-    white-space: nowrap;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-}
-
-.doctor-meta svg {
-    flex-shrink: 0;
-
-    color: #00ff37;
-
-    font-size: 10px;
-}
-
-/* =========================================================
-   FOOTER
-   ========================================================= */
-
-.home-footer {
-    width: 100%;
-
-    min-height: 42px;
-
-    flex-shrink: 0;
-
-    padding:
-        0 45px;
-
-    position: relative;
-
-    z-index: 5;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    border-top:
-        1px solid rgba(0, 255, 55, 0.12);
-
-    background:
-        rgba(0, 0, 0, 0.28);
-
-    color: #60736a;
-
-    font-size: 9px;
-}
-
-/* =========================================================
-   LARGE DESKTOP
-   ========================================================= */
-
-@media (min-width: 1500px) {
-
-    .home-content {
-        max-width: 1900px;
-
-        grid-template-columns:
-            minmax(0, 1fr)
-            minmax(430px, 520px);
-
-        column-gap: 40px;
-
-        padding:
-            34px 55px 23px;
-    }
-
-    .home-brand-icon {
-        width: 145px;
-
-        height: 145px;
-
-        min-width: 145px;
-    }
-
-    .home-brand-text h1 {
-        font-size:
-            clamp(
-                44px,
-                4vw,
-                68px
-            );
-    }
-
-    .hospital-card {
-        max-width: 520px;
-    }
-
-    .doctor-card {
-        width: 335px;
-
-        min-width: 335px;
-
-        height: 153px;
-    }
-}
-
-/* =========================================================
-   LAPTOP
-   ========================================================= */
-
-@media (max-width: 1250px) {
-
-    .home-content {
-        grid-template-columns:
-            minmax(0, 1fr)
-            minmax(380px, 460px);
-
-        column-gap: 25px;
-
-        padding:
-            27px 30px 22px;
-    }
-
-    .home-brand {
-        gap: 20px;
-    }
-
-    .home-brand-icon {
-        width: 120px;
-
-        height: 120px;
-
-        min-width: 120px;
-    }
-
-    .home-brand-text h1 {
-        font-size:
-            clamp(
-                34px,
-                4vw,
-                55px
-            );
-    }
-
-    .hospital-card {
-        max-width: 460px;
-
-        padding:
-            19px 16px 16px;
-    }
-
-    .management-item {
-        min-height: 50px;
-    }
-
-    .doctor-card {
-        width: 310px;
-
-        min-width: 310px;
-
-        height: 145px;
-    }
-
-    .doctor-card-photo {
-        width: 103px;
-
-        min-width: 103px;
-
-        height: 123px;
-    }
-}
-
-/* =========================================================
-   SMALL LAPTOP
-   ========================================================= */
-
-@media (max-width: 1050px) {
-
-    .home-content {
-        grid-template-columns:
-            minmax(0, 1fr)
-            minmax(350px, 420px);
-
-        column-gap: 20px;
-
-        padding:
-            22px 22px 18px;
-    }
-
-    .home-brand {
-        gap: 16px;
-    }
-
-    .home-brand-icon {
-        width: 105px;
-
-        height: 105px;
-
-        min-width: 105px;
-    }
-
-    .home-brand-text h1 {
-        font-size: 34px;
-    }
-
-    .home-brand-text span {
-        font-size: 11px;
-    }
-
-    .home-description {
-        font-size: 12px;
-    }
-
-    .home-login-button {
-        width: 190px;
-
-        height: 44px;
-
-        font-size: 12px;
-    }
-
-    .hospital-card {
-        max-width: 420px;
-
-        padding:
-            18px 15px 15px;
-    }
-
-    .hospital-card-icon {
-        width: 60px;
-
-        height: 60px;
-    }
-
-    .hospital-card h3 {
-        font-size: 16px;
-    }
-
-    .management-item {
-        min-height: 48px;
-
-        grid-template-columns:
-            34px
-            minmax(0, 1fr)
-            auto;
-
-        gap: 8px;
-    }
-
-    .management-item > svg {
-        width: 32px;
-
-        height: 32px;
-
-        padding: 7px;
-    }
-
-    .management-item > span {
-        font-size: 9px;
-    }
-
-    .management-item small {
-        min-width: 50px;
-
-        padding:
-            4px 6px;
-
-        font-size: 6px;
-    }
-
-    .doctor-card {
-        width: 290px;
-
-        min-width: 290px;
-
-        height: 140px;
-    }
-
-    .doctor-card-photo {
-        width: 96px;
-
-        min-width: 96px;
-
-        height: 118px;
-    }
-}
 
 /* =========================================================
    TABLET
-   ========================================================= */
+========================================================= */
 
 @media (max-width: 900px) {
 
-    .home-page {
-        min-height: 100vh;
+  .home-header {
+    padding-left: 82px;
+    padding-right: 25px;
+  }
 
-        overflow-x: hidden;
+  .heading-row {
+    gap: 12px;
+  }
 
-        overflow-y: auto;
-    }
+  .heading-row h2 {
+    font-size:
+      clamp(19px, 3vw, 27px);
+  }
 
-    .home-content {
-        width: 100%;
+  .hospital-name {
+    font-size:
+      clamp(30px, 7vw, 52px);
+  }
 
-        grid-template-columns: 1fr;
+  .step-two-content {
+    padding-top: 70px;
+  }
 
-        column-gap: 0;
-
-        row-gap: 26px;
-
-        padding:
-            28px 25px 30px;
-    }
-
-    .home-left {
-        width: 100%;
-
-        min-height: auto;
-    }
-
-    .home-right {
-        width: 100%;
-
-        justify-content: center;
-    }
-
-    .hospital-card {
-        width: 100%;
-
-        max-width: 520px;
-
-        padding:
-            21px 18px 17px;
-    }
-
-    .doctors-section {
-        grid-column: 1;
-
-        width: 100%;
-
-        margin-top: 0;
-    }
-
-    .doctors-marquee {
-        width: 100%;
-    }
-
-    .home-brand-icon {
-        width: 115px;
-
-        height: 115px;
-
-        min-width: 115px;
-    }
-
-    .home-brand-text h1 {
-        font-size:
-            clamp(
-                34px,
-                6vw,
-                50px
-            );
-    }
-
-    .home-description {
-        max-width: 850px;
-
-        font-size: 13px;
-    }
-
-    .home-footer {
-        min-height: 48px;
-
-        padding:
-            12px 25px;
-
-        flex-wrap: wrap;
-
-        justify-content: center;
-
-        gap: 8px;
-
-        text-align: center;
-    }
+  .admin-card {
+    width:
+      min(
+        370px,
+        calc(100vw - 34px)
+      );
+  }
 }
+
 
 /* =========================================================
    MOBILE
-   ========================================================= */
+========================================================= */
 
 @media (max-width: 600px) {
 
-    .home-content {
-        padding:
-            22px 16px 28px;
+  html,
+  body,
+  #root {
+    overflow: hidden;
+  }
 
-        row-gap: 23px;
-    }
+  .home-page {
+    height: 100dvh;
+    min-height: 100dvh;
+    max-height: 100dvh;
 
-    /* BADGE */
+    overflow: hidden;
+  }
 
-    .home-badge {
-        margin-bottom: 12px;
+  .home-page::after {
+    background-size: 36px 36px;
 
-        padding:
-            7px 11px;
+    opacity: 0.14;
+  }
 
-        font-size: 8px;
+  .home-header {
+    padding:
+      18px
+      15px
+      0
+      72px;
+  }
 
-        letter-spacing: 0.8px;
-    }
+  .home-header::after {
+    right: 12px;
+    top: 12px;
 
-    /* BRAND */
+    width: 48px;
+    height: 48px;
+  }
 
-    .home-brand {
-        gap: 12px;
+  .heading-row {
+    gap: 8px;
+  }
 
-        margin-bottom: 12px;
-    }
+  .heading-line {
+    max-width: 45px;
 
-    .home-brand-icon {
-        width: 88px;
+    height: 1px;
+  }
 
-        height: 88px;
+  .heading-row h2 {
+    font-size: 17px;
 
-        min-width: 88px;
-    }
+    letter-spacing: 0.4px;
 
-    .home-brand-text h1 {
-        font-size: 26px;
+    white-space: normal;
+  }
 
-        letter-spacing: -0.6px;
-    }
+  .main-page-arrow-button {
+    top: 15px;
+    left: 15px;
 
-    .home-brand-text span {
-        margin-top: 5px;
+    width: 48px;
+    height: 48px;
 
-        font-size: 9px;
+    font-size: 26px;
+  }
 
-        letter-spacing: 0.8px;
-    }
+  .home-content {
+    padding:
+      10px
+      14px
+      8px;
 
-    /* DESCRIPTION */
+    overflow: hidden;
+  }
 
-    .home-description {
-        font-size: 11px;
+  .hospital-name {
+    font-size:
+      clamp(28px, 9vw, 42px);
 
-        line-height: 1.55;
-    }
+    line-height: 1.1;
+  }
 
-    /* LOGIN */
+  .hospital-name::after {
+    width: 170px;
 
-    .home-login-button {
-        width: 100%;
+    margin-top: 7px;
+  }
 
-        max-width: 280px;
+  .medical-cross-one {
+    left: -25px;
+    top: 25%;
 
-        height: 42px;
+    font-size: 90px;
 
-        font-size: 11px;
-    }
+    opacity: 0.55;
+  }
 
-    /* PATIENT SERVICES */
+  .medical-cross-two {
+    right: -20px;
+    bottom: 17%;
 
-    .hospital-card {
-        width: 100%;
+    font-size: 80px;
 
-        max-width: 100%;
-
-        padding:
-            19px 13px 16px;
-
-        border-radius: 16px;
-    }
-
-    .hospital-card-icon {
-        width: 62px;
-
-        height: 62px;
-    }
-
-    .hospital-card h3 {
-        font-size: 17px;
-    }
-
-    .hospital-card > p {
-        font-size: 9px;
-
-        margin:
-            6px auto 12px;
-    }
-
-    .hospital-management-list {
-        padding-top: 11px;
-
-        gap: 7px;
-    }
-
-    .hospital-management-list h4 {
-        font-size: 10px;
-    }
-
-    .management-item {
-        min-height: 50px;
-
-        grid-template-columns:
-            34px
-            minmax(0, 1fr)
-            auto;
-
-        gap: 8px;
-
-        padding:
-            7px 8px;
-    }
-
-    .management-item > svg {
-        width: 32px;
-
-        height: 32px;
-
-        padding: 7px;
-    }
-
-    .management-item > span {
-        font-size: 9px;
-    }
-
-    .management-item small {
-        min-width: 48px;
-
-        padding:
-            5px 6px;
-
-        font-size: 6px;
-    }
-
-    .hospital-security {
-        margin-top: 10px;
-
-        padding-top: 8px;
-
-        font-size: 8px;
-    }
-
-    /* DOCTORS */
-
-    .doctors-section {
-        margin-top: 0;
-    }
-
-    .doctors-marquee {
-        padding:
-            3px 0 10px;
-    }
-
-    .doctors-marquee-track {
-        gap: 12px;
-
-        animation-duration: 26s;
-    }
-
-    .doctor-card {
-        width: 275px;
-
-        min-width: 275px;
-
-        height: 135px;
-
-        padding: 9px;
-
-        gap: 10px;
-    }
-
-    .doctor-card-photo {
-        width: 92px;
-
-        min-width: 92px;
-
-        height: 115px;
-    }
-
-    .doctor-card-info {
-        padding-left: 0;
-    }
-
-    .doctor-card-info h3 {
-        font-size: 13px;
-    }
-
-    .doctor-specialization {
-        font-size: 9px;
-    }
-
-    .doctor-meta {
-        margin-top: 7px;
-
-        gap: 4px;
-    }
-
-    .doctor-meta span {
-        font-size: 7px;
-    }
-
-    /* FOOTER */
-
-    .home-footer {
-        min-height: 48px;
-
-        padding:
-            11px 16px;
-
-        font-size: 8px;
-    }
+    opacity: 0.55;
+  }
+
+  .heartbeat-line {
+    top: 53%;
+
+    opacity: 0.35;
+  }
+
+  .admin-card-overlay::before {
+    width: 300px;
+    height: 220px;
+  }
+
+  .step-one-content {
+    min-height: 0;
+
+    flex: 1 1 auto;
+
+    padding:
+      20px
+      10px
+      20px;
+  }
+
+  .step-one-button {
+    width:
+      min(
+        290px,
+        calc(100vw - 40px)
+      );
+
+    height: 56px;
+
+    font-size: 17px;
+  }
+
+  .step-two-content {
+    flex: 1 1 auto;
+
+    padding:
+      68px
+      0
+      6px;
+
+    overflow: hidden;
+  }
+
+  .admin-card-overlay {
+    padding:
+      0
+      3px
+      5px;
+
+    overflow: visible;
+  }
+
+  .admin-card {
+    width:
+      min(
+        100%,
+        350px
+      );
+
+    padding:
+      39px
+      14px
+      10px;
+
+    border-radius: 16px;
+  }
+
+  .admin-logo-circle {
+    width: 88px;
+    height: 88px;
+
+    top: -44px;
+  }
+
+  .admin-logo-circle img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .admin-card-title h3 {
+    font-size: 19px;
+  }
+
+  .captcha-row {
+    grid-template-columns:
+      1fr
+      40px
+      1.2fr;
+  }
+
+  .field-box {
+    height: 39px;
+    min-height: 39px;
+  }
+
+  .field-box input,
+  .field-box select {
+    height: 39px;
+  }
+
+  .captcha-code,
+  .captcha-refresh-button,
+  .captcha-input-box {
+    min-height: 39px;
+  }
+
+  .login-submit-button,
+  .otp-send-button {
+    height: 40px;
+    min-height: 40px;
+  }
 }
 
+
 /* =========================================================
-   VERY SMALL MOBILE
-   ========================================================= */
+   SMALL MOBILE
+========================================================= */
 
-@media (max-width: 380px) {
+@media (max-width: 390px) {
 
-    .home-content {
-        padding:
-            20px 12px 25px;
+  .home-header {
+    padding-left: 68px;
+  }
 
-        row-gap: 21px;
-    }
+  .heading-row h2 {
+    font-size: 15px;
+  }
 
-    .home-brand {
-        gap: 9px;
-    }
+  .hospital-name {
+    font-size: 27px;
+  }
 
-    .home-brand-icon {
-        width: 74px;
+  .hospital-name::after {
+    width: 140px;
+  }
 
-        height: 74px;
+  .medical-cross-one {
+    left: -38px;
 
-        min-width: 74px;
-    }
+    font-size: 75px;
+  }
 
-    .home-brand-text h1 {
-        font-size: 21px;
-    }
+  .medical-cross-two {
+    right: -35px;
 
-    .home-brand-text span {
-        font-size: 8px;
-    }
+    font-size: 65px;
+  }
 
-    .home-description {
-        font-size: 10px;
-    }
+  .heartbeat-line {
+    opacity: 0.25;
+  }
 
-    .home-login-button {
-        max-width: 100%;
-    }
+  .step-two-content {
+    padding-top: 65px;
+    padding-bottom: 4px;
+  }
 
-    .hospital-card {
-        padding:
-            17px 10px 14px;
-    }
+  .admin-card {
+    width: 100%;
 
-    .hospital-card-icon {
-        width: 57px;
+    padding:
+      37px
+      12px
+      8px;
+  }
 
-        height: 57px;
-    }
+  .admin-logo-circle {
+    width: 82px;
+    height: 82px;
 
-    .hospital-card h3 {
-        font-size: 15px;
-    }
+    top: -41px;
+  }
 
-    .management-item {
-        min-height: 47px;
+  .admin-logo-circle img {
+    width: 64px;
+    height: 64px;
+  }
 
-        grid-template-columns:
-            31px
-            minmax(0, 1fr)
-            auto;
+  .field-group label {
+    font-size: 10px;
+  }
 
-        gap: 6px;
-    }
+  .field-box {
+    height: 37px;
+    min-height: 37px;
+  }
 
-    .management-item > svg {
-        width: 30px;
+  .field-box input,
+  .field-box select {
+    height: 37px;
 
-        height: 30px;
+    font-size: 11px;
+  }
 
-        padding: 6px;
-    }
+  .captcha-row {
+    grid-template-columns:
+      1fr
+      38px
+      1.2fr;
 
-    .management-item > span {
-        font-size: 8px;
-    }
+    gap: 5px;
+  }
 
-    .management-item small {
-        min-width: 44px;
+  .captcha-code {
+    font-size: 13px;
 
-        font-size: 6px;
-    }
+    letter-spacing: 2px;
+  }
 
-    .doctor-card {
-        width: 255px;
+  .captcha-code,
+  .captcha-refresh-button,
+  .captcha-input-box {
+    min-height: 37px;
+  }
 
-        min-width: 255px;
-
-        height: 130px;
-    }
-
-    .doctor-card-photo {
-        width: 86px;
-
-        min-width: 86px;
-
-        height: 110px;
-    }
+  .login-submit-button,
+  .otp-send-button {
+    height: 38px;
+    min-height: 38px;
+  }
 }
 
+
 /* =========================================================
-   ACCESSIBILITY
-   ========================================================= */
+   SHORT WINDOWS
+========================================================= */
 
-.home-login-button:focus-visible {
-    outline:
-        2px solid #ffffff;
+@media (max-height: 760px) {
 
-    outline-offset: 4px;
+  .home-header {
+    padding-top: 12px;
+  }
+
+  .home-content {
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+
+  .hospital-name {
+    font-size:
+      clamp(28px, 4.5vw, 50px);
+  }
+
+  .step-one-content {
+    min-height: 0;
+
+    padding:
+      15px
+      20px
+      15px;
+  }
+
+  .step-two-content {
+    padding-top: 66px;
+    padding-bottom: 5px;
+  }
+
+  .admin-card {
+    padding:
+      37px
+      15px
+      8px;
+  }
+
+  .admin-logo-circle {
+    width: 86px;
+    height: 86px;
+
+    top: -43px;
+  }
+
+  .admin-logo-circle img {
+    width: 68px;
+    height: 68px;
+  }
+
+  .admin-card-title {
+    margin-bottom: 6px;
+  }
+
+  .login-form,
+  .otp-form {
+    gap: 5px;
+  }
+
+  .field-group {
+    gap: 2px;
+  }
+
+  .field-box {
+    height: 37px;
+    min-height: 37px;
+  }
+
+  .field-box input,
+  .field-box select {
+    height: 37px;
+  }
+
+  .captcha-code,
+  .captcha-refresh-button,
+  .captcha-input-box {
+    min-height: 37px;
+  }
+
+  .login-submit-button,
+  .otp-send-button {
+    height: 38px;
+    min-height: 38px;
+  }
 }
 
+
 /* =========================================================
-   REDUCED MOTION
-   ========================================================= */
+   VERY SHORT SCREEN
+========================================================= */
+
+@media (max-height: 650px) {
+
+  .home-navigation-layer {
+    height: 70px;
+  }
+
+  .main-page-arrow-button {
+    top: 10px;
+
+    width: 44px;
+    height: 44px;
+
+    font-size: 23px;
+  }
+
+  .home-header {
+    padding:
+      8px
+      15px
+      0
+      65px;
+  }
+
+  .heading-row h2 {
+    font-size: 16px;
+  }
+
+  .home-content {
+    padding-top: 5px;
+    padding-bottom: 3px;
+  }
+
+  .hospital-name {
+    font-size: 27px;
+  }
+
+  .step-one-content {
+    min-height: 0;
+
+    padding:
+      10px
+      10px
+      10px;
+  }
+
+  .step-one-button {
+    height: 52px;
+
+    font-size: 15px;
+  }
+
+  .step-two-content {
+    padding-top: 60px;
+    padding-bottom: 2px;
+  }
+
+  .admin-card {
+    padding:
+      34px
+      13px
+      6px;
+  }
+
+  .admin-logo-circle {
+    width: 76px;
+    height: 76px;
+
+    top: -38px;
+  }
+
+  .admin-logo-circle img {
+    width: 59px;
+    height: 59px;
+  }
+
+  .admin-card-title {
+    margin-bottom: 5px;
+  }
+
+  .admin-card-title h3 {
+    font-size: 16px;
+  }
+
+  .title-line {
+    margin-top: 3px;
+  }
+
+  .field-box,
+  .field-box input,
+  .field-box select {
+    height: 35px;
+    min-height: 35px;
+  }
+
+  .captcha-code,
+  .captcha-refresh-button,
+  .captcha-input-box {
+    min-height: 35px;
+  }
+
+  .login-submit-button,
+  .otp-send-button {
+    height: 36px;
+    min-height: 36px;
+
+    font-size: 12px;
+  }
+}
+
+
+/* =========================================================
+   REDUCE MOTION
+========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
-    .doctors-marquee-track {
-        animation: none !important;
-    }
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
 
-    *,
-    *::before,
-    *::after {
-        transition-duration: 0.01ms !important;
+    transition: none !important;
+  }
 
-        scroll-behavior: auto !important;
-    }
+  .medical-cross,
+  .background-glow-one,
+  .background-glow-two,
+  .login-card-overlay-enter,
+  .otp-card-overlay-enter,
+  .login-card-enter,
+  .otp-card-enter {
+    animation: none !important;
+
+    transform: none !important;
+
+    filter: none !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL COLOR MATCH
+========================================================= */
+
+.home-page .main-page-arrow-button {
+  background:
+    linear-gradient(
+      145deg,
+      #003524,
+      #001810
+    );
+
+  border-color:
+    var(--hms-border);
+
+  color:
+    var(--hms-green);
+}
+
+.home-page .heading-row h2,
+.home-page .hospital-name {
+  color:
+    var(--hms-text);
+}
+
+.home-page .heading-line {
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(57, 255, 120, 0.4),
+      rgba(25, 255, 208, 0.22),
+      transparent
+    );
+}
+
+.home-page .hospital-api-warning {
+  background:
+    rgba(57, 255, 120, 0.06);
+
+  border:
+    1px solid
+    var(--hms-border-soft);
+
+  color:
+    var(--hms-muted);
+}
+
+.home-page .step-one-button {
+  background:
+    linear-gradient(
+      145deg,
+      var(--hms-green),
+      var(--hms-green-2) 55%,
+      #00b85f
+    );
+
+  border-color:
+    var(--hms-border);
+
+  color:
+    #00120d;
+}
+
+.home-page .admin-card {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0, 45, 30, 0.96),
+      rgba(0, 30, 21, 0.96)
+    );
+
+  color:
+    var(--hms-text);
+
+  border-color:
+    var(--hms-border);
+}
+
+.home-page .admin-logo-circle {
+  border-color:
+    var(--hms-green);
+
+  background:
+    linear-gradient(
+      145deg,
+      #003b28,
+      #001c14
+    );
+}
+
+.home-page .logo-fallback-text,
+.home-page .field-icon,
+.home-page .card-close-button {
+  color:
+    var(--hms-green);
+}
+
+.home-page .card-close-button {
+  border-color:
+    var(--hms-border-soft);
+
+  background:
+    linear-gradient(
+      145deg,
+      #003b28,
+      #001c14
+    );
+}
+
+.home-page .title-small,
+.home-page .admin-card-title h3,
+.home-page .field-group label,
+.home-page .otp-method-section > label {
+  color:
+    var(--hms-green-light);
+}
+
+.home-page .title-line {
+  background:
+    linear-gradient(
+      90deg,
+      var(--hms-green),
+      var(--hms-cyan)
+    );
+}
+
+.home-page .field-box {
+  border-color:
+    var(--hms-border-soft);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0, 55, 38, 0.9),
+      rgba(0, 30, 21, 0.95)
+    );
+}
+
+.home-page .background-glow-one {
+  background:
+    rgba(57, 255, 120, 0.09);
+}
+
+.home-page .background-glow-two {
+  background:
+    rgba(25, 255, 208, 0.07);
+}
+
+
+/* =========================================================
+   FINAL OVERFLOW SAFETY
+========================================================= */
+
+.home-page,
+.home-page * {
+  max-width: 100%;
+}
+
+.home-page {
+  overflow: hidden !important;
+}
+
+.home-page .home-content {
+  overflow: hidden !important;
+}
+
+.home-page .step-one-content {
+  overflow: hidden !important;
+}
+
+.home-page .step-two-content {
+  overflow: hidden !important;
+}
+
+.home-page .admin-card-overlay {
+  overflow: visible !important;
+}
+
+.home-page .admin-card {
+  overflow: visible !important;
+}
+
+.admin-card input,
+.admin-card select,
+.admin-card button {
+  max-width: 100%;
+}
+
+
+/* =========================================================
+   DESKTOP FINAL VIEWPORT
+========================================================= */
+
+@media (min-width: 901px) and (min-height: 700px) {
+
+  .home-page {
+    height: 100vh;
+    height: 100dvh;
+
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    max-height: 100vh;
+    max-height: 100dvh;
+
+    overflow: hidden !important;
+  }
+
+  .home-content {
+    min-height: 0;
+
+    padding-bottom: 10px;
+
+    overflow: hidden !important;
+  }
+
+  .step-two-content {
+    min-height: 0;
+
+    padding-top: 70px;
+    padding-bottom: 5px;
+
+    overflow: hidden !important;
+  }
+}
+
+/* =========================================================
+   OVERLAP FIX
+   1) Logo circle ke neeche card title overlap ho raha tha
+      (logo ka adha hissa card ke andar aata hai, par padding-top
+      logo ki aadhi height se kam thi).
+   2) Chhoti screen / non-super role (extra hospital field) mein
+      card neeche se cut ho jata tha -> ab step area scroll hoga.
+========================================================= */
+
+/* logo = 88px => aadha 44px, uske neeche 12px gap */
+.home-page .admin-card {
+  padding-top: 56px;
+}
+
+@media (max-width: 390px) {
+  /* logo 82px */
+  .home-page .admin-card {
+    padding-top: 52px;
+  }
+}
+
+@media (max-height: 760px) {
+  /* logo 86px */
+  .home-page .admin-card {
+    padding-top: 54px;
+  }
+}
+
+@media (max-height: 650px) {
+  /* logo 76px */
+  .home-page .admin-card {
+    padding-top: 48px;
+  }
+}
+
+/* Card kabhi clip na ho: zaroorat padne par scroll */
+.home-page .step-two-content {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding-bottom: 16px;
+  scrollbar-width: none;
+}
+
+.home-page .step-two-content::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 901px) and (min-height: 700px) {
+  .home-page .step-two-content {
+    overflow-y: auto !important;
+    padding-bottom: 16px;
+  }
+}
+
+
+/* =========================================================
+   POLISH FIX (screenshot ke baad)
+   1) Browser autofill ka safed/neela background hataya
+   2) CAPTCHA input ka border baaki fields jaisa kiya
+   3) Message box aur card ke neeche thoda breathing space
+========================================================= */
+
+.home-page .field-box input:-webkit-autofill,
+.home-page .field-box input:-webkit-autofill:hover,
+.home-page .field-box input:-webkit-autofill:focus,
+.home-page .captcha-input-box input:-webkit-autofill,
+.home-page .otp-input-box input:-webkit-autofill {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  -webkit-text-fill-color: var(--hms-text) !important;
+  caret-color: var(--hms-green);
+  border-radius: 0;
+  background-color: transparent !important;
+  background-clip: content-box;
+  transition: background-color 99999s ease-in-out 0s;
+}
+
+.home-page .captcha-input-box {
+  border: 1px solid var(--hms-border-soft);
+  overflow: hidden;
+}
+
+.home-page .captcha-input-box:focus-within {
+  border-color: rgba(57, 255, 120, 0.48);
+}
+
+.home-page .captcha-input-box input::placeholder {
+  color: var(--hms-muted);
+}
+
+.home-page .login-message {
+  padding: 7px 9px;
+  margin-top: 2px;
+}
+
+.home-page .admin-card {
+  padding-bottom: 14px;
+}
+
+
+/* =========================================================
+   SELECT DROPDOWN THEME (Role / Hospital)
+   - Sab browsers: dropdown options ab dark green + light text
+   - Naye Chrome/Edge (base-select support): poora custom
+     dropdown (rounded, glow, green highlight, checkmark)
+========================================================= */
+
+.home-page .field-box select option {
+  background: #002318;
+  color: var(--hms-text);
+}
+
+.home-page .field-box select option:disabled {
+  color: var(--hms-muted);
+}
+
+@supports (appearance: base-select) {
+
+  .home-page .field-box select,
+  .home-page .field-box select::picker(select) {
+    appearance: base-select;
+    -webkit-appearance: base-select;
+  }
+
+  .home-page .field-box select {
+    display: flex;
+    align-items: center;
+    padding-right: 6px;
+    background-image: none;
+  }
+
+  .home-page .field-box select::picker-icon {
+    color: var(--hms-green);
+    transition: transform 0.2s ease;
+  }
+
+  .home-page .field-box select:open::picker-icon {
+    transform: rotate(180deg);
+  }
+
+  .home-page .field-box select::picker(select) {
+    margin-top: 6px;
+    padding: 5px;
+
+    border: 1px solid var(--hms-border);
+    border-radius: 12px;
+
+    background: linear-gradient(145deg, #003524, #001a12);
+
+    box-shadow:
+      0 18px 38px rgba(0, 0, 0, 0.55),
+      0 0 22px rgba(57, 255, 120, 0.09);
+  }
+
+  .home-page .field-box select option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 9px 12px;
+
+    border-radius: 8px;
+
+    background: transparent;
+    color: var(--hms-text);
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+  }
+
+  .home-page .field-box select option:hover,
+  .home-page .field-box select option:focus-visible {
+    background: rgba(57, 255, 120, 0.13);
+    color: var(--hms-green-light);
+  }
+
+  .home-page .field-box select option:checked {
+    background: rgba(57, 255, 120, 0.22);
+    color: var(--hms-green-light);
+    font-weight: 800;
+  }
+
+  .home-page .field-box select option::checkmark {
+    color: var(--hms-green);
+  }
+
+  .home-page .field-box select option:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+
+/* =========================================================
+   CAPTCHA INPUT FIX
+   Andar ka alag square border/box hataya (kisi global
+   input style se aa raha tha) - ab sirf bahar ka rounded
+   box dikhega, baaki fields jaisa.
+========================================================= */
+
+.home-page .captcha-input-box {
+  height: 39px;
+  padding: 0 12px;
+  align-items: center;
+}
+
+.home-page .captcha-input-box input,
+.home-page .captcha-input-box input:hover,
+.home-page .captcha-input-box input:focus,
+.home-page .captcha-input-box input:focus-visible,
+.home-page .captcha-input-box input:active {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+
+  padding: 0;
+  margin: 0;
+
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+
+  background: transparent !important;
+
+  -webkit-appearance: none;
+  appearance: none;
+
+  color: var(--hms-text);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.home-page .captcha-input-box input::placeholder {
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+@media (max-width: 390px) {
+  .home-page .captcha-input-box {
+    height: 37px;
+  }
+}
+
+@media (max-height: 650px) {
+  .home-page .captcha-input-box {
+    height: 35px;
+  }
+}
+
+
+/* =========================================================
+   INPUT LINES FIX + PASSWORD ICON + LOGIN BUTTON
+========================================================= */
+
+/* 1) Email / Password / OTP inputs: left-right seedhi lines hatao */
+.home-page .field-box input,
+.home-page .field-box input:hover,
+.home-page .field-box input:focus,
+.home-page .field-box input:focus-visible,
+.home-page .field-box input:active,
+.home-page .otp-input-box input,
+.home-page .otp-input-box input:focus,
+.home-page .otp-input-box input:focus-visible {
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* 2) Password show / hide button */
+.home-page .password-toggle {
+  width: 30px;
+  height: 30px;
+
+  margin-left: 4px;
+
+  border: 0 !important;
+  border-radius: 50%;
+
+  background: rgba(57, 255, 120, 0.08);
+  color: var(--hms-green);
+
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.home-page .password-toggle svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+}
+
+.home-page .password-toggle:hover {
+  background: rgba(57, 255, 120, 0.18);
+  color: var(--hms-green-light);
+}
+
+.home-page .password-toggle:active {
+  transform: scale(0.92);
+}
+
+/* 3) Login / Send OTP / Verify buttons */
+.home-page .login-submit-button,
+.home-page .otp-send-button {
+  position: relative;
+  overflow: hidden;
+
+  gap: 12px;
+
+  border: 1px solid rgba(141, 255, 173, 0.55);
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #52ff8f 0%,
+      #1ee87b 50%,
+      #00c46a 100%
+    );
+
+  color: #00170f;
+
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.35),
+    0 0 22px rgba(57, 255, 120, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -2px 4px rgba(0, 70, 40, 0.25);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.home-page .login-submit-button > span,
+.home-page .otp-send-button > span {
+  position: relative;
+  z-index: 1;
+}
+
+/* shine sweep */
+.home-page .login-submit-button::before,
+.home-page .otp-send-button::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: -70%;
+
+  width: 40%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      100deg,
+      transparent,
+      rgba(255, 255, 255, 0.5),
+      transparent
+    );
+
+  transform: skewX(-20deg);
+
+  transition: left 0.65s ease;
+
+  pointer-events: none;
+}
+
+.home-page .login-submit-button:hover:not(:disabled),
+.home-page .otp-send-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  filter: brightness(1.05);
+
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(57, 255, 120, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -2px 4px rgba(0, 70, 40, 0.25);
+}
+
+.home-page .login-submit-button:hover:not(:disabled)::before,
+.home-page .otp-send-button:hover:not(:disabled)::before {
+  left: 130%;
+}
+
+.home-page .login-submit-button:active:not(:disabled),
+.home-page .otp-send-button:active:not(:disabled) {
+  transform: translateY(0) scale(0.985);
+}
+
+.home-page .login-submit-button:disabled,
+.home-page .otp-send-button:disabled {
+  opacity: 0.6;
+  filter: saturate(0.7);
+}
+
+/* arrow / tick badge */
+.home-page .submit-arrow {
+  width: 24px;
+  height: 24px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: rgba(0, 40, 24, 0.16);
+
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+
+  transition: transform 0.2s ease;
+}
+
+.home-page .submit-arrow svg {
+  display: block;
+}
+
+.home-page .login-submit-button:hover:not(:disabled) .submit-arrow {
+  transform: translateX(3px);
+}
+
+
+/* =========================================================
+   FIELD ICONS (Role / Hospital / Email / Password / OTP)
+========================================================= */
+
+.home-page .field-icon {
+  width: 24px;
+  height: 24px;
+
+  flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  margin: 0 2px 0 0;
+
+  border: 0;
+  border-radius: 0;
+
+  background: none;
+  box-shadow: none;
+
+  color: var(--hms-green);
+}
+
+.home-page .field-icon svg {
+  display: block;
+
+  width: 17px;
+  height: 17px;
+}
+
+.home-page .field-box:focus-within .field-icon,
+.home-page .otp-input-box:focus-within .field-icon {
+  color: var(--hms-green-light);
+}
+
+
+/* =========================================================
+   DROPDOWN ALIGNMENT FIX
+   Pehle popup sirf <select> ke neeche khulta tha (icon ke
+   baad se), isliye field ke left se offset ho jata tha aur
+   neeche ke labels ko kaat deta tha. Ab select poore field
+   ko cover karta hai, icon uske upar floating hai - to popup
+   field ke barabar width mein, seedha uske neeche khulta hai.
+========================================================= */
+
+@supports (appearance: base-select) {
+
+  .home-page .field-box:has(select) {
+    position: relative;
+    padding: 0;
+  }
+
+  .home-page .field-box:has(select) .field-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+
+    margin: 0;
+
+    transform: translateY(-50%);
+
+    pointer-events: none;
+
+    z-index: 2;
+  }
+
+  .home-page .field-box:has(select) select {
+    width: 100%;
+    height: 100%;
+
+    padding: 0 12px 0 42px;
+
+    font-family: inherit;
+  }
+
+  .home-page .field-box select::picker(select) {
+    box-sizing: border-box;
+
+    min-width: anchor-size(width);
+
+    margin-top: 8px;
+  }
+
+  .home-page .field-box select option {
+    font-family: inherit;
+    font-weight: 600;
+  }
+
+  .home-page .field-box select option:checked {
+    font-weight: 700;
+  }
+}
+
+
+/* =========================================================
+   HMS LOGIN BUTTON - glossy pill + glowing user badge
+   (shine sweep, pulse ring, hover / focus / press states)
+========================================================= */
+
+.home-page .step-one-button {
+  position: relative;
+  isolation: isolate;
+
+  width: min(330px, calc(100vw - 40px));
+  height: 66px;
+
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 0 8px 0 34px;
+
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #f0fbf4 38%,
+      #d3ebdc 100%
+    );
+
+  color: #1d4a37;
+
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.95);
+
+  box-shadow:
+    0 0 0 3px rgba(57, 255, 120, 0.14),
+    0 18px 32px rgba(0, 0, 0, 0.5),
+    0 0 34px rgba(57, 255, 120, 0.22),
+    inset 0 2px 3px rgba(255, 255, 255, 1),
+    inset 0 -5px 10px rgba(0, 80, 45, 0.2);
+
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+/* andar ki patli line + upar ki glossy chamak */
+.home-page .step-one-button::before {
+  content: "";
+
+  position: absolute;
+  inset: 3px;
+
+  z-index: 0;
+
+  border: 1px solid rgba(0, 100, 55, 0.14);
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0) 52%
+    );
+
+  pointer-events: none;
+}
+
+/* chalti hui shine (sweep) */
+.home-page .step-one-button::after {
+  content: "";
+  display: block;
+
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      110deg,
+      transparent 38%,
+      rgba(57, 255, 120, 0.22) 47%,
+      rgba(255, 255, 255, 0.85) 50%,
+      rgba(57, 255, 120, 0.22) 53%,
+      transparent 62%
+    );
+
+  background-size: 260% 100%;
+  background-position: 160% 0;
+
+  filter: none;
+
+  pointer-events: none;
+
+  animation: hmsLoginShine 4.8s ease-in-out infinite;
+}
+
+.home-page .step-one-button > span:first-child {
+  position: relative;
+  z-index: 2;
+}
+
+/* gol user badge */
+.home-page .step-one-button .button-arrow {
+  position: relative;
+  z-index: 2;
+
+  width: 50px;
+  height: 50px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 32% 25%,
+      #9dffc0 0%,
+      #3dff86 38%,
+      #00c767 100%
+    );
+
+  color: #ffffff;
+
+  font-size: 0;
+  line-height: 0;
+
+  box-shadow:
+    0 6px 12px rgba(0, 60, 30, 0.4),
+    0 0 18px rgba(57, 255, 120, 0.65),
+    inset 0 2px 3px rgba(255, 255, 255, 0.7),
+    inset 0 -4px 6px rgba(0, 100, 50, 0.35);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* badge ke bahar failti glow ring */
+.home-page .step-one-button .button-arrow::after {
+  content: "";
+
+  position: absolute;
+  inset: -4px;
+
+  border: 2px solid rgba(30, 232, 123, 0.6);
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  animation: hmsLoginPulse 2.4s ease-out infinite;
+}
+
+.home-page .step-one-button .button-arrow svg {
+  display: block;
+
+  filter: drop-shadow(0 1px 2px rgba(0, 70, 35, 0.5));
+}
+
+/* hover */
+.home-page .step-one-button:hover {
+  transform: translateY(-4px) scale(1.015);
+
+  box-shadow:
+    0 0 0 3px rgba(57, 255, 120, 0.3),
+    0 26px 40px rgba(0, 0, 0, 0.55),
+    0 0 48px rgba(57, 255, 120, 0.42),
+    inset 0 2px 3px rgba(255, 255, 255, 1),
+    inset 0 -5px 10px rgba(0, 80, 45, 0.2);
+}
+
+.home-page .step-one-button:hover .button-arrow {
+  transform: scale(1.1) rotate(-8deg);
+
+  box-shadow:
+    0 8px 14px rgba(0, 60, 30, 0.45),
+    0 0 26px rgba(57, 255, 120, 0.95),
+    inset 0 2px 3px rgba(255, 255, 255, 0.75),
+    inset 0 -4px 6px rgba(0, 100, 50, 0.35);
+}
+
+/* keyboard focus */
+.home-page .step-one-button:focus-visible {
+  outline: 3px solid rgba(57, 255, 120, 0.85);
+  outline-offset: 5px;
+}
+
+/* press */
+.home-page .step-one-button:active {
+  transform: translateY(1px) scale(0.985);
+
+  box-shadow:
+    0 0 0 3px rgba(57, 255, 120, 0.18),
+    0 8px 16px rgba(0, 0, 0, 0.45),
+    inset 0 4px 10px rgba(0, 80, 45, 0.3);
+}
+
+@keyframes hmsLoginShine {
+  0%,
+  55% {
+    background-position: 160% 0;
+  }
+
+  100% {
+    background-position: -60% 0;
+  }
+}
+
+@keyframes hmsLoginPulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 400px) {
+  .home-page .step-one-button {
+    padding-left: 26px;
+
+    font-size: 17px;
+    letter-spacing: 1.6px;
+  }
+}
+
+@media (max-height: 650px) {
+  .home-page .step-one-button {
+    height: 56px;
+
+    font-size: 17px;
+  }
+
+  .home-page .step-one-button .button-arrow {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-page .step-one-button::after,
+  .home-page .step-one-button .button-arrow::after {
+    animation: none;
+  }
+
+  .home-page .step-one-button,
+  .home-page .step-one-button .button-arrow {
+    transition: none;
+  }
+}
+
+
+/* =========================================================
+   CARD BUTTONS (Login / Send OTP / Verify OTP)
+   HMS Login button jaisa embossed pill + gol badge
+========================================================= */
+
+.home-page .login-submit-button,
+.home-page .otp-send-button {
+  height: 44px;
+  min-height: 44px;
+
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 0 5px 0 22px;
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #e9f6ee 45%,
+      #c9e3d4 100%
+    );
+
+  color: #25483a;
+
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  box-shadow:
+    0 10px 20px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(57, 255, 120, 0.12),
+    inset 0 2px 3px rgba(255, 255, 255, 0.95),
+    inset 0 -3px 6px rgba(0, 70, 40, 0.18);
+}
+
+/* purani chamak (shine) hatayi - light button par dikhti nahi */
+.home-page .login-submit-button::before,
+.home-page .otp-send-button::before {
+  display: none;
+}
+
+.home-page .login-submit-button:hover:not(:disabled),
+.home-page .otp-send-button:hover:not(:disabled) {
+  filter: none;
+
+  box-shadow:
+    0 14px 26px rgba(0, 0, 0, 0.45),
+    0 0 28px rgba(57, 255, 120, 0.22),
+    inset 0 2px 3px rgba(255, 255, 255, 0.95),
+    inset 0 -3px 6px rgba(0, 70, 40, 0.18);
+}
+
+.home-page .login-submit-button:active:not(:disabled),
+.home-page .otp-send-button:active:not(:disabled) {
+  transform: translateY(1px);
+
+  box-shadow:
+    0 5px 10px rgba(0, 0, 0, 0.4),
+    inset 0 3px 7px rgba(0, 70, 40, 0.25);
+}
+
+.home-page .login-submit-button .submit-arrow,
+.home-page .otp-send-button .submit-arrow {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      145deg,
+      #5dff98 0%,
+      #1ee87b 55%,
+      #00b85f 100%
+    );
+
+  color: #ffffff;
+
+  font-size: 16px;
+  font-weight: 900;
+
+  text-shadow: 0 1px 1px rgba(0, 70, 35, 0.45);
+
+  box-shadow:
+    0 4px 8px rgba(0, 60, 30, 0.35),
+    inset 0 2px 3px rgba(255, 255, 255, 0.55),
+    inset 0 -2px 4px rgba(0, 90, 45, 0.3);
+}
+
+.home-page .login-submit-button .submit-arrow svg,
+.home-page .otp-send-button .submit-arrow svg {
+  display: block;
+
+  filter: drop-shadow(0 1px 1px rgba(0, 70, 35, 0.45));
+}
+
+.home-page .login-submit-button:hover:not(:disabled) .submit-arrow,
+.home-page .otp-send-button:hover:not(:disabled) .submit-arrow {
+  transform: scale(1.08);
+}
+
+.home-page .login-submit-button:disabled,
+.home-page .otp-send-button:disabled {
+  opacity: 0.6;
+  filter: saturate(0.6);
+}
+
+@media (max-height: 760px) {
+  .home-page .login-submit-button,
+  .home-page .otp-send-button {
+    height: 42px;
+    min-height: 42px;
+  }
+
+  .home-page .login-submit-button .submit-arrow,
+  .home-page .otp-send-button .submit-arrow {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-height: 650px) {
+  .home-page .login-submit-button,
+  .home-page .otp-send-button {
+    height: 38px;
+    min-height: 38px;
+
+    font-size: 12px;
+  }
+
+  .home-page .login-submit-button .submit-arrow,
+  .home-page .otp-send-button .submit-arrow {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+
+/* =========================================================
+   DROPDOWN - stacked gradient tiles (reference image style)
+   Har option ek full-width tile: upar halka, neeche gehra
+   green gradient, white bold UPPERCASE text, patli lines.
+========================================================= */
+
+/* fallback (sab browsers) */
+.home-page .field-box select option {
+  background: #1d6045;
+  color: #ffffff;
+
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.home-page .field-box select option:disabled {
+  background: #123b2c;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+@supports (appearance: base-select) {
+
+  .home-page .field-box select::picker(select) {
+    padding: 0;
+
+    max-height: 270px;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    border: 1px solid rgba(141, 255, 173, 0.35);
+    border-radius: 10px;
+
+    background: #0f3d2b;
+
+    box-shadow:
+      0 18px 36px rgba(0, 0, 0, 0.55),
+      0 0 20px rgba(57, 255, 120, 0.08);
+  }
+
+  .home-page .field-box select option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 11px 12px;
+
+    border: 0;
+    border-bottom: 1px solid rgba(0, 20, 12, 0.45);
+    border-radius: 0;
+
+    background:
+      linear-gradient(
+        180deg,
+        #2f8a63 0%,
+        #1e6b4a 55%,
+        #175a3d 100%
+      );
+
+    color: #ffffff;
+
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: 0.9px;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 0 1px 1px rgba(0, 25, 15, 0.55);
+
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+    cursor: pointer;
+  }
+
+  .home-page .field-box select option:last-child {
+    border-bottom: 0;
+  }
+
+  .home-page .field-box select option::checkmark {
+    display: none;
+  }
+
+  .home-page .field-box select option:hover,
+  .home-page .field-box select option:focus-visible {
+    background:
+      linear-gradient(
+        180deg,
+        #42b27e 0%,
+        #2a8a5f 55%,
+        #1f7650 100%
+      );
+
+    color: #ffffff;
+  }
+
+  .home-page .field-box select option:checked {
+    background:
+      linear-gradient(
+        180deg,
+        #5dff98 0%,
+        #22d97b 55%,
+        #0fb866 100%
+      );
+
+    color: #00221a;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+
+    font-weight: 900;
+  }
+
+  .home-page .field-box select option:disabled {
+    background: #123b2c;
+
+    color: rgba(255, 255, 255, 0.4);
+
+    box-shadow: none;
+
+    cursor: not-allowed;
+  }
+}
+
+
+/* =========================================================
+   CARD: CLEAR + LOGIN (2 buttons)
+========================================================= */
+
+.home-page .login-actions {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+
+  margin-top: 2px;
+}
+
+.home-page .login-actions .login-submit-button,
+.home-page .login-actions .login-clear-button {
+  width: 100%;
+  min-width: 0;
+
+  margin-top: 0;
+  padding: 0 5px 0 16px;
+
+  letter-spacing: 0.8px;
+}
+
+.home-page .login-clear-button {
+  position: relative;
+
+  height: 44px;
+  min-height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  border: 1px solid rgba(141, 255, 173, 0.4);
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #1b6a4b 0%,
+      #0f4a33 55%,
+      #0a3726 100%
+    );
+
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-shadow: 0 1px 1px rgba(0, 25, 15, 0.55);
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.home-page .login-clear-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 22px rgba(0, 0, 0, 0.45),
+    0 0 18px rgba(57, 255, 120, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.home-page .login-clear-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.home-page .login-clear-button:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+.home-page .login-clear-button .submit-arrow {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+
+  background: rgba(0, 20, 12, 0.45);
+
+  color: var(--hms-green-light);
+
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-height: 760px) {
+  .home-page .login-clear-button {
+    height: 42px;
+    min-height: 42px;
+  }
+
+  .home-page .login-clear-button .submit-arrow {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-height: 650px) {
+  .home-page .login-clear-button {
+    height: 38px;
+    min-height: 38px;
+
+    font-size: 12px;
+  }
+
+  .home-page .login-clear-button .submit-arrow {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+
+/* =========================================================
+   REFINE: dropdown ko saaf-suthra banaya + Clear button chhota
+========================================================= */
+
+/* ---------- DROPDOWN (clean dark panel) ---------- */
+
+/* fallback (sab browsers) */
+.home-page .field-box select option {
+  background: #0d3a29;
+  color: #f4fff8;
+
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.home-page .field-box select option:disabled {
+  background: #0d3a29;
+  color: rgba(244, 255, 248, 0.4);
+}
+
+@supports (appearance: base-select) {
+
+  .home-page .field-box select::picker(select) {
+    padding: 5px;
+
+    border: 1px solid rgba(57, 255, 120, 0.3);
+    border-radius: 12px;
+
+    background: linear-gradient(160deg, #04301f 0%, #021c13 100%);
+
+    box-shadow:
+      0 16px 34px rgba(0, 0, 0, 0.55),
+      0 0 18px rgba(57, 255, 120, 0.07);
+  }
+
+  .home-page .field-box select option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+
+    margin: 0 0 3px;
+    padding: 9px 12px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #dff7e9;
+
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    text-align: left;
+    text-transform: none;
+    text-shadow: none;
+
+    box-shadow: none;
+  }
+
+  .home-page .field-box select option:last-child {
+    margin-bottom: 0;
+  }
+
+  .home-page .field-box select option:hover,
+  .home-page .field-box select option:focus-visible {
+    background: rgba(57, 255, 120, 0.12);
+
+    color: #ffffff;
+  }
+
+  .home-page .field-box select option:checked {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(57, 255, 120, 0.26),
+        rgba(57, 255, 120, 0.1)
+      );
+
+    color: var(--hms-green-light);
+    text-shadow: none;
+
+    font-weight: 700;
+
+    box-shadow: inset 3px 0 0 var(--hms-green);
+  }
+
+  .home-page .field-box select option::checkmark {
+    display: block;
+
+    order: 2;
+    margin-left: auto;
+
+    color: var(--hms-green);
+  }
+
+  .home-page .field-box select option:disabled {
+    background: transparent;
+
+    color: rgba(223, 247, 233, 0.38);
+
+    box-shadow: none;
+  }
+}
+
+/* ---------- CLEAR BUTTON (small, compact) ---------- */
+
+.home-page .login-actions {
+  grid-template-columns: auto 1fr;
+
+  align-items: center;
+}
+
+.home-page .login-actions .login-clear-button {
+  width: auto;
+  height: 34px;
+  min-height: 34px;
+
+  justify-content: center;
+  gap: 6px;
+
+  padding: 0 14px;
+
+  font-size: 12px;
+  letter-spacing: 0.6px;
+}
+
+.home-page .login-actions .login-clear-button .submit-arrow {
+  width: 16px;
+  height: 16px;
+
+  border: 0;
+
+  background: none;
+
+  box-shadow: none;
+}
+
+.home-page .login-actions .login-clear-button .submit-arrow svg {
+  width: 13px;
+  height: 13px;
+}
+
+@media (max-height: 650px) {
+  .home-page .login-actions .login-clear-button {
+    height: 31px;
+    min-height: 31px;
+
+    font-size: 11px;
+  }
+}
+
+
+/* =========================================================
+   LOGIN CARD - ROUND LIGHT DESIGN (reference image style)
+   - halka mint card, bahut gol kone
+   - upar avatar/logo circle, jiske aas-paas card ka "bump"
+   - pill fields, left mein gol dark icon badge
+   - dark green pill Login button
+========================================================= */
+
+.home-page {
+  --card-light: #f3faf6;
+  --field-light: #e4f0e9;
+  --ink: #0b3d2a;
+  --ink-soft: #1d5a40;
+  --ink-muted: #5a7a6b;
+}
+
+/* ---------- CARD ---------- */
+
+.home-page .admin-card {
+  width: min(384px, calc(100vw - 34px));
+
+  padding: 66px 22px 16px;
+
+  border: 0;
+  border-radius: 38px;
+
+  background: var(--card-light);
+
+  color: var(--ink);
+
+  box-shadow:
+    0 26px 55px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(57, 255, 120, 0.1);
+}
+
+.home-page .admin-card::before {
+  display: none;
+}
+
+/* ---------- LOGO CIRCLE + BUMP ---------- */
+
+.home-page .admin-logo-circle {
+  width: 92px;
+  height: 92px;
+
+  top: -46px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background:
+    linear-gradient(145deg, #0f5a3c 0%, #06301f 100%);
+
+  box-shadow:
+    0 0 0 8px var(--card-light),
+    0 0 0 9px rgba(0, 80, 50, 0.07);
+}
+
+.home-page .admin-logo-circle img {
+  width: 66px;
+  height: 66px;
+}
+
+.home-page .logo-fallback-text {
+  color: #eafff2;
+}
+
+/* ---------- CLOSE BUTTON ---------- */
+
+.home-page .card-close-button {
+  top: 14px;
+  right: 16px;
+
+  width: 30px;
+  height: 30px;
+
+  border: 1px solid rgba(0, 80, 50, 0.14);
+
+  background: var(--field-light);
+
+  color: var(--ink);
+
+  font-size: 19px;
+
+  box-shadow: none;
+}
+
+.home-page .card-close-button:hover {
+  background: #d3e6db;
+
+  color: var(--ink);
+}
+
+/* ---------- TITLE ---------- */
+
+.home-page .admin-card .title-small {
+  color: #1d7a53;
+}
+
+.home-page .admin-card .admin-card-title h3 {
+  color: var(--ink);
+}
+
+.home-page .admin-card .title-line {
+  background: linear-gradient(90deg, #0b3d2a, #19c47a);
+}
+
+/* ---------- LABELS ---------- */
+
+.home-page .admin-card .field-group label,
+.home-page .admin-card .otp-method-section > label {
+  padding-left: 14px;
+
+  color: var(--ink-soft);
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* ---------- PILL FIELDS ---------- */
+
+.home-page .admin-card .field-box,
+.home-page .admin-card .otp-input-box {
+  padding: 0 14px 0 0;
+
+  border: 0;
+  border-radius: 999px;
+
+  background: var(--field-light);
+
+  box-shadow:
+    inset 2px 2px 5px rgba(0, 70, 40, 0.14),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.home-page .admin-card .field-box:focus-within,
+.home-page .admin-card .otp-input-box:focus-within {
+  background: #dcebe2;
+
+  box-shadow:
+    inset 2px 2px 5px rgba(0, 70, 40, 0.14),
+    0 0 0 2px rgba(11, 61, 42, 0.35);
+}
+
+/* gol dark icon badge (left, flush) */
+.home-page .admin-card .field-icon {
+  width: auto;
+  height: 100%;
+
+  aspect-ratio: 1 / 1;
+
+  margin: 0 8px 0 0;
+
+  border-radius: 50%;
+
+  background: linear-gradient(145deg, #135f40, #0b3d2a);
+
+  color: #ffffff;
+
+  box-shadow:
+    0 3px 6px rgba(0, 50, 30, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+
+.home-page .admin-card .field-box:focus-within .field-icon,
+.home-page .admin-card .otp-input-box:focus-within .field-icon {
+  color: #ffffff;
+}
+
+.home-page .admin-card .field-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* input / select text */
+.home-page .admin-card .field-box input,
+.home-page .admin-card .field-box select,
+.home-page .admin-card .otp-input-box input {
+  color: #123528;
+}
+
+.home-page .admin-card .field-box input::placeholder,
+.home-page .admin-card .captcha-input-box input::placeholder,
+.home-page .admin-card .otp-input-box input::placeholder {
+  color: #7a978a;
+}
+
+/* browser autofill (light) */
+.home-page .field-box input:-webkit-autofill,
+.home-page .field-box input:-webkit-autofill:hover,
+.home-page .field-box input:-webkit-autofill:focus,
+.home-page .captcha-input-box input:-webkit-autofill,
+.home-page .otp-input-box input:-webkit-autofill {
+  -webkit-text-fill-color: #123528 !important;
+  caret-color: var(--ink);
+}
+
+/* select arrow */
+@supports (appearance: base-select) {
+  .home-page .admin-card .field-box select::picker-icon {
+    color: var(--ink);
+  }
+
+  /* select poora field cover kare, icon left mein gol badge */
+  .home-page .admin-card .field-box:has(select) {
+    padding: 0;
+  }
+
+  .home-page .admin-card .field-box:has(select) .field-icon {
+    left: 0;
+    top: 0;
+
+    height: 100%;
+
+    margin: 0;
+
+    transform: none;
+  }
+
+  .home-page .admin-card .field-box:has(select) select {
+    padding: 0 14px 0 54px;
+  }
+}
+
+@supports not (appearance: base-select) {
+  .home-page .admin-card .field-box select {
+    background-image:
+      linear-gradient(45deg, transparent 50%, #0b3d2a 50%),
+      linear-gradient(135deg, #0b3d2a 50%, transparent 50%);
+  }
+}
+
+/* password show / hide */
+.home-page .admin-card .password-toggle {
+  background: rgba(11, 61, 42, 0.08);
+
+  color: var(--ink);
+}
+
+.home-page .admin-card .password-toggle:hover {
+  background: rgba(11, 61, 42, 0.16);
+
+  color: var(--ink);
+}
+
+/* ---------- CAPTCHA ---------- */
+
+.home-page .admin-card .captcha-code {
+  border-radius: 999px;
+
+  background:
+    repeating-linear-gradient(
+      120deg,
+      #0e4a33 0,
+      #0e4a33 3px,
+      #135c3f 3px,
+      #135c3f 6px
+    );
+
+  color: #eafff2;
+}
+
+.home-page .admin-card .captcha-refresh-button {
+  border: 0;
+  border-radius: 50%;
+
+  background: linear-gradient(145deg, #135f40, #0b3d2a);
+
+  color: #ffffff;
+
+  box-shadow: 0 3px 6px rgba(0, 50, 30, 0.3);
+}
+
+.home-page .admin-card .captcha-input-box {
+  padding: 0 14px;
+
+  border: 0;
+  border-radius: 999px;
+
+  background: var(--field-light);
+
+  box-shadow:
+    inset 2px 2px 5px rgba(0, 70, 40, 0.14),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+.home-page .admin-card .captcha-input-box:focus-within {
+  box-shadow:
+    inset 2px 2px 5px rgba(0, 70, 40, 0.14),
+    0 0 0 2px rgba(11, 61, 42, 0.35);
+}
+
+.home-page .admin-card .captcha-input-box input,
+.home-page .admin-card .captcha-input-box input:hover,
+.home-page .admin-card .captcha-input-box input:focus,
+.home-page .admin-card .captcha-input-box input:focus-visible,
+.home-page .admin-card .captcha-input-box input:active {
+  color: #123528;
+}
+
+/* ---------- REMEMBER ME / FORGOT ---------- */
+
+.home-page .remember-row {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  padding: 0 8px;
+}
+
+.home-page .remember-check {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  color: var(--ink-muted);
+
+  font-size: 10.5px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.home-page .remember-check input {
+  position: relative;
+
+  width: 15px;
+  height: 15px;
+
+  flex-shrink: 0;
+
+  margin: 0;
+
+  border: 1.5px solid #5f8573;
+  border-radius: 5px;
+
+  background: #ffffff;
+
+  cursor: pointer;
+
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.home-page .remember-check input:checked {
+  border-color: var(--ink);
+
+  background: var(--ink);
+}
+
+.home-page .remember-check input:checked::after {
+  content: "";
+
+  position: absolute;
+
+  left: 4px;
+  top: 1px;
+
+  width: 4px;
+  height: 8px;
+
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+
+  transform: rotate(45deg);
+}
+
+.home-page .forgot-link {
+  padding: 0;
+
+  border: 0;
+
+  background: none;
+
+  color: var(--ink-muted);
+
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.home-page .forgot-link:hover {
+  color: var(--ink);
+
+  text-decoration: underline;
+}
+
+/* ---------- MESSAGE ---------- */
+
+.home-page .admin-card .login-message {
+  border: 1px solid rgba(0, 100, 60, 0.2);
+  border-radius: 12px;
+
+  background: rgba(0, 110, 65, 0.09);
+
+  color: #14543a;
+}
+
+/* ---------- BUTTONS (dark green pills) ---------- */
+
+.home-page .admin-card .login-submit-button,
+.home-page .admin-card .otp-send-button {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  background:
+    linear-gradient(
+      180deg,
+      #17744f 0%,
+      #0b3d2a 55%,
+      #062a1c 100%
+    );
+
+  color: #ffffff;
+
+  text-shadow: 0 1px 1px rgba(0, 25, 15, 0.5);
+
+  box-shadow:
+    0 9px 18px rgba(0, 50, 30, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.home-page .admin-card .login-submit-button:hover:not(:disabled),
+.home-page .admin-card .otp-send-button:hover:not(:disabled) {
+  box-shadow:
+    0 13px 24px rgba(0, 50, 30, 0.42),
+    0 0 18px rgba(25, 196, 122, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.home-page .admin-card .login-submit-button:active:not(:disabled),
+.home-page .admin-card .otp-send-button:active:not(:disabled) {
+  box-shadow:
+    0 4px 8px rgba(0, 50, 30, 0.35),
+    inset 0 3px 7px rgba(0, 0, 0, 0.35);
+}
+
+/* Clear: halka pill */
+.home-page .admin-card .login-clear-button {
+  border: 1px solid rgba(0, 80, 50, 0.2);
+
+  background: linear-gradient(180deg, #f7fcf9, #dcebe2);
+
+  color: var(--ink-soft);
+
+  text-shadow: none;
+
+  box-shadow:
+    0 4px 9px rgba(0, 50, 30, 0.16),
+    inset 0 1px 0 #ffffff;
+}
+
+.home-page .admin-card .login-clear-button:hover:not(:disabled) {
+  box-shadow:
+    0 7px 14px rgba(0, 50, 30, 0.22),
+    inset 0 1px 0 #ffffff;
+}
+
+.home-page .admin-card .login-clear-button .submit-arrow {
+  color: var(--ink-soft);
+}
+
+/* ---------- OTP CARD (light) ---------- */
+
+.home-page .admin-card .otp-description p {
+  color: var(--ink-muted);
+}
+
+.home-page .admin-card .otp-method-button {
+  border: 1px solid rgba(0, 80, 50, 0.15);
+  border-radius: 999px;
+
+  background: var(--field-light);
+
+  color: #3e6352;
+}
+
+.home-page .admin-card .otp-method-button.active {
+  border-color: var(--ink);
+
+  background: linear-gradient(180deg, #17744f, #0b3d2a);
+
+  color: #ffffff;
+
+  box-shadow: 0 4px 10px rgba(0, 50, 30, 0.3);
+}
+
+.home-page .admin-card .otp-destination {
+  border-radius: 14px;
+
+  background: rgba(0, 110, 65, 0.09);
+}
+
+.home-page .admin-card .otp-destination span {
+  color: var(--ink-muted);
+}
+
+.home-page .admin-card .otp-destination strong {
+  color: var(--ink);
+}
+
+.home-page .admin-card .otp-input-box {
+  height: 46px;
+}
+
+.home-page .admin-card .otp-input-box input,
+.home-page .admin-card .otp-input-box input:focus {
+  color: var(--ink);
+}
+
+.home-page .admin-card .otp-countdown {
+  border-radius: 999px;
+
+  background: rgba(0, 110, 65, 0.09);
+
+  color: var(--ink-muted);
+}
+
+.home-page .admin-card .otp-countdown strong {
+  color: var(--ink);
+}
+
+.home-page .admin-card .otp-countdown.danger {
+  background: rgba(220, 90, 40, 0.12);
+
+  color: #b4521f;
+}
+
+.home-page .admin-card .otp-countdown.danger strong {
+  color: #c2410c;
+}
+
+.home-page .admin-card .otp-resend-button {
+  color: #14704a;
+}
+
+.home-page .admin-card .otp-resend-button:hover {
+  background: rgba(0, 110, 65, 0.09);
+}
+
+.home-page .admin-card .otp-back-button {
+  border: 1px solid rgba(0, 80, 50, 0.18);
+  border-radius: 999px;
+
+  background: var(--field-light);
+
+  color: var(--ink-soft);
+}
+
+/* ---------- responsive: logo size + top padding ---------- */
+
+@media (max-width: 390px) {
+  .home-page .admin-card {
+    padding-top: 58px;
+  }
+
+  .home-page .admin-logo-circle {
+    width: 84px;
+    height: 84px;
+
+    top: -42px;
+  }
+
+  .home-page .admin-logo-circle img {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-height: 760px) {
+  .home-page .admin-card {
+    padding-top: 58px;
+  }
+
+  .home-page .admin-logo-circle {
+    width: 84px;
+    height: 84px;
+
+    top: -42px;
+  }
+
+  .home-page .admin-logo-circle img {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-height: 650px) {
+  .home-page .admin-card {
+    padding-top: 50px;
+  }
+
+  .home-page .admin-logo-circle {
+    width: 72px;
+    height: 72px;
+
+    top: -36px;
+  }
+
+  .home-page .admin-logo-circle img {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+
+/* =========================================================
+   LOGO CIRCLE FIX
+   Dark circle dark page par chhup jata tha - ab bright green
+   ring wapas, uske bahar card ka light bump.
+========================================================= */
+
+.home-page .admin-logo-circle {
+  border: 4px solid var(--hms-green);
+
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      #0f5a3c 0%,
+      #06301f 100%
+    );
+
+  box-shadow:
+    0 0 0 8px var(--card-light),
+    0 0 0 9px rgba(0, 80, 50, 0.07),
+    0 0 22px rgba(57, 255, 120, 0.35);
+
+  z-index: 40;
+}
+
+.home-page .admin-logo-circle img {
+  position: relative;
+  z-index: 1;
+
+  display: block;
+}
+
+
+/* =========================================================
+   ROUND CARD (poora gol circle) - reference image jaisa
+   Sirf badi screens (>= 640px) par. Mobile par pehle wala
+   gol-kone wala card hi rehta hai, kyunki circle mein
+   itne fields chhoti screen par nahi aate.
+========================================================= */
+
+@media (min-width: 640px) {
+
+  .home-page {
+    /* circle ka size: screen ki height ke hisaab se (590px - 640px) */
+    --D: min(640px, max(590px, calc(100dvh - 255px)));
+  }
+
+  .home-page .admin-card {
+    width: var(--D);
+    height: var(--D);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    padding: calc(var(--D) * 0.115) 0 0;
+
+    border-radius: 50%;
+  }
+
+  /* form circle ke beech wale hisse mein rahe */
+  .home-page .admin-card .login-form,
+  .home-page .admin-card .otp-form {
+    width: calc(var(--D) * 0.6);
+
+    gap: 7px;
+  }
+
+  .home-page .admin-card .admin-card-title {
+    width: auto;
+  }
+
+  /* neeche circle sankra hota hai - buttons ki row chhoti */
+  .home-page .admin-card .login-actions {
+    width: 82%;
+
+    align-self: center;
+  }
+
+  /* close button circle ke andar (corner square mein bahar nikalta) */
+  .home-page .admin-card .card-close-button {
+    top: calc(var(--D) * 0.17 - 15px);
+    right: calc(var(--D) * 0.17 - 15px);
+  }
+
+  /* OTP card: content circle ke beech mein */
+  .home-page .admin-card.otp-card {
+    justify-content: center;
+
+    padding-top: calc(var(--D) * 0.1);
+  }
+
+  .home-page .admin-card.otp-card
+    > :not(.admin-logo-circle):not(.card-close-button):not(.admin-card-title) {
+    width: calc(var(--D) * 0.58);
+  }
+
+  .home-page .admin-card.otp-card .otp-form {
+    width: calc(var(--D) * 0.58);
+  }
+}
+
+
+/* =========================================================
+   EXACT REFERENCE MATCH (desktop circle card)
+   - labels aur title nahi (reference mein sirf icon + text)
+   - badi, flat pill fields; icon badge pill ke barabar
+   - bada halo bump avatar ke aas-paas
+   - Login: flat dark pill, beech mein "LOGIN", koi badge nahi
+   - poora group circle ke beech mein
+========================================================= */
+
+@media (min-width: 640px) {
+
+  /* ---- group circle ke beech mein ---- */
+  .home-page .admin-card {
+    justify-content: center;
+
+    padding-top: calc(var(--D) * 0.07);
+    padding-bottom: calc(var(--D) * 0.02);
+  }
+
+  .home-page .admin-card:not(.otp-card) .login-form {
+    width: calc(var(--D) * 0.64);
+
+    gap: 12px;
+  }
+
+  /* ---- labels aur title: dikhte nahi (screen reader ke liye rahte hain) ---- */
+  .home-page .admin-card .login-form .field-group > label,
+  .home-page .admin-card:not(.otp-card) .admin-card-title {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    margin: -1px;
+    padding: 0;
+
+    overflow: hidden;
+
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+
+    border: 0;
+  }
+
+  /* ---- bada halo + avatar ---- */
+  .home-page .admin-logo-circle {
+    width: 84px;
+    height: 84px;
+
+    top: -42px;
+
+    box-shadow:
+      0 0 0 14px var(--card-light),
+      0 0 22px rgba(57, 255, 120, 0.3);
+  }
+
+  .home-page .admin-logo-circle img {
+    width: 58px;
+    height: 58px;
+  }
+
+  /* ---- flat pill fields, badge pill ke barabar ---- */
+  .home-page .admin-card .field-box,
+  .home-page .admin-card .otp-input-box,
+  .home-page .admin-card .captcha-input-box {
+    height: 44px;
+    min-height: 44px;
+
+    background: var(--field-light);
+
+    box-shadow: none;
+  }
+
+  .home-page .admin-card .field-box:focus-within,
+  .home-page .admin-card .otp-input-box:focus-within,
+  .home-page .admin-card .captcha-input-box:focus-within {
+    box-shadow: 0 0 0 2px rgba(11, 61, 42, 0.35);
+  }
+
+  .home-page .admin-card .field-box input,
+  .home-page .admin-card .field-box select {
+    height: 100%;
+
+    font-size: 13px;
+  }
+
+  .home-page .admin-card .field-icon {
+    box-shadow: none;
+  }
+
+  .home-page .admin-card .field-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .home-page .admin-card .captcha-code,
+  .home-page .admin-card .captcha-refresh-button {
+    min-height: 44px;
+  }
+
+  .home-page .admin-card .captcha-row {
+    grid-template-columns: minmax(80px, 1fr) 44px minmax(105px, 1.3fr);
+
+    gap: 8px;
+  }
+
+  /* ---- remember / forgot: chhota, halka gray ---- */
+  .home-page .remember-row {
+    padding: 0 12px;
+  }
+
+  .home-page .remember-check,
+  .home-page .forgot-link {
+    color: #8aa093;
+
+    font-size: 10px;
+  }
+
+  /* ---- buttons: flat dark pill, beech mein text ---- */
+  .home-page .admin-card .login-actions {
+    width: 100%;
+
+    gap: 10px;
+  }
+
+  .home-page .admin-card .login-actions .login-submit-button,
+  .home-page .admin-card .login-submit-button,
+  .home-page .admin-card .otp-send-button {
+    height: 44px;
+    min-height: 44px;
+
+    justify-content: center;
+
+    padding: 0 20px;
+
+    border: 0;
+
+    background: #0b3d2a;
+
+    font-size: 15px;
+    letter-spacing: 2px;
+
+    box-shadow: none;
+    text-shadow: none;
+  }
+
+  .home-page .admin-card .login-submit-button .submit-arrow,
+  .home-page .admin-card .otp-send-button .submit-arrow {
+    display: none;
+  }
+
+  .home-page .admin-card .login-submit-button:hover:not(:disabled),
+  .home-page .admin-card .otp-send-button:hover:not(:disabled) {
+    background: #11573b;
+
+    box-shadow: 0 6px 14px rgba(0, 50, 30, 0.3);
+  }
+
+  .home-page .admin-card .login-actions .login-clear-button {
+    height: 44px;
+    min-height: 44px;
+
+    padding: 0 18px;
+
+    border: 0;
+
+    background: var(--field-light);
+
+    font-size: 12px;
+
+    box-shadow: none;
+  }
+
+  .home-page .admin-card .login-actions .login-clear-button .submit-arrow {
+    display: none;
+  }
+
+  .home-page .admin-card .login-actions .login-clear-button:hover:not(:disabled) {
+    background: #d3e6db;
+
+    box-shadow: none;
+  }
+}
+
+
+/* =========================================================
+   CIRCLE FIT FIX
+   Screenshot mein circle screen se bada tha aur neeche se
+   kat raha tha (Login button cut). Ab circle ka size screen
+   ki bachi hui height se nikalta hai, aur header ka hospital
+   naam chhota ho jata hai taaki jagah bache.
+========================================================= */
+
+@media (min-width: 640px) {
+
+  .home-page {
+    /* Super Admin (hospital naam nahi) */
+    --D: clamp(440px, calc(100dvh - 150px), 640px);
+  }
+
+  .home-page:has(.hospital-name) {
+    /* baaki roles (upar hospital naam dikhta hai) */
+    --D: clamp(440px, calc(100dvh - 195px), 640px);
+  }
+
+  /* login khulne par hospital ka bada naam chhota */
+  .home-page .home-content:has(.step-two-content) .hospital-name {
+    font-size: clamp(26px, 3.4vw, 36px);
+  }
+
+  .home-page .home-content:has(.step-two-content) .hospital-name::after {
+    margin-top: 6px;
+  }
+
+  .home-page .step-two-content {
+    padding-top: 58px;
+    padding-bottom: 8px;
+  }
+
+  .home-page .admin-card-overlay {
+    padding-bottom: 4px;
+  }
+
+  /* thode compact fields taaki circle ke andar poore aayein */
+  .home-page .admin-card:not(.otp-card) .login-form {
+    gap: 9px;
+  }
+
+  .home-page .admin-card .field-box,
+  .home-page .admin-card .otp-input-box,
+  .home-page .admin-card .captcha-input-box {
+    height: 40px;
+    min-height: 40px;
+  }
+
+  .home-page .admin-card .field-box input,
+  .home-page .admin-card .field-box select {
+    font-size: 12.5px;
+  }
+
+  .home-page .admin-card .captcha-code,
+  .home-page .admin-card .captcha-refresh-button {
+    min-height: 40px;
+  }
+
+  .home-page .admin-card .captcha-row {
+    grid-template-columns: minmax(80px, 1fr) 40px minmax(105px, 1.3fr);
+  }
+
+  .home-page .admin-card .login-actions .login-submit-button,
+  .home-page .admin-card .login-submit-button,
+  .home-page .admin-card .otp-send-button,
+  .home-page .admin-card .login-actions .login-clear-button {
+    height: 40px;
+    min-height: 40px;
+  }
+
+  .home-page .admin-card .login-message {
+    padding: 5px 10px;
+  }
+}
+
+
+/* =========================================================
+   LOGO CARD KE ANDAR + CLEAR HATAYA + CLOSE BUTTON KI JAGAH
+========================================================= */
+
+.home-page {
+  --logo: 64px;
+}
+
+/* ---- logo ab card ke andar (bahar nahi nikalta) ---- */
+.home-page .admin-logo-circle {
+  width: var(--logo);
+  height: var(--logo);
+
+  top: 14px;
+
+  border: 3px solid var(--hms-green);
+
+  box-shadow: 0 0 18px rgba(57, 255, 120, 0.3);
+}
+
+.home-page .admin-logo-circle img {
+  width: calc(var(--logo) - 20px);
+  height: calc(var(--logo) - 20px);
+}
+
+/* mobile / chhota rounded card */
+.home-page .admin-card {
+  padding-top: calc(var(--logo) + 32px);
+}
+
+/* ---- sirf Login button ----- */
+.home-page .admin-card .login-actions {
+  grid-template-columns: 1fr;
+}
+
+/* ---- circle card (badi screen) ---- */
+@media (min-width: 640px) {
+
+  .home-page {
+    --logo: 70px;
+  }
+
+  .home-page .admin-logo-circle {
+    top: calc(var(--D) * 0.07);
+  }
+
+  .home-page .admin-card {
+    justify-content: flex-start;
+
+    padding-top: calc(var(--D) * 0.07 + var(--logo) + 12px);
+    padding-bottom: 0;
+  }
+
+  .home-page .admin-card.otp-card {
+    justify-content: flex-start;
+
+    padding-top: calc(var(--D) * 0.07 + var(--logo) + 12px);
+  }
+
+  .home-page .admin-card .login-actions {
+    width: 100%;
+  }
+
+  /* close button: circle ke kinare par, 45 degree (upar-right) par */
+  .home-page .admin-card .card-close-button {
+    top: calc(var(--D) * 0.1464 - 18px);
+    right: calc(var(--D) * 0.1464 - 18px);
+
+    width: 36px;
+    height: 36px;
+
+    border: 0;
+
+    background: #0b3d2a;
+
+    color: #ffffff;
+
+    font-size: 20px;
+
+    box-shadow:
+      0 0 0 4px var(--card-light),
+      0 6px 14px rgba(0, 0, 0, 0.35);
+
+    z-index: 50;
+  }
+
+  .home-page .admin-card .card-close-button:hover {
+    background: #11573b;
+
+    color: #ffffff;
+  }
+
+  /* error message aaye to remember row hat jaye (jagah ke liye) */
+  .home-page .admin-card .login-form:has(.login-message) .remember-row {
+    display: none;
+  }
+
+  /* OTP card: jagah bachane ke liye compact */
+  .home-page .admin-card.otp-card .otp-description,
+  .home-page .admin-card.otp-card .admin-card-title .title-small {
+    display: none;
+  }
+
+  .home-page .admin-card.otp-card:has(.otp-form) .otp-method-section,
+  .home-page .admin-card.otp-card:has(.otp-form) .otp-destination {
+    display: none;
+  }
+
+  .home-page .admin-card .otp-form .field-group > label {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    margin: -1px;
+    padding: 0;
+
+    overflow: hidden;
+
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+
+    border: 0;
+  }
+}
+
+/* bahut kam height par logo chhota */
+@media (max-height: 620px) {
+  .home-page {
+    --logo: 54px;
+  }
+}
+
+
+/* =========================================================
+   LOGIN PLAQUE CARD (dark green embossed plate)
+   ---------------------------------------------------------
+   - Reference: dark-green plaque, top row (logo + hospital
+     naam + close), bada serif title, recessed fields, raised
+     LOGIN button, neeche chhota footer.
+   - Border rim ghoomta hua light (conic-gradient) - animated.
+   - Badi screen: 2 column form. Mobile: 1 column, labels
+     chhupe (jagah bachane ke liye, placeholder dikhta hai).
+   - Sirf login card par (class: login-plaque-card). OTP card
+     par koi asar nahi.
+========================================================= */
+
+@property --login-ring-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes loginRingSpin {
+  to {
+    --login-ring-angle: 360deg;
+  }
+}
+
+/* ---------- CARD (barrel shape: flat top/bottom, kate kone, bahar bulge) ---------- */
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) {
+  --pl-rim: 4px;
+  --pl-fh: clamp(36px, 5.4vh, 44px);
+  --pl-w: min(860px, calc(100vw - 28px));
+  --pl-text: #f3fff7;
+  --pl-accent: #8dffad;
+
+  /* card ke beech ka fill: 0 = poora transparent, 1 = pehle jaisa solid */
+  --pl-body-a: 0.2;
+
+  position: relative;
+
+  width: var(--pl-w);
+  height: auto;
+  min-height: 0;
+  max-height: none;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  padding:
+    clamp(26px, 4.4vh, 38px)
+    calc(var(--pl-w) * 0.12)
+    clamp(30px, 4.6vh, 40px);
+
+  border: 0;
+  border-radius: 0;
+
+  /* beech ka hissa transparent: peeche ki image / emblem dikhegi.
+     Sirf halka dark-green tint taaki text padhne me aaye.
+     (rim alag se ::before me bani hai) */
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(255, 255, 255, 0.06) 0%,
+      transparent 55%
+    ),
+    linear-gradient(
+      180deg,
+      transparent 55%,
+      rgba(0, 0, 0, 0.12) 100%
+    ),
+    linear-gradient(
+      155deg,
+      rgba(37, 89, 58, var(--pl-body-a)) 0%,
+      rgba(27, 77, 46, var(--pl-body-a)) 50%,
+      rgba(20, 63, 38, var(--pl-body-a)) 100%
+    );
+
+  color: var(--pl-text);
+
+  box-shadow: none;
+
+  clip-path: polygon(12.00% 0.00%, 88.00% 0.00%, 94.69% 10.00%, 96.16% 16.00%, 97.40% 22.00%, 98.67% 30.00%, 99.52% 38.00%, 99.95% 46.00%, 100.00% 50.00%, 99.95% 54.00%, 99.52% 62.00%, 98.67% 70.00%, 97.40% 78.00%, 96.16% 84.00%, 94.69% 90.00%, 88.00% 100.00%, 12.00% 100.00%, 5.31% 90.00%, 3.84% 84.00%, 2.60% 78.00%, 1.33% 70.00%, 0.48% 62.00%, 0.05% 54.00%, 0.00% 50.00%, 0.05% 46.00%, 0.48% 38.00%, 1.33% 30.00%, 2.60% 22.00%, 3.84% 16.00%, 5.31% 10.00%);
+
+  /* open animation (ghoomta rim ab ::before me chalta hai) */
+  animation:
+    hmsCardOpen 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* clip-path shadow ko kaat deta hai, isliye shadow parent par */
+.home-page .admin-card-overlay:has(.login-plaque-card) {
+  filter:
+    drop-shadow(0 24px 24px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 22px rgba(57, 255, 120, 0.14));
+}
+
+/* rim: sirf bahar ki patli ghoomti border (beech ka hissa khali / transparent) */
+.home-page .admin-card.login-plaque-card:not(.otp-card)::before {
+  content: "";
+
+  display: block;
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  width: auto;
+  height: auto;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+
+  transform: none;
+  filter: none;
+
+  background:
+    conic-gradient(
+      from var(--login-ring-angle),
+      #0e3322,
+      #2f7a4f,
+      #a8f5c4,
+      #2f7a4f,
+      #0e3322,
+      #1d5a38,
+      #0e3322
+    );
+
+  clip-path: polygon(evenodd, 12.00% 0.00%, 88.00% 0.00%, 94.69% 10.00%, 96.16% 16.00%, 97.40% 22.00%, 98.67% 30.00%, 99.52% 38.00%, 99.95% 46.00%, 100.00% 50.00%, 99.95% 54.00%, 99.52% 62.00%, 98.67% 70.00%, 97.40% 78.00%, 96.16% 84.00%, 94.69% 90.00%, 88.00% 100.00%, 12.00% 100.00%, 5.31% 90.00%, 3.84% 84.00%, 2.60% 78.00%, 1.33% 70.00%, 0.48% 62.00%, 0.05% 54.00%, 0.00% 50.00%, 0.05% 46.00%, 0.48% 38.00%, 1.33% 30.00%, 2.60% 22.00%, 3.84% 16.00%, 5.31% 10.00%, 12.00% 0.00%, calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.1200) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.1200) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.8800) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.9469) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.1000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.9616) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.1600), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.9740) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.2200), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.9867) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.3000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.9952) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.3800), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.9995) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.4600), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 1.0000) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.5000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.9995) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.5400), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.9952) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.6200), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.9867) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.7000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.9740) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.7800), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.9616) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.8400), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.9469) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.9000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.8800) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 1.0000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.1200) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 1.0000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0531) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.9000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0384) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.8400), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0260) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.7800), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0133) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.7000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0048) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.6200), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0005) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.5400), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0000) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.5000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0005) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.4600), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0048) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.3800), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0133) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.3000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0260) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.2200), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0384) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.1600), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0531) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.1000), calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.1200) calc(var(--pl-rim) + (100% - 2 * var(--pl-rim)) * 0.0000));
+
+  box-shadow: none;
+
+  pointer-events: none;
+
+  z-index: -1;
+
+  animation: loginRingSpin 6s linear infinite;
+}
+
+/* andar ki engraved patli line (shape ke saath chalti hai) */
+.home-page .admin-card.login-plaque-card:not(.otp-card)::after {
+  content: "";
+
+  display: block;
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  width: auto;
+  height: auto;
+
+  margin: 0;
+
+  border: 0;
+  border-radius: 0;
+
+  background: rgba(255, 255, 255, 0.17);
+
+  clip-path: polygon(evenodd, calc(12.00% + 11px) calc(0.00% + 11px), calc(88.00% - 11px) calc(0.00% + 11px), calc(94.69% - 11px) calc(10.00% + 11px), calc(96.16% - 11px) calc(16.00% + 11px), calc(97.40% - 11px) calc(22.00% + 11px), calc(98.67% - 11px) calc(30.00% + 11px), calc(99.52% - 11px) calc(38.00% + 11px), calc(99.95% - 11px) calc(46.00% + 11px), calc(100.00% - 11px) 50.00%, calc(99.95% - 11px) calc(54.00% - 11px), calc(99.52% - 11px) calc(62.00% - 11px), calc(98.67% - 11px) calc(70.00% - 11px), calc(97.40% - 11px) calc(78.00% - 11px), calc(96.16% - 11px) calc(84.00% - 11px), calc(94.69% - 11px) calc(90.00% - 11px), calc(88.00% - 11px) calc(100.00% - 11px), calc(12.00% + 11px) calc(100.00% - 11px), calc(5.31% + 11px) calc(90.00% - 11px), calc(3.84% + 11px) calc(84.00% - 11px), calc(2.60% + 11px) calc(78.00% - 11px), calc(1.33% + 11px) calc(70.00% - 11px), calc(0.48% + 11px) calc(62.00% - 11px), calc(0.05% + 11px) calc(54.00% - 11px), calc(0.00% + 11px) 50.00%, calc(0.05% + 11px) calc(46.00% + 11px), calc(0.48% + 11px) calc(38.00% + 11px), calc(1.33% + 11px) calc(30.00% + 11px), calc(2.60% + 11px) calc(22.00% + 11px), calc(3.84% + 11px) calc(16.00% + 11px), calc(5.31% + 11px) calc(10.00% + 11px), calc(12.00% + 11px) calc(0.00% + 11px), calc(12.00% + 12.5px) calc(0.00% + 12.5px), calc(5.31% + 12.5px) calc(10.00% + 12.5px), calc(3.84% + 12.5px) calc(16.00% + 12.5px), calc(2.60% + 12.5px) calc(22.00% + 12.5px), calc(1.33% + 12.5px) calc(30.00% + 12.5px), calc(0.48% + 12.5px) calc(38.00% + 12.5px), calc(0.05% + 12.5px) calc(46.00% + 12.5px), calc(0.00% + 12.5px) 50.00%, calc(0.05% + 12.5px) calc(54.00% - 12.5px), calc(0.48% + 12.5px) calc(62.00% - 12.5px), calc(1.33% + 12.5px) calc(70.00% - 12.5px), calc(2.60% + 12.5px) calc(78.00% - 12.5px), calc(3.84% + 12.5px) calc(84.00% - 12.5px), calc(5.31% + 12.5px) calc(90.00% - 12.5px), calc(12.00% + 12.5px) calc(100.00% - 12.5px), calc(88.00% - 12.5px) calc(100.00% - 12.5px), calc(94.69% - 12.5px) calc(90.00% - 12.5px), calc(96.16% - 12.5px) calc(84.00% - 12.5px), calc(97.40% - 12.5px) calc(78.00% - 12.5px), calc(98.67% - 12.5px) calc(70.00% - 12.5px), calc(99.52% - 12.5px) calc(62.00% - 12.5px), calc(99.95% - 12.5px) calc(54.00% - 12.5px), calc(100.00% - 12.5px) 50.00%, calc(99.95% - 12.5px) calc(46.00% + 12.5px), calc(99.52% - 12.5px) calc(38.00% + 12.5px), calc(98.67% - 12.5px) calc(30.00% + 12.5px), calc(97.40% - 12.5px) calc(22.00% + 12.5px), calc(96.16% - 12.5px) calc(16.00% + 12.5px), calc(94.69% - 12.5px) calc(10.00% + 12.5px), calc(88.00% - 12.5px) calc(0.00% + 12.5px), calc(12.00% + 12.5px) calc(0.00% + 12.5px));
+
+  box-shadow: none;
+
+  pointer-events: none;
+
+  z-index: -1;
+}
+
+/* ---------- TOP ROW: logo + naam + close ---------- */
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .plaque-top {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  padding: 0 52px;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .admin-logo-circle {
+  position: relative;
+
+  top: auto;
+  left: auto;
+
+  transform: none;
+
+  width: clamp(60px, 10.5vh, 84px);
+  height: clamp(60px, 10.5vh, 84px);
+
+  flex: 0 0 auto;
+
+  border: 3px solid var(--pl-accent);
+
+  background:
+    radial-gradient(
+      circle at 35% 28%,
+      #2a7a4d 0%,
+      #123d27 70%,
+      #0a2a1a 100%
+    );
+
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.08),
+    0 0 0 5px rgba(0, 0, 0, 0.28),
+    0 8px 18px rgba(0, 0, 0, 0.45),
+    0 0 24px rgba(141, 255, 173, 0.22),
+    inset 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .admin-logo-circle img {
+  width: 74%;
+  height: 74%;
+
+  object-fit: contain;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .logo-fallback-text {
+  font-size: clamp(18px, 3vh, 26px);
+}
+
+
+/* close: top-right */
+.home-page .admin-card.login-plaque-card:not(.otp-card) .card-close-button {
+  position: absolute;
+
+  top: calc(clamp(26px, 4.4vh, 38px) + 10px);
+  right: calc(var(--pl-w) * 0.1);
+
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+
+  background:
+    radial-gradient(circle at 35% 30%, #2f8a5b, #0e3f28);
+
+  color: #ffffff;
+
+  font-size: 22px;
+  line-height: 1;
+
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.45),
+    inset 0 2px 2px rgba(255, 255, 255, 0.3);
+
+  transition:
+    transform 0.25s ease,
+    filter 0.2s ease;
+
+  z-index: 5;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .card-close-button:hover {
+  transform: rotate(90deg) scale(1.06);
+
+  filter: brightness(1.15);
+
+  color: #ffffff;
+
+  background:
+    radial-gradient(circle at 35% 30%, #2f8a5b, #0e3f28);
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .card-close-button:focus-visible {
+  outline: 2px solid var(--pl-accent);
+  outline-offset: 3px;
+}
+
+/* ---------- TITLE ---------- */
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .admin-card-title {
+  position: static;
+
+  width: auto;
+  height: auto;
+
+  margin: clamp(4px, 1vh, 10px) 0 clamp(8px, 1.4vh, 14px);
+  padding: 0;
+
+  overflow: visible;
+
+  clip: auto;
+  border: 0;
+  white-space: normal;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .admin-card-title .title-small,
+.home-page .admin-card.login-plaque-card:not(.otp-card) .admin-card-title .title-line {
+  display: none;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .admin-card-title h3 {
+  color: #ffffff;
+
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: clamp(24px, 4.2vw, 40px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.3px;
+
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.45),
+    0 -1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* ---------- FORM ---------- */
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .login-form {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: 1fr;
+
+  gap: clamp(7px, 1.2vh, 11px) 18px;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .login-form > .remember-row,
+.home-page .admin-card.login-plaque-card:not(.otp-card) .login-form > .login-message,
+.home-page .admin-card.login-plaque-card:not(.otp-card) .login-form > .login-actions {
+  grid-column: 1 / -1;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .login-form > .field-group {
+  min-width: 0;
+}
+
+/* labels: mobile par chhupe */
+.home-page .admin-card.login-plaque-card:not(.otp-card) .login-form .field-group > label {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  margin: -1px;
+  padding: 0;
+
+  overflow: hidden;
+
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+
+  border: 0;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .login-form .field-group {
+  gap: 4px;
+}
+
+/* recessed fields */
+.home-page .admin-card.login-plaque-card:not(.otp-card) .field-box,
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-input-box {
+  height: var(--pl-fh);
+  min-height: var(--pl-fh);
+
+  padding: 0 12px 0 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+
+  background: rgba(0, 18, 10, 0.3);
+
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.38),
+    0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-input-box {
+  padding: 0 12px;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .field-box:focus-within,
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-input-box:focus-within {
+  background: rgba(0, 18, 10, 0.4);
+
+  border-color: rgba(141, 255, 173, 0.65);
+
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.38),
+    0 0 0 2px rgba(141, 255, 173, 0.22);
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .field-icon {
+  height: 100%;
+
+  border-radius: 9px 0 0 9px;
+
+  background: rgba(255, 255, 255, 0.07);
+
+  color: var(--pl-accent);
+
+  box-shadow: none;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .field-box:focus-within .field-icon {
+  color: var(--pl-accent);
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .field-box input,
+.home-page .admin-card.login-plaque-card:not(.otp-card) .field-box select,
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-input-box input,
+.home-page .admin-card.login-plaque-card:not(.otp-card) .otp-input-box input {
+  color: var(--pl-text);
+
+  caret-color: var(--pl-accent);
+
+  font-size: 13.5px;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .field-box input::placeholder,
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-input-box input::placeholder {
+  color: rgba(220, 245, 230, 0.55);
+}
+
+/* autofill ka safed/neela background na aaye */
+.home-page .admin-card.login-plaque-card:not(.otp-card) .field-box input:-webkit-autofill,
+.home-page .admin-card.login-plaque-card:not(.otp-card) .field-box input:-webkit-autofill:hover,
+.home-page .admin-card.login-plaque-card:not(.otp-card) .field-box input:-webkit-autofill:focus,
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-input-box input:-webkit-autofill {
+  -webkit-text-fill-color: var(--pl-text) !important;
+
+  caret-color: var(--pl-accent);
+
+  -webkit-box-shadow: 0 0 0 1000px #123f29 inset !important;
+  box-shadow: 0 0 0 1000px #123f29 inset !important;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .password-toggle {
+  background: rgba(255, 255, 255, 0.1);
+
+  color: #eafff2;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .password-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+
+  color: #ffffff;
+}
+
+/* captcha */
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-row {
+  grid-template-columns:
+    minmax(70px, 1fr)
+    var(--pl-fh)
+    minmax(90px, 1.3fr);
+
+  gap: 10px;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-code {
+  position: relative;
+
+  min-height: var(--pl-fh);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+
+  /* halki 2 tirchhi noise lines (letters ke peeche), strike-through nahi */
+  background:
+    linear-gradient(
+      112deg,
+      transparent 46%,
+      rgba(141, 255, 173, 0.26) 47%,
+      transparent 48.5%
+    ),
+    linear-gradient(
+      68deg,
+      transparent 58%,
+      rgba(141, 255, 173, 0.18) 59%,
+      transparent 60.5%
+    ),
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(255, 255, 255, 0.08),
+      transparent 70%
+    ),
+    rgba(0, 18, 10, 0.34);
+
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.38),
+    0 1px 0 rgba(255, 255, 255, 0.1);
+
+  color: #eafff2;
+
+  font-family: "Courier New", Consolas, ui-monospace, monospace;
+  font-size: clamp(16px, 2.4vh, 19px);
+  font-weight: 900;
+  letter-spacing: 0;
+
+  text-decoration: none;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+
+  user-select: none;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-code span {
+  display: inline-block;
+
+  line-height: 1;
+
+  text-decoration: none;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-code span:nth-child(even) {
+  color: #b8ffcf;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-code span:nth-child(6n + 1) {
+  transform: rotate(-7deg) translateY(1px);
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-code span:nth-child(6n + 2) {
+  transform: rotate(5deg) translateY(-2px);
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-code span:nth-child(6n + 3) {
+  transform: rotate(-3deg) translateY(2px);
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-code span:nth-child(6n + 4) {
+  transform: rotate(8deg) translateY(-1px);
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-code span:nth-child(6n + 5) {
+  transform: rotate(-5deg) translateY(1px);
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-code span:nth-child(6n) {
+  transform: rotate(4deg) translateY(-2px);
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .captcha-refresh-button {
+  min-height: var(--pl-fh);
+
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+
+  background:
+    radial-gradient(circle at 35% 30%, #2f8a5b, #0e3f28);
+
+  color: #ffffff;
+
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+/* remember / forgot */
+.home-page .admin-card.login-plaque-card:not(.otp-card) .remember-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 2px;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .login-form:has(.login-message) .remember-row {
+  display: flex;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .remember-check,
+.home-page .admin-card.login-plaque-card:not(.otp-card) .forgot-link {
+  color: #cfe8d8;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .remember-check input {
+  accent-color: var(--pl-accent);
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .forgot-link {
+  color: var(--pl-accent);
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .forgot-link:hover {
+  color: #ffffff;
+
+  text-decoration: underline;
+}
+
+/* error / info message */
+.home-page .admin-card.login-plaque-card:not(.otp-card) .login-message {
+  margin: 0;
+  padding: 6px 10px;
+
+  border: 1px solid rgba(255, 150, 150, 0.45);
+  border-radius: 10px;
+
+  background: rgba(255, 90, 90, 0.14);
+
+  color: #ffdede;
+
+  font-size: 12.5px;
+  text-align: center;
+}
+
+/* ---------- LOGIN BUTTON (raised) ---------- */
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .login-actions {
+  display: flex;
+  justify-content: center;
+
+  width: 100%;
+
+  margin-top: 2px;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .login-actions .login-submit-button,
+.home-page .admin-card.login-plaque-card:not(.otp-card) .login-submit-button {
+  width: min(260px, 100%);
+
+  height: calc(var(--pl-fh) + 4px);
+  min-height: calc(var(--pl-fh) + 4px);
+
+  justify-content: center;
+
+  padding: 0 24px;
+
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #3a9a68 0%,
+      #1f6b44 55%,
+      #15502f 100%
+    );
+
+  color: #ffffff;
+
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
+
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.45),
+    inset 0 2px 2px rgba(255, 255, 255, 0.35),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.28);
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .login-submit-button .submit-arrow {
+  display: none;
+}
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .login-submit-button:hover:not(:disabled) {
+  filter: brightness(1.1);
+
+  box-shadow:
+    0 9px 18px rgba(0, 0, 0, 0.5),
+    0 0 22px rgba(141, 255, 173, 0.25),
+    inset 0 2px 2px rgba(255, 255, 255, 0.4),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.28);
+}
+
+/* ---------- FOOTER ---------- */
+
+.home-page .admin-card.login-plaque-card:not(.otp-card) .plaque-footer {
+  margin-top: clamp(6px, 1.2vh, 12px);
+
+  color: rgba(225, 248, 235, 0.85);
+
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-align: center;
+}
+
+/* dropdown arrow: dark field par light rang */
+@supports (appearance: base-select) {
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .field-box select::picker-icon,
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .field-box select:open::picker-icon {
+    color: var(--pl-accent);
+  }
+}
+
+@supports not (appearance: base-select) {
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .field-box select {
+    background-image:
+      linear-gradient(45deg, transparent 50%, #8dffad 50%),
+      linear-gradient(135deg, #8dffad 50%, transparent 50%);
+  }
+}
+
+/* ---------- TABLET / DESKTOP: 2 column + labels ---------- */
+
+@media (min-width: 720px) {
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .login-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* captcha: jab Hospital field bhi ho (5 groups) to poori row le */
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .login-form > .field-group:nth-child(5) {
+    grid-column: 1 / -1;
+  }
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .login-form .field-group > label {
+    position: static;
+
+    width: auto;
+    height: auto;
+
+    margin: 0;
+    padding: 0 2px;
+
+    overflow: visible;
+
+    clip: auto;
+    white-space: normal;
+
+    color: #e9fbef;
+
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+
+    text-shadow:
+      0 1px 0 rgba(0, 0, 0, 0.5),
+      0 -1px 0 rgba(255, 255, 255, 0.18);
+  }
+}
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 719px) {
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) {
+    --pl-w: min(460px, calc(100vw - 24px));
+
+    padding:
+      26px
+      calc(var(--pl-w) * 0.1)
+      30px;
+  }
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .plaque-top {
+    padding: 0 40px;
+  }
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .card-close-button {
+    top: 38px;
+    right: calc(var(--pl-w) * 0.1 - 4px);
+
+    width: 34px;
+    height: 34px;
+
+    font-size: 20px;
+  }
+}
+
+/* ---------- KAM HEIGHT: compact ---------- */
+
+@media (max-height: 700px) {
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .admin-card-title h3 {
+    font-size: clamp(20px, 3.4vw, 30px);
+  }
+}
+
+@media (max-height: 580px) {
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .plaque-footer {
+    display: none;
+  }
+}
+
+@media (max-height: 520px) {
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .admin-card-title {
+    display: none;
+  }
+}
+
+/* chhoti screen par card kat jaye to andar scroll */
+@media (max-width: 719px), (max-height: 700px) {
+
+  .home-page .step-two-content {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+}
+
+/* =========================================================
+   DROPDOWN LIST (Role / Hospital) - plaque ke saath match
+========================================================= */
+
+@supports (appearance: base-select) {
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .field-box select::picker(select) {
+    padding: 6px;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 12px;
+
+    background:
+      linear-gradient(
+        160deg,
+        #1f5a38 0%,
+        #153f27 100%
+      );
+
+    color: var(--pl-text);
+
+    box-shadow:
+      0 18px 36px rgba(0, 0, 0, 0.55),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .field-box select option {
+    padding: 9px 12px;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: var(--pl-text);
+
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .field-box select option:hover,
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .field-box select option:focus-visible {
+    background: rgba(255, 255, 255, 0.1);
+
+    color: #ffffff;
+  }
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .field-box select option:checked {
+    background: rgba(141, 255, 173, 0.16);
+
+    box-shadow: inset 3px 0 0 var(--pl-accent);
+
+    color: #ffffff;
+  }
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .field-box select option::checkmark {
+    color: var(--pl-accent);
+  }
+
+  /* "Select Role" / "Select Hospital": halka header, par padhne layak */
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .field-box select option:disabled {
+    background: transparent;
+
+    box-shadow: none;
+
+    color: rgba(220, 245, 230, 0.6);
+
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+}
+
+/* =========================================================
+   LOGIN LAYOUT: card chaaro taraf se center + bada heading
+   - Card horizontally aur vertically center (heading ke
+     neeche bachi jagah mein). margin:auto use kiya hai, isliye
+     jagah kam ho to card upar se kat-ta nahi, scroll hota hai.
+   - Upar ka "Hospital Management System" heading bada.
+========================================================= */
+
+.home-page .step-two-content:has(.login-plaque-card) {
+  justify-content: flex-start;
+
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.home-page .step-two-content:has(.login-plaque-card) .admin-card-overlay {
+  margin-top: auto;
+  margin-bottom: auto;
+
+  padding-bottom: 0;
+}
+
+@media (min-width: 640px) {
+
+  .home-page .home-content:has(.step-two-content) .hospital-name {
+    font-size: clamp(32px, min(5vw, 8vh), 60px);
+
+    letter-spacing: 1.6px;
+  }
+
+  .home-page .home-content:has(.step-two-content) .hospital-name::after {
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 639px) {
+
+  .home-page .home-content:has(.step-two-content) .hospital-name {
+    font-size: clamp(28px, min(9.5vw, 7vh), 44px);
+  }
+}
+
+/* ---------- animation band (accessibility) ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) {
+    animation: none !important;
+  }
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card)::before {
+    animation: none;
+  }
+
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .card-close-button,
+  .home-page .admin-card.login-plaque-card:not(.otp-card) .card-close-button:hover {
+    transition: none;
+
+    transform: none;
+  }
+}
+
+
+/* =========================================================
+   SEARCH SELECT (Role / Hospital)
+   Layout: control -> neeche menu (search + list)
+   Colors Home.css ke plaque theme se match karte hain.
+========================================================= */
+
+.home-page .ss {
+  position: relative;          /* menu isi ke andar absolute hota hai */
+  width: 100%;
+}
+
+/* ---------- CONTROL (field-box class se base style aata hai) ---------- */
+
+.home-page .ss .ss-control {
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: var(--pl-text, #f4fff8);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.home-page .ss .ss-control:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.home-page .ss.ss-open .ss-control {
+  border-color: rgba(141, 255, 173, 0.65);
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.38),
+    0 0 0 2px rgba(141, 255, 173, 0.22);
+}
+
+.home-page .ss .ss-value {
+  flex: 1;
+  min-width: 0;
+  padding: 0 6px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.home-page .ss .ss-placeholder {
+  color: rgba(220, 245, 230, 0.55);
+}
+
+/* chevron: band = neeche, khula = upar */
+.home-page .ss .ss-arrow {
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  margin: -3px 4px 0 8px;
+  border-right: 2px solid var(--pl-accent, #8dffad);
+  border-bottom: 2px solid var(--pl-accent, #8dffad);
+  transform: rotate(45deg);
+  transition: transform 0.18s ease, margin 0.18s ease;
+}
+
+.home-page .ss.ss-open .ss-arrow {
+  margin-top: 4px;
+  transform: rotate(-135deg);
+}
+
+/* ---------- MENU: hamesha NEECHE ---------- */
+
+.ss-menu {
+  --pl-text: #f3fff7;
+  --pl-accent: #8dffad;
+  font-family: Inter, "Segoe UI", Arial, Helvetica, sans-serif;
+  color: var(--pl-text);
+  position: fixed;             /* top/left/width JS se control ke neeche set hote hain */
+  z-index: 99999;              /* card aur page ke upar */
+  box-sizing: border-box;
+
+  padding: 8px 8px 6px;
+
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+
+  background: linear-gradient(160deg, #1f5a38 0%, #153f27 100%);
+
+  box-shadow:
+    0 18px 36px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  animation: ssMenuIn 0.14s ease-out both;
+  transform-origin: top center;
+}
+
+@keyframes ssMenuIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- SEARCH BOX ---------- */
+
+.ss-menu .ss-search {
+  position: relative;
+  margin-bottom: 6px;
+}
+
+.ss-menu .ss-search svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 15px;
+  height: 15px;
+  transform: translateY(-50%);
+  fill: rgba(220, 245, 230, 0.6);
+  pointer-events: none;
+}
+
+.ss-menu .ss-search input {
+  width: 100%;
+  height: 38px;
+  box-sizing: border-box;
+  padding: 0 12px 0 36px;
+
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 10px !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: rgba(0, 18, 10, 0.3) !important;
+
+  color: var(--pl-text, #f4fff8);
+  caret-color: var(--pl-accent, #8dffad);
+  font-family: inherit;
+  font-size: 13.5px;
+}
+
+.ss-menu .ss-search input:focus {
+  border-color: rgba(141, 255, 173, 0.65) !important;
+}
+
+.ss-menu .ss-search input::placeholder {
+  color: rgba(220, 245, 230, 0.55);
+}
+
+/* ---------- LIST ---------- */
+
+.ss-menu .ss-list {
+  max-height: 210px;           /* zyada options par list ke andar scroll */
+  margin: 0 -2px;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(141, 255, 173, 0.35) transparent;
+}
+
+.ss-menu .ss-option {
+  padding: 11px 14px;
+  border-radius: 8px;
+
+  color: var(--pl-text, #f4fff8);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ss-menu .ss-option.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.ss-menu .ss-option.selected {
+  background: rgba(141, 255, 173, 0.16);
+  box-shadow: inset 3px 0 0 var(--pl-accent, #8dffad);
+  color: #ffffff;
+}
+
+.ss-menu .ss-empty {
+  padding: 12px 14px;
+  color: rgba(220, 245, 230, 0.6);
+  font-size: 12.5px;
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ss-menu { animation: none; }
+  .home-page .ss .ss-arrow { transition: none; }
+}
+
+
+/* =========================================================
+   LOGIN SUCCESS POPUP - EMBOSS DESIGN
+   Ubhri hui (raised) plate, andar dabi hui ring, gol embossed
+   checkmark badge aur letterpress text - HMS Login button jaisa.
+========================================================= */
+
+.login-success-backdrop {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(0, 12, 8, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+
+  z-index: 100000;
+
+  animation: successFade 0.25s ease-out both;
+}
+
+/* ---------- raised plate ---------- */
+
+.login-success-popup {
+  position: relative;
+
+  width: min(340px, 100%);
+
+  padding: 34px 24px 26px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 30px;
+
+  background: linear-gradient(180deg, #ffffff 0%, #e9f6ee 45%, #c9e3d4 100%);
+  color: #25483a;
+
+  text-align: center;
+
+  box-shadow:
+    0 28px 55px rgba(0, 0, 0, 0.55),
+    0 0 36px rgba(57, 255, 120, 0.16),
+    inset 0 3px 4px rgba(255, 255, 255, 0.95),
+    inset 0 -6px 12px rgba(0, 70, 40, 0.2);
+
+  animation: successPop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* andar ki patli engraved line */
+.login-success-popup::before {
+  content: "";
+
+  position: absolute;
+  inset: 8px;
+
+  border: 1px solid rgba(0, 90, 50, 0.14);
+  border-radius: 23px;
+
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+
+  pointer-events: none;
+}
+
+/* ---------- checkmark: dabi hui ring + ubhra hua gol badge ---------- */
+
+.login-success-check {
+  position: relative;
+
+  width: 96px;
+  height: 96px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 8px;
+
+  border-radius: 50%;
+
+  /* recessed (andar dabi) socket */
+  background: linear-gradient(145deg, #bcd8c8, #f3fbf6);
+
+  box-shadow:
+    inset 5px 5px 10px rgba(0, 70, 40, 0.28),
+    inset -5px -5px 10px rgba(255, 255, 255, 0.95),
+    0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.login-success-check::before {
+  content: "";
+
+  position: absolute;
+  inset: 12px;
+
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+
+  /* ubhra hua green badge */
+  background: linear-gradient(145deg, #5dff98 0%, #1ee87b 55%, #00b85f 100%);
+
+  box-shadow:
+    0 6px 12px rgba(0, 60, 30, 0.4),
+    inset 0 2px 3px rgba(255, 255, 255, 0.6),
+    inset 0 -4px 6px rgba(0, 90, 45, 0.35);
+}
+
+.login-success-check svg {
+  position: relative;
+
+  width: 40px;
+  height: 40px;
+
+  color: #ffffff;
+
+  filter: drop-shadow(0 2px 1px rgba(0, 70, 35, 0.55));
+}
+
+.login-success-check path {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+
+  animation: successDraw 0.5s ease-out 0.25s forwards;
+}
+
+/* ---------- letterpress text ---------- */
+
+.login-success-popup h3 {
+  position: relative;
+
+  margin: 0;
+
+  color: #25483a;
+
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95),
+    0 -1px 0 rgba(0, 60, 30, 0.18);
+}
+
+.login-success-popup p {
+  position: relative;
+
+  margin: 0 0 12px;
+
+  color: #5a7a6b;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* ---------- embossed pill button ---------- */
+
+.login-success-button {
+  position: relative;
+
+  height: 44px;
+  padding: 0 34px;
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+
+  background: linear-gradient(180deg, #17744f 0%, #0b3d2a 55%, #062a1c 100%);
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 1px rgba(0, 25, 15, 0.6);
+
+  cursor: pointer;
+
+  box-shadow:
+    0 9px 18px rgba(0, 50, 30, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.login-success-button:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 13px 24px rgba(0, 50, 30, 0.45),
+    0 0 18px rgba(25, 196, 122, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.login-success-button:active {
+  transform: translateY(1px);
+
+  box-shadow:
+    0 3px 7px rgba(0, 50, 30, 0.35),
+    inset 0 3px 7px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes successFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes successPop {
+  from { opacity: 0; transform: scale(0.85) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes successDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-success-backdrop,
+  .login-success-popup,
+  .login-success-check path {
+    animation: none !important;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ===== OTP CARD (final) ===== */
+
+@keyframes hmsOtpCardIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes hmsOtpRise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.home-page .admin-card-overlay.otp-card-overlay-enter {
+  padding-top: 24px !important;
+  align-items: center !important;
+}
+
+.home-page .admin-card.otp-card {
+  width: min(560px, calc(100vw - 40px)) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 56px 30px 28px !important;
+  background: #f9fcfa !important;
+  border: 1px solid rgba(15, 90, 60, 0.12) !important;
+  border-radius: 40px !important;
+  color: #0b3d2a !important;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(57, 255, 120, 0.35) !important;
+  font-family: inherit !important;
+  animation: hmsOtpCardIn 0.45s ease-out both !important;
+}
+
+/* Logo */
+.home-page .admin-card.otp-card .admin-logo-circle {
+  top: -44px !important;
+  width: 84px !important;
+  height: 84px !important;
+  background: #0f5a3c !important;
+  border: 4px solid #ffffff !important;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18) !important;
+  animation: hmsOtpRise 0.5s ease-out 0.08s both;
+}
+.home-page .admin-card.otp-card .admin-logo-circle img {
+  filter: none !important;
+}
+
+/* Hidden extras */
+.home-page .admin-card.otp-card .title-small,
+.home-page .admin-card.otp-card .title-line,
+.home-page .admin-card.otp-card .otp-description,
+.home-page .admin-card.otp-card .otp-method-section > label {
+  display: none !important;
+}
+
+/* Heading */
+.home-page .admin-card.otp-card .admin-card-title {
+  animation: hmsOtpRise 0.5s ease-out 0.12s both;
+}
+.home-page .admin-card.otp-card .admin-card-title h3 {
+  color: #0b3d2a !important;
+  font-size: clamp(28px, 3.4vw, 34px) !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+}
+.home-page .admin-card.otp-card .otp-subtitle {
+  margin: 8px 0 20px !important;
+  font-size: 16px !important;
+  color: #6b8a7b !important;
+  animation: hmsOtpRise 0.5s ease-out 0.18s both;
+}
+
+/* Email / Mobile track */
+.home-page .admin-card.otp-card .otp-method-section {
+  width: 100%;
+  animation: hmsOtpRise 0.5s ease-out 0.22s both;
+}
+.home-page .admin-card.otp-card .otp-method-options {
+  display: flex !important;
+  gap: 0 !important;
+  padding: 4px !important;
+  margin-bottom: 14px !important;
+  background: #eef3f0 !important;
+  border: 1px solid rgba(0, 80, 50, 0.08) !important;
+  border-radius: 16px !important;
+}
+.home-page .admin-card.otp-card .otp-method-button {
+  flex: 1 !important;
+  height: 56px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: transparent !important;
+  color: #66807a !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease !important;
+}
+.home-page .admin-card.otp-card .otp-method-button:hover:not(.active) {
+  color: #0b3d2a !important;
+  background: rgba(15, 90, 60, 0.05) !important;
+}
+.home-page .admin-card.otp-card .otp-method-button:active {
+  transform: scale(0.98) !important;
+}
+.home-page .admin-card.otp-card .otp-method-button.active {
+  background: #0f5a3c !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(15, 90, 60, 0.2) !important;
+}
+.home-page .admin-card.otp-card .otp-method-icon {
+  display: inline-flex !important;
+  align-items: center;
+}
+
+/* Destination */
+.home-page .admin-card.otp-card .otp-destination {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 12px !important;
+  background: #f1f6f3 !important;
+  border: 1px solid rgba(0, 80, 50, 0.08) !important;
+  border-radius: 16px !important;
+  color: #7a9489 !important;
+  font-size: 14px !important;
+  animation: hmsOtpRise 0.5s ease-out 0.28s both;
+}
+.home-page .admin-card.otp-card .otp-destination strong {
+  color: #0b1f16 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.2px;
+}
+
+/* Send / Verify */
+.home-page .admin-card.otp-card .otp-send-button,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button {
+  height: 56px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  background: #0f5a3c !important;
+  color: #ffffff !important;
+  font-size: 22px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  box-shadow: 0 4px 10px rgba(15, 90, 60, 0.18) !important;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease !important;
+  animation: hmsOtpRise 0.5s ease-out 0.34s both;
+}
+.home-page .admin-card.otp-card .otp-send-button:hover:not(:disabled),
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button:hover:not(:disabled) {
+  background: #17744f !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 14px rgba(15, 90, 60, 0.25) !important;
+}
+.home-page .admin-card.otp-card .otp-send-button:active:not(:disabled),
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button:active:not(:disabled) {
+  transform: scale(0.98) !important;
+}
+.home-page .admin-card.otp-card .otp-send-button:disabled,
+.home-page .admin-card.otp-card .login-submit-button.otp-verify-button:disabled {
+  opacity: 0.6 !important;
+}
+
+/* Arrow in SEND OTP (a generic .admin-card rule hides it, so show it here) */
+.home-page .admin-card.otp-card .otp-send-button .submit-arrow {
+  display: inline-flex !important;
+  width: 26px !important;
+  height: 26px !important;
+  border: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  align-items: center;
+  justify-content: center;
+}
+.home-page .admin-card.otp-card .otp-send-button .submit-arrow svg {
+  width: 22px !important;
+  height: 22px !important;
+  filter: none !important;
+}
+
+/* OTP input (after Send) */
+.home-page .admin-card.otp-card .otp-input-box {
+  background: #f1f6f3 !important;
+  border: 1px solid rgba(0, 80, 50, 0.12) !important;
+  border-radius: 14px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+.home-page .admin-card.otp-card .otp-input-box:focus-within {
+  border-color: #17744f !important;
+  box-shadow: 0 0 0 3px rgba(23, 116, 79, 0.12) !important;
+}
+
+/* Back to Login */
+.home-page .admin-card.otp-card .otp-back-button {
+  width: 100% !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #0f5a3c !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  transition: color 0.2s ease !important;
+  animation: hmsOtpRise 0.5s ease-out 0.4s both;
+}
+.home-page .admin-card.otp-card .otp-back-button:hover {
+  color: #17744f !important;
+}
+.home-page .admin-card.otp-card .otp-back-button::before,
+.home-page .admin-card.otp-card .otp-back-button::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(0, 80, 50, 0.15);
+}
+
+/* Resend */
+.home-page .admin-card.otp-card .otp-resend-button {
+  color: #0f5a3c !important;
+  font-weight: 500 !important;
+}
+
+/* Close button */
+.home-page .admin-card.otp-card .card-close-button,
+.home-page .admin-card.otp-card .card-close-button:hover,
+.home-page .admin-card.otp-card .card-close-button:focus-visible {
+  top: 20px !important;
+  right: 20px !important;
+  width: 40px !important;
+  height: 40px !important;
+  background: #0f5a3c !important;
+  border: 0 !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  transition: background 0.2s ease, transform 0.15s ease !important;
+}
+.home-page .admin-card.otp-card .card-close-button:hover {
+  background: #17744f !important;
+  transform: rotate(90deg) !important;
+}
+.home-page .admin-card.otp-card .card-close-button svg,
+.home-page .admin-card.otp-card .card-close-button * {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* ===== OTP CARD: layout reset (overrides the old circular card rules) ===== */
+
+.home-page .admin-card-overlay.otp-card-overlay-enter {
+  position: fixed !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  overflow-y: auto !important;
+  z-index: 50 !important;
+  background: rgba(2, 12, 8, 0.72) !important;
+}
+
+.home-page .admin-card.otp-card {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  box-sizing: border-box !important;
+  width: min(560px, calc(100vw - 32px)) !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: fit-content !important;
+  max-height: none !important;
+  aspect-ratio: auto !important;
+  margin: 0 auto !important;
+  transform: none !important;
+  border-radius: 40px !important;
+  overflow: visible !important;
+  padding: 56px 30px 36px !important;
+}
+
+.home-page .admin-card.otp-card > * {
+  position: relative;
+  box-sizing: border-box;
+  max-width: 100%;
+  transform: none;
+}
+
+.home-page .admin-card.otp-card > .admin-logo-circle {
+  position: absolute !important;
+  top: -44px !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translateX(-50%) !important;
+  width: 84px !important;
+  height: 84px !important;
+  margin: 0 !important;
+}
+
+.home-page .admin-card.otp-card > .card-close-button {
+  position: absolute !important;
+  top: 20px !important;
+  right: 20px !important;
+  left: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  width: 40px !important;
+  height: 40px !important;
+  margin: 0 !important;
+}
+
+.home-page .admin-card.otp-card .otp-send-button,
+.home-page .admin-card.otp-card .otp-back-button,
+.home-page .admin-card.otp-card .otp-method-options,
+.home-page .admin-card.otp-card .otp-destination,
+.home-page .admin-card.otp-card .otp-input-box {
+  position: relative !important;
+  inset: auto !important;
+  transform: none;
+}
+
+.home-page .admin-card.otp-card .admin-card-title,
+.home-page .admin-card.otp-card .otp-description,
+.home-page .admin-card.otp-card .otp-method-section {
+  position: relative !important;
+  inset: auto !important;
+}
+
+@media (max-width: 480px) {
+  .home-page .admin-card.otp-card {
+    padding: 56px 20px 24px !important;
+    border-radius: 26px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-page .admin-card.otp-card,
+  .home-page .admin-card.otp-card * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Hindi text support only — existing colors and styling remain unchanged */
+.home-page,
+.home-page input,
+.home-page button,
+.home-page select,
+.home-page textarea,
+.home-page label,
+.home-page h1,
+.home-page h2,
+.home-page h3,
+.home-page p,
+.home-page span {
+  font-family: "Noto Sans Devanagari", "Mangal", "Nirmala UI", sans-serif;
 }
