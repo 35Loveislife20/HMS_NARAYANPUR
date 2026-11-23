@@ -1,3 +1,4 @@
+require("./config/brevoPatch");
 require("dotenv").config();
 
 const app = require("./app");
