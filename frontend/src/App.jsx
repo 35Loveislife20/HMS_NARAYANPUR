@@ -24,7 +24,7 @@ import Laboratory from "./pages/Laboratory/Laboratory";
 import Pharmacy from "./pages/pharmacy/Pharmacy";
 import Reports from "./pages/reports/Reports";
 import Settings from "./pages/settings/Settings";
-import HospitalSettings from "./pages/settings/Hospitalsettings";
+import HospitalSettings from "./pages/settings/HospitalSettings";
 import Users from "./pages/users/Users";
 import Dashboard from "./pages/dashboard/Dashboard";
 import SuperAdmin from "./pages/super-admin/SuperAdmin";
