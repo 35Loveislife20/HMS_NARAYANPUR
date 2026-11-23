@@ -87,15 +87,19 @@ const brevoTransport = {
     sendViaBrevo(mail).then((info) => cb(null, info), (err) => cb(err));
   },
   verify(cb) {
-    fetch(`${API}/account`, {
+    const run = fetch(`${API}/account`, {
       headers: { "api-key": process.env.BREVO_API_KEY, accept: "application/json" },
       signal: AbortSignal.timeout(10000),
-    }).then(
-      (r) => (r.ok ? cb(null, true) : cb(new Error(`Brevo API verify failed: ${r.status}`))),
-      (e) => cb(e)
-    );
-  },
-};
+    }).then((r) => {
+      if (!r.ok) throw new Error(`Brevo API verify failed: ${r.status}`);
+      return true;
+    });
+    if (typeof cb === "function") {
+      run.then(() => cb(null, true), (e) => cb(e));
+      return;
+    }
+    return run;
+  },};
 
 const original = nodemailer.createTransport.bind(nodemailer);
 nodemailer.createTransport = function (...args) {
