@@ -13984,3 +13984,24 @@ body {
     display: none !important;
   }
 }
+/* Desktop-site / tablet width: HMS login label visible */
+@media (min-width: 769px) and (max-width: 1100px) {
+  .main-page .hms-login-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    width: auto !important;
+    min-width: max-content !important;
+    overflow: visible !important;
+  }
+  .main-page .hms-login-btn > span {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  .main-page .hms-login-btn > svg {
+    display: inline-block !important;
+  }
+}
