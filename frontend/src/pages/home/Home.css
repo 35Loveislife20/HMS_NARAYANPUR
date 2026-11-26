@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,100..900,0..100&family=Baloo+2:wght@500..800&display=swap"); /* hms-chunky-font-import */
 /* =========================================================
    HMS HOME PAGE
    PREMIUM GREEN / CYAN MEDICAL THEME
@@ -7274,4 +7275,524 @@ select:focus-visible {
 .home-page p,
 .home-page span {
   font-family: "Noto Sans Devanagari", "Mangal", "Nirmala UI", sans-serif;
+}
+
+/* hms-gov-step-button : government portal style "एचएमएस लॉगिन" button */
+.step-one-content .step-one-button {
+  position: relative !important;
+  overflow: hidden !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 28px !important;
+  min-width: 340px !important;
+  height: 68px !important;
+  padding: 0 12px 4px 28px !important;
+  border: 1px solid #0a2f66 !important;
+  border-radius: 8px !important;
+  background: linear-gradient(180deg, #14509f 0%, #0b3a7a 100%) !important;
+  color: #ffffff !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  text-shadow: none !important;
+  white-space: nowrap !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .55) !important;
+  transform: none !important;
+  filter: none !important;
+  cursor: pointer !important;
+  transition: background .18s ease, box-shadow .18s ease !important;
+}
+
+/* Purani chamak hatao */
+.step-one-content .step-one-button::before {
+  display: none !important;
+}
+
+/* Neeche tiranga patti: kesariya | safed | hara */
+.step-one-content .step-one-button::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: auto 0 0 0 !important;
+  width: auto !important;
+  height: 5px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+  background: linear-gradient(90deg, #ff9933 0 33.33%, #ffffff 33.33% 66.66%, #138808 66.66% 100%) !important;
+}
+
+/* Text */
+.step-one-content .step-one-button > span:first-child {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  text-shadow: none !important;
+}
+
+/* Icon: gol hare badge ki jagah chaukor badge */
+.step-one-content .step-one-button .button-arrow {
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(255, 255, 255, .45) !important;
+  border-radius: 6px !important;
+  background: rgba(255, 255, 255, .14) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  filter: none !important;
+  animation: none !important;
+}
+
+.step-one-content .step-one-button .button-arrow svg {
+  color: #ffffff !important;
+  fill: currentColor !important;
+}
+
+/* Hover: halka rang badlav */
+.step-one-content .step-one-button:hover {
+  background: linear-gradient(180deg, #1b62bd 0%, #0f4694 100%) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .6) !important;
+  transform: none !important;
+}
+
+.step-one-content .step-one-button:hover .button-arrow {
+  background: #ff9933 !important;
+  border-color: #ff9933 !important;
+  transform: none !important;
+}
+
+.step-one-content .step-one-button:active {
+  transform: translateY(1px) !important;
+}
+
+.step-one-content .step-one-button:focus-visible {
+  outline: 3px solid #ff9933 !important;
+  outline-offset: 3px !important;
+}
+
+@media (max-width: 480px) {
+  .step-one-content .step-one-button {
+    min-width: 0 !important;
+    width: 100% !important;
+    height: 60px !important;
+    padding-left: 18px !important;
+    font-size: 18px !important;
+  }
+}
+
+/* hms-push-anim : 3D red push button + animated peeking character */
+.step-one-content .step-one-button {
+  position: relative !important;
+  overflow: visible !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 380px !important;
+  height: 92px !important;
+  margin: 140px 0 18px !important;
+  padding: 0 40px !important;
+  border: 0 !important;
+  border-radius: 24px !important;
+  background: #e4003a !important;
+  color: #ffffff !important;
+  font-family: inherit !important;
+  font-size: 34px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  text-shadow: none !important;
+  white-space: nowrap !important;
+  box-shadow: 0 10px 0 #a60032, 0 20px 26px rgba(0, 0, 0, .4) !important;
+  transform: none !important;
+  filter: none !important;
+  cursor: pointer !important;
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease !important;
+}
+
+.step-one-content .step-one-button::after {
+  display: none !important;
+}
+
+.step-one-content .step-one-button > span:first-child {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  text-shadow: none !important;
+}
+
+.step-one-content .step-one-button .button-arrow {
+  display: none !important;
+}
+
+/* Character: ye box button ke upar fixed rehta hai, image iske andar upar-neeche hoti hai */
+.step-one-content .step-one-button::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  top: auto !important;
+  right: auto !important;
+  left: 50% !important;
+  bottom: calc(100% - 1px) !important;
+  width: 170px !important;
+  height: 119px !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 0 0 -85px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 110'%3E%3Cpath d='M8 110 Q10 76 42 68 L78 68 Q110 76 112 110 Z' fill='%23f6c431'/%3E%3Cpath d='M44 70 L76 70 L74 110 L46 110 Z' fill='%23f2efea'/%3E%3Cellipse cx='60' cy='68' rx='23' ry='8' fill='%23fbd24c'/%3E%3Ccircle cx='60' cy='42' r='28' fill='%23f6d5bf'/%3E%3Cpath d='M30 42 Q26 8 62 8 Q96 8 91 42 Q86 22 62 24 Q40 24 30 42 Z' fill='%235a4231'/%3E%3Ccircle cx='50' cy='46' r='4' fill='%23111'/%3E%3Ccircle cx='70' cy='46' r='4' fill='%23111'/%3E%3Cpath d='M46 38 Q50 35 54 37 M66 37 Q70 35 74 38' stroke='%235a4231' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3Cpath d='M56 55 L64 55' stroke='%23b0503c' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-size: 130px 119px !important;
+  background-position: 50% 125px;
+  animation: hmsPeek 7s ease-in-out infinite !important;
+}
+
+/* Chhupa -> upar aata hai -> baayen dekhta -> daayen dekhta -> beech me -> wapas chhup jata hai */
+@keyframes hmsPeek {
+  0%, 10% { background-position: 50% 125px; }
+  20%     { background-position: 50% 0px; }
+  30%     { background-position: 22% 0px; }
+  40%     { background-position: 78% 0px; }
+  50%     { background-position: 50% 0px; }
+  65%     { background-position: 50% 0px; }
+  75%, 100% { background-position: 50% 125px; }
+}
+
+/* Hover: character poora upar aa jata hai aur ruk jata hai */
+.step-one-content .step-one-button:hover {
+  background: #f0003f !important;
+  transform: translateY(3px) !important;
+  box-shadow: 0 7px 0 #a60032, 0 14px 20px rgba(0, 0, 0, .4) !important;
+}
+
+.step-one-content .step-one-button:hover::before {
+  animation: none !important;
+  background-position: 50% 0px !important;
+  transition: background-position .25s ease !important;
+}
+
+/* Click: button dabta hai, character neeche chhup jata hai */
+.step-one-content .step-one-button:active {
+  transform: translateY(10px) !important;
+  box-shadow: 0 0 0 #a60032, 0 4px 8px rgba(0, 0, 0, .4) !important;
+}
+
+.step-one-content .step-one-button:active::before {
+  animation: none !important;
+  background-position: 50% 125px !important;
+  transition: background-position .12s ease !important;
+}
+
+.step-one-content .step-one-button:focus-visible {
+  outline: 3px solid #ffffff !important;
+  outline-offset: 4px !important;
+}
+
+/* Jinhone browser me "reduce motion" chalu kiya hai, unke liye character sthir rahega */
+@media (prefers-reduced-motion: reduce) {
+  .step-one-content .step-one-button::before {
+    animation: none !important;
+    background-position: 50% 0px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .step-one-content .step-one-button {
+    min-width: 0 !important;
+    width: 100% !important;
+    height: 76px !important;
+    font-size: 26px !important;
+    padding: 0 20px !important;
+  }
+}
+/* hms-bilingual-label : button ke andar English + Hindi naam */
+.step-one-content .step-one-button {
+  height: 108px !important;
+  min-width: 420px !important;
+}
+
+.step-one-content .step-one-button > .step-one-label {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  line-height: 1 !important;
+  text-align: center !important;
+}
+
+/* English: bada, bold, thodi doori ke saath */
+.step-one-content .step-one-button .step-one-label-en {
+  display: block !important;
+  color: #ffffff !important;
+  font-size: 36px !important;
+  font-weight: 800 !important;
+  letter-spacing: 5px !important;
+  text-transform: uppercase !important;
+  line-height: 1.05 !important;
+  text-shadow:
+    0 3px 0 rgba(120, 0, 28, .55),
+    0 7px 14px rgba(0, 0, 0, .25) !important;
+}
+
+/* Hindi: chhota, halka gulabi, upar patli chamakdar line */
+.step-one-content .step-one-button .step-one-label-hi {
+  position: relative !important;
+  display: block !important;
+  padding-top: 8px !important;
+  color: #ffe3ea !important;
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  letter-spacing: .5px !important;
+  line-height: 1.2 !important;
+  text-shadow: 0 2px 0 rgba(120, 0, 28, .45) !important;
+}
+
+.step-one-content .step-one-button .step-one-label-hi::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 50% !important;
+  width: 70% !important;
+  height: 2px !important;
+  transform: translateX(-50%) !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .8), transparent) !important;
+}
+
+/* Hover: Hindi thoda chamakta hai */
+.step-one-content .step-one-button:hover .step-one-label-hi {
+  color: #ffffff !important;
+}
+
+@media (max-width: 480px) {
+  .step-one-content .step-one-button {
+    height: 92px !important;
+    min-width: 0 !important;
+  }
+  .step-one-content .step-one-button .step-one-label-en {
+    font-size: 26px !important;
+    letter-spacing: 3px !important;
+  }
+  .step-one-content .step-one-button .step-one-label-hi {
+    font-size: 16px !important;
+  }
+}
+/* hms-green-theme : button ko page ke gehre hare theme se milao */
+.step-one-content .step-one-button {
+  background: linear-gradient(180deg, #2bf07a 0%, #12c25a 100%) !important;
+  box-shadow:
+    0 10px 0 #067a3a,
+    0 20px 26px rgba(0, 0, 0, .45),
+    0 0 34px rgba(0, 255, 120, .38) !important;
+}
+
+/* English naam: gehra hara, halki upar chamak */
+.step-one-content .step-one-button .step-one-label-en {
+  color: #03170c !important;
+  text-shadow:
+    0 2px 0 rgba(255, 255, 255, .35),
+    0 6px 12px rgba(0, 70, 30, .25) !important;
+}
+
+/* Hindi naam: thoda halka hara-kaala, upar patli line */
+.step-one-content .step-one-button .step-one-label-hi {
+  color: #05361b !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .3) !important;
+}
+
+.step-one-content .step-one-button .step-one-label-hi::before {
+  background: linear-gradient(90deg, transparent, rgba(3, 23, 12, .55), transparent) !important;
+}
+
+/* Hover: aur chamakdar, thoda dabta hai */
+.step-one-content .step-one-button:hover {
+  background: linear-gradient(180deg, #4dff95 0%, #19d765 100%) !important;
+  box-shadow:
+    0 7px 0 #067a3a,
+    0 14px 20px rgba(0, 0, 0, .45),
+    0 0 46px rgba(0, 255, 130, .55) !important;
+}
+
+.step-one-content .step-one-button:hover .step-one-label-hi {
+  color: #03170c !important;
+}
+
+/* Click: poora dab jata hai */
+.step-one-content .step-one-button:active {
+  box-shadow:
+    0 0 0 #067a3a,
+    0 4px 8px rgba(0, 0, 0, .45),
+    0 0 22px rgba(0, 255, 120, .35) !important;
+}
+
+.step-one-content .step-one-button:focus-visible {
+  outline: 3px solid #b6ff3b !important;
+  outline-offset: 4px !important;
+}
+/* hms-gov-label : button ke dono text ka sarkari style (rang, font, chaudai) */
+.step-one-content .step-one-button {
+  width: 420px !important;
+  min-width: 420px !important;
+  max-width: 100% !important;
+  height: 104px !important;
+  padding: 0 28px !important;
+  justify-content: center !important;
+}
+
+.step-one-content .step-one-button > .step-one-label {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+}
+
+/* English: gehra neela, saaf sans-serif, kam saaya */
+.step-one-content .step-one-button .step-one-label-en {
+  display: block !important;
+  width: 100% !important;
+  color: #0b2545 !important;
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif !important;
+  font-size: 30px !important;
+  font-weight: 700 !important;
+  letter-spacing: 3px !important;
+  text-transform: uppercase !important;
+  line-height: 1.1 !important;
+  text-shadow: none !important;
+}
+
+/* Hindi: wahi gehra neela, saaf Devanagari font */
+.step-one-content .step-one-button .step-one-label-hi {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  padding-top: 9px !important;
+  color: #0b2545 !important;
+  font-family: "Noto Sans Devanagari", "Nirmala UI", "Mangal", Arial, sans-serif !important;
+  font-size: 21px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.2 !important;
+  text-shadow: none !important;
+}
+
+/* Dono ke beech seedhi patli line */
+.step-one-content .step-one-button .step-one-label-hi::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 50% !important;
+  width: 56% !important;
+  height: 1px !important;
+  transform: translateX(-50%) !important;
+  background: rgba(11, 37, 69, .55) !important;
+}
+
+/* Hover/Click par bhi wahi saaf rang */
+.step-one-content .step-one-button:hover .step-one-label-en,
+.step-one-content .step-one-button:hover .step-one-label-hi,
+.step-one-content .step-one-button:active .step-one-label-en,
+.step-one-content .step-one-button:active .step-one-label-hi {
+  color: #0b2545 !important;
+}
+
+@media (max-width: 480px) {
+  .step-one-content .step-one-button {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 90px !important;
+    padding: 0 16px !important;
+  }
+  .step-one-content .step-one-button .step-one-label-en {
+    font-size: 23px !important;
+    letter-spacing: 2px !important;
+  }
+  .step-one-content .step-one-button .step-one-label-hi {
+    font-size: 17px !important;
+  }
+}
+/* hms-lime-theme : lime button + gehra hara text (site ke accent jaisa) */
+.step-one-content .step-one-button {
+  background: linear-gradient(180deg, #c6ff52 0%, #a3ee26 100%) !important;
+  box-shadow:
+    0 10px 0 #6fa51a,
+    0 20px 26px rgba(0, 0, 0, .45),
+    0 0 34px rgba(182, 255, 59, .32) !important;
+}
+
+.step-one-content .step-one-button .step-one-label-en,
+.step-one-content .step-one-button .step-one-label-hi,
+.step-one-content .step-one-button:hover .step-one-label-en,
+.step-one-content .step-one-button:hover .step-one-label-hi,
+.step-one-content .step-one-button:active .step-one-label-en,
+.step-one-content .step-one-button:active .step-one-label-hi {
+  color: #03170c !important;
+  text-shadow: none !important;
+}
+
+.step-one-content .step-one-button .step-one-label-hi::before {
+  background: rgba(3, 23, 12, .5) !important;
+}
+
+.step-one-content .step-one-button:hover {
+  background: linear-gradient(180deg, #d4ff74 0%, #b2f73d 100%) !important;
+  box-shadow:
+    0 7px 0 #6fa51a,
+    0 14px 20px rgba(0, 0, 0, .45),
+    0 0 46px rgba(182, 255, 59, .5) !important;
+}
+
+.step-one-content .step-one-button:active {
+  box-shadow:
+    0 0 0 #6fa51a,
+    0 4px 8px rgba(0, 0, 0, .45),
+    0 0 22px rgba(182, 255, 59, .3) !important;
+}
+
+.step-one-content .step-one-button:focus-visible {
+  outline: 3px solid #ffffff !important;
+  outline-offset: 4px !important;
+}
+/* hms-chunky-font : moti gol serif (English) + moti gol Devanagari (Hindi) */
+.step-one-content .step-one-button .step-one-label-en {
+  font-family: "Fraunces", "Cooper Black", "Alfa Slab One", Georgia, serif !important;
+  font-weight: 900 !important;
+  font-variation-settings: "SOFT" 100, "WONK" 0 !important;
+  font-optical-sizing: auto !important;
+  font-size: 34px !important;
+  letter-spacing: 1.5px !important;
+  line-height: 1.05 !important;
+}
+
+.step-one-content .step-one-button .step-one-label-hi {
+  font-family: "Baloo 2", "Noto Sans Devanagari", "Nirmala UI", "Mangal", sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 22px !important;
+  letter-spacing: 0 !important;
+  line-height: 1.15 !important;
+}
+
+@media (max-width: 480px) {
+  .step-one-content .step-one-button .step-one-label-en {
+    font-size: 26px !important;
+    letter-spacing: 1px !important;
+  }
+  .step-one-content .step-one-button .step-one-label-hi {
+    font-size: 18px !important;
+  }
 }

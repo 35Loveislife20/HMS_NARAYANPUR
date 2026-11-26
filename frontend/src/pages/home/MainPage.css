@@ -13885,3 +13885,57 @@ body {
 .main-page .about-section h3 {
   line-height: 1.35;
 }
+/* hms-department-text-fix : department card me naam upar, description neeche */
+.department-card > div > strong {
+  display: block !important;
+  margin-bottom: 4px;
+}
+.department-card > div > span {
+  display: block !important;
+  line-height: 1.5;
+}
+/* hms-nav-fill-fix : menu bada + poori jagah me, search khulne par auto-fit */
+@media (min-width: 981px) {
+  .main-page .main-nav {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    justify-content: center !important;
+    gap: clamp(2px, .6vw, 10px) !important;
+    padding: 0 clamp(6px, 1vw, 24px) !important;
+  }
+
+  .main-page .main-nav button,
+  .main-page .main-nav button.active {
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
+    padding: 0 clamp(6px, .7vw, 12px) !important;
+    font-size: clamp(12px, 1.15vw, 18px) !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    transition:
+      color .2s ease,
+      background .2s ease,
+      border-color .2s ease,
+      box-shadow .2s ease,
+      transform .2s ease,
+      font-size .2s ease,
+      padding .2s ease !important;
+  }
+
+  /* Search khula ho: menu apne aap chhota hokar fit ho */
+  .main-page .main-header:has(.header-search.is-open) .main-nav {
+    padding: 0 4px !important;
+  }
+
+  .main-page .main-header:has(.header-search.is-open) .main-nav button,
+  .main-page .main-header:has(.header-search.is-open) .main-nav button.active {
+    font-size: clamp(11px, .85vw, 13px) !important;
+    padding: 0 clamp(4px, .5vw, 9px) !important;
+  }
+
+  .main-page .main-header:has(.header-search.is-open) .header-search-panel {
+    flex: 0 0 clamp(220px, 20vw, 330px) !important;
+    width: clamp(220px, 20vw, 330px) !important;
+    max-width: clamp(220px, 20vw, 330px) !important;
+  }
+}

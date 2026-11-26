@@ -1340,7 +1340,7 @@ const Users = () => {
 
                 setSuccess(
                     data?.mailSent
-                        ? "User created. Login credentials email par PDF ke saath bhej diye gaye hain."
+                        ? "User created. Login credentials (email, password, role) email par bhej diye gaye hain."
                         : "User created, par credentials email nahi ja saka."
                 );
             }

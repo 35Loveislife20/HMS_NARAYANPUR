@@ -1959,8 +1959,9 @@ function Home() {
               className="step-one-button"
               onClick={openLogin}
             >
-              <span>
-                एचएमएस लॉगिन
+              <span className="step-one-label">
+                <span className="step-one-label-en">HMS LOGIN</span>
+                <span className="step-one-label-hi">स्टाफ लॉगिन</span>
               </span>
 
               <span className="button-arrow">

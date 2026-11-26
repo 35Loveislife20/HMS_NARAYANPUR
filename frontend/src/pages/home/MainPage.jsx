@@ -26,9 +26,44 @@ import {
   FaCheckCircle,
   FaChevronRight,
   FaSignInAlt,
+  FaAssistiveListeningSystems,
+  FaBrain,
+  FaBone,
+  FaBaby,
+  FaEye,
+  FaTooth,
+  FaLungs,
+  FaFemale,
+  FaXRay,
+  FaAmbulance,
 } from "react-icons/fa";
 
 import "./MainPage.css";
+
+/* Department ke naam se icon chunta hai. Match na mile to Flask dikhega. */
+const DEPARTMENT_ICON_RULES = [
+  { match: /\b(ent|ear|nose|throat|audiolog\w*|hearing)\b/, icon: FaAssistiveListeningSystems },
+  { match: /\b(cardio\w*|heart)\b/, icon: FaHeartbeat },
+  { match: /\b(neuro\w*|brain)\b/, icon: FaBrain },
+  { match: /\b(ortho\w*|bone|fracture)\b/, icon: FaBone },
+  { match: /\b(pediatric\w*|paediatric\w*|child\w*)\b/, icon: FaBaby },
+  { match: /\b(eye|ophthalm\w*)\b/, icon: FaEye },
+  { match: /\b(dental|dentist|tooth)\b/, icon: FaTooth },
+  { match: /\b(lung\w*|chest|pulmon\w*)\b/, icon: FaLungs },
+  { match: /\b(gynae\w*|gynec\w*|obstetric\w*|maternity)\b/, icon: FaFemale },
+  { match: /\b(radiolog\w*|x-?ray|imaging)\b/, icon: FaXRay },
+  { match: /\b(pharmac\w*)\b/, icon: FaPills },
+  { match: /\b(emergency|trauma|casualty)\b/, icon: FaAmbulance },
+  { match: /\b(skin|derma\w*|cosmet\w*)\b/, icon: FaUserMd },
+  { match: /\b(general|medicine|medical)\b/, icon: FaStethoscope },
+];
+
+const HmsDepartmentIcon = ({ name }) => {
+  const key = String(name || "").toLowerCase();
+  const rule = DEPARTMENT_ICON_RULES.find((item) => item.match.test(key));
+  const Icon = rule ? rule.icon : FaFlask;
+  return <Icon />;
+};
 /* =========================================================
    BACK / FORWARD PAR AUTOMATIC REFRESH
    Browser ka Back ya Forward dabane par page reload hota hai.
@@ -2324,7 +2359,7 @@ function MainPage() {
                   className="department-card"
                   key={department.id ?? `${name}-${index}`}
                 >
-                  <FaFlask />
+                  <HmsDepartmentIcon name={name} />
                   <div>
                     <strong>{name}</strong>
                     {detail && <span>{detail}</span>}

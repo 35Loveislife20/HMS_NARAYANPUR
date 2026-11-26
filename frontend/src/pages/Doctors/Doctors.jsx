@@ -772,7 +772,7 @@ const Doctors = () => {
                     : !data.loginCreated
                     ? "Doctor add ho gaya, par login account nahi ban saka."
                     : data.mailSent
-                    ? "Doctor add ho gaya. Login credentials email par PDF ke saath bhej diye gaye hain."
+                    ? "Doctor add ho gaya. Login credentials (email, password, role) email par bhej diye gaye hain."
                     : "Doctor add ho gaya, par email nahi ja saka. Forgot Password se login set karwa sakte hain.",
             });
         } catch (err) {

@@ -28,6 +28,19 @@ function escapeHtml(value) {
   }[c]));
 }
 
+/* "doctor" -> "Doctor", "super_admin" -> "Super Admin" */
+function formatRole(role) {
+  return String(role ?? "")
+    .replace(/[_-]+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/*
+  Sends ONLY login credentials (Login Email, Password, Role, Login URL).
+  No certificate / PDF / attachment is sent from here.
+  Used by Doctors, Users (Admin / Staff / Nurse ...) and Auth.
+*/
 async function issueCredentials({ userId, name, email, role, password, hospitalId }) {
   try {
     const tx = getTransporter();
@@ -43,6 +56,9 @@ async function issueCredentials({ userId, name, email, role, password, hospitalI
       process.env.EMAIL_USER ||
       process.env.MAIL_USER;
 
+    const roleLabel = formatRole(role);
+    const cell = "padding: 6px 12px; border: 1px solid #ddd;";
+
     await tx.sendMail({
       from,
       to: email,
@@ -51,10 +67,11 @@ async function issueCredentials({ userId, name, email, role, password, hospitalI
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; color: #222;">
           <h2 style="color: #0b5d3b;">Welcome to HMS</h2>
           <p>Dear <strong>${escapeHtml(name)}</strong>,</p>
-          <p>Your <strong>${escapeHtml(role)}</strong> account has been created.</p>
+          <p>Your <strong>${escapeHtml(roleLabel)}</strong> account has been created. Your login credentials are below.</p>
           <table style="border-collapse: collapse; margin: 16px 0;">
-            <tr><td style="padding: 6px 12px; border: 1px solid #ddd;"><strong>Login Email</strong></td><td style="padding: 6px 12px; border: 1px solid #ddd;">${escapeHtml(email)}</td></tr>
-            <tr><td style="padding: 6px 12px; border: 1px solid #ddd;"><strong>Password</strong></td><td style="padding: 6px 12px; border: 1px solid #ddd;">${escapeHtml(password)}</td></tr>
+            <tr><td style="${cell}"><strong>Login Email</strong></td><td style="${cell}">${escapeHtml(email)}</td></tr>
+            <tr><td style="${cell}"><strong>Password</strong></td><td style="${cell}">${escapeHtml(password)}</td></tr>
+            <tr><td style="${cell}"><strong>Role</strong></td><td style="${cell}">${escapeHtml(roleLabel)}</td></tr>
           </table>
           <p>Login: <a href="${escapeHtml(loginUrl)}">${escapeHtml(loginUrl)}</a></p>
           <p style="color: #b00020;"><strong>Please change your password after your first login.</strong></p>
