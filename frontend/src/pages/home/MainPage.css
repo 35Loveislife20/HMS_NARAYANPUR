@@ -13939,3 +13939,20 @@ body {
     max-width: clamp(220px, 20vw, 330px) !important;
   }
 }
+
+/* Mobile: HMS login button fix */
+@media (max-width: 768px) {
+  .header-search-empty {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    margin-left: auto !important;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+  }
+}
