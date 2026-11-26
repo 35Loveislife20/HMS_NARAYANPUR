@@ -236,7 +236,7 @@ const addUser = async (req, res) => {
         const plainPassword =
             password && String(password).trim()
                 ? String(password).trim()
-                : generatePassword();
+                : makeTempPassword();
 
         const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
@@ -751,3 +751,11 @@ module.exports = {
     deleteUser,
     changeProfileImage
 };
+/* Temp password generator (generatePassword import kaam nahi kar raha tha) */
+function makeTempPassword(length = 10) {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+  const bytes = require("crypto").randomBytes(length);
+  let out = "";
+  for (let i = 0; i < length; i++) out += chars[bytes[i] % chars.length];
+  return out;
+}
