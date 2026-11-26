@@ -49,7 +49,7 @@ async function issueCredentials({ userId, name, email, role, password, hospitalI
       return false;
     }
 
-    const loginUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const loginUrl = process.env.FRONTEND_URL || "https://hms-narayanpur-frontend.vercel.app";
     const from =
       process.env.SMTP_FROM ||
       process.env.SMTP_USER ||
