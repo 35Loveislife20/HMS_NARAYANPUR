@@ -1421,7 +1421,7 @@ module.exports = {
     editDoctor,
     removeDoctor,
 };
-/* Temp password generator (generatePassword import kaam nahi kar raha tha) */
+/* Temp password generator */
 function makeTempPassword(length = 10) {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
   const bytes = require("crypto").randomBytes(length);
