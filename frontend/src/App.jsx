@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import {
   Routes,
   Route,
@@ -7,38 +7,46 @@ import {
   useNavigate,
 } from "react-router-dom";
 
+// Landing page eager (pehli screen yahi hai)
 import MainPage from "./pages/home/MainPage";
-import Home from "./pages/home/Home";
 
-import Appointments from "./pages/Appointments/Appointments";
-import NewPatientAppointment from "./pages/Appointments/NewPatientAppointment";
-import OldPatientAppointment from "./pages/Appointments/OldPatientAppointment";
+// Baaki sab pages lazy: har ek alag chunk, MainPage ko bhari nahi karenge
+const Home = lazy(() => import("./pages/home/Home"));
+const Appointments = lazy(() => import("./pages/Appointments/Appointments"));
+const NewPatientAppointment = lazy(() => import("./pages/Appointments/NewPatientAppointment"));
+const OldPatientAppointment = lazy(() => import("./pages/Appointments/OldPatientAppointment"));
+const Patients = lazy(() => import("./pages/patients/Patients"));
+const PatientRegistration = lazy(() => import("./pages/patients/PatientRegistration"));
+const Doctors = lazy(() => import("./pages/Doctors/Doctors"));
+const Departments = lazy(() => import("./pages/Departments/Departments"));
+const Billing = lazy(() => import("./pages/Billing/Billing"));
+const Laboratory = lazy(() => import("./pages/Laboratory/Laboratory"));
+const Pharmacy = lazy(() => import("./pages/pharmacy/Pharmacy"));
+const Reports = lazy(() => import("./pages/reports/Reports"));
+const Settings = lazy(() => import("./pages/settings/Settings"));
+const HospitalSettings = lazy(() => import("./pages/settings/HospitalSettings"));
+const Users = lazy(() => import("./pages/users/Users"));
+const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
+const SuperAdmin = lazy(() => import("./pages/super-admin/SuperAdmin"));
+const PatientServices = lazy(() => import("./pages/patients/PatientServices"));
 
-import Patients from "./pages/patients/Patients";
-import PatientRegistration from "./pages/patients/PatientRegistration";
-
-import Doctors from "./pages/Doctors/Doctors";
-import Departments from "./pages/Departments/Departments";
-import Billing from "./pages/Billing/Billing";
-import Laboratory from "./pages/Laboratory/Laboratory";
-import Pharmacy from "./pages/pharmacy/Pharmacy";
-import Reports from "./pages/reports/Reports";
-import Settings from "./pages/settings/Settings";
-import HospitalSettings from "./pages/settings/HospitalSettings";
-import Users from "./pages/users/Users";
-import Dashboard from "./pages/dashboard/Dashboard";
-import SuperAdmin from "./pages/super-admin/SuperAdmin";
-
-import PatientServices from "./pages/patients/PatientServices";
-
-/* =========================================================
-   SETTINGS ROUTE (role ke hisaab se)
-
-   - Super Admin (seedha)            -> Settings (HMS login / branding)
-   - Super Admin (hospital dashboard
-     se, state.hospitalId ke saath)  -> us hospital ki HospitalSettings
-   - Hospital Admin / baaki staff    -> apne hospital ki HospitalSettings
-========================================================= */
+function PageLoader() {
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#050706",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#a6ff2e",
+        fontFamily: "Inter, Arial, sans-serif",
+      }}
+    >
+      Loading...
+    </div>
+  );
+}
 
 function readStoredUser() {
   try {
@@ -134,117 +142,29 @@ function SettingsRoute() {
 
 function App() {
   return (
-    <Routes>
-      {/* =========================
-          MAIN PAGE
-      ========================= */}
-      <Route path="/" element={<MainPage />} />
-
-      {/* =========================
-          ADMIN / HMS
-      ========================= */}
-      <Route path="/home" element={<Home />} />
-
-      {/* =========================
-          PATIENT SERVICES
-      ========================= */}
-      <Route
-        path="/patient-services"
-        element={<PatientServices />}
-      />
-
-      {/* =========================
-          APPOINTMENTS
-      ========================= */}
-      <Route
-        path="/appointments"
-        element={<Appointments />}
-      />
-
-      <Route
-        path="/appointments/new"
-        element={<NewPatientAppointment />}
-      />
-
-      <Route
-        path="/appointments/old"
-        element={<OldPatientAppointment />}
-      />
-
-      {/* =========================
-          PATIENTS
-      ========================= */}
-      <Route
-        path="/patients"
-        element={<Patients />}
-      />
-
-      <Route
-        path="/patients/register"
-        element={<PatientRegistration />}
-      />
-
-      {/* =========================
-          ADMIN MODULES
-      ========================= */}
-      <Route
-        path="/doctors"
-        element={<Doctors />}
-      />
-
-      <Route
-        path="/departments"
-        element={<Departments />}
-      />
-
-      <Route
-        path="/billing"
-        element={<Billing />}
-      />
-
-      <Route
-        path="/laboratory"
-        element={<Laboratory />}
-      />
-
-      <Route
-        path="/pharmacy"
-        element={<Pharmacy />}
-      />
-
-      <Route
-        path="/reports"
-        element={<Reports />}
-      />
-
-      <Route
-        path="/settings"
-        element={<SettingsRoute />}
-      />
-
-      <Route
-        path="/users"
-        element={<Users />}
-      />
-
-      <Route
-        path="/dashboard"
-        element={<Dashboard />}
-      />
-
-      <Route
-        path="/super-admin"
-        element={<SuperAdmin />}
-      />
-
-      {/* =========================
-          FALLBACK
-      ========================= */}
-      <Route
-        path="*"
-        element={<Navigate to="/" replace />}
-      />
-    </Routes>
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/patient-services" element={<PatientServices />} />
+        <Route path="/appointments" element={<Appointments />} />
+        <Route path="/appointments/new" element={<NewPatientAppointment />} />
+        <Route path="/appointments/old" element={<OldPatientAppointment />} />
+        <Route path="/patients" element={<Patients />} />
+        <Route path="/patients/register" element={<PatientRegistration />} />
+        <Route path="/doctors" element={<Doctors />} />
+        <Route path="/departments" element={<Departments />} />
+        <Route path="/billing" element={<Billing />} />
+        <Route path="/laboratory" element={<Laboratory />} />
+        <Route path="/pharmacy" element={<Pharmacy />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/settings" element={<SettingsRoute />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/super-admin" element={<SuperAdmin />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   );
 }
 
