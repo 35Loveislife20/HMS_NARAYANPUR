@@ -13940,3 +13940,20 @@ body {
   }
 }
 
+
+/* Mobile: HMS login button (hms-login-btn) */
+@media (max-width: 768px) {
+  .hms-login-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    padding: 7px 12px !important;
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+  }
+}
