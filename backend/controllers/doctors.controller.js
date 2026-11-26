@@ -1,3 +1,4 @@
+const { makeTempPassword } = require("../utils/tempPassword");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
@@ -1421,11 +1422,3 @@ module.exports = {
     editDoctor,
     removeDoctor,
 };
-/* Temp password generator */
-function makeTempPassword(length = 10) {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
-  const bytes = require("crypto").randomBytes(length);
-  let out = "";
-  for (let i = 0; i < length; i++) out += chars[bytes[i] % chars.length];
-  return out;
-}

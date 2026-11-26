@@ -1,3 +1,4 @@
+const { makeTempPassword } = require("../utils/tempPassword");
 const bcrypt = require("bcryptjs");
 
 const {
@@ -751,11 +752,3 @@ module.exports = {
     deleteUser,
     changeProfileImage
 };
-/* Temp password generator */
-function makeTempPassword(length = 10) {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
-  const bytes = require("crypto").randomBytes(length);
-  let out = "";
-  for (let i = 0; i < length; i++) out += chars[bytes[i] % chars.length];
-  return out;
-}
