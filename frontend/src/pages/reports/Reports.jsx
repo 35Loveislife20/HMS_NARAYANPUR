@@ -8,7 +8,7 @@ import { FaArrowLeft } from "react-icons/fa";
 
 import "./Reports.css";
 
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api"; // hms-env-api-fix
 
 /* =========================================================
    HELPERS
