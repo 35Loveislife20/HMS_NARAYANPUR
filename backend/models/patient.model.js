@@ -410,7 +410,6 @@ const updatePatientModel = async (
     let query = `
         UPDATE patients
         SET
-            patient_code = ?,
             name = ?,
             gender = ?,
             date_of_birth = ?,
@@ -423,7 +422,6 @@ const updatePatientModel = async (
     `;
 
     const params = [
-        patient_code,
         name,
         gender,
         date_of_birth || null,
