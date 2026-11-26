@@ -29,6 +29,7 @@ const {
 } = require("../utils/credentialMailer");
 
 const cloudinary = require("cloudinary").v2;
+const { saveImageFile } = require("../utils/imageStore");
 
 
 /*
@@ -477,116 +478,17 @@ Priority:
 =========================================================
 */
 
-const uploadDoctorPhoto = async (
-    file
-) => {
+const uploadDoctorPhoto = async (file) => {
     if (!file) {
         return null;
     }
 
-    if (
-        !ALLOWED_MIME_TYPES.includes(
-            file.mimetype
-        )
-    ) {
-        throw new Error(
-            "INVALID_DOCTOR_IMAGE_TYPE"
-        );
+    if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+        throw new Error("INVALID_DOCTOR_IMAGE_TYPE");
     }
 
-    /*
-    -----------------------------------------------------
-    CLOUDINARY
-    -----------------------------------------------------
-    */
-
-    if (isCloudinaryConfigured) {
-        return new Promise(
-            (resolve, reject) => {
-                const uploadStream =
-                    cloudinary.uploader.upload_stream(
-                        {
-                            folder:
-                                "hms/doctors",
-
-                            resource_type:
-                                "image",
-                        },
-                        (
-                            error,
-                            result
-                        ) => {
-                            if (error) {
-                                reject(error);
-                                return;
-                            }
-
-                            if (
-                                !result?.secure_url
-                            ) {
-                                reject(
-                                    new Error(
-                                        "Cloudinary did not return an image URL."
-                                    )
-                                );
-
-                                return;
-                            }
-
-                            resolve(
-                                result.secure_url
-                            );
-                        }
-                    );
-
-                uploadStream.end(
-                    file.buffer
-                );
-            }
-        );
-    }
-
-    /*
-    -----------------------------------------------------
-    LOCAL FALLBACK
-    -----------------------------------------------------
-    */
-
-    await fs.promises.mkdir(
-        doctorUploadDirectory,
-        {
-            recursive: true,
-        }
-    );
-
-    let extension =
-        path.extname(
-            file.originalname || ""
-        ).toLowerCase();
-
-    if (
-        !ALLOWED_IMAGE_EXTENSIONS.includes(
-            extension
-        )
-    ) {
-        extension = ".jpg";
-    }
-
-    const uniqueName =
-        `doctor-${Date.now()}-${crypto.randomUUID()}${extension}`;
-
-    const filePath =
-        path.join(
-            doctorUploadDirectory,
-            uniqueName
-        );
-
-    await fs.promises.writeFile(
-        filePath,
-        file.buffer
-    );
-
-    return `/uploads/doctors/${uniqueName}`;
+    // Photo TiDB (images table) me save hoti hai
+    return saveImageFile(file, { entityType: "doctor" });
 };
 
 

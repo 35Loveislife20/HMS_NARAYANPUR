@@ -26,6 +26,7 @@
  */
 
 const dbModule = require("../config/db");
+const { saveImageFile } = require("../utils/imageStore");
 
 /* =========================================================
    DATABASE CONNECTION
@@ -387,30 +388,13 @@ function getUploadedFile(files, fieldName) {
  *
  * /uploads -> backend/uploads
  */
-function getUploadedFilePath(file) {
+async function getUploadedFilePath(file) {
     if (!file) {
         return null;
     }
 
-    if (file.filename) {
-        return `/uploads/settings/${file.filename}`;
-    }
-
-    if (file.path) {
-        const normalized = String(file.path)
-            .replace(/\\/g, "/");
-
-        const uploadsIndex =
-            normalized.lastIndexOf("/uploads/");
-
-        if (uploadsIndex >= 0) {
-            return normalized.substring(
-                uploadsIndex
-            );
-        }
-    }
-
-    return null;
+    // Image TiDB (images table) me save hoti hai -> /uploads/images/<id>
+    return saveImageFile(file, { entityType: "settings" });
 }
 
 /* =========================================================
@@ -1144,17 +1128,17 @@ async function updateSettings(req, res) {
          * /uploads/settings/filename.ext
          */
         const uploadedAdminLogoPath =
-            getUploadedFilePath(
+            await getUploadedFilePath(
                 uploadedAdminLogo
             );
 
         const uploadedBackgroundImagePath =
-            getUploadedFilePath(
+            await getUploadedFilePath(
                 uploadedBackgroundImage
             );
 
         const uploadedSignaturePath =
-            getUploadedFilePath(
+            await getUploadedFilePath(
                 getUploadedFile(
                     req.files,
                     "adminSignature"
@@ -1162,7 +1146,7 @@ async function updateSettings(req, res) {
             );
 
         const uploadedStampPath =
-            getUploadedFilePath(
+            await getUploadedFilePath(
                 getUploadedFile(
                     req.files,
                     "adminStamp"
@@ -2231,11 +2215,10 @@ async function updateSettings(req, res) {
             error
         );
 
-        return res.status(500).json({
+        return res.status(error.status || 500).json({
             success: false,
 
-            message:
-                "Failed to save HMS settings.",
+            message: error.status ? error.message : "Failed to save HMS settings.",
 
             error:
                 process.env.NODE_ENV ===

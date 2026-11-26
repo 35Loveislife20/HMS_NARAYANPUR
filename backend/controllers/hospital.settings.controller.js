@@ -10,6 +10,7 @@
 ========================================================= */
 
 const db = require("../config/db");
+const { saveImageFile } = require("../utils/imageStore");
 
 const HOSPITAL_ID_COLUMN = "id";
 
@@ -140,16 +141,24 @@ const updateHospitalSettings = async (req, res) => {
         const imageUpdates = {};
         const requestedImageFields = new Set();
 
-        Object.entries(IMAGE_FIELD_MAP).forEach(([fieldName, column]) => {
+        const uploadedColumns = new Set();
+
+        for (const [fieldName, column] of Object.entries(IMAGE_FIELD_MAP)) {
             const uploaded = files[fieldName]?.[0];
 
             if (uploaded) {
                 requestedImageFields.add(column);
-                imageUpdates[column] = `${UPLOAD_URL_PREFIX}/${uploaded.filename}`;
-                return;
+                imageUpdates[column] = await saveImageFile(uploaded, {
+                    entityType: "hospital",
+                    entityId: hospitalId,
+                });
+                uploadedColumns.add(column);
+                continue;
             }
 
-            if (!Object.prototype.hasOwnProperty.call(body, fieldName)) return;
+            if (uploadedColumns.has(column)) continue;
+
+            if (!Object.prototype.hasOwnProperty.call(body, fieldName)) continue;
 
             const value = body[fieldName];
             requestedImageFields.add(column);
@@ -163,7 +172,7 @@ const updateHospitalSettings = async (req, res) => {
                 }
                 // khali string -> column ko touch nahi karte
             }
-        });
+        }
 
         Object.assign(updates, imageUpdates);
 
@@ -222,7 +231,7 @@ const updateHospitalSettings = async (req, res) => {
         });
     } catch (error) {
         console.error("UPDATE HOSPITAL SETTINGS ERROR:", error);
-        return res.status(500).json({ success: false, message: "Settings save nahi ho payi." });
+        return res.status(error.status || 500).json({ success: false, message: error.status ? error.message : "Settings save nahi ho payi." });
     }
 };
 

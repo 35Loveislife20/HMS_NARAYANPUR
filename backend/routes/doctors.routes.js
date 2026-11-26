@@ -76,7 +76,7 @@ const uploadDoctorPhoto = multer({
     storage,
     fileFilter,
     limits: {
-        fileSize: 5 * 1024 * 1024,
+        fileSize: 2 * 1024 * 1024,
     },
 });
 
@@ -246,7 +246,7 @@ router.use(
             return res.status(400).json({
                 success: false,
                 message:
-                    "Doctor photo must be 5 MB or smaller.",
+                    "Doctor photo must be 2 MB or smaller.",
             });
         }
 

@@ -28,6 +28,9 @@ const complaintRoutes = require("./routes/complaintRoutes");
 // NEW: WhatsApp
 const whatsappRoutes = require("./routes/whatsapp.routes");
 
+// NEW: images stored in TiDB
+const imagesRoutes = require("./routes/images.routes");
+
 // =====================================================
 // PUBLIC ROUTES
 // =====================================================
@@ -82,6 +85,9 @@ app.use(
 // =====================================================
 // STATIC UPLOADS
 // =====================================================
+
+// Images from TiDB: GET /uploads/images/:id (static se PEHLE)
+app.use("/uploads/images", imagesRoutes);
 
 app.use(
     "/uploads",
@@ -339,6 +345,14 @@ app.use(
         console.error(
             "========================================"
         );
+
+        if (error.code === "LIMIT_FILE_SIZE") {
+            return res.status(413).json({ success: false, message: "Image 2 MB se badi nahi honi chahiye." });
+        }
+
+        if (error.name === "MulterError") {
+            return res.status(400).json({ success: false, message: error.message });
+        }
 
         const statusCode =
             Number(error.status) ||

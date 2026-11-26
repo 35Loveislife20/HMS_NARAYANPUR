@@ -43,28 +43,7 @@ const FIELD_PREFIX = {
     adminStamp: "admin-stamp",
 };
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDirectory);
-    },
-
-    filename: (req, file, cb) => {
-        const extension = path
-            .extname(file.originalname || "")
-            .toLowerCase();
-
-        const safeExtension = extension || ".jpg";
-
-        const fieldName =
-            FIELD_PREFIX[file.fieldname] || "background";
-
-        const uniqueName = `${fieldName}-${Date.now()}-${Math.round(
-            Math.random() * 1e9
-        )}${safeExtension}`;
-
-        cb(null, uniqueName);
-    },
-});
+const storage = multer.memoryStorage();
 
 /* =========================================================
    FILE FILTER
@@ -76,14 +55,12 @@ const fileFilter = (req, file, cb) => {
         "image/jpg",
         "image/png",
         "image/webp",
-        "image/gif",
-        "image/svg+xml",
     ];
 
     if (!allowedTypes.includes(file.mimetype)) {
         return cb(
             new Error(
-                "Only JPG, JPEG, PNG, WEBP, GIF and SVG images are allowed."
+                "Only JPG, JPEG, PNG and WEBP images are allowed."
             )
         );
     }
@@ -99,7 +76,7 @@ const settingsUpload = multer({
     storage,
     fileFilter,
     limits: {
-        fileSize: 5 * 1024 * 1024,
+        fileSize: 2 * 1024 * 1024,
         files: 4,
     },
 }).fields([
@@ -118,7 +95,7 @@ const handleUpload = (req, res, next) => {
             ) {
                 return res.status(400).json({
                     success: false,
-                    message: "Image size must not exceed 5MB.",
+                    message: "Image size must not exceed 2MB.",
                 });
             }
 
